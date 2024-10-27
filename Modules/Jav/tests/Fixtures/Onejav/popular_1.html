@@ -1,0 +1,1214 @@
+
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <meta name="description" content="Popular JAV torrents from the last 7 days.">
+    <meta property="og:title" content="OneJAV">
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css" integrity="sha256-2k1KVsNPRXxZOsXQ8aqcZ9GOOwmJTMoOB5o5Qp1d6/s=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-tooltip@2.0.2/dist/css/bulma-tooltip.min.css" integrity="sha256-4sEalG00AgYSQIYA/likT3rU/pElCgDfnyHz/mf+j30=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/luminous-lightbox/2.3.3/luminous-basic.min.css" integrity="sha512-qvPeSLkXsYxwQBnNswZ6Fri9TbDR2wOKSXzBFnuSFlOGbWob7KY8qrHU6F4YukwN6FmcdDWR1jYCbgWjf3nVkQ==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="/static/css/onejav.3cb5340d07fa.css">
+
+    <link rel="apple-touch-icon" href="/static/img/onejav.5468a5a7d373.png">
+    <link rel="shortcut icon" href="/static/img/onejav.5468a5a7d373.png">
+    <title>Popular (7 days) - OneJAV.com - Free JAV Torrents</title>
+
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-85812008-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-85812008-1');
+    </script>
+
+
+
+
+</head>
+<body>
+
+
+<nav class="navbar is-fixed">
+    <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="/static/img/onejav.5468a5a7d373.png" width="30" height="30">
+            OneJAV
+        </a>
+        <div class="navbar-burger burger" data-target="navMenu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div id="navMenu" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="/">
+                <span class="icon">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                </span>
+                Home
+            </a>
+
+            <a class="navbar-item tooltip is-tooltip-bottom" href="/new" data-tooltip="Recently Updated!">
+                <span class="icon has-text-danger">
+                    <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                </span>
+
+                New
+            </a>
+            <a class="navbar-item" href="/popular/">
+                <span class="icon">
+                    <i class="fa fa-star" aria-hidden="true"></i>
+                </span>
+                <span>
+                    Popular
+                </span>
+            </a>
+            <a class="navbar-item" href="/tag/FC2">
+                <span class="icon">
+                    <i class="fa fa-fire" aria-hidden="true"></i>
+                </span>
+                <span>
+                    Amateur
+                </span>
+            </a>
+            <a class="navbar-item tooltip is-tooltip-bottom" href="/tag/JavPlayer" data-tooltip="Demosaiced videos by JavPlayer">
+                <span class="icon">
+                    <i class="fa fa-file-video-o" aria-hidden="true"></i>
+                </span>
+                <span>
+                    JavPlayer
+                </span>
+            </a>
+            <a class="navbar-item" href="/random/">
+                <span class="icon">
+                    <i class="fa fa-question" aria-hidden="true"></i>
+                </span>
+                <span>
+                    Random
+                </span>
+            </a>
+            <a class="navbar-item" href="/actress/">
+                <span class="icon">
+                    <i class="fa fa-female" aria-hidden="true"></i>
+                </span>
+                <span>
+                    Actresses
+                </span>
+            </a>
+            <a class="navbar-item" href="/tag/">
+                <i class="fa fa-tags" aria-hidden="true"></i>
+                Tags
+            </a>
+
+        </div>
+        <div class="navbar-end">
+            <div class="navbar-item">
+                <form class="field is-grouped" method="get" action="/search/">
+                    <a class="control button is-danger is-outlined" href="/favorite/">
+                        <i class="fa fa-bookmark"></i>
+                    </a>
+
+                    <input class="input is-expanded" name="q" type="text" placeholder="Search torrents" value="">
+                    <button class="control button is-primary" type="submit">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+
+
+
+
+<div class="container">
+
+    <nav class="breadcrumb box">
+        <ul>
+            <li class="is-active"><a href="#">Torrents</a></li>
+            <li><a href="/popular/">Popular</a></li>
+
+            <li class="is-active"><a href="#">7 days</a></li>
+
+        </ul>
+    </nav>
+
+
+
+
+    <div class="level">
+        <div class="level-left"></div>
+        <div class="level-right">
+            <div class="level-item tooltip is-tooltip-warning is-tooltip-active is-tooltip-left" data-tooltip="You can filter torrents with these buttons!">
+                <div class="field has-addons">
+
+                    <p class="control">
+                        <a class="button is-primary is-primary" href="/popular/">All</a>
+                    </p>
+                    <p class="control">
+                        <a class="button is-primary is-inverted" href="?jav=1">JAV</a>
+                    </p>
+                    <p class="control">
+                        <a class="button is-primary is-inverted" href="?amateur=1">Amateur</a>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="level">
+        <div class="level-left"></div>
+        <div class="level-right">
+            <div class="level-item">
+                <span>Torrents from the last </span>
+            </div>
+            <div class="level-item">
+                <div class="field has-addons">
+                    <p class="control">
+                        <a class="button is-primary is-inverted" href="/popular/60?">60 Days</a>
+                    </p>
+                    <p class="control">
+                        <a class="button is-primary is-inverted" href="/popular/30?">30 Days</a>
+                    </p>
+                    <p class="control">
+                        <a class="button is-primary" href="/popular/7?">7 Days</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://pics.dmm.co.jp/mono/movie/adult/sone405/sone405pl.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/sone405">
+                                SONE405
+                            </a>
+                            <span class="is-size-6 has-text-grey">8.3 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/18">Oct. 18, 2024</a>
+
+
+                        </p>
+
+
+                        <div class="tags">
+
+
+                            <a class="tag is-light" href="/tag/Beautiful%20Girl">
+                                Beautiful Girl
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Drama">
+                                Drama
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/School%20Girls">
+                                School Girls
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Slender">
+                                Slender
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Solowork">
+                                Solowork
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Uniform">
+                                Uniform
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="level has-text-grey-dark">
+                            教員生活27年で一番美人な教え子の甘い求愛に人生を棒にふりそうな俺 河北彩伽
+                        </p>
+
+
+                        <div class="panel">
+
+                            <a class="panel-block" href="/actress/%E6%B2%B3%E5%8C%97%E5%BD%A9%E4%BC%BD">河北彩伽</a>
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/sone405/download/40041261/onejav.com_sone405.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://pics.dmm.co.jp/mono/movie/adult/sone398/sone398pl.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/sone398">
+                                SONE398
+                            </a>
+                            <span class="is-size-6 has-text-grey">6.0 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/18">Oct. 18, 2024</a>
+
+
+                        </p>
+
+
+                        <div class="tags">
+
+
+                            <a class="tag is-light" href="/tag/Cuckold">
+                                Cuckold
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Drama">
+                                Drama
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Kiss">
+                                Kiss
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Sister">
+                                Sister
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Solowork">
+                                Solowork
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Tall">
+                                Tall
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="level has-text-grey-dark">
+                            無邪気で絶対Hさせてくれそうな彼女の妹が終電逃して泊まりに来た。 倉木華
+                        </p>
+
+
+                        <div class="panel">
+
+                            <a class="panel-block" href="/actress/%E5%80%89%E6%9C%A8%E8%8F%AF">倉木華</a>
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/sone398/download/73545545/onejav.com_sone398.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://pics.dmm.co.jp/mono/movie/adult/sone408/sone408pl.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/sone408">
+                                SONE408
+                            </a>
+                            <span class="is-size-6 has-text-grey">9.1 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/18">Oct. 18, 2024</a>
+
+
+                        </p>
+
+
+                        <div class="tags">
+
+
+                            <a class="tag is-light" href="/tag/Big%20Tits">
+                                Big Tits
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Drama">
+                                Drama
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Kiss">
+                                Kiss
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Solowork">
+                                Solowork
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Sweat">
+                                Sweat
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Uniform">
+                                Uniform
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="level has-text-grey-dark">
+                            田舎に引っ越した少女を待っていたのは… お節介な地元オヤジ達とのねっとり濃厚な近所付き合い。（性交渉あり） 宇野みれい
+                        </p>
+
+
+                        <div class="panel">
+
+                            <a class="panel-block" href="/actress/%E5%AE%87%E9%87%8E%E3%81%BF%E3%82%8C%E3%81%84">宇野みれい</a>
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/sone408/download/69843859/onejav.com_sone408.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://pics.dmm.co.jp/mono/movie/adult/sone414/sone414pl.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/sone414">
+                                SONE414
+                            </a>
+                            <span class="is-size-6 has-text-grey">6.1 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/18">Oct. 18, 2024</a>
+
+
+                        </p>
+
+
+                        <div class="tags">
+
+
+                            <a class="tag is-light" href="/tag/Business%20Attire">
+                                Business Attire
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Cuckold">
+                                Cuckold
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Cunnilingus">
+                                Cunnilingus
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Drama">
+                                Drama
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Solowork">
+                                Solowork
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Subordinates,%20Colleagues">
+                                Subordinates, Colleagues
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="level has-text-grey-dark">
+                            彼氏が残業中も、外回り中も、出張中も…私は大嫌いな中年課長に大股を開いて舐め濡らされドンピシャチ●ポに喘いでいます… 早坂ひめ
+                        </p>
+
+
+                        <div class="panel">
+
+                            <a class="panel-block" href="/actress/%E6%97%A9%E5%9D%82%E3%81%B2%E3%82%81">早坂ひめ</a>
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/sone414/download/62652352/onejav.com_sone414.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://pics.dmm.co.jp/mono/movie/adult/sone403/sone403pl.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/sone403">
+                                SONE403
+                            </a>
+                            <span class="is-size-6 has-text-grey">7.4 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/18">Oct. 18, 2024</a>
+
+
+                        </p>
+
+
+                        <div class="tags">
+
+
+                            <a class="tag is-light" href="/tag/3P,%204P">
+                                3P, 4P
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Acme%20%C2%B7%20Orgasm">
+                                Acme · Orgasm
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Cuckold">
+                                Cuckold
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Facials">
+                                Facials
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Slender">
+                                Slender
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Solowork">
+                                Solowork
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="level has-text-grey-dark">
+                            人気カップルインフルエンサーがSNSでバズりたくて迷い込んだ先は濃厚絶倫オヤジが住む淫欲まみれの変態村だった…。 楓ふうあ
+                        </p>
+
+
+                        <div class="panel">
+
+                            <a class="panel-block" href="/actress/Fuua%20Kaede">Fuua Kaede</a>
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/sone403/download/56377060/onejav.com_sone403.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://pics.dmm.co.jp/mono/movie/adult/sone367/sone367pl.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/sone367">
+                                SONE367
+                            </a>
+                            <span class="is-size-6 has-text-grey">7.5 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/18">Oct. 18, 2024</a>
+
+
+                        </p>
+
+
+                        <div class="tags">
+
+
+                            <a class="tag is-light" href="/tag/Big%20Tits">
+                                Big Tits
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Cowgirl">
+                                Cowgirl
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Drama">
+                                Drama
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Nasty,%20Hardcore">
+                                Nasty, Hardcore
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Solowork">
+                                Solowork
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="level has-text-grey-dark">
+                            束縛もないし気も使わないただ欲望を満たすSEXも出来る女ともだち。 本郷愛
+                        </p>
+
+
+                        <div class="panel">
+
+                            <a class="panel-block" href="/actress/Yume%20Nikaidou">Yume Nikaidou</a>
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/sone367/download/26276426/onejav.com_sone367.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://contents-thumbnail2.fc2.com/w1280/storage101000.contents.fc2.com/file/383/38212808/1729064744.49.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/fc2ppv4554524">
+                                FC2PPV4554524
+                            </a>
+                            <span class="is-size-6 has-text-grey">4.3 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/17">Oct. 17, 2024</a>
+
+
+                        </p>
+
+
+                        <div class="tags">
+
+
+                            <a class="tag is-light" href="/tag/Amateur">
+                                Amateur
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Big%20Tits">
+                                Big Tits
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Blow">
+                                Blow
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Breasts">
+                                Breasts
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Creampie">
+                                Creampie
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Deep%20Throating">
+                                Deep Throating
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/FC2">
+                                FC2
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/POV">
+                                POV
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Titty%20Fuck">
+                                Titty Fuck
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="level has-text-grey-dark">
+                            【最高傑作】爆乳CAとフライト終わりに濃厚個撮。丁寧な敬語で抵抗を示しつつも神対応をしてくれる淫乱女神に感謝の大量中出しプレゼント。これ以上ない興奮体験を隅々まで収めたリピヌキ確定原盤。
+                        </p>
+
+
+                        <div class="panel">
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/fc2ppv4554524/download/34905473/onejav.com_fc2ppv4554524.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://pics.dmm.co.jp/mono/movie/adult/sone420/sone420pl.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/sone420">
+                                SONE420
+                            </a>
+                            <span class="is-size-6 has-text-grey">7.4 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/18">Oct. 18, 2024</a>
+
+
+                        </p>
+
+
+                        <div class="tags">
+
+
+                            <a class="tag is-light" href="/tag/Acme%20%C2%B7%20Orgasm">
+                                Acme · Orgasm
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Big%20Tits">
+                                Big Tits
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Cuckold">
+                                Cuckold
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Drama">
+                                Drama
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/OL">
+                                OL
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Solowork">
+                                Solowork
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="level has-text-grey-dark">
+                            出張先で軽蔑している中年セクハラ上司とまさかの相部屋に…朝まで続く絶倫性交に不覚にも感じてしまった純白マシュマロボディ新人社員 水乃なのは
+                        </p>
+
+
+                        <div class="panel">
+
+                            <a class="panel-block" href="/actress/%E6%B0%B4%E4%B9%83%E3%81%AA%E3%81%AE%E3%81%AF">水乃なのは</a>
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/sone420/download/71504503/onejav.com_sone420.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://pics.dmm.co.jp/mono/movie/adult/sone411/sone411pl.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/sone411">
+                                SONE411
+                            </a>
+                            <span class="is-size-6 has-text-grey">6.2 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/18">Oct. 18, 2024</a>
+
+
+                        </p>
+
+
+                        <div class="tags">
+
+
+                            <a class="tag is-light" href="/tag/Beautiful%20Girl">
+                                Beautiful Girl
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Blow">
+                                Blow
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Cowgirl">
+                                Cowgirl
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Otaku">
+                                Otaku
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Solowork">
+                                Solowork
+                            </a>
+
+
+
+                            <a class="tag is-light" href="/tag/Uniform">
+                                Uniform
+                            </a>
+
+
+                        </div>
+
+
+                        <p class="level has-text-grey-dark">
+                            無口で大人しい女生徒になら何してもいいんじゃないか？地味な図書委員は担任に犯●れてもイキまくった。 浅野こころ
+                        </p>
+
+
+                        <div class="panel">
+
+                            <a class="panel-block" href="/actress/%E6%B5%85%E9%87%8E%E3%81%93%E3%81%93%E3%82%8D">浅野こころ</a>
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/sone411/download/71405210/onejav.com_sone411.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="card mb-3">
+        <div class="container">
+            <div class="columns">
+                <div class="column">
+
+                    <img class="image" src="https://pics.dmm.co.jp/mono/movie/adult/sone407/sone407pl.jpg" onerror="reloadImage(event)" referrerpolicy="same-origin" style="max-height: 540px">
+
+                </div>
+                <div class="column is-5">
+                    <div class="card-content is-flex" style="flex-direction: column; height: 100%">
+                        <h5 class="title is-4 is-spaced">
+                            <a href="/torrent/sone407">
+                                SONE407
+                            </a>
+                            <span class="is-size-6 has-text-grey">6.4 GB</span>
+
+                        </h5>
+
+                        <p class="subtitle is-6">
+
+                            <a href="/2024/10/18">Oct. 18, 2024</a>
+
+
+                        </p>
+
+
+
+
+                        <div class="panel">
+
+
+                        </div>
+                        <br>
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <a class="button is-primary is-fullwidth" data-toggle="tooltip" title="Download .torrent" target="_blank" href="/torrent/sone407/download/19025715/onejav.com_sone407.torrent" rel="nofollow">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <nav class="pagination is-centered">
+
+
+        <a class="pagination-next button is-primary" href="?page=2">Next</a>
+
+        <ul class="pagination-list">
+
+
+            <li><a class="pagination-link button is-primary">1</a></li>
+
+
+
+            <li><a class="pagination-link button is-primary is-inverted" href="?page=2">2</a></li>
+
+
+
+            <li><a class="pagination-link button is-primary is-inverted" href="?page=3">3</a></li>
+
+
+
+            <li><a class="pagination-link button is-primary is-inverted" href="?page=4">4</a></li>
+
+
+
+
+        </ul>
+    </nav>
+
+
+
+</div>
+
+
+<footer class="footer">
+    <div class="container">
+        <p class="has-text-centered has-text-grey is-size-6">
+            <i class="fa fa-quote-left" aria-hidden="true"></i>
+            <em>
+                One JAV to rule them all, One JAV to find them,<br>
+                One JAV to bring them all and in the darkness bind them.
+            </em>
+            <i class="fa fa-quote-right" aria-hidden="true"></i>
+        </p>
+        <div class="level">
+            <div class="level-left">
+                <div class="content">
+                    <div>Every performer on this site is over 18 years old.</div>
+                    <div>© 2024 OneJAV.com, All Rights Reserved.</div>
+                    <div>
+                        Bitcoin: <a href="bitcoin:14r2XcUsfqqnYx1Ck4CuJT4gH8NFga5WbR">14r2XcUsfqqnYx1Ck4CuJT4gH8NFga5WbR</a>
+                    </div>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="content">
+                    <a class="footer-icon" href="/feeds/" target="_blank" data-toggle="tooltip" title="RSS">
+                        <i class="fa fa-rss-square"></i>
+                    </a>
+                    <a class="footer-icon" href="https://www.facebook.com/sharer/sharer.php?u=https://onejav.com" target="_blank" rel="nofollow" data-toggle="tooltip" title="Share on Facebook">
+                        <i class="fa fa-facebook-official"></i>
+                    </a>
+                    <a class="footer-icon" href="https://twitter.com/share?url=https://onejav.com&amp;text=JAV%20Torrents&amp;hashtags=porn&amp;" target="_blank" rel="nofollow" data-toggle="tooltip" title="Share on Twitter">
+                        <i class="fa fa-twitter-square"></i>
+                    </a>
+                    <nav class="nav nav-inline">
+                        <a class="nav-link" href="/contact">DMCA</a>
+                        <a class="nav-link" href="/contact">Contact</a>
+                        <a class="nav-link" href="/faq">FAQ</a>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</footer>
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js" integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dragscroll/0.0.8/dragscroll.min.js" integrity="sha256-Y1FoPjA9P8r32Xxe8bgnq+YS2CNo2kH3YCiAMTvwofo=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/luminous-lightbox/2.3.3/Luminous.min.js" integrity="sha512-OowuWkXmzaarpYBk1sa79Vv/KEffTghmkzqG5g0eC+K0ujtoLpuvGzR3ED8YFST667Z5lQjnRsBObGq24m+mkQ==" crossorigin="anonymous"></script>
+<script src="/static/js/onejav.4def7ddec0cc.js"></script>
+
+<script type='text/javascript'
+        src='//beachinfinitegag.com/7f/f9/4e/7ff94e9461629d2f54ff14725863196e.js'></script>
+<script type='text/javascript'
+        src='//beachinfinitegag.com/dc/83/b5/dc83b5f9de390e9ce7aaef9932cac4c7.js'></script>
+
+
+<script>
+    new LuminousGallery(document.querySelectorAll(".screenshot-link"));
+</script>
+
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'8d780ef4ab440ec0',t:'MTcyOTc1Mjg5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

@@ -2,7 +2,8 @@
     "preset": "laravel",
     "rules": {
         "not_operator_with_successor_space": false,
-        "new_with_parentheses": false
+        "new_with_parentheses": false,
+        "concat_space": false
 
     }
 }

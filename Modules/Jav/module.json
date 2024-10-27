@@ -1,0 +1,11 @@
+{
+    "name": "Jav",
+    "alias": "jav",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Jav\\Providers\\JavServiceProvider"
+    ],
+    "files": []
+}

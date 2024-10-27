@@ -10,6 +10,7 @@ use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Modules\Client\Services\Factory;
 use Modules\Client\Tests\TestCase;
+use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 class FactoryTest extends TestCase
@@ -48,7 +49,7 @@ class FactoryTest extends TestCase
     {
         $factory = app(Factory::class);
         $client = $factory
-            ->appendException('Exception', 'GET', $this->faker->url)
+            ->appendException('Exception', SymfonyRequest::METHOD_GET, $this->faker->url)
             ->make();
 
         $this->expectException(Exception::class);
@@ -68,7 +69,7 @@ class FactoryTest extends TestCase
             ->enableHistory()
             ->make();
 
-        $response = $client->request('GET', $this->faker->url);
+        $response = $client->request(SymfonyRequest::METHOD_GET, $this->faker->url);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals($text, $response->getBody()->getContents());
 
@@ -91,8 +92,8 @@ class FactoryTest extends TestCase
             ->enableHistory()
             ->make();
 
-        $client->request('GET', $this->faker->url);
-        $client->request('GET', $this->faker->url);
+        $client->request(SymfonyRequest::METHOD_GET, $this->faker->url);
+        $client->request(SymfonyRequest::METHOD_GET, $this->faker->url);
 
         $this->assertCount(2, $factory->getHistories()[0]);
     }
@@ -112,7 +113,7 @@ class FactoryTest extends TestCase
             ->enableRetries()
             ->make();
 
-        $response = $client->request('GET', $this->faker->url);
+        $response = $client->request(SymfonyRequest::METHOD_GET, $this->faker->url);
         $this->assertEquals(200, $response->getStatusCode());
     }
 }

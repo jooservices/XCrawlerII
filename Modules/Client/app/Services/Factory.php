@@ -4,6 +4,7 @@ namespace Modules\Client\Services;
 
 use DateTime;
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -36,7 +37,7 @@ class Factory
     /**
      * @throws BindingResolutionException
      */
-    public function make(array $options = []): Client
+    public function make(array $options = []): ClientInterface
     {
         if (!isset($options['handler'])) {
             $options['handler'] = $this->getHandler();

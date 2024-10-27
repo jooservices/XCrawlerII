@@ -4,6 +4,7 @@ namespace Modules\Client\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\Client\Services\RequestLogService;
 use Nwidart\Modules\Traits\PathNamespace;
 
 class ClientServiceProvider extends ServiceProvider
@@ -34,6 +35,7 @@ class ClientServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+        $this->app->singleton(RequestLogService::class);
     }
 
     /**
