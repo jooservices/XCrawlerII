@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.9",
         "mongodb/laravel-mongodb": "^5.1",
         "nwidart/laravel-modules": "^11.1",
+        "predis/predis": "^2.2",
         "symfony/dom-crawler": "^7.1",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.1",
         "wikimedia/composer-merge-plugin": "^2.1"
