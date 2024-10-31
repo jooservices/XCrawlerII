@@ -3,7 +3,9 @@
 namespace Modules\Jav\Providers;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Modules\Jav\Listeners\JavMovieSubscriber;
 use Modules\Jav\Models\OnejavReference;
 use Modules\Jav\Observers\OnejavReferenceObserver;
 use Nwidart\Modules\Traits\PathNamespace;
@@ -29,6 +31,7 @@ class JavServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
 
         OnejavReference::observe(OnejavReferenceObserver::class);
+        Event::subscribe(JavMovieSubscriber::class);
     }
 
     /**

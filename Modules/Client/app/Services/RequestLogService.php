@@ -2,6 +2,7 @@
 
 namespace Modules\Client\Services;
 
+use Exception;
 use Modules\Client\Exceptions\RequestLogWithoutResponding;
 use Modules\Client\Models\RequestLog;
 
@@ -32,7 +33,7 @@ class RequestLogService
     }
 
     public function respond(
-        int $statusCode = null,
+        ?int $statusCode = null,
         mixed $body = null
     ): void {
         $this->model->update([
@@ -43,7 +44,7 @@ class RequestLogService
         unset($this->model);
     }
 
-    public function exception(\Exception $exception): void
+    public function exception(Exception $exception): void
     {
         unset($this->model);
     }

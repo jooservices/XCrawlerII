@@ -2,10 +2,15 @@
 
 namespace Modules\Jav\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Jav\Database\Factories\OnejavReferenceFactory;
+use Modules\Jav\Models\Interfaces\IJavMovie;
 use MongoDB\Laravel\Eloquent\Model;
 
-class OnejavReference extends Model
+class OnejavReference extends Model implements IJavMovie
 {
+    use HasFactory;
+
     protected $table = 'onejav';
     protected $connection = 'mongodb';
     /**
@@ -36,4 +41,44 @@ class OnejavReference extends Model
         'torrent' => 'string',
         'gallery' => 'array',
     ];
+
+    public function getCover(): ?string
+    {
+        return $this->cover;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function getDvdId(): ?string
+    {
+        return $this->dvd_id;
+    }
+
+    public function getSize(): ?float
+    {
+        return $this->size;
+    }
+
+    public function getGallery(): ?array
+    {
+        return $this->gallery;
+    }
+
+    protected static function newFactory(): OnejavReferenceFactory
+    {
+        return OnejavReferenceFactory::new();
+    }
+
+    public function getGenres(): ?array
+    {
+        return $this->genres;
+    }
+
+    public function getPerformers(): ?array
+    {
+        return $this->performers;
+    }
 }

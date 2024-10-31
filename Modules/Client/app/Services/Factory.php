@@ -100,7 +100,7 @@ class Factory
         $this->pushMiddleware(
             Middleware::retry(
                 $decider,
-                function (int $retries, ResponseInterface $response) use ($delayInSec): float|int {
+                function (int $retries, ResponseInterface $response) use ($delayInSec): int {
                     if ($this->hasMocking()) {
                         return 1;
                     }

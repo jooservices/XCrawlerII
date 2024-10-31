@@ -19,11 +19,11 @@ class BaseClient implements IClient
 
     protected string $contentType = 'x-www-form-urlencoded';
 
-    public function __construct()
+    public function __construct(array $options = [])
     {
         $this->client = app(Factory::class)
             ->enableRetries()
-            ->make();
+            ->make($options);
     }
 
     public function get(

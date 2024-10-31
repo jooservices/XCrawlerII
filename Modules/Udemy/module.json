@@ -1,0 +1,11 @@
+{
+    "name": "Udemy",
+    "alias": "udemy",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Udemy\\Providers\\UdemyServiceProvider"
+    ],
+    "files": []
+}

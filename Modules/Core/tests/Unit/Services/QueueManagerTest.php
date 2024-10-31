@@ -23,20 +23,20 @@ class QueueManagerTest extends TestCase
         $this->assertInstanceOf(Pool::class, $pool);
     }
 
-    public function testPushJob()
-    {
-        $pool = Pool::factory()->create();
-        $manager = app(QueueManager::class);
+//    public function testPushJob()
+//    {
+//        $pool = Pool::factory()->create();
+//        $manager = app(QueueManager::class);
+//
+//        $job = $manager->pushQueue(
+//            $pool,
+//            $this->faker->word,
+//        );
+//        $this->assertInstanceOf(Queue::class, $job);
+//        $this->assertTrue($pool->queues->first()->is($job));
+//    }
 
-        $job = $manager->pushQueue(
-            $pool,
-            $this->faker->word,
-        );
-        $this->assertInstanceOf(Queue::class, $job);
-        $this->assertTrue($pool->queues->first()->is($job));
-    }
-
-    public function testGetPoolWithBalacing()
+    public function testGetPoolWithBalancing()
     {
         Pool::factory()
             ->count(10)

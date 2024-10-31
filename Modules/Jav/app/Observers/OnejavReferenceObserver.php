@@ -11,7 +11,7 @@ class OnejavReferenceObserver
      */
     public function created(OnejavReference $model): void
     {
-        dd($model);
+        //
     }
 
     /**

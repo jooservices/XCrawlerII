@@ -5,7 +5,7 @@ namespace Modules\Client\Services;
 use Modules\Client\Exceptions\ClientNotFound;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\Clients\BaseClient;
-use Modules\Jav\app\Services\Client\OnejavClient;
+use Modules\Jav\Onejav\Client;
 
 class ClientManager
 {
@@ -14,7 +14,7 @@ class ClientManager
     public function __construct()
     {
         $this->register(BaseClient::class);
-        $this->register(OnejavClient::class);
+        $this->register(Client::class);
     }
 
     public function register(string $class): static

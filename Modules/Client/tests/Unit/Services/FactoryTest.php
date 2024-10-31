@@ -20,8 +20,10 @@ class FactoryTest extends TestCase
      */
     public function testMakeClient()
     {
-        $factory = app(Factory::class);
-        $this->assertInstanceOf(ClientInterface::class, $factory->make());
+        $this->assertInstanceOf(
+            ClientInterface::class,
+            app(Factory::class)->make()
+        );
     }
 
     /**
