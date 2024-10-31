@@ -4,8 +4,6 @@ namespace Modules\Jav\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Modules\Jav\Models\JavMovie;
 use NotificationChannels\Telegram\TelegramMessage;
 
@@ -36,19 +34,19 @@ class JavMovieCreatedNotification extends Notification
             ->to('-4556029367')
 
             // Markdown supported.
-            ->content("New JAV movie created")
+            ->content('New JAV movie created')
             ->line('')
             ->line($notifiable->dvd_id)
             ->line('Size: ' . $notifiable->size);
-//            ->lineIf($notifiable->amount > 0, "Amount paid: {$notifiable->amount}")
-//            ->line("Thank you!")
+        //            ->lineIf($notifiable->amount > 0, "Amount paid: {$notifiable->amount}")
+        //            ->line("Thank you!")
 
-            // (Optional) Blade template for the content.
-            // ->view('notification', ['url' => $url])
+        // (Optional) Blade template for the content.
+        // ->view('notification', ['url' => $url])
 
-            // (Optional) Inline Buttons
-//            ->button('View Invoice', $url)
-//            ->button('Download Invoice', $url);
+        // (Optional) Inline Buttons
+        //            ->button('View Invoice', $url)
+        //            ->button('Download Invoice', $url);
 
         // (Optional) Conditional notification.
         // Only send if amount is greater than 0. Otherwise, don't send.

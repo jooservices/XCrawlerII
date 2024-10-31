@@ -32,7 +32,9 @@ class JavMovieSubscriber
         $repository->syncPerformers($model, collect($event->movie->getPerformers()));
         $repository->syncGenres($model, collect($event->movie->getGenres()));
 
-        $model->notify(new JavMovieCreatedNotification($this));
+        if (app()->environment('production')) {
+            $model->notify(new JavMovieCreatedNotification());
+        }
 
         JavMovieCreateCompleted::dispatch($model);
         /**
