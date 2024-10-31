@@ -5,6 +5,7 @@ namespace Modules\Jav\Models;
 use Dyrynda\Database\Support\GeneratesUuid;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 
 // use Modules\Jav\Database\Factories\JavMoviesFactory;
 
@@ -12,6 +13,7 @@ class JavMovie extends Model
 {
     use HasFactory;
     use GeneratesUuid;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.

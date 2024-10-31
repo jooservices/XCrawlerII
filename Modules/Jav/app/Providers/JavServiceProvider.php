@@ -5,6 +5,7 @@ namespace Modules\Jav\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Modules\Jav\Console\OnejavSync;
 use Modules\Jav\Listeners\JavMovieSubscriber;
 use Modules\Jav\Models\OnejavReference;
 use Modules\Jav\Observers\OnejavReferenceObserver;
@@ -48,7 +49,9 @@ class JavServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
+        $this->commands([
+            OnejavSync::class
+        ]);
     }
 
     /**

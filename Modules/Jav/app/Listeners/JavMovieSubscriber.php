@@ -6,6 +6,7 @@ use Illuminate\Events\Dispatcher;
 use Modules\Jav\Events\JavMovieCreateCompleted;
 use Modules\Jav\Events\OnejavReferenceCreatedEvent;
 use Modules\Jav\Models\JavMovie;
+use Modules\Jav\Notifications\JavMovieCreatedNotification;
 use Modules\Jav\Repositories\JavMovieRepository;
 
 class JavMovieSubscriber
@@ -31,6 +32,7 @@ class JavMovieSubscriber
         $repository->syncPerformers($model, collect($event->movie->getPerformers()));
         $repository->syncGenres($model, collect($event->movie->getGenres()));
 
+        $model->notify(new JavMovieCreatedNotification($this));
 
         JavMovieCreateCompleted::dispatch($model);
         /**
