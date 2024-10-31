@@ -182,9 +182,9 @@ return [
     */
 
     'defaults' => [
-        'supervisor-1' => [
+        'onejav' => [
             'connection' => 'redis',
-            'queue' => ['default', 'onejav'],
+            'queue' => ['onejav'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
@@ -199,7 +199,7 @@ return [
 
     'environments' => [
         'production' => [
-            'supervisor-1' => [
+            'onejav' => [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
@@ -207,7 +207,13 @@ return [
         ],
 
         'local' => [
-            'supervisor-1' => [
+            'onejav' => [
+                'maxProcesses' => 3,
+            ],
+        ],
+
+        'uat' => [
+            'onejav' => [
                 'maxProcesses' => 3,
             ],
         ],
