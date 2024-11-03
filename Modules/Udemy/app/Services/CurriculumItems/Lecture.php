@@ -24,6 +24,7 @@ class Lecture implements IStudyCurriculum
         $parts = (int) ceil($totalTime / (15 * 5));
 
         $now = Carbon::now();
+        $payloads = [];
 
         for ($index = 0; $index < $parts; $index++) {
             for ($part = 1; $part <= 5; $part++) {

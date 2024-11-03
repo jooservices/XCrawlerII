@@ -1,0 +1,42 @@
+# https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions
+name: XCrawlerII - Build & Tests
+
+# https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+on:
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+  pull_request:
+    branches: [ develop ]
+    types: [ opened, synchronize ]
+  push:
+    branches: [ develop ]
+
+#concurrency:
+#  group: staging_build_test_${{ github.head_ref }}
+#  cancel-in-progress: true
+
+jobs:
+
+  code_standards:
+    name: Code standards check
+    strategy:
+      matrix:
+        lint: [ phpmd ]
+
+    runs-on:
+      - self-hosted
+      - ubuntu
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      #      PHP will be installed on server by itself
+
+      - name: Setup application
+        if: success()
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          composer install --no-ansi --no-scripts --no-progress --prefer-dist
+
+      - name: Lint
+        run: composer ${{ matrix.lint }}

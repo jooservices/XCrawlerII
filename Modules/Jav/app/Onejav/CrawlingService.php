@@ -56,34 +56,34 @@ class CrawlingService
         }));
     }
 
-    public function item(Crawler $el): OnejavItemEntity
+    public function item(Crawler $element): OnejavItemEntity
     {
         $item = new OnejavItemEntity();
 
-        if ($el->filter('h5.title a')->count()) {
-            $item->url = trim($el->filter('h5.title a')->attr('href'));
+        if ($element->filter('h5.title a')->count()) {
+            $item->url = trim($element->filter('h5.title a')->attr('href'));
         }
 
-        if ($el->filter('.columns img.image')->count()) {
-            $item->cover = trim($el->filter('.columns img.image')->attr('src'));
+        if ($element->filter('.columns img.image')->count()) {
+            $item->cover = trim($element->filter('.columns img.image')->attr('src'));
         }
 
-        if ($el->filter('h5 a')->count()) {
-            $item->dvd_id = trim($el->filter('h5 a')->text(null, false));
+        if ($element->filter('h5 a')->count()) {
+            $item->dvd_id = trim($element->filter('h5 a')->text(null, false));
             /**
              * @TODO Use Helper
              */
             $item->dvd_id = OnejavHelper::parseDvdId($item->dvd_id);
         }
 
-        if ($el->filter('h5 span')->count()) {
-            $item->size = trim($el->filter('h5 span')->text(null, false));
+        if ($element->filter('h5 span')->count()) {
+            $item->size = trim($element->filter('h5 span')->text(null, false));
             $item->size = OnejavHelper::convertSize($item->size);
         }
 
         // Always use href because it'll never change but text will be
-        $item->date = OnejavHelper::convertToDate(trim($el->filter('.subtitle.is-6 a')->attr('href')));
-        $item->genres = collect($el->filter('.tags .tag')->each(
+        $item->date = OnejavHelper::convertToDate(trim($element->filter('.subtitle.is-6 a')->attr('href')));
+        $item->genres = collect($element->filter('.tags .tag')->each(
             function ($genres) {
                 return trim($genres->text(null, false));
             }
@@ -92,11 +92,11 @@ class CrawlingService
         })->unique()->toArray();
 
         // Description
-        $description = $el->filter('.level.has-text-grey-dark');
+        $description = $element->filter('.level.has-text-grey-dark');
         $item->description = $description->count() ? trim($description->text(null, false)) : null;
         $item->description = preg_replace("/\r|\n/", '', $item->description);
 
-        $item->performers = collect($el->filter('.panel .panel-block')->each(
+        $item->performers = collect($element->filter('.panel .panel-block')->each(
             function ($performers) {
                 return trim($performers->text(null, false));
             }
@@ -104,10 +104,10 @@ class CrawlingService
             return empty($value);
         })->unique()->toArray();
 
-        $item->torrent = trim($el->filter('.control.is-expanded a')->attr('href'));
+        $item->torrent = trim($element->filter('.control.is-expanded a')->attr('href'));
 
         // Gallery. Only for FC
-        $gallery = $el->filter('.columns .column a img');
+        $gallery = $element->filter('.columns .column a img');
         if ($gallery->count()) {
             $item->gallery = collect($gallery->each(
                 function ($image) {

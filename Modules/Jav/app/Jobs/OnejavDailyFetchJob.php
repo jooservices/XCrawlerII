@@ -7,12 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Modules\Core\Services\SettingService;
 use Modules\Jav\Events\OnejavDailyProcessedEvent;
-use Modules\Jav\Events\OnejavReferenceCreatedEvent;
-use Modules\Jav\Models\OnejavReference;
 use Modules\Jav\Onejav\CrawlingService;
 use Modules\Jav\Repositories\OnejavRepository;
 use Modules\Jav\Services\OnejavService;
@@ -45,9 +42,13 @@ class OnejavDailyFetchJob implements ShouldQueue
             $repository->insert($item->toArray());
         }
 
-        OnejavDailyProcessedEvent::dispatch($items, $this->date, $this->page);
+        OnejavDailyProcessedEvent::dispatch(
+            $items,
+            $this->date,
+            $this->page
+        );
 
-        $totalPages = (int) app(SettingService::class)->get(
+        $totalPages = (int)app(SettingService::class)->get(
             OnejavService::SETTING_GROUP,
             Str::slug($this->date, '_') . '_last_page',
         );

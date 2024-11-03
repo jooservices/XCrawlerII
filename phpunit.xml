@@ -17,6 +17,9 @@
         <testsuite name="Jav">
             <directory>Modules/Jav/tests</directory>
         </testsuite>
+        <testsuite name="Udemy">
+            <directory>Modules/Udemy/tests</directory>
+        </testsuite>
     </testsuites>
 
     <source>

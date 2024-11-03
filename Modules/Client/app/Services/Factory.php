@@ -49,6 +49,11 @@ class Factory
         return $this->client;
     }
 
+    /**
+     * @TODO a certain sign of a Single Responsibility Principle violation
+     * @param bool $useMock
+     * @return HandlerStack|MockHandler
+     */
     protected function getHandler(bool $useMock = false): HandlerStack|MockHandler
     {
         if (

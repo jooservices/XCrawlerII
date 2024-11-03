@@ -67,6 +67,18 @@
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail\" \"npm run dev\" --names=server,queue,logs,vite"
+        ],
+        "test": [
+            "@php vendor/bin/phpunit --testsuite=Core",
+            "@php vendor/bin/phpunit --testsuite=Client",
+            "@php vendor/bin/phpunit --testsuite=Jav",
+            "@php vendor/bin/phpunit --testsuite=Udemy"
+        ],
+        "phpmd": [
+            "@php vendor/bin/phpmd app github phpmd.xml"
+        ],
+        "phpstan": [
+            "@php vendor/bin/phpstan analyze --level=1 Modules"
         ]
     },
     "extra": {

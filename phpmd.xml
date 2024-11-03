@@ -8,9 +8,11 @@
         Inspired by https://github.com/phpmd/phpmd/issues/137
         using http://phpmd.org/documentation/creating-a-ruleset.html
     </description>
-    <!-- se importan los rulesets, en este caso todos. -->
+
     <rule ref="rulesets/cleancode.xml">
         <exclude name="StaticAccess"/>
+        <exclude name="ElseExpression"/>
+        <exclude name="BooleanArgumentFlag"/>
     </rule>
     <rule ref="rulesets/codesize.xml/CyclomaticComplexity"/>
     <rule ref="rulesets/codesize.xml/NPathComplexity"/>
@@ -33,11 +35,14 @@
     <rule ref="rulesets/design.xml/CouplingBetweenObjects">
         <properties>
             <property name="minimum" value="20"/>
+            <property name="maximum" value="15"/>
         </properties>
     </rule>
     <!-- se importa naming y se excluye ShortVariable para ser ajustada despues. -->
     <rule ref="rulesets/naming.xml">
         <exclude name="ShortVariable"/>
+        <exclude name="LongVariable"/>
+        <exclude name="ShortMethodName"/>
     </rule>
     <rule ref="rulesets/naming.xml/ShortVariable"
           since="0.2"
@@ -46,9 +51,19 @@
           externalInfoUrl="http://phpmd.org/rules/naming.html#shortvariable">
         <priority>3</priority>
         <properties>
-            <property name="minimum" description="Minimum length for a variable, property or parameter name" value="3"/>
+            <property name="minimum" description="Minimum length for a variable, property or parameter name" value="2"/>
             <property name="exceptions" value="id,q,w,i,j,v,e,f,fp" />
         </properties>
     </rule>
-    <rule ref="rulesets/unusedcode.xml"/>
+    <rule ref="rulesets/naming.xml/LongVariable"
+          since="0.2"
+          class="PHPMD\Rule\Naming\LongVariable"
+          externalInfoUrl="https://phpmd.org/rules/naming.html#longvariable">
+        <properties>
+            <property name="maximum" description="The variable length reporting threshold" value="30"/>
+        </properties>
+    </rule>
+    <rule ref="rulesets/unusedcode.xml">
+        <exclude name="UnusedFormalParameter"/>
+    </rule>
 </ruleset>

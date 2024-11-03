@@ -7,6 +7,15 @@ use Modules\Jav\Database\Factories\OnejavReferenceFactory;
 use Modules\Jav\Models\Interfaces\IJavMovie;
 use MongoDB\Laravel\Eloquent\Model;
 
+/**
+ * @property string $cover
+ * @property string $dvd_id
+ * @property string $title
+ * @property float $size
+ * @property array $gallery
+ * @property array $genres
+ * @property array $performers
+ */
 class OnejavReference extends Model implements IJavMovie
 {
     use HasFactory;
