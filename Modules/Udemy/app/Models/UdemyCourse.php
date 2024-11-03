@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
 use Modules\Udemy\Database\Factories\UdemyCourseFactory;
 
 /**
+ * @property int $id
  * @property string $title
+ * @property CurriculumItem|Collection $items
  */
 class UdemyCourse extends Model
 {

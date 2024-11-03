@@ -8,6 +8,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Modules\Client\Interfaces\IResponse;
 use Modules\Client\Services\Clients\BaseClient;
 use Modules\Client\Services\Factory;
+use Modules\Udemy\Exceptions\TokenNotFoundException;
 
 class Client extends BaseClient
 {
@@ -51,7 +52,7 @@ class Client extends BaseClient
         array $options = []
     ): IResponse {
         if (!isset($this->token)) {
-            throw new \Exception('Token not set');
+            throw new TokenNotFoundException('Token not set');
         }
 
         $options = array_merge(

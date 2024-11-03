@@ -4,6 +4,7 @@ namespace Modules\Udemy\Services\Client\Entities;
 
 /**
  * @property int $completion_ratio
+ * @property string $enrollment_time
  */
 class CourseEntity extends AbstractBaseEntity
 {

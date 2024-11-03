@@ -37,7 +37,7 @@ class CompleteLectureJob implements ShouldQueue
         $result = app(UdemySdk::class)
             ->me()
             ->completedLectures(
-                $this->userToken->token,
+                $this->userToken,
                 $this->curriculumItem,
             );
 

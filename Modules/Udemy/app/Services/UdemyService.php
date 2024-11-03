@@ -3,6 +3,7 @@
 namespace Modules\Udemy\Services;
 
 use Exception;
+use Modules\Udemy\Events\BeforeProcessCompleteCurriculumItemEvent;
 use Modules\Udemy\Jobs\SyncCurriculumItemsJob;
 use Modules\Udemy\Jobs\SyncMyCoursesJob;
 use Modules\Udemy\Models\CurriculumItem;
@@ -21,7 +22,7 @@ class UdemyService
         'simple-quiz' => SimpleQuiz::class,
     ];
 
-    public function syncMyCourses(string $token)
+    public function syncMyCourses(string $token): void
     {
         /**
          * - subscribedCourses
@@ -33,28 +34,18 @@ class UdemyService
         SyncMyCoursesJob::dispatch($token);
     }
 
-    public function syncCurriculumItems(UserToken $userToken, UdemyCourse $course)
+    public function syncCurriculumItems(UserToken $userToken, UdemyCourse $course): void
     {
         SyncCurriculumItemsJob::dispatch($userToken, $course);
-    }
-
-    public function processNotCompletedCourses(string $token)
-    {
-        /**
-         * @var UserToken $user
-         */
-        $user = UserToken::where('token', $token)->first();
-        dd(
-            $user->courses()->where('completion_ratio', '<', 100)->get()
-        );
     }
 
     /**
      * @throws Exception
      */
-    public function completeCurriculum(UserToken $userToken, CurriculumItem $curriculumItem)
+    public function completeCurriculum(UserToken $userToken, CurriculumItem $curriculumItem): void
     {
         $class = $curriculumItem->class;
+
         if ($class === 'quiz') {
             $class = $curriculumItem->type;
         }
@@ -62,6 +53,13 @@ class UdemyService
         if (!isset($this->mappingCurriculumItems[$class])) {
             return;
         }
+
+        BeforeProcessCompleteCurriculumItemEvent::dispatch(
+            $userToken,
+            $curriculumItem,
+            $this->mappingCurriculumItems[$class]
+        );
+
         app($this->mappingCurriculumItems[$class])
             ->process($userToken, $curriculumItem);
     }

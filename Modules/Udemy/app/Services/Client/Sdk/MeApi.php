@@ -5,6 +5,7 @@ namespace Modules\Udemy\Services\Client\Sdk;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\ClientManager;
 use Modules\Udemy\Models\CurriculumItem;
+use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\Client\Client;
 use Modules\Udemy\Services\Client\Entities\AssessmentEntity;
 use Modules\Udemy\Services\Client\Entities\CoursesCategoriesEntity;
@@ -76,12 +77,11 @@ class MeApi
     }
 
     public function lectureProgressLogs(
-        string $token,
+        UserToken $userToken,
         CurriculumItem $curriculumItem,
         array $payload = []
     ): bool {
-
-        $this->client->setToken($token);
+        $this->client->setToken($userToken->token);
         $response = $this->client->request(
             Request::METHOD_POST,
             self::ENDPOINT
@@ -96,10 +96,10 @@ class MeApi
     }
 
     public function completedLectures(
-        string $token,
+        UserToken $userToken,
         CurriculumItem $curriculumItem,
     ): bool {
-        $this->client->setToken($token);
+        $this->client->setToken($userToken->token);
         $response = $this->client->request(
             Request::METHOD_POST,
             self::ENDPOINT
@@ -126,7 +126,7 @@ class MeApi
             . '/subscribed-courses'
             . '/' . $curriculumItem->course->id
             . '/quizzes/' . $curriculumItem->id
-                . '/user-attempted-quizzes/?fields[user_attempted_quiz]=id,created,viewed_time,completion_time,version,completed_assessments,results_summary',
+            . '/user-attempted-quizzes/?fields[user_attempted_quiz]=id,created,viewed_time,completion_time,version,completed_assessments,results_summary',
             [
                 'is_viewed' => true,
                 'version' => 1,
@@ -143,17 +143,19 @@ class MeApi
     public function assessmentAnswers(
         string $token,
         CurriculumItem $curriculumItem,
-        int $attempId,
+        int $attempt,
         AssessmentEntity $assessmentEntity,
     ) {
-
         $this->client->setToken($token);
+        /**
+         * @TODO Handle duration
+         */
         $response = $this->client->request(
             Request::METHOD_POST,
             self::ENDPOINT
             . '/subscribed-courses'
             . '/' . $curriculumItem->course->id
-            . '/user-attempted-quizzes/' . $attempId
+            . '/user-attempted-quizzes/' . $attempt
             . '/assessment-answers/?fields[user_answers_assessment]=id,response,assessment,is_marked_for_review,score',
             [
                 'assessment_id' => $assessmentEntity->getId(),

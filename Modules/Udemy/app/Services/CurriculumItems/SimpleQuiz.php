@@ -16,10 +16,10 @@ class SimpleQuiz implements IStudyCurriculum
         $attempt = $sdk->me()->userAttemptedQuizzes($userToken->token, $curriculumItem);
 
         if ($attempt !== false) {
-            $assessments = ($sdk->quizzes()->assessments(
+            $assessments = $sdk->quizzes()->assessments(
                 $userToken->token,
                 $curriculumItem
-            ));
+            );
 
             foreach ($assessments->getResults() as $assessment) {
                 $sdk->me()->assessmentAnswers(

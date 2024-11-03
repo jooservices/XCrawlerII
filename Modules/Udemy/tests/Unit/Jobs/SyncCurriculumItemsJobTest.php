@@ -3,7 +3,7 @@
 namespace Modules\Udemy\Tests\Unit\Jobs;
 
 use Illuminate\Support\Facades\Event;
-use Modules\Udemy\Events\CourseReadyForStudy;
+use Modules\Udemy\Events\CourseReadyForStudyEvent;
 use Modules\Udemy\Jobs\SyncCurriculumItemsJob;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
@@ -28,11 +28,11 @@ class SyncCurriculumItemsJobTest extends TestCase
         );
 
         Event::fake([
-            CourseReadyForStudy::class,
+            CourseReadyForStudyEvent::class,
         ]);
         SyncCurriculumItemsJob::dispatch($userToken, $course);
         $this->assertCount(54, $course->items);
 
-        Event::assertDispatched(CourseReadyForStudy::class);
+        Event::assertDispatched(CourseReadyForStudyEvent::class);
     }
 }

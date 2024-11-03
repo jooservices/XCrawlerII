@@ -28,7 +28,11 @@ class CourseReadyForStudyNotification extends Notification
         return ['telegram'];
     }
 
-    public function toTelegram(UserToken $notifiable)
+    /**
+     * @param UserToken $notifiable
+     * @return TelegramMessage
+     */
+    public function toTelegram(UserToken $notifiable): TelegramMessage
     {
         return TelegramMessage::create()
             // Optional recipient user id.

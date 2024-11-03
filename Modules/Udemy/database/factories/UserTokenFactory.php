@@ -3,6 +3,7 @@
 namespace Modules\Udemy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 
 class UserTokenFactory extends Factory
@@ -31,8 +32,9 @@ class UserTokenFactory extends Factory
         return $this->afterMaking(function (UserToken $user) {
             // ...
         })->afterCreating(function (UserToken $user) {
-
+            $user->courses()->syncWithoutDetaching([
+                UdemyCourse::factory()->create()->id,
+            ]);
         });
     }
 }
-

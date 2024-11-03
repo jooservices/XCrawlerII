@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Modules\Udemy\Database\Factories\CurriculumItemFactory;
 
 /**
+ * @property int $id
  * @property string $type
  * @property string $class
+ * @property UdemyCourse $course
+ * @property int $asset_time_estimation
  */
 class CurriculumItem extends Model
 {

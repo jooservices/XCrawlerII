@@ -3,7 +3,7 @@
 namespace Modules\Udemy\app\Listeners;
 
 use Illuminate\Events\Dispatcher;
-use Modules\Udemy\Events\CourseReadyForStudy;
+use Modules\Udemy\Events\CourseReadyForStudyEvent;
 use Modules\Udemy\Events\CurriculumItemCreatedEvent;
 use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
 use Modules\Udemy\Events\UdemyCourseCreatedEvent;
@@ -45,18 +45,23 @@ class UdemyCourseSubscriber
             $event->courseCurriculumItemsEntity->getCount() === $course->items->count()
             && $completionRatio < 100
         ) {
-            CourseReadyForStudy::dispatch(
+            CourseReadyForStudyEvent::dispatch(
                 $event->userToken,
                 $event->curriculumItem->course,
             );
         }
     }
 
-    public function handleCourseReadyForStudy(CourseReadyForStudy $event)
+    public function handleCourseReadyForStudy(CourseReadyForStudyEvent $event): void
     {
         $event->userToken->notify(new CourseReadyForStudyNotification($event->udemyCourse));
 
         $items = $event->udemyCourse->items;
+
+        if ($items->isEmpty()) {
+            return;
+        }
+
         $service = app(UdemyService::class);
         $items->each(function ($item) use ($event, $service) {
             $service->completeCurriculum(
@@ -75,7 +80,7 @@ class UdemyCourseSubscriber
             UdemyCourseCreatedEvent::class => 'handleUdemyCourseCreated',
             SyncMyCoursesCompletedEvent::class => 'handleUdemyCoursesCompleted',
             CurriculumItemCreatedEvent::class => 'handleCurriculumItemCreated',
-            CourseReadyForStudy::class => 'handleCourseReadyForStudy',
+            CourseReadyForStudyEvent::class => 'handleCourseReadyForStudy',
         ];
     }
 }

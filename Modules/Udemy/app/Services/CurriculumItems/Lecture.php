@@ -5,19 +5,23 @@ namespace Modules\Udemy\Services\CurriculumItems;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Modules\Udemy\Interfaces\IStudyCurriculum;
-use Modules\Udemy\Jobs\CompleteCurriculumItemJob;
 use Modules\Udemy\Jobs\CompleteLectureJob;
+use Modules\Udemy\Jobs\LectureProgressLogJob;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
+use Throwable;
 
 class Lecture implements IStudyCurriculum
 {
+    /**
+     * @throws Throwable
+     */
     public function process(
         UserToken $userToken,
         CurriculumItem $curriculumItem
-    ) {
+    ): void {
         $totalTime = $curriculumItem->asset_time_estimation;
-        $parts = (int)ceil($totalTime / (15 * 5));
+        $parts = (int) ceil($totalTime / (15 * 5));
 
         $now = Carbon::now();
 
@@ -40,11 +44,17 @@ class Lecture implements IStudyCurriculum
         $chains = [];
 
         foreach ($payloads as $payload) {
-            $chains[] = new CompleteCurriculumItemJob($userToken, $curriculumItem, $payload);
+            $chains[] = new LectureProgressLogJob($userToken, $curriculumItem, $payload);
         }
 
+        /**
+         * Use chains to make sure we fully watch lecture than complete it
+         */
         Bus::batch([$chains])
             ->then(function () use ($userToken, $curriculumItem) {
+                /**
+                 * @TODO Dispatch event
+                 */
                 CompleteLectureJob::dispatch($userToken, $curriculumItem);
             })
             ->dispatch();

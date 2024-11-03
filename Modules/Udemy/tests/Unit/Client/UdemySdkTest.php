@@ -10,10 +10,9 @@ use Modules\Udemy\Tests\TestCase;
 
 class UdemySdkTest extends TestCase
 {
-    public function testGetSubscribedCoursesCategories()
+    public function testGetSubscribedCoursesCategoriesSuccess()
     {
-        $sdk = app(UdemySdk::class);
-        $me = $sdk->me();
+        $me = app(UdemySdk::class)->me();
         $this->assertInstanceOf(MeApi::class, $me);
 
         $list = $me->subscribedCoursesCategories($this->faker->uuid);

@@ -62,7 +62,6 @@ class SyncCurriculumItemsJob implements ShouldQueue
             }
         );
 
-
         if ($entities->pages() > 1 && $entities->pages() > $this->page) {
             for ($index = 2; $index <= $entities->pages(); $index++) {
                 SyncCurriculumItemsJob::dispatch($this->user, $this->course, $index);

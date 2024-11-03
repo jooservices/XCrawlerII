@@ -16,7 +16,7 @@ use Modules\Udemy\Services\UdemyService;
 /**
  * For lecture
  */
-class CompleteCurriculumItemJob implements ShouldQueue
+class LectureProgressLogJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -43,7 +43,7 @@ class CompleteCurriculumItemJob implements ShouldQueue
         $result = app(UdemySdk::class)
             ->me()
             ->lectureProgressLogs(
-                $this->userToken->token,
+                $this->userToken,
                 $this->curriculumItem,
                 $this->payload
             );

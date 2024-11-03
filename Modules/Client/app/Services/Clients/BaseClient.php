@@ -116,7 +116,7 @@ class BaseClient implements IClient
                     if ($exception->hasResponse()) {
                         return new $responseClass($exception->getResponse());
                     }
-                } catch (\Exception | GuzzleException $exception) {
+                } catch (\Exception|GuzzleException $exception) {
                     $logService->exception($exception);
 
                     return new $responseClass();
