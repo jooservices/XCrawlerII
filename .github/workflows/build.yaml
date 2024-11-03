@@ -20,7 +20,7 @@ jobs:
     name: Code standards check
     strategy:
       matrix:
-        lint: [ phpmd ]
+        lint: [ phpmd, phpstan ]
 
     runs-on:
       - self-hosted
