@@ -80,7 +80,7 @@ class BaseClient implements IClient
 
         return Cache::remember(
             $key,
-            config('jav.onejav.cache_interval'),
+            100,
             function () use ($method, $endpoint, $payload, $options) {
                 $method = Str::upper($method);
                 $logService = app(RequestLogService::class);

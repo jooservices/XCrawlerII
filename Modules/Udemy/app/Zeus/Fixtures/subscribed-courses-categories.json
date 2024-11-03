@@ -1,0 +1,67 @@
+{
+    "count": 12,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "_class": "course_category",
+            "id": 304,
+            "title": "Design Tools"
+        },
+        {
+            "_class": "course_category",
+            "id": 306,
+            "title": "Development"
+        },
+        {
+            "_class": "course_category",
+            "id": 308,
+            "title": "Finance & Accounting"
+        },
+        {
+            "_class": "course_category",
+            "id": 312,
+            "title": "IT Operations"
+        },
+        {
+            "_class": "course_category",
+            "id": 314,
+            "title": "Leadership & Management"
+        },
+        {
+            "_class": "course_category",
+            "id": 318,
+            "title": "Productivity"
+        },
+        {
+            "_class": "course_category",
+            "id": 320,
+            "title": "Personal Development"
+        },
+        {
+            "_class": "course_category",
+            "id": 322,
+            "title": "Project & Product Management"
+        },
+        {
+            "_class": "course_category",
+            "id": 326,
+            "title": "Data Science"
+        },
+        {
+            "_class": "course_category",
+            "id": 332,
+            "title": "Continuing Education Units"
+        },
+        {
+            "_class": "course_category",
+            "id": 334,
+            "title": "Cybersecurity"
+        },
+        {
+            "_class": "course_category",
+            "id": 336,
+            "title": "Language Learning"
+        }
+    ]
+}

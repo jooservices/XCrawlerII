@@ -3,7 +3,12 @@
 namespace Modules\Udemy\Providers;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use Modules\Udemy\app\Listeners\UdemyCourseSubscriber;
+use Modules\Udemy\Console\CompleteMyCourse;
+use Modules\Udemy\Console\ProcessMyCourses;
+use Modules\Udemy\Console\SyncMyCourse;
 use Nwidart\Modules\Traits\PathNamespace;
 
 class UdemyServiceProvider extends ServiceProvider
@@ -25,6 +30,8 @@ class UdemyServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+
+        Event::subscribe(UdemyCourseSubscriber::class);
     }
 
     /**
@@ -41,7 +48,11 @@ class UdemyServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
+        $this->commands([
+            SyncMyCourse::class,
+            ProcessMyCourses::class,
+            CompleteMyCourse::class
+        ]);
     }
 
     /**

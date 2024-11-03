@@ -49,13 +49,7 @@ class OnejavFetchItemsJob implements ShouldQueue
         $repository = app(OnejavRepository::class);
 
         foreach ($items as $item) {
-            $model = $repository->insert($item->toArray());
-
-            if ($model->wasRecentlyCreated) {
-                OnejavMovieCreatedEvent::dispatch($model);
-            }
-
-            Event::dispatch(new OnejavReferenceCreatedEvent($model));
+            $repository->insert($item->toArray());
         }
     }
 

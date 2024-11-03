@@ -40,3 +40,13 @@ In case you want to develop UnitTest with specific Client request by endpoint / 
 - Models
   - OnejavReference
   - JavMovie
+
+### Udemy
+- Command `udemy:sync-my-courses {token}`
+  - Dispatch job `SyncMyCoursesJob`
+    -  Create UdemyCourse record 
+        -  Dispatch event UdemyCourseCreatedEvent 
+          -  Dispatch job `SyncCurriculumItemsJob` for fetching Curriculum items
+             - When item created will dispatch event and check if ALL items are fetch
+               - When all items are fetch than dispatch event `CourseReadyForStudy`. Now we are ready for study
+                 -  In this event we will process all items and complete it 

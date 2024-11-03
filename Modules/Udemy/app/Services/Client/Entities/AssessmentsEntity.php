@@ -1,0 +1,19 @@
+<?php
+
+namespace Modules\Udemy\Services\Client\Entities;
+
+use Illuminate\Support\Collection;
+use Modules\Udemy\Interfaces\IResultsListEntity;
+use Modules\Udemy\Services\Client\Entities\Traits\TResultsEntityList;
+
+class AssessmentsEntity extends AbstractBaseEntity implements IResultsListEntity
+{
+    use TResultsEntityList;
+
+    public function getResults(): Collection
+    {
+        return collect($this->data->results)->map(function ($item) {
+            return new AssessmentEntity($item);
+        });
+    }
+}

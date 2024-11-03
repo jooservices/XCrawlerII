@@ -14,6 +14,7 @@ use Modules\Jav\Events\OnejavDailyProcessedEvent;
 use Modules\Jav\Events\OnejavReferenceCreatedEvent;
 use Modules\Jav\Models\OnejavReference;
 use Modules\Jav\Onejav\CrawlingService;
+use Modules\Jav\Repositories\OnejavRepository;
 use Modules\Jav\Services\OnejavService;
 use Throwable;
 
@@ -38,14 +39,10 @@ class OnejavDailyFetchJob implements ShouldQueue
     public function handle(CrawlingService $service): void
     {
         $items = $service->getItems($this->date, $this->page);
+        $repository = app(OnejavRepository::class);
 
         foreach ($items as $item) {
-            $model = OnejavReference::updateOrCreate([
-                'url' => $item->url,
-                'dvd_id' => $item->dvd_id,
-            ], $item->toArray());
-
-            Event::dispatch(new OnejavReferenceCreatedEvent($model));
+            $repository->insert($item->toArray());
         }
 
         OnejavDailyProcessedEvent::dispatch($items, $this->date, $this->page);

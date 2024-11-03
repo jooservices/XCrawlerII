@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Str;
+use Modules\Jav\Services\OnejavService;
+use Modules\Udemy\Services\UdemyService;
 
 return [
 
@@ -182,15 +184,34 @@ return [
     */
 
     'defaults' => [
-        'onejav' => [
+        OnejavService::ONEJAV_QUEUE_NAME => [
             'connection' => 'redis',
-            'queue' => ['onejav'],
+            'queue' => [
+                'default',
+                OnejavService::ONEJAV_QUEUE_NAME,
+            ],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
             'maxTime' => 0,
-            'maxJobs' => 0,
-            'memory' => 128,
+            'maxJobs' => config('onejav.horizon.max_process'),
+            'memory' => config('onejav.horizon.memory_limit'),
+            'tries' => 1,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
+        UdemyService::UDEMY_QUEUE_NAME => [
+            'connection' => 'redis',
+            'queue' => [
+                'default',
+                UdemyService::UDEMY_QUEUE_NAME,
+            ],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => config('onejav.horizon.max_process'),
+            'memory' => config('onejav.horizon.memory_limit'),
             'tries' => 1,
             'timeout' => 60,
             'nice' => 0,
@@ -199,23 +220,26 @@ return [
 
     'environments' => [
         'production' => [
-            'onejav' => [
+            OnejavService::ONEJAV_QUEUE_NAME => [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
+            UdemyService::UDEMY_QUEUE_NAME => [],
         ],
 
         'local' => [
-            'onejav' => [
+            OnejavService::ONEJAV_QUEUE_NAME => [
                 'maxProcesses' => 3,
             ],
+            UdemyService::UDEMY_QUEUE_NAME => [],
         ],
 
         'uat' => [
-            'onejav' => [
+            OnejavService::ONEJAV_QUEUE_NAME => [
                 'maxProcesses' => 3,
             ],
+            UdemyService::UDEMY_QUEUE_NAME => [],
         ],
     ],
 ];

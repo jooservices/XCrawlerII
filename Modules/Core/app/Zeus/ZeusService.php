@@ -5,7 +5,7 @@ namespace Modules\Core\Zeus;
 use GuzzleHttp\ClientInterface;
 use Mockery;
 use Modules\Client\Services\Factory;
-use Modules\Core\Interfaces\IWish;
+use Modules\Core\Exceptions\ClassNotFoundException;
 
 class ZeusService
 {
@@ -45,7 +45,7 @@ class ZeusService
     public function wish(string $wish): self
     {
         if (!class_exists($wish)) {
-            throw new \Exception("Wish class $wish does not exist");
+            throw new ClassNotFoundException("Wish class $wish does not exist");
         }
 
         $this->clientMock = app($wish)->wish($this->clientMock);

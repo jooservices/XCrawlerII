@@ -13,8 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         //
     })
-    ->withExceptions(function (Exceptions $exceptions) {
-        if (app()->bound('sentry')) {
-            app('sentry')->captureException($exceptions);
-        }
+    ->withExceptions(function (Exceptions|Throwable $exceptions) {
+
+
     })->create();

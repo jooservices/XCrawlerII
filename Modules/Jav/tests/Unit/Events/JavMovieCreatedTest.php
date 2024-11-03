@@ -13,17 +13,22 @@ class JavMovieCreatedTest extends TestCase
 {
     public function testMovieCreatedEvent()
     {
-        Event::fake([
-            JavMovieCreateCompleted::class,
-        ]);
-
         $onejav = OnejavReference::factory()->create();
 
-        Event::dispatch(new OnejavReferenceCreatedEvent($onejav));
-
-        $this->assertDatabaseHas('jav_movies', [
-            'dvd_id' => $onejav->dvd_id,
+        Event::fake([
+            JavMovieCreateCompleted::class
         ]);
+
+        Event::dispatch(
+            new OnejavReferenceCreatedEvent($onejav)
+        );
+
+        $this->assertDatabaseHas(
+            'jav_movies',
+            [
+                'dvd_id' => $onejav->dvd_id,
+            ]
+        );
 
         $movie = JavMovie::where('dvd_id', $onejav->dvd_id)->first();
 

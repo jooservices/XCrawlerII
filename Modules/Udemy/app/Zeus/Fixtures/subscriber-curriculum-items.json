@@ -1,0 +1,1037 @@
+{
+    "count": 54,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "_class": "chapter",
+            "id": 73968,
+            "sort_order": 53,
+            "title": "Introduction",
+            "is_published": true,
+            "object_index": 1
+        },
+        {
+            "_class": "lecture",
+            "id": 333781,
+            "title": "Introduction",
+            "created": "2013-06-12T09:42:21Z",
+            "is_published": true,
+            "is_free": true,
+            "asset": {
+                "_class": "asset",
+                "id": 57139792,
+                "asset_type": "Video",
+                "title": "001 IT PM FOR BEGINNERS NEW 110124 SLIDES 1 2.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "001-IT-PM-FOR-BEGINNERS-NEW-110124-SLIDES-1-2.mp4",
+                "time_estimation": 156
+            },
+            "sort_order": 52,
+            "object_index": 1,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "chapter",
+            "id": 74057,
+            "sort_order": 51,
+            "title": "Background material",
+            "is_published": true,
+            "object_index": 2
+        },
+        {
+            "_class": "lecture",
+            "id": 347889,
+            "title": "Portfolio vs. Programme vs. Project",
+            "created": "2013-06-27T00:05:42Z",
+            "is_published": true,
+            "is_free": true,
+            "asset": {
+                "_class": "asset",
+                "id": 57161996,
+                "asset_type": "Video",
+                "title": "002 IT PM FOR BEGINNERS NEW 110124 SLIDES 3 4 5.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "002-IT-PM-FOR-BEGINNERS-NEW-110124-SLIDES-3-4-5.mp4",
+                "time_estimation": 258
+            },
+            "sort_order": 50,
+            "object_index": 2,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "quiz",
+            "id": 8566,
+            "title": "Portfolio vs. Programme vs. Project",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 49,
+            "object_index": 1
+        },
+        {
+            "_class": "lecture",
+            "id": 347890,
+            "title": "Typical stages prior to the Project Manager's involvement",
+            "created": "2013-06-27T00:06:25Z",
+            "is_published": true,
+            "is_free": true,
+            "asset": {
+                "_class": "asset",
+                "id": 57139778,
+                "asset_type": "Video",
+                "title": "003 IT PM FOR BEGINNERS NEW 120124 SLIDES 6.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "003-IT-PM-FOR-BEGINNERS-NEW-120124-SLIDES-6.mp4",
+                "time_estimation": 173
+            },
+            "sort_order": 48,
+            "object_index": 3,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 347892,
+            "title": "The foundations for project success",
+            "created": "2013-06-27T00:07:16Z",
+            "is_published": true,
+            "is_free": true,
+            "asset": {
+                "_class": "asset",
+                "id": 57139786,
+                "asset_type": "Video",
+                "title": "004 IT PM FOR BEGINNERS NEW 160124 SLIDES 7.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "004-IT-PM-FOR-BEGINNERS-NEW-160124-SLIDES-7.mp4",
+                "time_estimation": 278
+            },
+            "sort_order": 47,
+            "object_index": 4,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "chapter",
+            "id": 78888,
+            "sort_order": 46,
+            "title": "Key project roles",
+            "is_published": true,
+            "object_index": 3
+        },
+        {
+            "_class": "lecture",
+            "id": 352430,
+            "title": "Key project roles",
+            "created": "2013-07-02T01:52:37Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139760,
+                "asset_type": "Video",
+                "title": "005 IT PM FOR BEGINNERS NEW 170124 SLIDES 8 9 10.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "005-IT-PM-FOR-BEGINNERS-NEW-170124-SLIDES-8-9-10.mp4",
+                "time_estimation": 449
+            },
+            "sort_order": 45,
+            "object_index": 5,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "quiz",
+            "id": 8567,
+            "title": "Key project roles",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 44,
+            "object_index": 2
+        },
+        {
+            "_class": "chapter",
+            "id": 74061,
+            "sort_order": 43,
+            "title": "The key project stages: Overview",
+            "is_published": true,
+            "object_index": 4
+        },
+        {
+            "_class": "lecture",
+            "id": 349960,
+            "title": "Overview of project stages",
+            "created": "2013-06-29T05:35:52Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139794,
+                "asset_type": "Video",
+                "title": "006 IT PM FOR BEGINNERS NEW 190124 SLIDES 11 12 13.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "006-IT-PM-FOR-BEGINNERS-NEW-190124-SLIDES-11-12-13.mp4",
+                "time_estimation": 235
+            },
+            "sort_order": 42,
+            "object_index": 6,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "quiz",
+            "id": 8569,
+            "title": "Overview of project stages",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 41,
+            "object_index": 3
+        },
+        {
+            "_class": "chapter",
+            "id": 79086,
+            "sort_order": 40,
+            "title": "Initiating the project",
+            "is_published": true,
+            "object_index": 5
+        },
+        {
+            "_class": "lecture",
+            "id": 352655,
+            "title": "Initiating the project",
+            "created": "2013-07-02T08:30:54Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139788,
+                "asset_type": "Video",
+                "title": "007 IT PM FOR BEGINNERS NEW 210124 SLIDES 14 15 16 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "007-IT-PM-FOR-BEGINNERS-NEW-210124-SLIDES-14-15-16-Auto-saved.mp4",
+                "time_estimation": 219
+            },
+            "sort_order": 39,
+            "object_index": 7,
+            "supplementary_assets": [
+                {
+                    "_class": "asset",
+                    "id": 46976620,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "PROJECT BRIEF EXAMPLE.pdf",
+                    "filename": "PROJECT-BRIEF-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                },
+                {
+                    "_class": "asset",
+                    "id": 46976630,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "PROJECT BRIEF GUIDELINES.pdf",
+                    "filename": "PROJECT-BRIEF-GUIDELINES.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                }
+            ]
+        },
+        {
+            "_class": "chapter",
+            "id": 79087,
+            "sort_order": 38,
+            "title": "Planning the project",
+            "is_published": true,
+            "object_index": 6
+        },
+        {
+            "_class": "lecture",
+            "id": 350638,
+            "title": "Creating your PROJECT MANAGEMENT PLAN: Overview",
+            "created": "2013-06-30T08:48:58Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139790,
+                "asset_type": "Video",
+                "title": "008 IT PM FOR BEGINNERS NEW 230124 SLIDES 17 to 23.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "008-IT-PM-FOR-BEGINNERS-NEW-230124-SLIDES-17-to-23.mp4",
+                "time_estimation": 416
+            },
+            "sort_order": 37,
+            "object_index": 8,
+            "supplementary_assets": [
+                {
+                    "_class": "asset",
+                    "id": 46976686,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "PROJECT MANAGEMENT PLAN.pdf",
+                    "filename": "PROJECT-MANAGEMENT-PLAN.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                }
+            ]
+        },
+        {
+            "_class": "quiz",
+            "id": 8570,
+            "title": "Creating your PROJECT MANAGEMENT PLAN: Overview",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 36,
+            "object_index": 4
+        },
+        {
+            "_class": "lecture",
+            "id": 350639,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Steps 1 to 8",
+            "created": "2013-06-30T09:28:13Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139796,
+                "asset_type": "Video",
+                "title": "009 IT PM FOR BEGINNERS NEW 280124 SLIDES 24 25.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "009-IT-PM-FOR-BEGINNERS-NEW-280124-SLIDES-24-25.mp4",
+                "time_estimation": 357
+            },
+            "sort_order": 35,
+            "object_index": 9,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 350641,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 9",
+            "created": "2013-06-30T09:31:39Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139780,
+                "asset_type": "Video",
+                "title": "010 IT PM FOR BEGINNERS NEW 300124 SLIDES 26 27 28.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "010-IT-PM-FOR-BEGINNERS-NEW-300124-SLIDES-26-27-28.mp4",
+                "time_estimation": 232
+            },
+            "sort_order": 34,
+            "object_index": 10,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 354948,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 10",
+            "created": "2013-07-04T11:20:21Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139798,
+                "asset_type": "Video",
+                "title": "011 IT PM FOR BEGINNERS NEW 010224 SLIDES 29.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "011-IT-PM-FOR-BEGINNERS-NEW-010224-SLIDES-29.mp4",
+                "time_estimation": 179
+            },
+            "sort_order": 33,
+            "object_index": 11,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "quiz",
+            "id": 8572,
+            "title": "Brief test, steps 1 to 10.",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 32,
+            "object_index": 5
+        },
+        {
+            "_class": "lecture",
+            "id": 356486,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 11, Part 1",
+            "created": "2013-07-06T03:05:54Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139812,
+                "asset_type": "Video",
+                "title": "012 IT PM FOR BEGINNERS NEW 020224 SLIDES 30 to 35.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "012-IT-PM-FOR-BEGINNERS-NEW-020224-SLIDES-30-to-35.mp4",
+                "time_estimation": 652
+            },
+            "sort_order": 31,
+            "object_index": 12,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 359382,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 11, Part 2",
+            "created": "2013-07-09T04:12:41Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139762,
+                "asset_type": "Video",
+                "title": "013 IT PM FOR BEGINNERS NEW 060224 SLIDES 36 to 40.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "013-IT-PM-FOR-BEGINNERS-NEW-060224-SLIDES-36-to-40.mp4",
+                "time_estimation": 403
+            },
+            "sort_order": 30,
+            "object_index": 13,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 359448,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 11, Part 3",
+            "created": "2013-07-09T07:30:15Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139804,
+                "asset_type": "Video",
+                "title": "014 IT PM FOR BEGINNERS NEW 070224 SLIDES 41 to 42.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "014-IT-PM-FOR-BEGINNERS-NEW-070224-SLIDES-41-to-42.mp4",
+                "time_estimation": 264
+            },
+            "sort_order": 29,
+            "object_index": 14,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 359458,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 11, Part 4",
+            "created": "2013-07-09T08:05:22Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139766,
+                "asset_type": "Video",
+                "title": "015 IT PM FOR BEGINNERS NEW 080224 SLIDES 43 to 44.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "015-IT-PM-FOR-BEGINNERS-NEW-080224-SLIDES-43-to-44.mp4",
+                "time_estimation": 110
+            },
+            "sort_order": 28,
+            "object_index": 15,
+            "supplementary_assets": [
+                {
+                    "_class": "asset",
+                    "id": 46976752,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "RISK MANAGEMENT FORM EXAMPLE.pdf",
+                    "filename": "RISK-MANAGEMENT-FORM-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                },
+                {
+                    "_class": "asset",
+                    "id": 46976758,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "RISK MANAGEMENT REGISTER EXAMPLE.pdf",
+                    "filename": "RISK-MANAGEMENT-REGISTER-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                }
+            ]
+        },
+        {
+            "_class": "quiz",
+            "id": 8576,
+            "title": "Risk management",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 27,
+            "object_index": 6
+        },
+        {
+            "_class": "lecture",
+            "id": 360823,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 12",
+            "created": "2013-07-10T05:06:17Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139784,
+                "asset_type": "Video",
+                "title": "016 IT PM FOR BEGINNERS NEW 090224 SLIDES 45.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "016-IT-PM-FOR-BEGINNERS-NEW-090224-SLIDES-45.mp4",
+                "time_estimation": 212
+            },
+            "sort_order": 26,
+            "object_index": 16,
+            "supplementary_assets": [
+                {
+                    "_class": "asset",
+                    "id": 46976834,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "ISSUE MANAGEMENT FORM EXAMPLE.pdf",
+                    "filename": "ISSUE-MANAGEMENT-FORM-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                },
+                {
+                    "_class": "asset",
+                    "id": 46976840,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "ISSUE MANAGEMENT REGISTER EXAMPLE.pdf",
+                    "filename": "ISSUE-MANAGEMENT-REGISTER-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                },
+                {
+                    "_class": "asset",
+                    "id": 46976844,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "ISSUE RESOLUTION PROCESS EXAMPLE.pdf",
+                    "filename": "ISSUE-RESOLUTION-PROCESS-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                }
+            ]
+        },
+        {
+            "_class": "quiz",
+            "id": 8578,
+            "title": "Issue management",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 25,
+            "object_index": 7
+        },
+        {
+            "_class": "lecture",
+            "id": 360840,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 13",
+            "created": "2013-07-10T05:23:32Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139764,
+                "asset_type": "Video",
+                "title": "017 IT PM FOR BEGINNERS NEW 100224 SLIDES 46 TO 49.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "017-IT-PM-FOR-BEGINNERS-NEW-100224-SLIDES-46-TO-49.mp4",
+                "time_estimation": 326
+            },
+            "sort_order": 24,
+            "object_index": 17,
+            "supplementary_assets": [
+                {
+                    "_class": "asset",
+                    "id": 46976876,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "CHANGE REQUEST FORM EXAMPLE,pdf.pdf",
+                    "filename": "CHANGE-REQUEST-FORM-EXAMPLE-pdf.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                },
+                {
+                    "_class": "asset",
+                    "id": 46976888,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "CHANGE CONTROL REGISTER EXAMPLE.pdf",
+                    "filename": "CHANGE-CONTROL-REGISTER-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                },
+                {
+                    "_class": "asset",
+                    "id": 46976902,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "CHANGE REQUEST PROCESS EXAMPLE.pdf",
+                    "filename": "CHANGE-REQUEST-PROCESS-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                }
+            ]
+        },
+        {
+            "_class": "quiz",
+            "id": 8577,
+            "title": "Change management",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 23,
+            "object_index": 8
+        },
+        {
+            "_class": "lecture",
+            "id": 361016,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 14",
+            "created": "2013-07-10T11:26:00Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139758,
+                "asset_type": "Video",
+                "title": "018 IT PM FOR BEGINNERS NEW 230224 SLIDES 50 TO 54.mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "018-IT-PM-FOR-BEGINNERS-NEW-230224-SLIDES-50-TO-54.mp4",
+                "time_estimation": 301
+            },
+            "sort_order": 22,
+            "object_index": 18,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "quiz",
+            "id": 8579,
+            "title": "Quality management",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 21,
+            "object_index": 9
+        },
+        {
+            "_class": "lecture",
+            "id": 361751,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 15",
+            "created": "2013-07-11T03:48:03Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139774,
+                "asset_type": "Video",
+                "title": "019 IT PM FOR BEGINNERS NEW 290224 SLIDES 55 TO 57 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "019-IT-PM-FOR-BEGINNERS-NEW-290224-SLIDES-55-TO-57-Auto-saved.mp4",
+                "time_estimation": 165
+            },
+            "sort_order": 20,
+            "object_index": 19,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 361757,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 16",
+            "created": "2013-07-11T04:03:30Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139770,
+                "asset_type": "Video",
+                "title": "020 IT PM FOR BEGINNERS NEW 050324 SLIDES 58 TO 59 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "020-IT-PM-FOR-BEGINNERS-NEW-050324-SLIDES-58-TO-59-Auto-saved.mp4",
+                "time_estimation": 450
+            },
+            "sort_order": 19,
+            "object_index": 20,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 362856,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 17",
+            "created": "2013-07-12T01:27:45Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139776,
+                "asset_type": "Video",
+                "title": "021 IT PM FOR BEGINNERS NEW 130324 SLIDE 60 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "021-IT-PM-FOR-BEGINNERS-NEW-130324-SLIDE-60-Auto-saved.mp4",
+                "time_estimation": 123
+            },
+            "sort_order": 18,
+            "object_index": 21,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "quiz",
+            "id": 8580,
+            "title": "Communication / Supplier / HR Management",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 17,
+            "object_index": 10
+        },
+        {
+            "_class": "lecture",
+            "id": 361695,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 18, Part 1",
+            "created": "2013-07-11T01:30:47Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139754,
+                "asset_type": "Video",
+                "title": "022 IT PM FOR BEGINNERS NEW 170324 SLIDES 61 TO 70 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "022-IT-PM-FOR-BEGINNERS-NEW-170324-SLIDES-61-TO-70-Auto-saved.mp4",
+                "time_estimation": 1320
+            },
+            "sort_order": 16,
+            "object_index": 22,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 361768,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Step 18, Part 2",
+            "created": "2013-07-11T04:23:16Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139782,
+                "asset_type": "Video",
+                "title": "023 IT PM FOR BEGINNERS NEW 240324 SLIDES 71 TO 74 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "023-IT-PM-FOR-BEGINNERS-NEW-240324-SLIDES-71-TO-74-Auto-saved.mp4",
+                "time_estimation": 657
+            },
+            "sort_order": 15,
+            "object_index": 23,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "quiz",
+            "id": 8643,
+            "title": "Producing a project baseline schedule and cost",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 14,
+            "object_index": 11
+        },
+        {
+            "_class": "lecture",
+            "id": 362889,
+            "title": "Creating your PROJECT MANAGEMENT PLAN in 20 steps: Steps 19, 20",
+            "created": "2013-07-12T02:21:28Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139768,
+                "asset_type": "Video",
+                "title": "024 IT PM FOR BEGINNERS NEW 050424 SLIDES 75 TO 77 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "024-IT-PM-FOR-BEGINNERS-NEW-050424-SLIDES-75-TO-77-Auto-saved.mp4",
+                "time_estimation": 181
+            },
+            "sort_order": 13,
+            "object_index": 24,
+            "supplementary_assets": [
+                {
+                    "_class": "asset",
+                    "id": 46977058,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "PROJECT MANAGEMENT PLAN.pdf",
+                    "filename": "PROJECT-MANAGEMENT-PLAN.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                }
+            ]
+        },
+        {
+            "_class": "chapter",
+            "id": 79090,
+            "sort_order": 12,
+            "title": "Executing, monitoring and controlling the project",
+            "is_published": true,
+            "object_index": 7
+        },
+        {
+            "_class": "lecture",
+            "id": 362961,
+            "title": "Executing, monitoring and controlling your project: Overview",
+            "created": "2013-07-12T04:26:13Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139810,
+                "asset_type": "Video",
+                "title": "025 IT PM FOR BEGINNERS NEW 080424 SLIDES 78 TO 80 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "025-IT-PM-FOR-BEGINNERS-NEW-080424-SLIDES-78-TO-80-Auto-saved.mp4",
+                "time_estimation": 241
+            },
+            "sort_order": 11,
+            "object_index": 25,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 363200,
+            "title": "Executing, monitoring and controlling your project: Authorize the work",
+            "created": "2013-07-12T11:02:09Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139808,
+                "asset_type": "Video",
+                "title": "026 IT PM FOR BEGINNERS NEW 100424 SLIDES 81 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "026-IT-PM-FOR-BEGINNERS-NEW-100424-SLIDES-81-Auto-saved.mp4",
+                "time_estimation": 127
+            },
+            "sort_order": 10,
+            "object_index": 26,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 364534,
+            "title": "Executing, monitoring and controlling your project: Track and monitor progress",
+            "created": "2013-07-14T06:13:51Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139772,
+                "asset_type": "Video",
+                "title": "027 IT PM FOR BEGINNERS NEW 110424 SLIDES 82 TO 85 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "027-IT-PM-FOR-BEGINNERS-NEW-110424-SLIDES-82-TO-85-Auto-saved.mp4",
+                "time_estimation": 455
+            },
+            "sort_order": 9,
+            "object_index": 27,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 364657,
+            "title": "Executing, monitoring and controlling your project: Change control",
+            "created": "2013-07-14T13:20:39Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139806,
+                "asset_type": "Video",
+                "title": "028 IT PM FOR BEGINNERS NEW 130424 SLIDES 86 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "028-IT-PM-FOR-BEGINNERS-NEW-130424-SLIDES-86-Auto-saved.mp4",
+                "time_estimation": 140
+            },
+            "sort_order": 8,
+            "object_index": 28,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "lecture",
+            "id": 364686,
+            "title": "Executing, monitoring and controlling your project: Evaluate, forecast, report",
+            "created": "2013-07-14T14:29:50Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139752,
+                "asset_type": "Video",
+                "title": "029 IT PM FOR BEGINNERS NEW 150424 SLIDES 87 TO 91 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "029-IT-PM-FOR-BEGINNERS-NEW-150424-SLIDES-87-TO-91-Auto-saved.mp4",
+                "time_estimation": 466
+            },
+            "sort_order": 7,
+            "object_index": 29,
+            "supplementary_assets": [
+                {
+                    "_class": "asset",
+                    "id": 46977076,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "PROJECT STATUS REPORT EXAMPLE.pdf",
+                    "filename": "PROJECT-STATUS-REPORT-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                }
+            ]
+        },
+        {
+            "_class": "lecture",
+            "id": 365337,
+            "title": "Executing, monitoring and controlling your project: Revise and correct",
+            "created": "2013-07-15T04:12:02Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139756,
+                "asset_type": "Video",
+                "title": "030 IT PM FOR BEGINNERS NEW 180424 SLIDES 92 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "030-IT-PM-FOR-BEGINNERS-NEW-180424-SLIDES-92-Auto-saved.mp4",
+                "time_estimation": 104
+            },
+            "sort_order": 6,
+            "object_index": 30,
+            "supplementary_assets": []
+        },
+        {
+            "_class": "quiz",
+            "id": 8651,
+            "title": "Executing, monitoring and controlling your project: Summary questions",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 5,
+            "object_index": 12
+        },
+        {
+            "_class": "chapter",
+            "id": 79092,
+            "sort_order": 4,
+            "title": "Closing the project",
+            "is_published": true,
+            "object_index": 8
+        },
+        {
+            "_class": "lecture",
+            "id": 366634,
+            "title": "Closing the project",
+            "created": "2013-07-16T03:35:12Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139800,
+                "asset_type": "Video",
+                "title": "031 IT PM FOR BEGINNERS NEW 180424 SLIDES 93 to 98 [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "031-IT-PM-FOR-BEGINNERS-NEW-180424-SLIDES-93-to-98-Auto-saved.mp4",
+                "time_estimation": 527
+            },
+            "sort_order": 3,
+            "object_index": 31,
+            "supplementary_assets": [
+                {
+                    "_class": "asset",
+                    "id": 46977092,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "HANDOVER CHECKLIST EXAMPLE.pdf",
+                    "filename": "HANDOVER-CHECKLIST-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                },
+                {
+                    "_class": "asset",
+                    "id": 46977094,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "PROJECT CLOSURE CHECKLIST EXAMPLE.pdf",
+                    "filename": "PROJECT-CLOSURE-CHECKLIST-EXAMPLE.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                }
+            ]
+        },
+        {
+            "_class": "quiz",
+            "id": 8654,
+            "title": "Closing the project",
+            "type": "simple-quiz",
+            "is_published": true,
+            "sort_order": 2,
+            "object_index": 13
+        },
+        {
+            "_class": "chapter",
+            "id": 83355,
+            "sort_order": 1,
+            "title": "Course Wrap Up",
+            "is_published": true,
+            "object_index": 9
+        },
+        {
+            "_class": "lecture",
+            "id": 36539754,
+            "title": "Bonus Lecture",
+            "created": "2023-02-24T00:43:11Z",
+            "is_published": true,
+            "is_free": false,
+            "asset": {
+                "_class": "asset",
+                "id": 57139750,
+                "asset_type": "Video",
+                "title": "032 IT PM FOR BEGINNERS NEW 220424 SLIDES 99 BONUS LECTURE [Auto-saved].mp4",
+                "status": 1,
+                "is_external": false,
+                "filename": "032-IT-PM-FOR-BEGINNERS-NEW-220424-SLIDES-99-BONUS-LECTURE-Auto-saved.mp4",
+                "time_estimation": 160
+            },
+            "sort_order": 0,
+            "object_index": 32,
+            "supplementary_assets": [
+                {
+                    "_class": "asset",
+                    "id": 57146416,
+                    "time_estimation": 0,
+                    "is_external": false,
+                    "title": "UDEMY JUNE 2024 PM COURSE SLIDES TEMPLATES QUIZZES FINAL.pdf",
+                    "filename": "UDEMY-JUNE-2024-PM-COURSE-SLIDES-TEMPLATES-QUIZZES-FINAL.pdf",
+                    "status": 1,
+                    "asset_type": "File"
+                }
+            ]
+        }
+    ]
+}
