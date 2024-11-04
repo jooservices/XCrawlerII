@@ -4,6 +4,7 @@ namespace Modules\Udemy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Udemy\Models\UdemyCourse;
+use Modules\Udemy\Models\UserToken;
 
 class UdemyCourseFactory extends Factory
 {
@@ -30,4 +31,3 @@ class UdemyCourseFactory extends Factory
         ];
     }
 }
-

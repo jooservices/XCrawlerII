@@ -6,8 +6,6 @@ use Illuminate\Console\Command;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\UdemyService;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class CompleteMyCourse extends Command
 {
@@ -31,12 +29,13 @@ class CompleteMyCourse extends Command
             'class' => 'course',
         ]);
 
-        $service = app(UdemyService::class);
-
-        $userToken = UserToken::updateOrCreate([
-            'token' => $this->argument('token'),
+        $userToken = UserToken::updateOrCreate(['token' => $this->argument('token')]);
+        $userToken->courses()->syncWithoutDetaching([
+            $course->id => [
+                'completion_ratio' => 1,
+            ],
         ]);
 
-        $service->syncCurriculumItems($userToken, $course);
+        app(UdemyService::class)->syncCurriculumItems($userToken, $course);
     }
 }

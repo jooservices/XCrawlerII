@@ -2,6 +2,7 @@
 
 namespace Modules\Udemy\Jobs;
 
+use Exception;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,13 +11,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
-use Modules\Udemy\Services\Client\UdemySdk;
 use Modules\Udemy\Services\UdemyService;
 
-/**
- * For lecture
- */
-class LectureProgressLogJob implements ShouldQueue
+class StudyCurriculumItem implements ShouldQueue
 {
     use Batchable;
     use Dispatchable;
@@ -29,8 +26,7 @@ class LectureProgressLogJob implements ShouldQueue
      */
     public function __construct(
         public UserToken $userToken,
-        public CurriculumItem $curriculumItem,
-        public array $payload
+        public CurriculumItem $curriculumItem
     ) {
         $this->onQueue(UdemyService::UDEMY_QUEUE_NAME);
     }
@@ -38,20 +34,13 @@ class LectureProgressLogJob implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function handle(): void
+    public function handle(UdemyService $service): void
     {
-        $result = app(UdemySdk::class)
-            ->me()
-            ->lectureProgressLogs(
-                $this->userToken,
-                $this->curriculumItem,
-                $this->payload
-            );
-
-        if (!$result) {
-            $this->fail();
-        }
+        $service->completeCurriculum(
+            $this->userToken,
+            $this->curriculumItem
+        );
     }
 }
