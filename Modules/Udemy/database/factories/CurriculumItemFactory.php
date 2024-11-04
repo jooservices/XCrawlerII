@@ -19,7 +19,7 @@ class CurriculumItemFactory extends Factory
     {
         $course = UdemyCourse::inRandomOrder()->first();
         return [
-            'id' => $this->faker->numerify(),
+            'id' => $this->faker->unique()->numerify(),
             'course_id' => $course ? $course->id : UdemyCourse::factory()->create([
                 'id' => 59583
             ])->id,

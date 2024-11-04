@@ -44,7 +44,6 @@ class SyncCurriculumItemsJob implements ShouldQueue
                 'page' => $this->page,
             ]
         );
-
         $entities->getResults()->each(
             function (CurriculumItemEntity $curriculumItemEntity) use ($entities) {
                 $model = $this->course->items()->updateOrCreate(

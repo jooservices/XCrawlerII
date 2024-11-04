@@ -11,7 +11,7 @@ class UserTokenFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      */
-    protected $model = \Modules\Udemy\Models\UserToken::class;
+    protected $model = UserToken::class;
 
     /**
      * Define the model's default state.
@@ -30,6 +30,19 @@ class UserTokenFactory extends Factory
     public function configure(): static
     {
         return $this->afterMaking(function (UserToken $user) {
+            // ...
+        })->afterCreating(function (UserToken $user) {
+        });
+    }
+
+    /**
+     * Indicate that the user is suspended.
+     */
+    public function withCourse(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return $attributes;
+        })->afterMaking(function (UserToken $user) {
             // ...
         })->afterCreating(function (UserToken $user) {
             $user->courses()->syncWithoutDetaching([

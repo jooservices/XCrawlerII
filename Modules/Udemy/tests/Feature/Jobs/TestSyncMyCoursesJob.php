@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Udemy\Tests\Unit\Jobs;
+namespace Modules\Udemy\Tests\Feature\Jobs;
 
 use Illuminate\Support\Facades\Queue;
 use Modules\Udemy\Jobs\SyncMyCoursesJob;

@@ -14,7 +14,7 @@ use Modules\Udemy\Services\UdemyService;
 
 class UdemyCourseSubscriber
 {
-    public function handleUdemyCourseCreated(UdemyCourseCreatedEvent $event)
+    public function handleUdemyCourseCreated(UdemyCourseCreatedEvent $event): void
     {
         SyncCurriculumItemsJob::dispatch(
             $event->user,
