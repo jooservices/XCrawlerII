@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Modules\Udemy\app\Listeners\UdemyCourseSubscriber;
 use Modules\Udemy\Console\CompleteMyCourse;
-use Modules\Udemy\Console\ProcessMyCourses;
 use Modules\Udemy\Console\SyncMyCourse;
 use Nwidart\Modules\Traits\PathNamespace;
 
@@ -50,7 +49,6 @@ class UdemyServiceProvider extends ServiceProvider
     {
         $this->commands([
             SyncMyCourse::class,
-            ProcessMyCourses::class,
             CompleteMyCourse::class
         ]);
     }

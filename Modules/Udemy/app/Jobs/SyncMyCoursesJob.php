@@ -9,7 +9,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
-use Modules\Udemy\Events\UdemyCourseCreatedEvent;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Repositories\UdemyCourseRepository;
 use Modules\Udemy\Repositories\UserTokenRepository;
@@ -24,60 +23,50 @@ class SyncMyCoursesJob implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    private UserToken $user;
-
     /**
      * Create a new job instance.
      */
     public function __construct(
-        private readonly string $token,
+        private readonly UserToken $userToken,
         private readonly int $page = 1
     ) {
         $this->onQueue(UdemyService::UDEMY_QUEUE_NAME);
-        $this->user = app(UserTokenRepository::class)
-            ->create(['token' => $this->token]);
     }
 
     /**
      * Execute the job.
+     *
      * @throws \Exception
      */
     public function handle(UdemySdk $sdk): void
     {
         $coursesEntity = $sdk
             ->me()
-            ->subscribedCourses($this->token, ['page' => $this->page]);
+            ->subscribedCourses($this->userToken->token, ['page' => $this->page]);
 
         if (!$coursesEntity) {
             return;
         }
 
         $repository = app(UdemyCourseRepository::class);
+        $userTokenRepository = app(UserTokenRepository::class);
         $coursesEntity->getResults()->each(
-            function (CourseEntity $courseEntity) use ($repository) {
-                $model = $repository->create($courseEntity);
-
-                $this->user->courses()->syncWithoutDetaching(
-                    [
-                        $model->id => [
-                            'completion_ratio' => $courseEntity->completion_ratio,
-                            'enrollment_time' => Carbon::parse($courseEntity->enrollment_time),
-                        ],
-                    ]
+            function (CourseEntity $courseEntity) use ($repository, $userTokenRepository) {
+                $userTokenRepository->syncCourse(
+                    $this->userToken,
+                    $repository->createFromEntity($courseEntity),
+                    $courseEntity->completion_ratio,
+                    Carbon::parse($courseEntity->enrollment_time)
                 );
-
-                if ($model->wasRecentlyCreated) {
-                    UdemyCourseCreatedEvent::dispatch($this->user, $model);
-                }
             }
         );
 
         if ($coursesEntity->pages() > 1 && $coursesEntity->pages() > $this->page) {
             for ($index = 2; $index <= $coursesEntity->pages(); $index++) {
-                SyncMyCoursesJob::dispatch($this->token, $index);
+                SyncMyCoursesJob::dispatch($this->userToken->token, $index);
             }
         }
 
-        SyncMyCoursesCompletedEvent::dispatch($this->user, $coursesEntity);
+        SyncMyCoursesCompletedEvent::dispatch($this->userToken, $coursesEntity);
     }
 }

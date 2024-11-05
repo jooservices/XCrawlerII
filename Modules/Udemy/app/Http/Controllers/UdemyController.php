@@ -4,62 +4,23 @@ namespace Modules\Udemy\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Udemy\Http\Requests\UdemyCreateRequest;
+use Modules\Udemy\Models\UserToken;
+use Modules\Udemy\Repositories\UserTokenRepository;
+use Modules\Udemy\Services\UdemyService;
+use Modules\Udemy\Transformers\UserTokenResource;
 
 class UdemyController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('udemy::index');
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(UdemyCreateRequest $request)
     {
-        return view('udemy::create');
-    }
+        $userToken = app(UserTokenRepository::class)
+            ->createWithToken($request->input('token'));
+        app(UdemyService::class)->syncMyCourses($userToken);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
-    {
-        return view('udemy::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('udemy::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        //
+        return new UserTokenResource($userToken);
     }
 }

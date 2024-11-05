@@ -4,7 +4,6 @@ namespace Modules\Udemy\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\Udemy\Models\UdemyCourse;
-use Modules\Udemy\Models\UserToken;
 
 class UdemyCourseFactory extends Factory
 {
@@ -12,6 +11,8 @@ class UdemyCourseFactory extends Factory
      * The name of the factory's corresponding model.
      */
     protected $model = UdemyCourse::class;
+
+    public const int COURSE_ID = 59583;
 
     /**
      * Define the model's default state.

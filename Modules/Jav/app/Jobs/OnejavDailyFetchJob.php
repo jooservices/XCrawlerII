@@ -48,10 +48,11 @@ class OnejavDailyFetchJob implements ShouldQueue
             $this->page
         );
 
-        $totalPages = (int)app(SettingService::class)->get(
+        $totalPages = (int) app(SettingService::class)->get(
             OnejavService::SETTING_GROUP,
             Str::slug($this->date, '_') . '_last_page',
         );
+
         if ($totalPages > 1 && $this->page < $totalPages) {
             for ($page = 2; $page <= $totalPages; $page++) {
                 OnejavDailyFetchJob::dispatch($this->date, $page);

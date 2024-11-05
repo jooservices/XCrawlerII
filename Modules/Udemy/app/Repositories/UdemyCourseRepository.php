@@ -7,14 +7,29 @@ use Modules\Udemy\Services\Client\Entities\CourseEntity;
 
 class UdemyCourseRepository
 {
-    public function create(CourseEntity $courseEntity): UdemyCourse
+    public function createFromEntity(CourseEntity $courseEntity): UdemyCourse
     {
-        return UdemyCourse::updateOrCreate(
-            [
-                'id' => $courseEntity->getId(),
-                'url' => $courseEntity->getUrl(),
-            ],
-            $courseEntity->toArray()
-        );
+        return $this->createCourse($courseEntity->toArray());
+    }
+
+    public function createFromId(int $courseId): UdemyCourse
+    {
+        return $this->createCourse([
+            'id' => $courseId,
+            'class' => 'course',
+        ]);
+    }
+
+    private function createCourse(array $data): UdemyCourse
+    {
+        $model = UdemyCourse::updateOrCreate([
+            'id' => $data['id'],
+        ], $data);
+
+        /**
+         * @TODO Dispatch event and fetch data if needed
+         */
+
+        return $model;
     }
 }

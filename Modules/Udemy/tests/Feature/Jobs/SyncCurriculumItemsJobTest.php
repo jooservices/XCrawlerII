@@ -3,7 +3,7 @@
 namespace Modules\Udemy\Tests\Feature\Jobs;
 
 use Illuminate\Support\Facades\Event;
-use Modules\Udemy\Events\CourseReadyForStudyEvent;
+use Modules\Udemy\Database\Factories\UdemyCourseFactory;
 use Modules\Udemy\Events\CurriculumItemCreatedEvent;
 use Modules\Udemy\Jobs\SyncCurriculumItemsJob;
 use Modules\Udemy\Models\UdemyCourse;
@@ -15,7 +15,9 @@ class SyncCurriculumItemsJobTest extends TestCase
     public function testSuccess()
     {
         $userToken = UserToken::factory()->create();
-        $course = UdemyCourse::factory()->create(['id' => 59583]);
+        $course = UdemyCourse::factory()->create(
+            ['id' => UdemyCourseFactory::COURSE_ID]
+        );
         $userToken->courses()->syncWithoutDetaching(
             [
                 $course->id => [

@@ -5,12 +5,14 @@ namespace Modules\Udemy\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Modules\Udemy\Models\UserToken;
+use Modules\Udemy\Notifications\Traits\THasTelegramNotification;
 use Modules\Udemy\Services\Client\Entities\CoursesEntity;
 use NotificationChannels\Telegram\TelegramMessage;
 
 class CoursesSyncCompletedNotification extends Notification
 {
     use Queueable;
+    use THasTelegramNotification;
 
     /**
      * Create a new notification instance.
@@ -25,18 +27,14 @@ class CoursesSyncCompletedNotification extends Notification
     /**
      * Get the notification's delivery channels.
      */
-    public function via($notifiable): array
+    public function via(): array
     {
         return ['telegram'];
     }
 
-    public function toTelegram(UserToken $notifiable)
+    public function toTelegram(): TelegramMessage
     {
-        return TelegramMessage::create()
-            // Optional recipient user id.
-            ->to(config('udemy.notifications.telegram.chat_id'))
-
-            // Markdown supported.
+        return $this->getMessage()
             ->content('Courses sync completed')
             ->escapedLine('')
             ->line('User ' . $this->userToken->token)

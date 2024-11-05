@@ -3,12 +3,12 @@
 namespace Modules\Udemy\app\Listeners;
 
 use Illuminate\Bus\Batch;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\Bus;
 use Modules\Udemy\Events\CourseReadyForStudyEvent;
 use Modules\Udemy\Events\CurriculumItemCreatedEvent;
 use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
-use Modules\Udemy\Events\UdemyCourseCreatedEvent;
+use Modules\Udemy\Events\UserCourseStudyCompleted;
+use Modules\Udemy\Events\UserCourseSyncCompleted;
 use Modules\Udemy\Jobs\StudyCurriculumItem;
 use Modules\Udemy\Jobs\SyncCurriculumItemsJob;
 use Modules\Udemy\Notifications\CourseReadyForStudyNotification;
@@ -17,7 +17,7 @@ use Throwable;
 
 class UdemyCourseSubscriber
 {
-    public function handleUdemyCourseCreated(UdemyCourseCreatedEvent $event): void
+    public function handleUserCourseSyncCompleted(UserCourseSyncCompleted $event): void
     {
         SyncCurriculumItemsJob::dispatch(
             $event->user,
@@ -25,7 +25,7 @@ class UdemyCourseSubscriber
         );
     }
 
-    public function handleUdemyCoursesCompleted(SyncMyCoursesCompletedEvent $event)
+    public function handleUdemyCoursesCompleted(SyncMyCoursesCompletedEvent $event): void
     {
         $event->userToken->notify(new CoursesSyncCompletedNotification(
             $event->userToken,
@@ -36,6 +36,9 @@ class UdemyCourseSubscriber
     public function handleCurriculumItemCreated(CurriculumItemCreatedEvent $event): void
     {
         $course = $event->curriculumItem->course;
+        /**
+         * @TODO Query with completion_ratio condition
+         */
         $completionRatio = $event->userToken->courses()
             ->where('udemy_courses.id', $course->id)
             ->first()
@@ -43,6 +46,7 @@ class UdemyCourseSubscriber
 
         /**
          * Only dispatch when course is not completed
+         * and all items are synced
          */
         if (
             $event->courseCurriculumItemsEntity->getCount() === $course->items->count()
@@ -84,8 +88,11 @@ class UdemyCourseSubscriber
              */
         })->progress(function (Batch $batch) {
             // A single job has completed successfully...
-        })->then(function (Batch $batch) {
-            // All jobs completed successfully...
+        })->then(function (Batch $batch) use ($event) {
+            UserCourseStudyCompleted::dispatch(
+                $event->userToken,
+                $event->udemyCourse
+            );
         })->catch(function (Batch $batch, Throwable $e) {
             // First batch job failure detected...
         })->finally(function (Batch $batch) {
@@ -97,10 +104,11 @@ class UdemyCourseSubscriber
         )->dispatch();
     }
 
-    public function subscribe(Dispatcher $events): array
+    public function subscribe(): array
     {
         return [
-            UdemyCourseCreatedEvent::class => 'handleUdemyCourseCreated',
+            UserCourseSyncCompleted::class => 'handleUserCourseSyncCompleted',
+
             SyncMyCoursesCompletedEvent::class => 'handleUdemyCoursesCompleted',
             CurriculumItemCreatedEvent::class => 'handleCurriculumItemCreated',
             CourseReadyForStudyEvent::class => 'handleCourseReadyForStudy',

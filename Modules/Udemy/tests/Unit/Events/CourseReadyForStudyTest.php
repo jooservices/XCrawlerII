@@ -4,8 +4,10 @@ namespace Modules\Udemy\Tests\Unit\Events;
 
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Modules\Udemy\Events\CourseReadyForStudyEvent;
+use Modules\Udemy\Events\UserCourseStudyCompleted;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Notifications\CourseReadyForStudyNotification;
@@ -20,6 +22,9 @@ class CourseReadyForStudyTest extends TestCase
     {
         Bus::fake();
         Notification::fake();
+        Event::fake([
+            UserCourseStudyCompleted::class
+        ]);
 
         $userToken = UserToken::factory()
             ->withCourse()

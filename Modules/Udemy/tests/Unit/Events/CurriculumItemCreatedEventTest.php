@@ -64,7 +64,7 @@ class CurriculumItemCreatedEventTest extends TestCase
          */
         $userToken->courses()->syncWithoutDetaching([
             $udemyCourse->id => [
-                'completion_ratio' => $this->faker->numberBetween(1,99),
+                'completion_ratio' => $this->faker->numberBetween(1, 99),
             ],
         ]);
 
@@ -74,7 +74,7 @@ class CurriculumItemCreatedEventTest extends TestCase
         );
 
         CurriculumItem::factory()->count(54)
-            ->create(['course_id' => $udemyCourse->id,]);
+            ->create(['course_id' => $udemyCourse->id]);
 
         CurriculumItemCreatedEvent::dispatch($userToken, $entities, $udemyCourse->items->first());
 
