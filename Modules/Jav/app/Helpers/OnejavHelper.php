@@ -28,7 +28,9 @@ class OnejavHelper
 
     public static function convertToDate(string $date): ?Carbon
     {
-        if (!$dateTime = Carbon::createFromFormat(CrawlingService::DEFAULT_DATE_FORMAT, trim($date, '/'))) {
+        $dateTime = Carbon::createFromFormat(CrawlingService::DEFAULT_DATE_FORMAT, trim($date, '/'));
+
+        if (!$dateTime) {
             return null;
         }
 

@@ -7,4 +7,7 @@ use Modules\Udemy\Tests\TestCase;
 class UdemyCourseCreatedEventTest extends TestCase
 {
 
+    /**
+     * @TODO Nothing yet
+     */
 }

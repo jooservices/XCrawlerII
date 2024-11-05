@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Jav\Events;
+namespace Modules\Udemy\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,9 +9,10 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Modules\Jav\Models\OnejavReference;
+use Modules\Udemy\Models\UdemyCourse;
+use Modules\Udemy\Models\UserToken;
 
-class OnejavMovieCreatedEvent
+class UserCourseSyncCompleted
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -21,18 +22,9 @@ class OnejavMovieCreatedEvent
      * Create a new event instance.
      */
     public function __construct(
-        public OnejavReference $model
+        public UserToken $user,
+        public UdemyCourse $course
     ) {
         //
-    }
-
-    /**
-     * Get the channels the event should be broadcast on.
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
     }
 }

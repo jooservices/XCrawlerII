@@ -1,9 +1,10 @@
 <?php
 
-namespace Modules\Udemy\Tests\Unit\Jobs;
+namespace Modules\Udemy\Tests\Feature\Jobs;
 
 use Illuminate\Support\Facades\Event;
-use Modules\Udemy\Events\CourseReadyForStudyEvent;
+use Modules\Udemy\Database\Factories\UdemyCourseFactory;
+use Modules\Udemy\Events\CurriculumItemCreatedEvent;
 use Modules\Udemy\Jobs\SyncCurriculumItemsJob;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
@@ -14,10 +15,9 @@ class SyncCurriculumItemsJobTest extends TestCase
     public function testSuccess()
     {
         $userToken = UserToken::factory()->create();
-        $course = UdemyCourse::factory()->create([
-            'id' => 59583,
-        ]);
-
+        $course = UdemyCourse::factory()->create(
+            ['id' => UdemyCourseFactory::COURSE_ID]
+        );
         $userToken->courses()->syncWithoutDetaching(
             [
                 $course->id => [
@@ -28,11 +28,12 @@ class SyncCurriculumItemsJobTest extends TestCase
         );
 
         Event::fake([
-            CourseReadyForStudyEvent::class,
+            CurriculumItemCreatedEvent::class,
         ]);
+
         SyncCurriculumItemsJob::dispatch($userToken, $course);
         $this->assertCount(54, $course->items);
 
-        Event::assertDispatched(CourseReadyForStudyEvent::class);
+        Event::assertDispatched(CurriculumItemCreatedEvent::class);
     }
 }

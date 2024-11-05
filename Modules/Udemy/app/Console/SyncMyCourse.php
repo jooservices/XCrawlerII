@@ -3,10 +3,13 @@
 namespace Modules\Udemy\Console;
 
 use Illuminate\Console\Command;
+use Modules\Udemy\Console\Traits\THasToken;
 use Modules\Udemy\Services\UdemyService;
 
 class SyncMyCourse extends Command
 {
+    use THasToken;
+
     /**
      * The name and signature of the console command.
      */
@@ -22,6 +25,6 @@ class SyncMyCourse extends Command
      */
     public function handle(): void
     {
-        app(UdemyService::class)->syncMyCourses($this->argument('token'));
+        app(UdemyService::class)->syncMyCourses($this->getToken());
     }
 }

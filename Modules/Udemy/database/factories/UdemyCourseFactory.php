@@ -12,6 +12,8 @@ class UdemyCourseFactory extends Factory
      */
     protected $model = UdemyCourse::class;
 
+    public const int COURSE_ID = 59583;
+
     /**
      * Define the model's default state.
      */
@@ -30,4 +32,3 @@ class UdemyCourseFactory extends Factory
         ];
     }
 }
-

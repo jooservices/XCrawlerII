@@ -14,6 +14,8 @@ use Modules\Udemy\Http\Controllers\UdemyController;
  *
 */
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('udemy', UdemyController::class)->names('udemy');
-});
+Route::prefix('v1/udemy')
+    ->name('udemy.')
+    ->group(function () {
+        Route::post('/users', [UdemyController::class, 'create'])->name('create');
+    });

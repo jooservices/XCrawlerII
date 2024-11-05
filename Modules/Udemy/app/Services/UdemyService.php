@@ -22,7 +22,7 @@ class UdemyService
         'simple-quiz' => SimpleQuiz::class,
     ];
 
-    public function syncMyCourses(string $token): void
+    public function syncMyCourses(UserToken $userToken): void
     {
         /**
          * - subscribedCourses
@@ -31,7 +31,7 @@ class UdemyService
          * --------- SyncCurriculumItems
          * ---- loop all pages
          */
-        SyncMyCoursesJob::dispatch($token);
+        SyncMyCoursesJob::dispatch($userToken);
     }
 
     public function syncCurriculumItems(UserToken $userToken, UdemyCourse $course): void

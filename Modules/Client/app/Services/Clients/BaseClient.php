@@ -5,6 +5,7 @@ namespace Modules\Client\Services\Clients;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Modules\Client\Interfaces\IClient;
@@ -19,6 +20,9 @@ class BaseClient implements IClient
 
     protected string $contentType = 'x-www-form-urlencoded';
 
+    /**
+     * @throws BindingResolutionException
+     */
     public function __construct(array $options = [])
     {
         $this->client = app(Factory::class)

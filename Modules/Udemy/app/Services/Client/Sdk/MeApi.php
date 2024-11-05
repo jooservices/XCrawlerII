@@ -50,6 +50,9 @@ class MeApi
         return new CoursesCategoriesEntity($response->parseBody()->getData());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function subscribedCourses(string $token, array $payload = []): CoursesEntity
     {
         $this->client->setToken($token);
@@ -76,6 +79,9 @@ class MeApi
         return new CoursesEntity($response->parseBody()->getData());
     }
 
+    /**
+     * @throws \Exception
+     */
     public function lectureProgressLogs(
         UserToken $userToken,
         CurriculumItem $curriculumItem,

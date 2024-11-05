@@ -3,14 +3,17 @@
 namespace Modules\Udemy\Console;
 
 use Illuminate\Console\Command;
+use Modules\Udemy\Console\Traits\THasToken;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
+use Modules\Udemy\Repositories\UdemyCourseRepository;
+use Modules\Udemy\Repositories\UserTokenRepository;
 use Modules\Udemy\Services\UdemyService;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class CompleteMyCourse extends Command
 {
+    use THasToken;
+
     /**
      * The name and signature of the console command.
      */
@@ -19,24 +22,18 @@ class CompleteMyCourse extends Command
     /**
      * The console command description.
      */
-    protected $description = 'Command description.';
+    protected $description = 'Complete specific course.';
 
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
-        $course = UdemyCourse::updateOrCreate([
-            'id' => $this->argument('course_id'),
-            'class' => 'course',
-        ]);
+        $course = app(UdemyCourseRepository::class)
+            ->createFromId($this->argument('course_id'));
+        $userToken = app(UserTokenRepository::class)
+            ->createWithToken($this->getToken());
 
-        $service = app(UdemyService::class);
-
-        $userToken = UserToken::updateOrCreate([
-            'token' => $this->argument('token'),
-        ]);
-
-        $service->syncCurriculumItems($userToken, $course);
+        app(UdemyService::class)->syncCurriculumItems($userToken, $course);
     }
 }

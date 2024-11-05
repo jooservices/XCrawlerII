@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Jav\Events;
+namespace Modules\Udemy\Events;
 
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -9,20 +9,17 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Modules\Jav\Models\OnejavReference;
+use Modules\Udemy\Interfaces\IResultsListEntity;
 
-class OnejavMovieCreatedEvent
+class ListEntityHaveNoResultsEvent
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-    use SerializesModels;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(
-        public OnejavReference $model
-    ) {
+    public function __construct(public IResultsListEntity $listEntity)
+    {
         //
     }
 

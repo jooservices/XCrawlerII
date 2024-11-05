@@ -44,9 +44,11 @@ class SyncCurriculumItemsJob implements ShouldQueue
                 'page' => $this->page,
             ]
         );
-
         $entities->getResults()->each(
             function (CurriculumItemEntity $curriculumItemEntity) use ($entities) {
+                /**
+                 * @TODO Move to repository
+                 */
                 $model = $this->course->items()->updateOrCreate(
                     [
                         'id' => $curriculumItemEntity->getId(),
