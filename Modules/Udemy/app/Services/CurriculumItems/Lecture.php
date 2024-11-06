@@ -9,6 +9,8 @@ use Modules\Udemy\Jobs\CompleteLectureJob;
 use Modules\Udemy\Jobs\LectureProgressLogJob;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
+use Modules\Udemy\Services\Client\UdemySdk;
+use Modules\Udemy\Services\UdemyService;
 use Throwable;
 
 class Lecture implements IStudyCurriculum
@@ -20,6 +22,17 @@ class Lecture implements IStudyCurriculum
         UserToken $userToken,
         CurriculumItem $curriculumItem
     ): void {
+        /**
+         * Read only
+         */
+        if ($curriculumItem->asset_type === 'Article') {
+            app(UdemySdk::class)->me()->viewLogs(
+                $userToken,
+                $curriculumItem
+            );
+
+            return;
+        }
         $totalTime = $curriculumItem->asset_time_estimation;
         $parts = (int) ceil($totalTime / (15 * 5));
 
@@ -58,6 +71,7 @@ class Lecture implements IStudyCurriculum
                  */
                 CompleteLectureJob::dispatch($userToken, $curriculumItem);
             })
+            ->onQueue(UdemyService::UDEMY_QUEUE_NAME)
             ->dispatch();
     }
 }

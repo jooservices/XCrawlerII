@@ -82,6 +82,9 @@ class BaseClient implements IClient
             . serialize($options)
         );
 
+        /**
+         * @TODO Cache is optional
+         */
         return Cache::remember(
             $key,
             100,
@@ -123,6 +126,7 @@ class BaseClient implements IClient
                 } catch (\Exception|GuzzleException $exception) {
                     $logService->exception($exception);
 
+                    dd($exception->getMessage());
                     return new $responseClass();
                 }
             }

@@ -17,6 +17,11 @@ class UdemyService
 {
     public const string UDEMY_QUEUE_NAME = 'udemy';
 
+    /**
+     * @TODO
+     * - type = 'coding-exercise'
+     * @var array|string[]
+     */
     private array $mappingCurriculumItems = [
         'lecture' => Lecture::class,
         'simple-quiz' => SimpleQuiz::class,
@@ -24,13 +29,6 @@ class UdemyService
 
     public function syncMyCourses(UserToken $userToken): void
     {
-        /**
-         * - subscribedCourses
-         * ---- create Course and link with User
-         * ------- dispatch UdemyCourseCreated
-         * --------- SyncCurriculumItems
-         * ---- loop all pages
-         */
         SyncMyCoursesJob::dispatch($userToken);
     }
 

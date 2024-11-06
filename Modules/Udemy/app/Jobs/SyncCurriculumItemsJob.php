@@ -8,6 +8,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\Udemy\Events\CurriculumItemCreatedEvent;
+use Modules\Udemy\Events\SyncCurriculumItemsSyncCompletedEvent;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\Client\Entities\CurriculumItemEntity;
@@ -25,7 +26,7 @@ class SyncCurriculumItemsJob implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public UserToken $user,
+        public UserToken $userToken,
         public UdemyCourse $course,
         public int $page = 1
     ) {
@@ -38,12 +39,15 @@ class SyncCurriculumItemsJob implements ShouldQueue
     public function handle(): void
     {
         $entities = app(UdemySdk::class)->courses()->subscriberCurriculumItems(
-            $this->user->token,
+            $this->userToken->token,
             $this->course->id,
             [
                 'page' => $this->page,
             ]
         );
+        /**
+         * Call progress to get studied items
+         */
         $entities->getResults()->each(
             function (CurriculumItemEntity $curriculumItemEntity) use ($entities) {
                 /**
@@ -57,17 +61,27 @@ class SyncCurriculumItemsJob implements ShouldQueue
                 );
 
                 CurriculumItemCreatedEvent::dispatch(
-                    $this->user,
+                    $this->userToken,
                     $entities,
                     $model
                 );
             }
         );
 
-        if ($entities->pages() > 1 && $entities->pages() > $this->page) {
+        if (
+            $this->page === 1
+            && $entities->pages() > 1
+            && $entities->pages() > $this->page
+        ) {
             for ($index = 2; $index <= $entities->pages(); $index++) {
-                SyncCurriculumItemsJob::dispatch($this->user, $this->course, $index);
+                SyncCurriculumItemsJob::dispatch($this->userToken, $this->course, $index);
             }
         }
+
+        SyncCurriculumItemsSyncCompletedEvent::dispatch(
+            $this->userToken,
+            $this->course,
+            $entities
+        );
     }
 }

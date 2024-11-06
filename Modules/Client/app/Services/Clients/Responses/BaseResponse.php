@@ -63,7 +63,9 @@ class BaseResponse implements IResponse
 
     public function getContentType(): string
     {
-        $headers = $this->response->getHeader('Content-Type');
+        $headers = $this->response
+            ? $this->response->getHeader('Content-Type')
+            : ['text/html'];
 
         return reset($headers);
     }

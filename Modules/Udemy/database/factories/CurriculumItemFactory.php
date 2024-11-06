@@ -18,25 +18,25 @@ class CurriculumItemFactory extends Factory
     public function definition(): array
     {
         $course = UdemyCourse::inRandomOrder()->first();
+
         return [
             'id' => $this->faker->unique()->numerify(),
             'course_id' => $course ? $course->id : UdemyCourse::factory()->create([
-                'id' => 59583
+                'id' => 59583,
             ])->id,
             'is_published' => $this->faker->boolean(),
             'title' => $this->faker->sentence(),
-            'class'=> $this->faker->randomElement([
-                'lecture'
+            'class' => $this->faker->randomElement([
+                'lecture',
             ]),
-            'asset_id'=> $this->faker->numberBetween(1, 10),
-            'asset_type'=> $this->faker->word(),
-//            'asset_filename',
-//            'asset_is_external',
-//            'asset_status',
-            'asset_time_estimation'=> $this->faker->numberBetween(100, 1000),
-//            'asset_title',
-//            'asset_class'
+            'asset_id' => $this->faker->numberBetween(1, 10),
+            'asset_type' => $this->faker->word(),
+            //            'asset_filename',
+            //            'asset_is_external',
+            //            'asset_status',
+            'asset_time_estimation' => $this->faker->numberBetween(100, 1000),
+            //            'asset_title',
+            //            'asset_class'
         ];
     }
 }
-

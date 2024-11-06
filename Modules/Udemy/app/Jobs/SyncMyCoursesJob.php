@@ -9,6 +9,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
+use Modules\Udemy\Events\UserHaveNoCoursesSubscribedEvent;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Repositories\UdemyCourseRepository;
 use Modules\Udemy\Repositories\UserTokenRepository;
@@ -45,11 +46,14 @@ class SyncMyCoursesJob implements ShouldQueue
             ->subscribedCourses($this->userToken->token, ['page' => $this->page]);
 
         if (!$coursesEntity) {
+            UserHaveNoCoursesSubscribedEvent::dispatch($this->userToken);
+
             return;
         }
 
         $repository = app(UdemyCourseRepository::class);
         $userTokenRepository = app(UserTokenRepository::class);
+
         $coursesEntity->getResults()->each(
             function (CourseEntity $courseEntity) use ($repository, $userTokenRepository) {
                 $userTokenRepository->syncCourse(
@@ -61,9 +65,13 @@ class SyncMyCoursesJob implements ShouldQueue
             }
         );
 
-        if ($coursesEntity->pages() > 1 && $coursesEntity->pages() > $this->page) {
+        if (
+            $this->page === 1 // Only process pages for first page
+            && $coursesEntity->pages() > 1
+            && $coursesEntity->pages() > $this->page
+        ) {
             for ($index = 2; $index <= $coursesEntity->pages(); $index++) {
-                SyncMyCoursesJob::dispatch($this->userToken->token, $index);
+                SyncMyCoursesJob::dispatch($this->userToken, $index);
             }
         }
 

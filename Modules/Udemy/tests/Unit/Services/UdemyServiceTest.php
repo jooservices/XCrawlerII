@@ -5,7 +5,9 @@ namespace Modules\Udemy\Tests\Unit\Services;
 use Exception;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Modules\Udemy\Events\BeforeProcessCompleteCurriculumItemEvent;
+use Modules\Udemy\Jobs\SyncMyCoursesJob;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\UdemyService;
@@ -13,6 +15,16 @@ use Modules\Udemy\Tests\TestCase;
 
 class UdemyServiceTest extends TestCase
 {
+    public function testSyncMyCourses()
+    {
+        Queue::fake([
+            SyncMyCoursesJob::class,
+        ]);
+
+        app(UdemyService::class)->syncMyCourses(UserToken::factory()->create());
+        Queue::assertPushed(SyncMyCoursesJob::class);
+    }
+
     /**
      * @throws Exception
      */

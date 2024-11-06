@@ -12,6 +12,7 @@ use Modules\Udemy\Database\Factories\CurriculumItemFactory;
  * @property string $class
  * @property UdemyCourse $course
  * @property int $asset_time_estimation
+ * @property string $asset_type
  */
 class CurriculumItem extends Model
 {

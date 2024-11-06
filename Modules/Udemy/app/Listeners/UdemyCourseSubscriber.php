@@ -5,19 +5,29 @@ namespace Modules\Udemy\app\Listeners;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Facades\Bus;
 use Modules\Udemy\Events\CourseReadyForStudyEvent;
+use Modules\Udemy\Events\Courses\CourseCreatedEvent;
+use Modules\Udemy\Events\Courses\UserCourseSyncCompletedEvent;
 use Modules\Udemy\Events\CurriculumItemCreatedEvent;
+use Modules\Udemy\Events\SyncCurriculumItemsSyncCompletedEvent;
 use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
 use Modules\Udemy\Events\UserCourseStudyCompleted;
-use Modules\Udemy\Events\UserCourseSyncCompleted;
 use Modules\Udemy\Jobs\StudyCurriculumItem;
 use Modules\Udemy\Jobs\SyncCurriculumItemsJob;
 use Modules\Udemy\Notifications\CourseReadyForStudyNotification;
 use Modules\Udemy\Notifications\CoursesSyncCompletedNotification;
+use Modules\Udemy\Services\UdemyService;
 use Throwable;
 
 class UdemyCourseSubscriber
 {
-    public function handleUserCourseSyncCompleted(UserCourseSyncCompleted $event): void
+    public function handleCourseCreated(CourseCreatedEvent $event)
+    {
+        /**
+         * Send global notifications to let users know course is created
+         */
+    }
+
+    public function handleUserCourseSyncCompleted(UserCourseSyncCompletedEvent $event): void
     {
         SyncCurriculumItemsJob::dispatch(
             $event->user,
@@ -35,7 +45,15 @@ class UdemyCourseSubscriber
 
     public function handleCurriculumItemCreated(CurriculumItemCreatedEvent $event): void
     {
-        $course = $event->curriculumItem->course;
+        /**
+         * Nothing yet
+         */
+    }
+
+    public function handleSyncCurriculumItemsSyncCompleted(SyncCurriculumItemsSyncCompletedEvent $event): void
+    {
+        $course = $event->udemyCourse;
+
         /**
          * @TODO Query with completion_ratio condition
          */
@@ -49,12 +67,12 @@ class UdemyCourseSubscriber
          * and all items are synced
          */
         if (
-            $event->courseCurriculumItemsEntity->getCount() === $course->items->count()
+            $event->curriculumItems->getCount() === $course->items->count()
             && $completionRatio < 100
         ) {
             CourseReadyForStudyEvent::dispatch(
                 $event->userToken,
-                $event->curriculumItem->course,
+                $course
             );
         }
     }
@@ -75,6 +93,10 @@ class UdemyCourseSubscriber
         $itemsBatch = [];
 
         $items->each(function ($item) use ($event, &$itemsBatch) {
+            /**
+             * @TODO Exclude non action lecture
+             * - chapter
+             */
             $itemsBatch[] = new StudyCurriculumItem($event->userToken, $item);
         });
 
@@ -101,16 +123,19 @@ class UdemyCourseSubscriber
              */
         })->name(
             $event->userToken->id . '.' . $event->udemyCourse->id
-        )->dispatch();
+        )->onQueue(UdemyService::UDEMY_QUEUE_NAME)->dispatch();
     }
 
     public function subscribe(): array
     {
         return [
-            UserCourseSyncCompleted::class => 'handleUserCourseSyncCompleted',
+            CourseCreatedEvent::class, 'handleCourseCreated',
+            UserCourseSyncCompletedEvent::class => 'handleUserCourseSyncCompleted',
 
             SyncMyCoursesCompletedEvent::class => 'handleUdemyCoursesCompleted',
             CurriculumItemCreatedEvent::class => 'handleCurriculumItemCreated',
+            SyncCurriculumItemsSyncCompletedEvent::class => 'handleSyncCurriculumItemsSyncCompleted',
+
             CourseReadyForStudyEvent::class => 'handleCourseReadyForStudy',
         ];
     }

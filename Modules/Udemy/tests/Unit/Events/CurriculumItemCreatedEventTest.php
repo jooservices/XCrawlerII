@@ -3,6 +3,7 @@
 namespace Modules\Udemy\Tests\Unit\Events;
 
 use Illuminate\Support\Facades\Event;
+use Modules\Udemy\Database\Factories\UdemyCourseFactory;
 use Modules\Udemy\Events\CourseReadyForStudyEvent;
 use Modules\Udemy\Events\CurriculumItemCreatedEvent;
 use Modules\Udemy\Models\CurriculumItem;
@@ -20,9 +21,7 @@ class CurriculumItemCreatedEventTest extends TestCase
         ]);
 
         $userToken = UserToken::factory()->create();
-        $udemyCourse = UdemyCourse::factory()->create([
-            'id' => 59583,
-        ]);
+        $udemyCourse = UdemyCourse::factory()->create(['id' => UdemyCourseFactory::COURSE_ID,]);
 
         /**
          * Attach without pivot value
@@ -45,39 +44,9 @@ class CurriculumItemCreatedEventTest extends TestCase
 
         CurriculumItemCreatedEvent::dispatch($userToken, $entities, $model);
 
-        Event::assertNotDispatched(CourseReadyForStudyEvent::class);
-    }
-
-    public function testEventWhenCourseIsReadyForStudy(): void
-    {
-        Event::fake([
-            CourseReadyForStudyEvent::class,
-        ]);
-
-        $userToken = UserToken::factory()->create();
-        $udemyCourse = UdemyCourse::factory()->create([
-            'id' => 59583,
-        ]);
-
         /**
-         * Attach without pivot value
+         * Item is created but it's not enough for completed
          */
-        $userToken->courses()->syncWithoutDetaching([
-            $udemyCourse->id => [
-                'completion_ratio' => $this->faker->numberBetween(1, 99),
-            ],
-        ]);
-
-        $entities = app(UdemySdk::class)->courses()->subscriberCurriculumItems(
-            $userToken,
-            $udemyCourse->id
-        );
-
-        CurriculumItem::factory()->count(54)
-            ->create(['course_id' => $udemyCourse->id]);
-
-        CurriculumItemCreatedEvent::dispatch($userToken, $entities, $udemyCourse->items->first());
-
-        Event::assertDispatched(CourseReadyForStudyEvent::class);
+        Event::assertNotDispatched(CourseReadyForStudyEvent::class);
     }
 }

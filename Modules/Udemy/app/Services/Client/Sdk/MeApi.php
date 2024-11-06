@@ -121,6 +121,23 @@ class MeApi
         return $response->getStatusCode() === 201;
     }
 
+    public function viewLogs(
+        UserToken $userToken,
+        CurriculumItem $curriculumItem,
+    ): bool {
+        $this->client->setToken($userToken->token);
+        $response = $this->client->request(
+            Request::METHOD_POST,
+            self::ENDPOINT
+            . '/subscribed-courses'
+            . '/' . $curriculumItem->course->id
+            . '/lectures/' . $curriculumItem->id
+            . '/view-logs',
+        );
+
+        return $response->getStatusCode() === 201;
+    }
+
     public function userAttemptedQuizzes(
         string $token,
         CurriculumItem $curriculumItem,
