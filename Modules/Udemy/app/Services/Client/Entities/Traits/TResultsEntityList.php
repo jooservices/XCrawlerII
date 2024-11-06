@@ -2,8 +2,6 @@
 
 namespace Modules\Udemy\Services\Client\Entities\Traits;
 
-use Illuminate\Support\Collection;
-
 trait TResultsEntityList
 {
     public function getCount(): int

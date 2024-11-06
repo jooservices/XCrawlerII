@@ -9,22 +9,19 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 
-class UserCourseStudyCompleted
+class UserHaveNoCoursesSubscribedEvent
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-    use SerializesModels;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
     public function __construct(
-        public UserToken $userToken,
-        public UdemyCourse $udemyCourse
-    ) {
+        public UserToken $userToken
+    )
+    {
         //
     }
 }

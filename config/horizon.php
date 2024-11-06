@@ -184,6 +184,21 @@ return [
     */
 
     'defaults' => [
+        'default' => [
+            'connection' => 'redis',
+            'queue' => [
+                'default',
+            ],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => config('onejav.horizon.max_process', 3),
+            'memory' => config('onejav.horizon.memory_limit', 512),
+            'tries' => 1,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
         OnejavService::ONEJAV_QUEUE_NAME => [
             'connection' => 'redis',
             'queue' => [
@@ -220,6 +235,7 @@ return [
 
     'environments' => [
         'production' => [
+            'default' => [],
             OnejavService::ONEJAV_QUEUE_NAME => [
                 'maxProcesses' => 10,
                 'balanceMaxShift' => 1,
@@ -229,6 +245,7 @@ return [
         ],
 
         'local' => [
+            'default' => [],
             OnejavService::ONEJAV_QUEUE_NAME => [
                 'maxProcesses' => 3,
             ],
@@ -236,6 +253,7 @@ return [
         ],
 
         'uat' => [
+            'default' => [],
             OnejavService::ONEJAV_QUEUE_NAME => [
                 'maxProcesses' => 3,
             ],

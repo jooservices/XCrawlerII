@@ -10,6 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Courses
 {
+    /**
+     * @var Client $client
+     */
     private IClient $client;
 
     private const string ENDPOINT = 'api-2.0/courses';
@@ -42,6 +45,10 @@ class Courses
             self::ENDPOINT . '/' . $courseId . '/subscriber-curriculum-items',
             $payload
         );
+
+        /**
+         * @TODO Handle not success
+         */
 
         return new CourseCurriculumItemsEntity($response->parseBody()->getData());
     }

@@ -3,8 +3,8 @@
 namespace Modules\Udemy\Repositories;
 
 use Carbon\Carbon;
-use Modules\Udemy\Events\UdemyCourseCreatedEvent;
-use Modules\Udemy\Events\UserCourseSyncCompleted;
+use Modules\Udemy\Events\Courses\CourseCreatedEvent;
+use Modules\Udemy\Events\Courses\UserCourseSyncCompletedEvent;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 
@@ -22,7 +22,7 @@ class UserTokenRepository
         UdemyCourse $udemyCourse,
         int $completionRatio = 0,
         ?Carbon $enrollmentTime = null
-    ) {
+    ): void {
         $enrollmentTime = $enrollmentTime ?? Carbon::now();
 
         $userToken->courses()->syncWithoutDetaching([
@@ -32,10 +32,10 @@ class UserTokenRepository
             ],
         ]);
 
-        if ($udemyCourse->wasRecentlyCreated) {
-            UdemyCourseCreatedEvent::dispatch($userToken, $udemyCourse);
+        if ($udemyCourse->wasRecentlyCreated && $udemyCourse->wasChanged() === false) {
+            CourseCreatedEvent::dispatch($userToken, $udemyCourse);
         }
 
-        UserCourseSyncCompleted::dispatch($userToken, $udemyCourse);
+        UserCourseSyncCompletedEvent::dispatch($userToken, $udemyCourse);
     }
 }
