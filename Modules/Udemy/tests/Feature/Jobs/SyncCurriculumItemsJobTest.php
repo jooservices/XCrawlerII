@@ -5,7 +5,7 @@ namespace Modules\Udemy\Tests\Feature\Jobs;
 use Illuminate\Support\Facades\Event;
 use Modules\Udemy\Database\Factories\UdemyCourseFactory;
 use Modules\Udemy\Events\CurriculumItemCreatedEvent;
-use Modules\Udemy\Events\SyncCurriculumItemsSyncCompletedEvent;
+use Modules\Udemy\Events\CurriculumItems\SyncCurriculumItemsCompletedEvent;
 use Modules\Udemy\Jobs\SyncCurriculumItemsJob;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
@@ -32,13 +32,13 @@ class SyncCurriculumItemsJobTest extends TestCase
 
         Event::fake([
             CurriculumItemCreatedEvent::class,
-            SyncCurriculumItemsSyncCompletedEvent::class,
+            SyncCurriculumItemsCompletedEvent::class,
         ]);
 
         SyncCurriculumItemsJob::dispatch($userToken, $course);
         $this->assertCount(54, $course->items);
 
         Event::assertDispatched(CurriculumItemCreatedEvent::class);
-        Event::assertDispatched(SyncCurriculumItemsSyncCompletedEvent::class);
+        Event::assertDispatched(SyncCurriculumItemsCompletedEvent::class);
     }
 }

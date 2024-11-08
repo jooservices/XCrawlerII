@@ -2,6 +2,7 @@
 
 namespace Modules\Udemy\Services\Client\Sdk;
 
+use Exception;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\ClientManager;
 use Modules\Udemy\Models\CurriculumItem;
@@ -10,12 +11,13 @@ use Modules\Udemy\Services\Client\Client;
 use Modules\Udemy\Services\Client\Entities\AssessmentEntity;
 use Modules\Udemy\Services\Client\Entities\CoursesCategoriesEntity;
 use Modules\Udemy\Services\Client\Entities\CoursesEntity;
+use Modules\Udemy\Services\Client\Entities\ProgressEntity;
 use Symfony\Component\HttpFoundation\Request;
 
 class MeApi
 {
     /**
-     * @var Client $client
+     * @var Client
      */
     private IClient $client;
 
@@ -27,19 +29,24 @@ class MeApi
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function subscribedCoursesCategories(string $token, array $payload = []): CoursesCategoriesEntity
-    {
+    public function subscribedCoursesCategories(
+        string $token,
+        array $payload = []
+    ): ?CoursesCategoriesEntity {
         $this->client->setToken($token);
-        $payload = array_merge($payload, [
-            'fields' => [
-                'course_category' => 'id,title',
+        $payload = array_merge(
+            [
+                'fields' => [
+                    'course_category' => 'id,title',
+                ],
+                'previewing' => false,
+                'page_size' => 15,
+                'is_archived' => false,
             ],
-            'previewing' => false,
-            'page_size' => 15,
-            'is_archived' => false,
-        ]);
+            $payload
+        );
 
         $response = $this->client->request(
             Request::METHOD_GET,
@@ -47,14 +54,20 @@ class MeApi
             $payload
         );
 
+        if (!$response->isSuccess()) {
+            return null;
+        }
+
         return new CoursesCategoriesEntity($response->parseBody()->getData());
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
-    public function subscribedCourses(string $token, array $payload = []): CoursesEntity
-    {
+    public function subscribedCourses(
+        string $token,
+        array $payload = []
+    ): ?CoursesEntity {
         $this->client->setToken($token);
         $payload = array_merge(
             [
@@ -64,10 +77,10 @@ class MeApi
                 ],
                 'ordering' => '-last_accessed',
                 'page' => 1,
-                'page_size' => 100,
+                'page_size' => 50,
                 'is_archived' => false,
             ],
-            $payload,
+            $payload
         );
 
         $response = $this->client->request(
@@ -76,11 +89,46 @@ class MeApi
             $payload
         );
 
+        if (!$response->isSuccess()) {
+            return null;
+        }
+
         return new CoursesEntity($response->parseBody()->getData());
     }
 
+    public function progress(
+        string $token,
+        int $courseId,
+        array $payload = []
+    )
+    {
+        $this->client->setToken($token);
+        $payload = array_merge(
+            [
+                'fields' => [
+                    'course' => 'completed_lecture_ids,completed_quiz_ids,last_seen_page,completed_assignment_ids,first_completion_time',
+                ],
+                'page' => 1,
+                'page_size' => 100,
+            ],
+            $payload
+        );
+
+        $response = $this->client->request(
+            Request::METHOD_GET,
+            self::ENDPOINT . '/subscribed-courses/' . $courseId . '/progress',
+            $payload
+        );
+
+        if (!$response->isSuccess()) {
+            return null;
+        }
+
+        return new ProgressEntity($response->parseBody()->getData());
+    }
+
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function lectureProgressLogs(
         UserToken $userToken,

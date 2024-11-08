@@ -6,6 +6,7 @@ return [
         'base_uri' => 'https://fpt-software.udemy.com/',
     ],
     'notifications' => [
+        'enabled' => env('UDEMY_NOTIFICATION_ENABLED', false),
         'telegram' => [
             'chat_id' => env('UDEMY_NOTIFICATION_TELEGRAM_CHAT_ID'),
         ],

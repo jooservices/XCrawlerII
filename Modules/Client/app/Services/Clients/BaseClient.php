@@ -87,7 +87,7 @@ class BaseClient implements IClient
          */
         return Cache::remember(
             $key,
-            100,
+            1,
             function () use ($method, $endpoint, $payload, $options) {
                 $method = Str::upper($method);
                 $logService = app(RequestLogService::class);
@@ -123,11 +123,6 @@ class BaseClient implements IClient
                     if ($exception->hasResponse()) {
                         return new $responseClass($exception->getResponse());
                     }
-                } catch (\Exception|GuzzleException $exception) {
-                    $logService->exception($exception);
-
-                    dd($exception->getMessage());
-                    return new $responseClass();
                 }
             }
         );

@@ -1,15 +1,14 @@
 <?php
 
-namespace Modules\Udemy\Events;
+namespace Modules\Udemy\Events\Courses;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
-use Modules\Udemy\Services\Client\Entities\CourseCurriculumItemsEntity;
 
-class SyncCurriculumItemsSyncCompletedEvent
+class SyncMyCourseCompletedEvent
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -19,9 +18,8 @@ class SyncCurriculumItemsSyncCompletedEvent
      * Create a new event instance.
      */
     public function __construct(
-        public UserToken $userToken,
-        public UdemyCourse $udemyCourse,
-        public CourseCurriculumItemsEntity $curriculumItems,
+        public UserToken $user,
+        public UdemyCourse $course
     ) {
         //
     }

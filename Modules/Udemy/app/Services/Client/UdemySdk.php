@@ -9,22 +9,22 @@ use Modules\Udemy\Services\Client\Sdk\StructuredDataApi;
 
 class UdemySdk
 {
-    public function me()
+    public function me(): MeApi
     {
         return app(MeApi::class);
     }
 
-    public function structuredData()
+    public function structuredData(): StructuredDataApi
     {
         return app(StructuredDataApi::class);
     }
 
-    public function courses()
+    public function courses(): Courses
     {
         return app(Courses::class);
     }
 
-    public function quizzes()
+    public function quizzes(): Quizzes
     {
         return app(Quizzes::class);
     }

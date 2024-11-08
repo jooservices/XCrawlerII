@@ -4,7 +4,7 @@ namespace Modules\Udemy\Tests\Unit\Events;
 
 use Illuminate\Support\Facades\Event;
 use Modules\Udemy\Events\CourseReadyForStudyEvent;
-use Modules\Udemy\Events\SyncCurriculumItemsSyncCompletedEvent;
+use Modules\Udemy\Events\CurriculumItems\SyncCurriculumItemsCompletedEvent;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
@@ -27,7 +27,7 @@ class SyncCurriculumItemsSyncCompletedEventTest extends TestCase
         ]);
 
         CurriculumItem::factory()->create();
-        SyncCurriculumItemsSyncCompletedEvent::dispatch(
+        SyncCurriculumItemsCompletedEvent::dispatch(
             $userToken,
             $userToken->courses->first(),
             new CourseCurriculumItemsEntity(json_decode(json_encode(['count' => 1])))
@@ -50,7 +50,7 @@ class SyncCurriculumItemsSyncCompletedEventTest extends TestCase
         ]);
 
         CurriculumItem::factory()->create();
-        SyncCurriculumItemsSyncCompletedEvent::dispatch(
+        SyncCurriculumItemsCompletedEvent::dispatch(
             $userToken,
             $userToken->courses->first(),
             new CourseCurriculumItemsEntity(json_decode(json_encode(['count' => 1])))
