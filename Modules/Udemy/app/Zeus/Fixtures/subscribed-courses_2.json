@@ -1,1 +1,1651 @@
-{"count":90,"next":null,"previous":"https://fpt-software.udemy.com/api-2.0/users/me/subscribed-courses/?fields%5Bcourse%5D=archive_time%2Cbuyable_object_type%2Ccompletion_ratio%2Cenrollment_time%2Cfavorite_time%2Cfeatures%2Cimage_240x135%2Cimage_480x270%2Cis_practice_test_course%2Cis_private%2Cis_published%2Clast_accessed_time%2Cnum_collections%2Cpublished_title%2Ctitle%2Ctracking_id%2Curl%2Cvisible_instructors%2Cis_course_available_in_org&fields%5Buser%5D=%40min%2Cjob_title&is_archived=false&ordering=-last_accessed&page_size=50","results":[{"_class":"course","id":6025532,"title":"Generative AI For Risk & Cyber Security Professionals 2024","url":"/course/draft/6025532/learn/","visible_instructors":[{"_class":"user","id":224427278,"title":"AI MENTOR","name":"AI","display_name":"AI MENTOR","job_title":"Empowering You to Innovate with AI"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/6025532_9f2b.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/6025532_9f2b.jpg","published_title":"generative-ai-for-risk-cyber-security-professionals-2024","tracking_id":"AwAeLUD2Q1eD6UX4qD_izQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":false,"buyable_object_type":"course","last_accessed_time":"2024-07-20T13:24:13Z","enrollment_time":"2024-07-20T12:12:21Z","is_course_available_in_org":false,"num_collections":0},{"_class":"course","id":5950974,"title":"Building a Culture of Innovation","url":"/course/building-a-culture-of-innovation-gotian/learn/","visible_instructors":[{"_class":"user","id":266019896,"title":"Ruth Gotian","name":"Ruth","display_name":"Ruth Gotian","job_title":"Social-scientist, professor, author, keynote speaker"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5950974_b7e9_3.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5950974_b7e9_3.jpg","published_title":"building-a-culture-of-innovation-gotian","tracking_id":"o3u1mRVkRsK6ycSZty6eoQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-20T11:33:00Z","enrollment_time":"2024-07-20T11:07:38Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5124886,"title":"Data-Driven Decision Making for Managers","url":"/course/data-driven-decisions-for-leaders-data-science-business/learn/","visible_instructors":[{"_class":"user","id":21188192,"title":"Justin Bateh, PhD, PMP","name":"Justin","display_name":"Justin Bateh, PhD, PMP","job_title":"#1 Project Management Creator Worldwide"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5124886_7659_2.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5124886_7659_2.jpg","published_title":"data-driven-decisions-for-leaders-data-science-business","tracking_id":"mYl-mDrmSzemGNxD5va-rw","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-20T06:44:19Z","enrollment_time":"2024-07-20T05:09:23Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5375876,"title":"FPT_Basic English Grammar","url":"/course/fsoft-english-basic/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5375876_b59c_3.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5375876_b59c_3.jpg","published_title":"fsoft-english-basic","tracking_id":"yc1VTXlrS764ypZWJrPwGg","favorite_time":null,"archive_time":null,"completion_ratio":72,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-20T03:27:47Z","enrollment_time":"2024-07-19T09:55:10Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5885206,"title":"Guide to Green Taxonomies and EU Taxonomy Reporting Tutorial","url":"/course/guide-to-green-taxonomies-and-eu-taxonomy-reporting-tutorial/learn/","visible_instructors":[{"_class":"user","id":68092661,"title":"Julia Mariasova","name":"Julia","display_name":"Julia Mariasova","job_title":"Management Consultant / Media Producer"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5885206_9d81.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5885206_9d81.jpg","published_title":"guide-to-green-taxonomies-and-eu-taxonomy-reporting-tutorial","tracking_id":"Oo6u99nVRF6DHsTUSyLQ8w","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T10:04:02Z","enrollment_time":"2024-07-19T10:03:28Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":2561682,"title":"Intermediate English Course: Develop Your Grammar and Skills","url":"/course/intermediate-english/learn/","visible_instructors":[{"_class":"user","id":41614524,"title":"Akın Demir","name":"Akın","display_name":"Akın Demir","job_title":"English Teacher & Author & Educational Consultant"},{"_class":"user","id":41292860,"title":"Seçkin Esen","name":"Seçkin","display_name":"Seçkin Esen","job_title":"İngilizce Öğretmeni & Yazar"},{"_class":"user","id":123825900,"title":"Rebecca Ewang","name":"Rebecca","display_name":"Rebecca Ewang","job_title":"International English Teacher at MyECO"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/2561682_44c8_3.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/2561682_44c8_3.jpg","published_title":"intermediate-english","tracking_id":"zpU7GLnrTeSDURRUhg7kCg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T10:02:07Z","enrollment_time":"2024-07-19T09:59:42Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1993718,"title":"FULL STACK JAVA DEV: JAVA + JSP + SPRING + BOOT + JS + REACT","url":"/course/full-stack-java-developer-java/learn/","visible_instructors":[{"_class":"user","id":15843944,"title":"StudyEasy Organization","name":"StudyEasy","display_name":"StudyEasy Organization","job_title":"Fantastic content maker and fabulous presenters"},{"_class":"user","id":23464438,"title":"Chand Sheikh","name":"Chand","display_name":"Chand Sheikh","job_title":"Best seller Instructor, Teaches more than 1,90,000+ students"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1993718_b47a_3.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1993718_b47a_3.jpg","published_title":"full-stack-java-developer-java","tracking_id":"zGHOxcApSv298wHUqpZK6g","favorite_time":null,"archive_time":null,"completion_ratio":26,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T09:53:31Z","enrollment_time":"2024-07-19T09:49:37Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5959932,"title":"Positive Leadership","url":"/course/positive-leadership/learn/","visible_instructors":[{"_class":"user","id":167875158,"title":"Héctor Peña","name":"Héctor","display_name":"Héctor Peña","job_title":"Edupreneur"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5959932_3e04_4.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5959932_3e04_4.jpg","published_title":"positive-leadership","tracking_id":"BjUQ6StSThSA9vuSlFywFw","favorite_time":null,"archive_time":null,"completion_ratio":97,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T09:46:41Z","enrollment_time":"2024-07-19T09:45:26Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5841712,"title":"FPT_BSQL4T - Database Concepts and ER Model","url":"/course/bsql4t-database-concepts-and-er-model/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5841712_c5e8.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5841712_c5e8.jpg","published_title":"bsql4t-database-concepts-and-er-model","tracking_id":"mrzTMalkQDqRs97ORer2jg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T06:27:54Z","enrollment_time":"2024-07-19T05:25:38Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5612358,"title":"FPT_Manner Basics for FJP Delivery Members","url":"/course/manner-basics-for-fjp-delivery-members/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5612358_8b0e.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5612358_8b0e.jpg","published_title":"manner-basics-for-fjp-delivery-members","tracking_id":"FYj5deuxSOmoNWp7BukJ3A","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T05:24:19Z","enrollment_time":"2024-07-19T05:11:01Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5875426,"title":"Focus Mastery: Maximize Productivity and Optimize Routine","url":"/course/focus-and-productivity-manage-your-routine-effectively/learn/","visible_instructors":[{"_class":"user","id":266028264,"title":"Matheus Stangherlin","name":"Matheus","display_name":"Matheus Stangherlin","job_title":"Empreendedor"},{"_class":"user","id":279884241,"title":"Brain Lab","name":"Brain","display_name":"Brain Lab","job_title":"Learn Brain Skills"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5875426_25da_2.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5875426_25da_2.jpg","published_title":"focus-and-productivity-manage-your-routine-effectively","tracking_id":"jIu7IbVeQ8iFB331kp0C8Q","favorite_time":null,"archive_time":null,"completion_ratio":0,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T05:21:12Z","enrollment_time":"2024-07-19T05:21:03Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":4776994,"title":"FPT_FSOFT Customer Interview Training","url":"/course/customer-interview-training/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/4776994_36a6.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/4776994_36a6.jpg","published_title":"customer-interview-training","tracking_id":"DNb1EL9dTxqUFHkP5fFRIQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T05:19:07Z","enrollment_time":"2024-07-19T05:16:43Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1332278,"title":"Docker for the Absolute Beginner - Hands On - DevOps","url":"/course/learn-docker/learn/","visible_instructors":[{"_class":"user","id":31303958,"title":"Mumshad Mannambeth","name":"Mumshad","display_name":"Mumshad Mannambeth","job_title":"Best Selling Instructor | Teaches Kubernetes"},{"_class":"user","id":61457358,"title":"KodeKloud Training","name":"KodeKloud","display_name":"KodeKloud Training","job_title":"Hands-On Online Training Academy"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1332278_4ea6_6.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1332278_4ea6_6.jpg","published_title":"learn-docker","tracking_id":"KK1Rq1qCSQuLUw5rQBAagg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T05:10:07Z","enrollment_time":"2024-02-22T02:43:52Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1937324,"title":"SOLID Principles in PHP : Learn how to write better code","url":"/course/solid-principles-decoded/learn/","visible_instructors":[{"_class":"user","id":545801,"title":"Ali Shah","name":"Ali","display_name":"Ali Shah","job_title":"Lead developer & Web Technologies Enthusiast"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1937324_3caa.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1937324_3caa.jpg","published_title":"solid-principles-decoded","tracking_id":"I3k_bKJxTrayD_RxoBc0_w","favorite_time":null,"archive_time":null,"completion_ratio":78,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":false,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-19T04:12:39Z","enrollment_time":"2024-07-19T03:07:40Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":6033724,"title":"FPT_ISMS Refresh Training S1 2024 (Vietnamese)","url":"/course/fsoft-isms-s2-2024-vietnamese/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/6033724_d9a5.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/6033724_d9a5.jpg","published_title":"fsoft-isms-s2-2024-vietnamese","tracking_id":"0NQKSXE8TQSc1OrguEooMA","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-04T07:48:03Z","enrollment_time":"2024-07-03T22:24:33Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":4828296,"title":"FPT_AI Cơ bản","url":"/course/fpt-ai-co-ban/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/4828296_d39c.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/4828296_d39c.jpg","published_title":"fpt-ai-co-ban","tracking_id":"9Q9lFrTkQ2GNs-xaDiccFw","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-05-02T09:24:53Z","enrollment_time":"2024-05-02T09:05:19Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5720640,"title":"FPT_ISMS Refresh Training 2024 (Vietnamese)","url":"/course/draft/5720640/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5720640_be5f.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5720640_be5f.jpg","published_title":"fsoft-isms-s2-2023-vietnamese","tracking_id":"Xc9EnXF5Q4mPe-3mEe8Jrw","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":false,"buyable_object_type":"course","last_accessed_time":"2024-01-22T07:58:07Z","enrollment_time":"2024-01-16T03:24:47Z","is_course_available_in_org":false,"num_collections":0},{"_class":"course","id":5326926,"title":"FPT_Induction - Objective Key Results","url":"/course/objective-key-results/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5326926_9066.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5326926_9066.jpg","published_title":"objective-key-results","tracking_id":"gmGccjr4RN2UaIEk-MG9zA","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-12-11T04:20:28Z","enrollment_time":"2023-12-10T21:51:09Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5373722,"title":"FPT_Cloud Essentials for Developers","url":"/course/cloud-ess-dev/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5373722_1519.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5373722_1519.jpg","published_title":"cloud-ess-dev","tracking_id":"vO0A7bSdRjeX8Uqk0wcEkg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T10:19:15Z","enrollment_time":"2023-11-05T06:46:21Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5450184,"title":"FPT_SPD - Software and Knowledge Utilization","url":"/course/spd4d-sku/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5450184_036a.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5450184_036a.jpg","published_title":"spd4d-sku","tracking_id":"zp7hZGP9SQizKOQSU6krfQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T06:40:57Z","enrollment_time":"2023-11-05T06:40:25Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5450200,"title":"FPT_SPD - OSS Check","url":"/course/spd4d-oss-check/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5450200_da60.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5450200_da60.jpg","published_title":"spd4d-oss-check","tracking_id":"jC5IfmblT3ej3GwzeenWAA","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T06:39:58Z","enrollment_time":"2023-11-05T06:39:15Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5450240,"title":"FPT_SPD - Secure Coding","url":"/course/spd4d-secure-coding/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5450240_ed51.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5450240_ed51.jpg","published_title":"spd4d-secure-coding","tracking_id":"mM91wdhNRBWdAlrlf6H01w","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T06:38:42Z","enrollment_time":"2023-11-05T06:36:42Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5449890,"title":"FPT_SPD - DevOps","url":"/course/spd4d-devops/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5449890_412f.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5449890_412f.jpg","published_title":"spd4d-devops","tracking_id":"mBfgEb3uQ4KVjy5odPIoSw","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T06:36:22Z","enrollment_time":"2023-11-05T06:22:55Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5449854,"title":"FPT_SPD - Fsoft Defect Management System","url":"/course/spd4d-fsoft-defect-management/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5449854_8709.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5449854_8709.jpg","published_title":"spd4d-fsoft-defect-management","tracking_id":"4ZzCA1ivSOiTTldQK71H7g","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T06:22:38Z","enrollment_time":"2023-11-05T06:18:03Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5449880,"title":"FPT_SPD - Timesheet Training","url":"/course/spd4d-timesheet-training/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5449880_d9a9.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5449880_d9a9.jpg","published_title":"spd4d-timesheet-training","tracking_id":"Ph110x5NSu6A7JNilPElPw","favorite_time":null,"archive_time":null,"completion_ratio":80,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T06:17:44Z","enrollment_time":"2023-11-05T06:17:06Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5449802,"title":"FPT_SPD - Unit Testing","url":"/course/spd4d-unit-testing/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5449802_439d.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5449802_439d.jpg","published_title":"spd4d-unit-testing","tracking_id":"w3bv6IsLRGWeVbCVr6c_zQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T06:16:47Z","enrollment_time":"2023-11-05T05:57:54Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5448376,"title":"FPT_SPD - Configuration Management","url":"/course/spd4d-configuration-management/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5448376_bc29.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5448376_bc29.jpg","published_title":"spd4d-configuration-management","tracking_id":"zUB3MkjzSf2JBPZS9sGDNQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T05:57:33Z","enrollment_time":"2023-11-05T02:07:29Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5448356,"title":"FPT_SPD - FSOFT Software Development Process","url":"/course/spd4d-software-process-development/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5448356_44a4.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5448356_44a4.jpg","published_title":"spd4d-software-process-development","tracking_id":"N84-2UcLTbe81I-tFiosEA","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T02:00:01Z","enrollment_time":"2023-11-05T01:56:00Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5447784,"title":"FPT_SPD - ISMS for Developer","url":"/course/spd4d-isms-for-dev/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5447784_d805.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5447784_d805.jpg","published_title":"spd4d-isms-for-dev","tracking_id":"PZrS-3MWTAqjFm6A5vQ4cQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T01:54:30Z","enrollment_time":"2023-11-05T01:29:12Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5452208,"title":"FPT_SPD - How to work in FSO project","url":"/course/spd-how-to-work-in-fso-project/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5452208_b551.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5452208_b551.jpg","published_title":"spd-how-to-work-in-fso-project","tracking_id":"DehZyWBDSSe21WnysAMwcQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-05T01:28:46Z","enrollment_time":"2023-11-03T08:08:24Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5447776,"title":"FPT_SPD4D - Introduction","url":"/course/spd4d-introduction/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5447776_b7a9.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5447776_b7a9.jpg","published_title":"spd4d-introduction","tracking_id":"sjydJTQFQiSoiBhTvAY_Ig","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-11-03T08:07:54Z","enrollment_time":"2023-11-03T08:03:07Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":4993206,"title":"FPT_Kỹ năng Ho-Ren-So","url":"/course/fsoft-horenso-2022/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/4993206_7f8d.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/4993206_7f8d.jpg","published_title":"fsoft-horenso-2022","tracking_id":"iyCOua0HR3yuz412bL8arg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-10-20T02:43:58Z","enrollment_time":"2023-10-20T01:42:38Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5280510,"title":"FPT_Induction - Code of Business Conduct","url":"/course/cobc-dayone-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5280510_ac73_2.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5280510_ac73_2.jpg","published_title":"cobc-dayone-vi","tracking_id":"4mQ_WVY5TJm-MoxVaE-gNg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-10-19T05:07:58Z","enrollment_time":"2023-10-19T04:54:47Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5329010,"title":"FPT_Induction - Internal Labor Regulations","url":"/course/labor-law-dayone-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5329010_bce3.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5329010_bce3.jpg","published_title":"labor-law-dayone-vi","tracking_id":"70qmKaiFQwmfm5UUcBPRNQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-10-19T04:54:28Z","enrollment_time":"2023-10-19T04:45:49Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5327302,"title":"FPT_Induction - Human Resources at FSOFT","url":"/course/hr-dayone-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5327302_047e.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5327302_047e.jpg","published_title":"hr-dayone-vi","tracking_id":"InToamhWSq2jVXOnOPgpKQ","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-10-19T04:45:17Z","enrollment_time":"2023-10-19T04:37:18Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5327242,"title":"FPT_Induction - IT Guidelines","url":"/course/it-guideline-dayone-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5327242_5af4_2.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5327242_5af4_2.jpg","published_title":"it-guideline-dayone-vi","tracking_id":"uc9Oals_R4mAPTS3RvzF8w","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-10-19T04:37:06Z","enrollment_time":"2023-10-19T04:35:56Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5327130,"title":"FPT_Induction - QMS Introduction","url":"/course/qms-dayone-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5327130_0239.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5327130_0239.jpg","published_title":"qms-dayone-vi","tracking_id":"0n_U673MQEi9sxTcwEnTmw","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-10-19T04:35:21Z","enrollment_time":"2023-10-19T04:30:23Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5329032,"title":"FPT_Induction - ISMS","url":"/course/isms-dayone-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5329032_f696_2.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5329032_f696_2.jpg","published_title":"isms-dayone-vi","tracking_id":"eu2-EC-yR1G-uI-vGk4u-A","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-10-19T04:28:59Z","enrollment_time":"2023-10-19T02:58:32Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5327106,"title":"FPT_Induction - BCMS Policy Training","url":"/course/bcms-dayone-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5327106_3e3a.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5327106_3e3a.jpg","published_title":"bcms-dayone-vi","tracking_id":"C3GGjXH0RImQ5OEjcHBN9g","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2023-10-19T02:52:04Z","enrollment_time":"2023-10-19T02:44:12Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5328970,"title":"FPT_Induction - Chính sách khoán thu nhập dự án","url":"/course/draft/5328970/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5328970_8b64.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5328970_8b64.jpg","published_title":"income-policy-delivery-dayone-vi","tracking_id":"AV0XSel-QdOOs3x2N9cGaA","favorite_time":null,"archive_time":null,"completion_ratio":62,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":false,"buyable_object_type":"course","last_accessed_time":"2023-10-19T02:40:32Z","enrollment_time":"2023-10-19T02:14:16Z","is_course_available_in_org":false,"num_collections":0}]}
+{
+    "count": 90,
+    "next": "https://fpt-software.udemy.com/api-2.0/users/me/subscribed-courses/?fields%5C%5Bcourse%5C%5D=archive_time%2Cbuyable_object_type%2Ccompletion_ratio%2Cenrollment_time%2Cfavorite_time%2Cfeatures%2Cimage_240x135%2Cimage_480x270%2Cis_practice_test_course%2Cis_private%2Cis_published%2Clast_accessed_time%2Cnum_collections%2Cpublished_title%2Ctitle%2Ctracking_id%2Curl%2Cvisible_instructors%2Cis_course_available_in_org&fields%5C%5Buser%5C%5D=%40min%2Cjob_title&is_archived=false&ordering=-last_accessed&page=3&page_size=40",
+    "previous": "https://fpt-software.udemy.com/api-2.0/users/me/subscribed-courses/?fields%5C%5Bcourse%5C%5D=archive_time%2Cbuyable_object_type%2Ccompletion_ratio%2Cenrollment_time%2Cfavorite_time%2Cfeatures%2Cimage_240x135%2Cimage_480x270%2Cis_practice_test_course%2Cis_private%2Cis_published%2Clast_accessed_time%2Cnum_collections%2Cpublished_title%2Ctitle%2Ctracking_id%2Curl%2Cvisible_instructors%2Cis_course_available_in_org&fields%5C%5Buser%5C%5D=%40min%2Cjob_title&is_archived=false&ordering=-last_accessed&page_size=40",
+    "results": [
+        {
+            "_class": "course",
+            "id": 1361790,
+            "title": "PMP Exam Prep Seminar - Complete Exam Coverage with 35 PDUs",
+            "url": "/course/pmp-pmbok6-35-pdus/learn/",
+            "is_paid": true,
+            "price": "₫2,199,000",
+            "price_detail": {
+                "amount": 2199000.0,
+                "currency": "VND",
+                "price_string": "₫2,199,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "oLySXelnTO6f0beuxXsdmw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 8912846,
+                    "title": "Joseph Phillips",
+                    "name": "Joseph",
+                    "display_name": "Joseph Phillips",
+                    "job_title": "PMP, PMI-ACP, Project+, ITIL, PSM I, CTT+",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/8912846_1a61.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/8912846_1a61.jpg",
+                    "initials": "JP",
+                    "url": "/user/josephphillips2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1361790_2eb7_2.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1361790_2eb7_2.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1361790_2eb7_2.jpg",
+            "published_title": "pmp-pmbok6-35-pdus",
+            "tracking_id": "-WXrU-rHQbu6XT5PbHXOJw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 10971,
+            "title": "How to Budget and Forecast for Your Business",
+            "url": "/course/how-to-budget-and-forecast-for-your-business/learn/",
+            "is_paid": true,
+            "price": "₫599,000",
+            "price_detail": {
+                "amount": 599000.0,
+                "currency": "VND",
+                "price_string": "₫599,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "s4LJEsh1QvavKeTGwtDAgQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 50016,
+                    "title": "Bplans School of Business",
+                    "name": "Bplans School of Business",
+                    "display_name": "Bplans School of Business",
+                    "job_title": "Helping You Succeed in Business",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/50016_bc4f_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/50016_bc4f_3.jpg",
+                    "initials": "B",
+                    "url": "/user/timberry/"
+                },
+                {
+                    "_class": "user",
+                    "id": 56504,
+                    "title": "Tim Berry",
+                    "name": "Tim",
+                    "display_name": "Tim Berry",
+                    "job_title": "Business Planning Expert",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/56504_eeb8_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/56504_eeb8_2.jpg",
+                    "initials": "TB",
+                    "url": "/user/timberry2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/10971_da21_5.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/10971_da21_5.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/10971_da21_5.jpg",
+            "published_title": "how-to-budget-and-forecast-for-your-business",
+            "tracking_id": "LVXcc-JWQFeiald7w-kvGw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 3098554,
+            "title": "SAP MM-WM Integration Course",
+            "url": "/course/sap-mm-wm-integration-course-by-ganesh-padala/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "yILbknujRH2CDMdRKbrGcA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 68817574,
+                    "title": "Ganesh Padala",
+                    "name": "Ganesh",
+                    "display_name": "Ganesh Padala",
+                    "job_title": "SAP SCM Consultant",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/68817574_5c7a_7.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/68817574_5c7a_7.jpg",
+                    "initials": "GP",
+                    "url": "/user/ganesh-padala-2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/3098554_17b7.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/3098554_17b7.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/3098554_17b7.jpg",
+            "published_title": "sap-mm-wm-integration-course-by-ganesh-padala",
+            "tracking_id": "v-vuelKXRQqJ1SZYFsdOew",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 139200,
+            "title": "Powerful speaking",
+            "url": "/course/powerful-speaking/learn/",
+            "is_paid": true,
+            "price": "₫549,000",
+            "price_detail": {
+                "amount": 549000.0,
+                "currency": "VND",
+                "price_string": "₫549,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "1M8faWgTSvaiX6wwNEt9TA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 305484,
+                    "title": "Julian Treasure",
+                    "name": "Julian",
+                    "display_name": "Julian Treasure",
+                    "job_title": "Five-time TED speaker and author of \"How to be Heard\"",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/305484_4e68_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/305484_4e68_4.jpg",
+                    "initials": "JT",
+                    "url": "/user/juliantreasure/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/139200_55b2_5.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/139200_55b2_5.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/139200_55b2_5.jpg",
+            "published_title": "powerful-speaking",
+            "tracking_id": "EDMTxHPCS4uyELfSx3_WaQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_GB",
+                "title": "English (UK)",
+                "english_title": "English (UK)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 235128,
+            "title": "Learn  SQL For Oracle Databases - Using Toad From Scratch",
+            "url": "/course/introduction-to-oracle-sql-with-toad/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "Op4Jy9W7QBOMs0sOcKvu3Q",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 1230724,
+                    "title": "Skill Tree",
+                    "name": "Skill",
+                    "display_name": "Skill Tree",
+                    "job_title": "Skill based learning",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/1230724_3979_8.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/1230724_3979_8.jpg",
+                    "initials": "ST",
+                    "url": "/user/williamumusu/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/235128_8ad8_6.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/235128_8ad8_6.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/235128_8ad8_6.jpg",
+            "published_title": "introduction-to-oracle-sql-with-toad",
+            "tracking_id": "qBw4_L2fSUy3Nmeaglwtdg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_GB",
+                "title": "English (UK)",
+                "english_title": "English (UK)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 857010,
+            "title": "Learn Ethical Hacking From Scratch 2024",
+            "url": "/course/learn-ethical-hacking-from-scratch/learn/",
+            "is_paid": true,
+            "price": "₫2,199,000",
+            "price_detail": {
+                "amount": 2199000.0,
+                "currency": "VND",
+                "price_string": "₫2,199,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "BOsoejd7S2aEM57wQAU2kg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 6956218,
+                    "title": "Zaid Sabih",
+                    "name": "Zaid",
+                    "display_name": "Zaid Sabih",
+                    "job_title": "Ethical Hacker, Computer Scientist & CEO of zSecurity",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/6956218_3564_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/6956218_3564_4.jpg",
+                    "initials": "ZS",
+                    "url": "/user/zaidsabih/"
+                },
+                {
+                    "_class": "user",
+                    "id": 41384972,
+                    "title": "z Security",
+                    "name": "z",
+                    "display_name": "z Security",
+                    "job_title": "Leading provider of ethical hacking and cyber security training,",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/41384972_fbb7_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/41384972_fbb7_2.jpg",
+                    "initials": "ZS",
+                    "url": "/user/zsecurity-2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/857010_8239_5.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/857010_8239_5.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/857010_8239_5.jpg",
+            "published_title": "learn-ethical-hacking-from-scratch",
+            "tracking_id": "Q_9wwj9ZQgGRXC7Tlq7QnQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_GB",
+                "title": "English (UK)",
+                "english_title": "English (UK)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 6055451,
+            "title": "FPT_BRCMS awareness 2024 for FSO VN (Vietnamese)",
+            "url": "/course/fsoft-brcms-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "Ns9n5-s4RZid23025KQL3w",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/6055451_5034.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/6055451_5034.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/6055451_5034.jpg",
+            "published_title": "fsoft-brcms-vi",
+            "tracking_id": "E-7-s7zwRcmPclXP96LJVg",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 6112197,
+            "title": "FPT_Giá trị cốt lõi FPT",
+            "url": "/course/gia-tri-cot-loi-fpt-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "ghJUOOiRT3ijv38dCCYD9A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/6112197_72f8.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/6112197_72f8.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/6112197_72f8.jpg",
+            "published_title": "gia-tri-cot-loi-fpt-vi",
+            "tracking_id": "ajpHBiPxRG6VuCYrX0m0JQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 6065169,
+            "title": "FPT_Corporate Social Responsibility Training 2024",
+            "url": "/course/fsoft-csr-2024/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "QnfPVzUjTEyYYjYkq5if5g",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/6065169_9380.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/6065169_9380.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/6065169_9380.jpg",
+            "published_title": "fsoft-csr-2024",
+            "tracking_id": "UR7kwpNUQoOCo55mkVAKMw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 4223598,
+            "title": "FPT_5 Ways to Respond to a Job Interview Question",
+            "url": "/course/respond-to-job-interview-question/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "0XFjQgUqQFasIJqyq1y_gw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/4223598_0529.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/4223598_0529.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/4223598_0529.jpg",
+            "published_title": "respond-to-job-interview-question",
+            "tracking_id": "uuvM8LmYTmeT6sKXcZrhzQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 6025532,
+            "title": "Generative AI For Risk & Cyber Security Professionals 2024",
+            "url": "/course/draft/6025532/learn/",
+            "is_paid": true,
+            "price": "₫849,000",
+            "price_detail": {
+                "amount": 849000.0,
+                "currency": "VND",
+                "price_string": "₫849,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "nVC3J-BoTw-BHaXP--5Hiw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 224427278,
+                    "title": "AI MENTOR",
+                    "name": "AI",
+                    "display_name": "AI MENTOR",
+                    "job_title": "Empowering You to Innovate with AI",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/224427278_3b37.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/224427278_3b37.jpg",
+                    "initials": "AM",
+                    "url": "/user/ai-mentor/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/6025532_9f2b.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/6025532_9f2b.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/6025532_9f2b.jpg",
+            "published_title": "generative-ai-for-risk-cyber-security-professionals-2024",
+            "tracking_id": "APN2uxviQgmi_rIZGB8gAQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5950974,
+            "title": "Building a Culture of Innovation",
+            "url": "/course/building-a-culture-of-innovation-gotian/learn/",
+            "is_paid": true,
+            "price": "₫2,399,000",
+            "price_detail": {
+                "amount": 2399000.0,
+                "currency": "VND",
+                "price_string": "₫2,399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "zSvx6fwESkek5Q_b2Y36gA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 266019896,
+                    "title": "Ruth Gotian",
+                    "name": "Ruth",
+                    "display_name": "Ruth Gotian",
+                    "job_title": "Social-scientist, professor, author, keynote speaker",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/266019896_13db.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/266019896_13db.jpg",
+                    "initials": "RG",
+                    "url": "/user/ruth-gotian/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5950974_b7e9_3.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5950974_b7e9_3.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5950974_b7e9_3.jpg",
+            "published_title": "building-a-culture-of-innovation-gotian",
+            "tracking_id": "W7JbjPPlS1GLBQ1T6mK8xw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5124886,
+            "title": "Data-Driven Decision Making for Managers",
+            "url": "/course/data-driven-decisions-for-leaders-data-science-business/learn/",
+            "is_paid": true,
+            "price": "₫649,000",
+            "price_detail": {
+                "amount": 649000.0,
+                "currency": "VND",
+                "price_string": "₫649,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "K_xpBmpQRgaCMQ0X_nW4LQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 21188192,
+                    "title": "Justin Bateh, PhD, PMP",
+                    "name": "Justin",
+                    "display_name": "Justin Bateh, PhD, PMP",
+                    "job_title": "#1 Project Management Creator Worldwide",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/21188192_002d_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/21188192_002d_4.jpg",
+                    "initials": "JB",
+                    "url": "/user/justin-bateh/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5124886_7659_2.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5124886_7659_2.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5124886_7659_2.jpg",
+            "published_title": "data-driven-decisions-for-leaders-data-science-business",
+            "tracking_id": "7wZ0hc8wRu2XUXfPtTzjGQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5375876,
+            "title": "FPT_Basic English Grammar",
+            "url": "/course/fsoft-english-basic/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "I5NjHL0MRgGnHUud89Hi-A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5375876_b59c_3.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5375876_b59c_3.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5375876_b59c_3.jpg",
+            "published_title": "fsoft-english-basic",
+            "tracking_id": "VAl0fX-jTZypoof9aRMjZw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5885206,
+            "title": "Guide to Green Taxonomies and EU Taxonomy Reporting Tutorial",
+            "url": "/course/guide-to-green-taxonomies-and-eu-taxonomy-reporting-tutorial/learn/",
+            "is_paid": true,
+            "price": "₫599,000",
+            "price_detail": {
+                "amount": 599000.0,
+                "currency": "VND",
+                "price_string": "₫599,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "j6oMb_zbRaGIk9QW5kFysg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 68092661,
+                    "title": "Julia Mariasova",
+                    "name": "Julia",
+                    "display_name": "Julia Mariasova",
+                    "job_title": "Management Consultant / Media Producer",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/68092661_998d_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/68092661_998d_4.jpg",
+                    "initials": "JM",
+                    "url": "/user/julia-1340/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5885206_9d81.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5885206_9d81.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5885206_9d81.jpg",
+            "published_title": "guide-to-green-taxonomies-and-eu-taxonomy-reporting-tutorial",
+            "tracking_id": "DEmiO2CpQC-RIEqwx1_lBQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_GB",
+                "title": "English (UK)",
+                "english_title": "English (UK)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 2561682,
+            "title": "Intermediate English Course: Develop Your Grammar and Skills",
+            "url": "/course/intermediate-english/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "PkTuw57ES2my_w2pkUS7RQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 41614524,
+                    "title": "Akın Demir",
+                    "name": "Akın",
+                    "display_name": "Akın Demir",
+                    "job_title": "English Teacher & Author & Educational Consultant",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/41614524_df99_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/41614524_df99_5.jpg",
+                    "initials": "AD",
+                    "url": "/user/akin-demir/"
+                },
+                {
+                    "_class": "user",
+                    "id": 41292860,
+                    "title": "Seçkin Esen",
+                    "name": "Seçkin",
+                    "display_name": "Seçkin Esen",
+                    "job_title": "İngilizce Öğretmeni & Yazar",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/41292860_4772_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/41292860_4772_3.jpg",
+                    "initials": "SE",
+                    "url": "/user/seckin-esen/"
+                },
+                {
+                    "_class": "user",
+                    "id": 123825900,
+                    "title": "Rebecca Ewang",
+                    "name": "Rebecca",
+                    "display_name": "Rebecca Ewang",
+                    "job_title": "International English Teacher at MyECO",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/123825900_5ca6_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/123825900_5ca6_3.jpg",
+                    "initials": "RE",
+                    "url": "/user/rebecca-ewang/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/2561682_44c8_3.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/2561682_44c8_3.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/2561682_44c8_3.jpg",
+            "published_title": "intermediate-english",
+            "tracking_id": "Dw5tzInUSF2CYyaU5A11Tw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1993718,
+            "title": "FULL STACK JAVA DEV: JAVA + JSP + SPRING + BOOT + JS + REACT",
+            "url": "/course/full-stack-java-developer-java/learn/",
+            "is_paid": true,
+            "price": "₫2,199,000",
+            "price_detail": {
+                "amount": 2199000.0,
+                "currency": "VND",
+                "price_string": "₫2,199,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "mGiA4YyfT5exGQW-KiCXbA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 15843944,
+                    "title": "StudyEasy Organization",
+                    "name": "StudyEasy",
+                    "display_name": "StudyEasy Organization",
+                    "job_title": "Fantastic content maker and fabulous presenters",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/15843944_2e5c_7.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/15843944_2e5c_7.jpg",
+                    "initials": "SO",
+                    "url": "/user/studyeasy/"
+                },
+                {
+                    "_class": "user",
+                    "id": 23464438,
+                    "title": "Chand Sheikh",
+                    "name": "Chand",
+                    "display_name": "Chand Sheikh",
+                    "job_title": "Best seller Instructor, Teaches more than 1,90,000+ students",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/23464438_e7fb_6.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/23464438_e7fb_6.jpg",
+                    "initials": "CS",
+                    "url": "/user/chaand-sheikh/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1993718_b47a_3.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1993718_b47a_3.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1993718_b47a_3.jpg",
+            "published_title": "full-stack-java-developer-java",
+            "tracking_id": "LhOW5TXESPaWwup_IIWzMA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5959932,
+            "title": "Positive Leadership",
+            "url": "/course/positive-leadership/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "dMVQhZPVRL2BzckbPlnQ4A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 167875158,
+                    "title": "Héctor Peña",
+                    "name": "Héctor",
+                    "display_name": "Héctor Peña",
+                    "job_title": "Edupreneur",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/167875158_ce92_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/167875158_ce92_4.jpg",
+                    "initials": "HP",
+                    "url": "/user/hector-g-pena-garcia/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5959932_3e04_4.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5959932_3e04_4.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5959932_3e04_4.jpg",
+            "published_title": "positive-leadership",
+            "tracking_id": "r1HnXVJCQNGm6bgVmzJnsQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5841712,
+            "title": "FPT_BSQL4T - Database Concepts and ER Model",
+            "url": "/course/bsql4t-database-concepts-and-er-model/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "t0-jXwQrQcK4HAwlx7zSrA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5841712_c5e8.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5841712_c5e8.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5841712_c5e8.jpg",
+            "published_title": "bsql4t-database-concepts-and-er-model",
+            "tracking_id": "OFlGg7mYQIqrGxc-FziOdA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5612358,
+            "title": "FPT_Manner Basics for FJP Delivery Members",
+            "url": "/course/manner-basics-for-fjp-delivery-members/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "Mi8zYFLpR46UwhwnZvnllA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5612358_8b0e.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5612358_8b0e.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5612358_8b0e.jpg",
+            "published_title": "manner-basics-for-fjp-delivery-members",
+            "tracking_id": "NrA00c3FTdaujhNAARR8yw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5875426,
+            "title": "Focus Mastery: Maximize Productivity and Optimize Routine",
+            "url": "/course/focus-and-productivity-manage-your-routine-effectively/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "GGcNrXaARwqA7aI7ZYAqWQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 266028264,
+                    "title": "Matheus Stangherlin",
+                    "name": "Matheus",
+                    "display_name": "Matheus Stangherlin",
+                    "job_title": "Empreendedor",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/266028264_6575.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/266028264_6575.jpg",
+                    "initials": "MS",
+                    "url": "/user/matheus-stangherlin-2/"
+                },
+                {
+                    "_class": "user",
+                    "id": 279884241,
+                    "title": "Brain Lab",
+                    "name": "Brain",
+                    "display_name": "Brain Lab",
+                    "job_title": "Learn Brain Skills",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/279884241_8a87_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/279884241_8a87_2.jpg",
+                    "initials": "BL",
+                    "url": "/user/brain-lab/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5875426_25da_2.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5875426_25da_2.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5875426_25da_2.jpg",
+            "published_title": "focus-and-productivity-manage-your-routine-effectively",
+            "tracking_id": "Nc7UjDEMQQuH-pVgp1rfVA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 4776994,
+            "title": "FPT_FSOFT Customer Interview Training",
+            "url": "/course/customer-interview-training/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "Z3kTEUQoRZed1tleNJEm9A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/4776994_36a6.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/4776994_36a6.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/4776994_36a6.jpg",
+            "published_title": "customer-interview-training",
+            "tracking_id": "CRzw7n_US4e8aAUMV3__ug",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1332278,
+            "title": "Docker for the Absolute Beginner - Hands On - DevOps",
+            "url": "/course/learn-docker/learn/",
+            "is_paid": true,
+            "price": "₫1,799,000",
+            "price_detail": {
+                "amount": 1799000.0,
+                "currency": "VND",
+                "price_string": "₫1,799,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "z2elr67ER4S1vuQMLmbQ6A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 31303958,
+                    "title": "Mumshad Mannambeth",
+                    "name": "Mumshad",
+                    "display_name": "Mumshad Mannambeth",
+                    "job_title": "Best Selling Instructor | Teaches Kubernetes",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/31303958_8529_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/31303958_8529_3.jpg",
+                    "initials": "MM",
+                    "url": "/user/mumshad-mannambeth/"
+                },
+                {
+                    "_class": "user",
+                    "id": 61457358,
+                    "title": "KodeKloud Training",
+                    "name": "KodeKloud",
+                    "display_name": "KodeKloud Training",
+                    "job_title": "Hands-On Online Training Academy",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/61457358_a661_18.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/61457358_a661_18.jpg",
+                    "initials": "KT",
+                    "url": "/user/kodekloud/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1332278_4ea6_6.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1332278_4ea6_6.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1332278_4ea6_6.jpg",
+            "published_title": "learn-docker",
+            "tracking_id": "nzqLS3c_RJCNHRMI7kFXqw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1937324,
+            "title": "SOLID Principles in PHP : Learn how to write better code",
+            "url": "/course/solid-principles-decoded/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "Xpk4_s2DTA6ZFzkKAF8fuQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 545801,
+                    "title": "Ali Shah",
+                    "name": "Ali",
+                    "display_name": "Ali Shah",
+                    "job_title": "Lead developer & Web Technologies Enthusiast",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/545801_01c7_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/545801_01c7_4.jpg",
+                    "initials": "AS",
+                    "url": "/user/muhammadshahhotmailcouk/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1937324_3caa.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1937324_3caa.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1937324_3caa.jpg",
+            "published_title": "solid-principles-decoded",
+            "tracking_id": "AffZpa2bRLK5MbVf_wN-5A",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_GB",
+                "title": "English (UK)",
+                "english_title": "English (UK)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 6033724,
+            "title": "FPT_ISMS Refresh Training S1 2024 (Vietnamese)",
+            "url": "/course/fsoft-isms-s2-2024-vietnamese/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "zgchEPvnRnKQIVwP2xAM2w",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/6033724_d9a5.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/6033724_d9a5.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/6033724_d9a5.jpg",
+            "published_title": "fsoft-isms-s2-2024-vietnamese",
+            "tracking_id": "2Ee78kCVTvmiRkTUW2tDdw",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 4828296,
+            "title": "FPT_AI Cơ bản",
+            "url": "/course/fpt-ai-co-ban/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "HS6NK9QpRrKZqiKnPLuNzw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/4828296_d39c.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/4828296_d39c.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/4828296_d39c.jpg",
+            "published_title": "fpt-ai-co-ban",
+            "tracking_id": "Ss6RIdDZT8WPJvnpslSRJQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5720640,
+            "title": "FPT_ISMS Refresh Training 2024 (Vietnamese)",
+            "url": "/course/draft/5720640/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "obeB-vw3R3SAAthXp-whgA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5720640_be5f.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5720640_be5f.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5720640_be5f.jpg",
+            "published_title": "fsoft-isms-s2-2023-vietnamese",
+            "tracking_id": "sMic3iHpSd2Gyz03uHio8g",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5326926,
+            "title": "FPT_Induction - Objective Key Results",
+            "url": "/course/objective-key-results/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "QU46YXQZTpy0v6Px7lsvKA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5326926_9066.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5326926_9066.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5326926_9066.jpg",
+            "published_title": "objective-key-results",
+            "tracking_id": "GHuBtmLFQC2qvhCW-sxdOA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5373722,
+            "title": "FPT_Cloud Essentials for Developers",
+            "url": "/course/cloud-ess-dev/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "3JE7slrkQFWePquVMgM_zw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5373722_1519.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5373722_1519.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5373722_1519.jpg",
+            "published_title": "cloud-ess-dev",
+            "tracking_id": "Jddllhf8Sj-nA_ZVYK6jGw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5450184,
+            "title": "FPT_SPD - Software and Knowledge Utilization",
+            "url": "/course/spd4d-sku/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "WYs1v0XmRTyxJyOwqbV_-A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5450184_036a.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5450184_036a.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5450184_036a.jpg",
+            "published_title": "spd4d-sku",
+            "tracking_id": "MMN-kCecR4STBpkvZUYk8A",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5450200,
+            "title": "FPT_SPD - OSS Check",
+            "url": "/course/spd4d-oss-check/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "SjT5uwOOTvCHTUG5KT_g_A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5450200_da60.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5450200_da60.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5450200_da60.jpg",
+            "published_title": "spd4d-oss-check",
+            "tracking_id": "EGgIEu3EQDWUVK37-bB5YA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5450240,
+            "title": "FPT_SPD - Secure Coding",
+            "url": "/course/spd4d-secure-coding/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "g7fwpfyWQcKBidd70dHyGA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5450240_ed51.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5450240_ed51.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5450240_ed51.jpg",
+            "published_title": "spd4d-secure-coding",
+            "tracking_id": "dC00FJxSSTKlPjz5z2AtIA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5449890,
+            "title": "FPT_SPD - DevOps",
+            "url": "/course/spd4d-devops/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "jRvyx2EKT0SHueG0XIzlkQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5449890_412f.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5449890_412f.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5449890_412f.jpg",
+            "published_title": "spd4d-devops",
+            "tracking_id": "4XkO4dBYQQuGGMgF0EBgRg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5449854,
+            "title": "FPT_SPD - Fsoft Defect Management System",
+            "url": "/course/spd4d-fsoft-defect-management/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "Gl2eDPaQRben_hLmmjwMhA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5449854_8709.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5449854_8709.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5449854_8709.jpg",
+            "published_title": "spd4d-fsoft-defect-management",
+            "tracking_id": "hMrVuGmHREWKMk_bf0_5PQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5449880,
+            "title": "FPT_SPD - Timesheet Training",
+            "url": "/course/spd4d-timesheet-training/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "MeCi5cm6SUW2jSPDzszl4Q",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5449880_d9a9.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5449880_d9a9.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5449880_d9a9.jpg",
+            "published_title": "spd4d-timesheet-training",
+            "tracking_id": "mg5zj_I9QPafAAhZljje0Q",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5449802,
+            "title": "FPT_SPD - Unit Testing",
+            "url": "/course/spd4d-unit-testing/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "uQN8tmfnSbqazAdAG4VO9A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5449802_439d.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5449802_439d.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5449802_439d.jpg",
+            "published_title": "spd4d-unit-testing",
+            "tracking_id": "gO6aG8zXQBaDU0gwGea5GQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5448376,
+            "title": "FPT_SPD - Configuration Management",
+            "url": "/course/spd4d-configuration-management/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "q5iw5mMuR7KGSQvUzOu5pA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5448376_bc29.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5448376_bc29.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5448376_bc29.jpg",
+            "published_title": "spd4d-configuration-management",
+            "tracking_id": "lIkIAOalS1-z0thYk3xk0w",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5448356,
+            "title": "FPT_SPD - FSOFT Software Development Process",
+            "url": "/course/spd4d-software-process-development/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "xmVF4oFkRxqsPcxPJ5KnTQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5448356_44a4.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5448356_44a4.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5448356_44a4.jpg",
+            "published_title": "spd4d-software-process-development",
+            "tracking_id": "gYuGWSnRS_ucR9esznyKCw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5447784,
+            "title": "FPT_SPD - ISMS for Developer",
+            "url": "/course/spd4d-isms-for-dev/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "qtO9twvmSOCnevzy57ZFdw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5447784_d805.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5447784_d805.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5447784_d805.jpg",
+            "published_title": "spd4d-isms-for-dev",
+            "tracking_id": "LEk1bw1eT-GbpygDpcZJJQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5452208,
+            "title": "FPT_SPD - How to work in FSO project",
+            "url": "/course/spd-how-to-work-in-fso-project/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "3WxSWfHuRZmUKtNE-aCnRw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5452208_b551.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5452208_b551.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5452208_b551.jpg",
+            "published_title": "spd-how-to-work-in-fso-project",
+            "tracking_id": "c0Bl16-rQz6tlvx2SONtaA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        }
+    ]
+}

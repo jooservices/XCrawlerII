@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Modules\Udemy\Events\BeforeProcessCompleteCurriculumItemEvent;
+use Modules\Udemy\Events\Courses\SyncMyCourseCompletedEvent;
+use Modules\Udemy\Events\UserHaveNoCoursesSubscribedEvent;
 use Modules\Udemy\Jobs\SyncMyCoursesJob;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
@@ -15,6 +17,37 @@ use Modules\Udemy\Tests\TestCase;
 
 class UdemyServiceTest extends TestCase
 {
+    public function testSyncMyCourse()
+    {
+        Event::fake(
+            [
+                SyncMyCourseCompletedEvent::class,
+                UserHaveNoCoursesSubscribedEvent::class,
+            ]
+        );
+
+        $service = app(UdemyService::class);
+        $userToken = UserToken::factory()->create();
+
+        $service->syncMyCourse(
+            $userToken,
+            [
+                'page' => 1,
+                'page_size' => 40,
+            ]
+        );
+
+        Event::assertDispatchedTimes(SyncMyCourseCompletedEvent::class, 40);
+
+        $service->syncMyCourse(
+            $userToken,
+            [
+                'error' => 403,
+            ]
+        );
+        Event::assertDispatched(UserHaveNoCoursesSubscribedEvent::class);
+    }
+
     public function testSyncMyCourses()
     {
         Queue::fake([

@@ -2,27 +2,25 @@
 
 namespace Modules\Udemy\Jobs;
 
-use Carbon\Carbon;
+use Illuminate\Bus\Batch;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
-use Modules\Udemy\Events\UserHaveNoCoursesSubscribedEvent;
+use Illuminate\Support\Facades\Bus;
+use Modules\Udemy\Events\Courses\SyncMyCourseProcessingEvent;
+use Modules\Udemy\Events\Courses\SyncMyCoursesCompletedEvent;
 use Modules\Udemy\Models\UserToken;
-use Modules\Udemy\Repositories\UdemyCourseRepository;
-use Modules\Udemy\Repositories\UserTokenRepository;
-use Modules\Udemy\Services\Client\Entities\CourseEntity;
-use Modules\Udemy\Services\Client\UdemySdk;
 use Modules\Udemy\Services\UdemyService;
+use Throwable;
 
 class SyncMyCoursesJob implements ShouldQueue
 {
+    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
 
     /**
      * Create a new job instance.
@@ -39,30 +37,11 @@ class SyncMyCoursesJob implements ShouldQueue
      *
      * @throws \Exception
      */
-    public function handle(UdemySdk $sdk): void
+    public function handle(): void
     {
-        $coursesEntity = $sdk
-            ->me()
-            ->subscribedCourses($this->userToken->token, ['page' => $this->page]);
-
-        if (!$coursesEntity) {
-            UserHaveNoCoursesSubscribedEvent::dispatch($this->userToken);
-
-            return;
-        }
-
-        $repository = app(UdemyCourseRepository::class);
-        $userTokenRepository = app(UserTokenRepository::class);
-
-        $coursesEntity->getResults()->each(
-            function (CourseEntity $courseEntity) use ($repository, $userTokenRepository) {
-                $userTokenRepository->syncCourse(
-                    $this->userToken,
-                    $repository->createFromEntity($courseEntity),
-                    $courseEntity->completion_ratio,
-                    Carbon::parse($courseEntity->enrollment_time)
-                );
-            }
+        $coursesEntity = app(UdemyService::class)->syncMyCourse(
+            $this->userToken,
+            ['page' => $this->page]
         );
 
         if (
@@ -70,11 +49,23 @@ class SyncMyCoursesJob implements ShouldQueue
             && $coursesEntity->pages() > 1
             && $coursesEntity->pages() > $this->page
         ) {
+            $batch = [];
             for ($index = 2; $index <= $coursesEntity->pages(); $index++) {
-                SyncMyCoursesJob::dispatch($this->userToken, $index);
+                $batch[] = new SyncMyCoursesJob($this->userToken, $index);
             }
-        }
 
-        SyncMyCoursesCompletedEvent::dispatch($this->userToken, $coursesEntity);
+            $userToken = $this->userToken;
+            Bus::batch($batch)->before(function (Batch $batch) {
+                // The batch has been created but no jobs have been added...
+            })->progress(function (Batch $batch) {
+                SyncMyCourseProcessingEvent::dispatch();
+            })->then(function (Batch $batch) use ($userToken) {
+                SyncMyCoursesCompletedEvent::dispatch($userToken);
+            })->catch(function (Batch $batch, Throwable $e) {
+                // First batch job failure detected...
+            })->finally(function (Batch $batch) {
+                // The batch has finished executing...
+            })->name('Sync my courses')->onQueue(UdemyService::UDEMY_QUEUE_NAME)->dispatch();
+        }
     }
 }

@@ -2,32 +2,21 @@
 
 namespace Modules\Udemy\app\Listeners;
 
-use Illuminate\Bus\Batch;
-use Illuminate\Support\Facades\Bus;
 use Modules\Udemy\Events\CourseReadyForStudyEvent;
-use Modules\Udemy\Events\Courses\CourseCreatedEvent;
-use Modules\Udemy\Events\Courses\UserCourseSyncCompletedEvent;
+use Modules\Udemy\Events\Courses\SyncMyCourseCompletedEvent;
+use Modules\Udemy\Events\Courses\SyncMyCoursesCompletedEvent;
 use Modules\Udemy\Events\CurriculumItemCreatedEvent;
-use Modules\Udemy\Events\SyncCurriculumItemsSyncCompletedEvent;
-use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
+use Modules\Udemy\Events\CurriculumItems\SyncCurriculumItemsCompletedEvent;
 use Modules\Udemy\Events\UserCourseStudyCompleted;
-use Modules\Udemy\Jobs\StudyCurriculumItem;
 use Modules\Udemy\Jobs\SyncCurriculumItemsJob;
-use Modules\Udemy\Notifications\CourseReadyForStudyNotification;
 use Modules\Udemy\Notifications\CoursesSyncCompletedNotification;
+use Modules\Udemy\Notifications\StudyCourseCompletedEvent;
 use Modules\Udemy\Services\UdemyService;
 use Throwable;
 
 class UdemyCourseSubscriber
 {
-    public function handleCourseCreated(CourseCreatedEvent $event)
-    {
-        /**
-         * Send global notifications to let users know course is created
-         */
-    }
-
-    public function handleUserCourseSyncCompleted(UserCourseSyncCompletedEvent $event): void
+    public function handleUserCourseSyncCompleted(SyncMyCourseCompletedEvent $event): void
     {
         SyncCurriculumItemsJob::dispatch(
             $event->user,
@@ -37,10 +26,9 @@ class UdemyCourseSubscriber
 
     public function handleUdemyCoursesCompleted(SyncMyCoursesCompletedEvent $event): void
     {
-        $event->userToken->notify(new CoursesSyncCompletedNotification(
-            $event->userToken,
-            $event->coursesEntity
-        ));
+        if (config('udemy.notifications.enabled', false)) {
+            $event->userToken->notify(new CoursesSyncCompletedNotification($event->userToken));
+        }
     }
 
     public function handleCurriculumItemCreated(CurriculumItemCreatedEvent $event): void
@@ -50,7 +38,7 @@ class UdemyCourseSubscriber
          */
     }
 
-    public function handleSyncCurriculumItemsSyncCompleted(SyncCurriculumItemsSyncCompletedEvent $event): void
+    public function handleSyncCurriculumItemsSyncCompleted(SyncCurriculumItemsCompletedEvent $event): void
     {
         $course = $event->udemyCourse;
 
@@ -82,61 +70,29 @@ class UdemyCourseSubscriber
      */
     public function handleCourseReadyForStudy(CourseReadyForStudyEvent $event): void
     {
-        $event->userToken->notify(new CourseReadyForStudyNotification($event->udemyCourse));
+        app(UdemyService::class)->completeCurriculumItems($event->userToken, $event->udemyCourse);
+    }
 
-        $items = $event->udemyCourse->items;
-
-        if ($items->isEmpty()) {
-            return;
-        }
-
-        $itemsBatch = [];
-
-        $items->each(function ($item) use ($event, &$itemsBatch) {
-            /**
-             * @TODO Exclude non action lecture
-             * - chapter
-             */
-            $itemsBatch[] = new StudyCurriculumItem($event->userToken, $item);
-        });
-
-        /**
-         * Batch of items for study
-         * Each item will also break down to chains
-         */
-        Bus::batch($itemsBatch)->before(function (Batch $batch) {
-            /**
-             * @TODO Dispatch event and notification to let user know their course started
-             */
-        })->progress(function (Batch $batch) {
-            // A single job has completed successfully...
-        })->then(function (Batch $batch) use ($event) {
-            UserCourseStudyCompleted::dispatch(
-                $event->userToken,
-                $event->udemyCourse
-            );
-        })->catch(function (Batch $batch, Throwable $e) {
-            // First batch job failure detected...
-        })->finally(function (Batch $batch) {
-            /**
-             * @TODO Dispatch event and notification to let user know their course completed
-             */
-        })->name(
-            $event->userToken->id . '.' . $event->udemyCourse->id
-        )->onQueue(UdemyService::UDEMY_QUEUE_NAME)->dispatch();
+    public function handleUserCourseCompleted(UserCourseStudyCompleted $event): void
+    {
+        $event->userToken->notify(new StudyCourseCompletedEvent(
+            $event->userToken,
+            $event->udemyCourse
+        ));
     }
 
     public function subscribe(): array
     {
         return [
-            CourseCreatedEvent::class, 'handleCourseCreated',
-            UserCourseSyncCompletedEvent::class => 'handleUserCourseSyncCompleted',
+            SyncMyCourseCompletedEvent::class => 'handleUserCourseSyncCompleted',
 
             SyncMyCoursesCompletedEvent::class => 'handleUdemyCoursesCompleted',
             CurriculumItemCreatedEvent::class => 'handleCurriculumItemCreated',
-            SyncCurriculumItemsSyncCompletedEvent::class => 'handleSyncCurriculumItemsSyncCompleted',
+            SyncCurriculumItemsCompletedEvent::class => 'handleSyncCurriculumItemsSyncCompleted',
 
             CourseReadyForStudyEvent::class => 'handleCourseReadyForStudy',
+
+            UserCourseStudyCompleted::class => 'handleUserCourseCompleted',
         ];
     }
 }

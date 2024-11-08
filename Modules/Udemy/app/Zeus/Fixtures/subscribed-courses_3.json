@@ -1,0 +1,377 @@
+{
+    "count": 90,
+    "next": null,
+    "previous": "https://fpt-software.udemy.com/api-2.0/users/me/subscribed-courses/?fields%5C%5Bcourse%5C%5D=archive_time%2Cbuyable_object_type%2Ccompletion_ratio%2Cenrollment_time%2Cfavorite_time%2Cfeatures%2Cimage_240x135%2Cimage_480x270%2Cis_practice_test_course%2Cis_private%2Cis_published%2Clast_accessed_time%2Cnum_collections%2Cpublished_title%2Ctitle%2Ctracking_id%2Curl%2Cvisible_instructors%2Cis_course_available_in_org&fields%5C%5Buser%5C%5D=%40min%2Cjob_title&is_archived=false&ordering=-last_accessed&page=2&page_size=40",
+    "results": [
+        {
+            "_class": "course",
+            "id": 5447776,
+            "title": "FPT_SPD4D - Introduction",
+            "url": "/course/spd4d-introduction/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "ldkvhqQSTSqHTxJXRXBYjg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5447776_b7a9.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5447776_b7a9.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5447776_b7a9.jpg",
+            "published_title": "spd4d-introduction",
+            "tracking_id": "ywzZQiUPQpeaJj2bkk31Tw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 4993206,
+            "title": "FPT_Kỹ năng Ho-Ren-So",
+            "url": "/course/fsoft-horenso-2022/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "mbDb7sLPRk23H8cPRoqnUA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/4993206_7f8d.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/4993206_7f8d.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/4993206_7f8d.jpg",
+            "published_title": "fsoft-horenso-2022",
+            "tracking_id": "bQaIuA2_QtqMZA9ugzxGLg",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5280510,
+            "title": "FPT_Induction - Code of Business Conduct",
+            "url": "/course/cobc-dayone-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "CN5rRgPpSSSy8MYb5qOrNQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5280510_ac73_2.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5280510_ac73_2.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5280510_ac73_2.jpg",
+            "published_title": "cobc-dayone-vi",
+            "tracking_id": "HZllH44eSHiuVdIZeymE-Q",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5329010,
+            "title": "FPT_Induction - Internal Labor Regulations",
+            "url": "/course/labor-law-dayone-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "a1z4CetAQvi4TPXrUCk15A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5329010_bce3.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5329010_bce3.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5329010_bce3.jpg",
+            "published_title": "labor-law-dayone-vi",
+            "tracking_id": "DAeKCx4MS7q3pbKHFe05FA",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5327302,
+            "title": "FPT_Induction - Human Resources at FSOFT",
+            "url": "/course/hr-dayone-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "CLbCaUO0QVGAs-i83541rA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5327302_047e.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5327302_047e.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5327302_047e.jpg",
+            "published_title": "hr-dayone-vi",
+            "tracking_id": "UQkF8vkVSIy7XYxvhX42dA",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5327242,
+            "title": "FPT_Induction - IT Guidelines",
+            "url": "/course/it-guideline-dayone-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "XmWJfwdsSDmkErxeU6ed0A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5327242_5af4_2.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5327242_5af4_2.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5327242_5af4_2.jpg",
+            "published_title": "it-guideline-dayone-vi",
+            "tracking_id": "zTU31KZwQU60ZGty8TjfHQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5327130,
+            "title": "FPT_Induction - QMS Introduction",
+            "url": "/course/qms-dayone-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "upqb1rtXSkOqTMMcyzIBEQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5327130_0239.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5327130_0239.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5327130_0239.jpg",
+            "published_title": "qms-dayone-vi",
+            "tracking_id": "N4bWwuWpRnyKbZzOk-m6WQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5329032,
+            "title": "FPT_Induction - ISMS",
+            "url": "/course/isms-dayone-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "5x6E-XPKQ8qVxuXJDmznsQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5329032_f696_2.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5329032_f696_2.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5329032_f696_2.jpg",
+            "published_title": "isms-dayone-vi",
+            "tracking_id": "L7Gd5qXAR9-kjxhB8lqZAQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5327106,
+            "title": "FPT_Induction - BCMS Policy Training",
+            "url": "/course/bcms-dayone-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "Io1nyNC4SyedliSzqV1dvg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5327106_3e3a.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5327106_3e3a.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5327106_3e3a.jpg",
+            "published_title": "bcms-dayone-vi",
+            "tracking_id": "vUGFbgoyR1usY8RHlj-4Ow",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5328970,
+            "title": "FPT_Induction - Chính sách khoán thu nhập dự án",
+            "url": "/course/draft/5328970/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "WCATBm6kRAStKFzU-UVzog",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5328970_8b64.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5328970_8b64.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5328970_8b64.jpg",
+            "published_title": "income-policy-delivery-dayone-vi",
+            "tracking_id": "7JjTFPCUTMyhvaOu8xv3JQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        }
+    ]
+}

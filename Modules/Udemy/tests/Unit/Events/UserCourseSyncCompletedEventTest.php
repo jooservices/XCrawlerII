@@ -3,7 +3,7 @@
 namespace Modules\Udemy\Tests\Unit\Events;
 
 use Illuminate\Support\Facades\Queue;
-use Modules\Udemy\Events\Courses\UserCourseSyncCompletedEvent;
+use Modules\Udemy\Events\Courses\SyncMyCourseCompletedEvent;
 use Modules\Udemy\Jobs\SyncCurriculumItemsJob;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Tests\TestCase;
@@ -20,7 +20,7 @@ class UserCourseSyncCompletedEventTest extends TestCase
 
         $course = $userToken->courses->first();
 
-        UserCourseSyncCompletedEvent::dispatch($userToken, $course);
+        SyncMyCourseCompletedEvent::dispatch($userToken, $course);
 
         Queue::assertPushed(SyncCurriculumItemsJob::class);
     }

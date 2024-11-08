@@ -1,1 +1,1838 @@
-{"count":90,"next":"https://fpt-software.udemy.com/api-2.0/users/me/subscribed-courses/?fields%5Bcourse%5D=archive_time%2Cbuyable_object_type%2Ccompletion_ratio%2Cenrollment_time%2Cfavorite_time%2Cfeatures%2Cimage_240x135%2Cimage_480x270%2Cis_practice_test_course%2Cis_private%2Cis_published%2Clast_accessed_time%2Cnum_collections%2Cpublished_title%2Ctitle%2Ctracking_id%2Curl%2Cvisible_instructors%2Cis_course_available_in_org&fields%5Buser%5D=%40min%2Cjob_title&is_archived=false&ordering=-last_accessed&page=2&page_size=50","previous":null,"results":[{"_class":"course","id":692188,"title":"Python Mega Course: Learn Python in 60 Days, Build 20 Apps","url":"/course/the-python-mega-course/learn/","visible_instructors":[{"_class":"user","id":717783,"title":"Ardit Sulce","name":"Ardit","display_name":"Ardit Sulce","job_title":"Python Programmer | Author at PythonHow | 10 Years on Udemy"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/692188_9da7_34.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/692188_9da7_34.jpg","published_title":"the-python-mega-course","tracking_id":"vnS-GWsmS-6GkEk-aX4X4w","favorite_time":null,"archive_time":null,"completion_ratio":3,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-05T08:54:13Z","enrollment_time":"2024-10-10T01:53:35Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":6212509,"title":"FPT_ISMS Refresh Training S2 2024 (Vietnamese)","url":"/course/fpt-isms4r-s2-2024-vn-for-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/6212509_4e9e.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/6212509_4e9e.jpg","published_title":"fpt-isms4r-s2-2024-vn-for-vi","tracking_id":"kDm3sanpQIGLGJu4am_QLA","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-05T07:51:55Z","enrollment_time":"2024-10-09T02:09:32Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1201172,"title":"Best Way to Learn German Language: Full Beginner (A1.1)","url":"/course/best-way-to-learn-german-full-beginner-starter-kit/learn/","visible_instructors":[{"_class":"user","id":16912784,"title":"Sandra 11Percent","name":"Sandra","display_name":"Sandra 11Percent","job_title":"Making German fun since 2011"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1201172_836c_4.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1201172_836c_4.jpg","published_title":"best-way-to-learn-german-full-beginner-starter-kit","tracking_id":"ACO25VecSA6LVzOjs11RVw","favorite_time":null,"archive_time":null,"completion_ratio":19,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-05T07:40:03Z","enrollment_time":"2024-08-20T09:40:18Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":283222,"title":"Surviving Digital Forensics: Resolving Attached USBs","url":"/course/surviving-digital-forensics-resolving-attached-usbs/learn/","visible_instructors":[{"_class":"user","id":3804670,"title":"Michael Leclair","name":"Michael","display_name":"Michael Leclair","job_title":"DFIR Professional"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/283222_5ed8.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/283222_5ed8.jpg","published_title":"surviving-digital-forensics-resolving-attached-usbs","tracking_id":"MeGQj_MfRpSryO8N_lEbeg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-04T07:49:16Z","enrollment_time":"2024-11-04T07:03:07Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":2015076,"title":"CompTIA Security+ (SY0-701) Complete Course & Exam","url":"/course/securityplus/learn/","visible_instructors":[{"_class":"user","id":27592028,"title":"Jason Dion • 1.8 Million+ Enrollments Worldwide","name":"Jason Dion","display_name":"Jason Dion • 1.8 Million+ Enrollments Worldwide","job_title":"CISSP, CEH, Pentest+, CySA+, Sec+, Net+, A+, PRINCE2, ITIL"},{"_class":"user","id":53797544,"title":"Dion Training Solutions • ATO for ITIL & PRINCE2","name":"Dion Training Solutions","display_name":"Dion Training Solutions • ATO for ITIL & PRINCE2","job_title":"Courses in IT Ops, Cyber Security, and Project Management"},{"_class":"user","id":155034650,"title":"Dion Training Solutions • ATO for ITIL & PRINCE2","name":"Dion Training Solutions","display_name":"Dion Training Solutions • ATO for ITIL & PRINCE2","job_title":"Courses in IT Ops, Cyber Security, and Project Management"},{"_class":"user","id":238396730,"title":"Jamario Kelly","name":"Jamario","display_name":"Jamario Kelly","job_title":"Instructor at Dion Training"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/2015076_2944_7.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/2015076_2944_7.jpg","published_title":"securityplus","tracking_id":"WWm4Kt8XQWut3f3cDrzfBg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-04T06:58:24Z","enrollment_time":"2024-10-08T06:13:02Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":3659946,"title":"Best Way to Learn German Language: Advancing Beginner (A2.1)","url":"/course/best-way-to-learn-german-language-beginner-intermediate-a2-1/learn/","visible_instructors":[{"_class":"user","id":16912784,"title":"Sandra 11Percent","name":"Sandra","display_name":"Sandra 11Percent","job_title":"Making German fun since 2011"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/3659946_cf61_4.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/3659946_cf61_4.jpg","published_title":"best-way-to-learn-german-language-beginner-intermediate-a2-1","tracking_id":"w8h88ybHRheQQ239INnJYg","favorite_time":null,"archive_time":null,"completion_ratio":81,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-04T06:54:58Z","enrollment_time":"2024-07-22T13:33:28Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1030682,"title":"Learn German Language: Complete German Course - Beginners","url":"/course/german-course-for-beginners-learn-german/learn/","visible_instructors":[{"_class":"user","id":23835596,"title":"AbcEdu Online","name":"AbcEdu","display_name":"AbcEdu Online","job_title":"Interactive Board - 30+ years teaching, 200.000+ Students"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1030682_5949_7.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1030682_5949_7.jpg","published_title":"german-course-for-beginners-learn-german","tracking_id":"4lrpKvKCTMSnP4QPEztSDA","favorite_time":null,"archive_time":null,"completion_ratio":99,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-04T06:54:53Z","enrollment_time":"2024-07-22T13:16:54Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5928302,"title":"AKYLADE Certified Cyber Resilience Fundamentals (A/CCRF)","url":"/course/akylade-certified-cyber-resilience-fundamentals-accrf/learn/","visible_instructors":[{"_class":"user","id":27592028,"title":"Jason Dion • 1.8 Million+ Enrollments Worldwide","name":"Jason Dion","display_name":"Jason Dion • 1.8 Million+ Enrollments Worldwide","job_title":"CISSP, CEH, Pentest+, CySA+, Sec+, Net+, A+, PRINCE2, ITIL"},{"_class":"user","id":155034650,"title":"Dion Training Solutions • ATO for ITIL & PRINCE2","name":"Dion Training Solutions","display_name":"Dion Training Solutions • ATO for ITIL & PRINCE2","job_title":"Courses in IT Ops, Cyber Security, and Project Management"},{"_class":"user","id":53797544,"title":"Dion Training Solutions • ATO for ITIL & PRINCE2","name":"Dion Training Solutions","display_name":"Dion Training Solutions • ATO for ITIL & PRINCE2","job_title":"Courses in IT Ops, Cyber Security, and Project Management"},{"_class":"user","id":238394698,"title":"Reed Bidgood","name":"Reed","display_name":"Reed Bidgood","job_title":"Instructor for Dion Training"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5928302_41b6.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5928302_41b6.jpg","published_title":"akylade-certified-cyber-resilience-fundamentals-accrf","tracking_id":"tso7VoCvQumRwB6iLgpvxQ","favorite_time":null,"archive_time":null,"completion_ratio":99,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T21:27:33Z","enrollment_time":"2024-07-20T03:28:25Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":238934,"title":"Pianoforall - Incredible New Way To Learn Piano & Keyboard","url":"/course/pianoforall-incredible-new-way-to-learn-piano-keyboard/learn/","visible_instructors":[{"_class":"user","id":5753906,"title":"Robin Hall","name":"Robin","display_name":"Robin Hall","job_title":"Piano Teacher (450,000 students online), Artist, Therapist,"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/238934_4d81_7.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/238934_4d81_7.jpg","published_title":"pianoforall-incredible-new-way-to-learn-piano-keyboard","tracking_id":"_8sXbW8vSDuTdZHNQmFfrw","favorite_time":null,"archive_time":null,"completion_ratio":43,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T17:46:40Z","enrollment_time":"2024-07-22T13:13:09Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5863758,"title":"Custom GPTs for Non-Technical Business Leaders","url":"/course/custom-gpts-for-business-leaders/learn/","visible_instructors":[{"_class":"user","id":2234938,"title":"Hassan Osman","name":"Hassan","display_name":"Hassan Osman","job_title":"Tech Leader & Bestselling Author focused on Future of Work"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5863758_0cd8.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5863758_0cd8.jpg","published_title":"custom-gpts-for-business-leaders","tracking_id":"HBPek0p6To6D1t9ljY_T1g","favorite_time":null,"archive_time":null,"completion_ratio":30,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T17:14:41Z","enrollment_time":"2024-07-22T03:13:04Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5953850,"title":"Responsible AI: Principles, Practices, and Applications","url":"/course/responsible-ai-principles-practices-and-applications/learn/","visible_instructors":[{"_class":"user","id":248357270,"title":"Stuart Wesselby","name":"Stuart","display_name":"Stuart Wesselby","job_title":"Instructor and Educator in Education, Digital, Growth"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5953850_b464.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5953850_b464.jpg","published_title":"responsible-ai-principles-practices-and-applications","tracking_id":"FZr3_MHITnKQc3PVAvvBOw","favorite_time":null,"archive_time":null,"completion_ratio":23,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T16:27:31Z","enrollment_time":"2024-07-22T03:13:50Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":3318530,"title":"SAP Important Topics for all Functional Consultants","url":"/course/sap-generic-course-for-all-functional-consultants/learn/","visible_instructors":[{"_class":"user","id":68817574,"title":"Ganesh Padala","name":"Ganesh","display_name":"Ganesh Padala","job_title":"SAP SCM Consultant"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/3318530_36b6.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/3318530_36b6.jpg","published_title":"sap-generic-course-for-all-functional-consultants","tracking_id":"nAXRLO2NTj6ysROzTbYC0A","favorite_time":null,"archive_time":null,"completion_ratio":17,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T16:16:29Z","enrollment_time":"2024-10-09T09:06:27Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1906852,"title":"MongoDB - The Complete Developer's Guide 2024","url":"/course/mongodb-the-complete-developers-guide/learn/","visible_instructors":[{"_class":"user","id":31926668,"title":"Academind by Maximilian Schwarzmüller","name":"Academind by Maximilian","display_name":"Academind by Maximilian Schwarzmüller","job_title":"Online Education"},{"_class":"user","id":13952972,"title":"Maximilian Schwarzmüller","name":"Maximilian","display_name":"Maximilian Schwarzmüller","job_title":"AWS certified, Professional Web Developer and Instructor"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1906852_93c6_2.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1906852_93c6_2.jpg","published_title":"mongodb-the-complete-developers-guide","tracking_id":"OKsvW4GmQTqYT6JbrMErJg","favorite_time":null,"archive_time":null,"completion_ratio":38,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T15:57:18Z","enrollment_time":"2023-10-26T03:08:39Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":6100015,"title":"LLM Engineering: Master AI & Large Language Models (LLMs)","url":"/course/llm-engineering-master-ai-and-large-language-models/learn/","visible_instructors":[{"_class":"user","id":150405524,"title":"Ligency Team","name":"Ligency","display_name":"Ligency Team","job_title":"Helping Data Scientists Succeed"},{"_class":"user","id":276658919,"title":"Ed Donner","name":"Ed","display_name":"Ed Donner","job_title":"AI startup co-founder and leader; Gen AI and LLM instructor"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/6100015_1979_4.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/6100015_1979_4.jpg","published_title":"llm-engineering-master-ai-and-large-language-models","tracking_id":"ZmVTBLaTR3ijd_mpKEi28w","favorite_time":null,"archive_time":null,"completion_ratio":13,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T14:33:14Z","enrollment_time":"2024-10-14T04:25:51Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":2779762,"title":"DevOps, CI/CD(Continuous Integration/Delivery) for Beginners","url":"/course/ci-cd-devops/learn/","visible_instructors":[{"_class":"user","id":78777828,"title":"John Honai","name":"John","display_name":"John Honai","job_title":"A Computer Science Engineer and a passionate teacher!"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/2779762_87e5_4.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/2779762_87e5_4.jpg","published_title":"ci-cd-devops","tracking_id":"g1ZSFb1HRVKIO5GjBNAE7A","favorite_time":null,"archive_time":null,"completion_ratio":31,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T13:04:02Z","enrollment_time":"2023-11-01T16:02:27Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1838018,"title":"PHP Unit Testing with PHPUnit","url":"/course/php-unit-testing/learn/","visible_instructors":[{"_class":"user","id":87452,"title":"Dave Hollingworth","name":"Dave","display_name":"Dave Hollingworth","job_title":"IT Trainer"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1838018_0e2b.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1838018_0e2b.jpg","published_title":"php-unit-testing","tracking_id":"eSBSALHgT0Gx8ssEH6N4cQ","favorite_time":null,"archive_time":null,"completion_ratio":37,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T12:58:49Z","enrollment_time":"2023-11-24T03:02:46Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":51727,"title":"How to Stop Stuttering & Speak Smoothly Using Pro90d","url":"/course/how-to-stop-stuttering-speak-smoothly-using-pro90d/learn/","visible_instructors":[{"_class":"user","id":334286,"title":"Michael Williams","name":"Michael","display_name":"Michael Williams","job_title":"\"Speech Coach for Professionals”"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/51727_33af_5.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/51727_33af_5.jpg","published_title":"how-to-stop-stuttering-speak-smoothly-using-pro90d","tracking_id":"uCU2QW96TpqBEqZ-EaSG7w","favorite_time":null,"archive_time":null,"completion_ratio":11,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T12:33:40Z","enrollment_time":"2024-02-07T04:55:16Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":614772,"title":"The Complete Cyber Security Course : Hackers Exposed!","url":"/course/the-complete-internet-security-privacy-course-volume-1/learn/","visible_instructors":[{"_class":"user","id":15858120,"title":"Nathan House","name":"Nathan","display_name":"Nathan House","job_title":"Leading Cyber Security Expert - CEO of StationX"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/614772_233b_9.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/614772_233b_9.jpg","published_title":"the-complete-internet-security-privacy-course-volume-1","tracking_id":"Xg3huJ6NSo6Ko4h6ZHglKA","favorite_time":null,"archive_time":null,"completion_ratio":94,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T11:06:19Z","enrollment_time":"2024-10-08T08:51:52Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":281138,"title":"Learn Network Hacking From Scratch (WiFi & Wired)","url":"/course/wifi-hacking-penetration-testing-from-scratch/learn/","visible_instructors":[{"_class":"user","id":6956218,"title":"Zaid Sabih","name":"Zaid","display_name":"Zaid Sabih","job_title":"Ethical Hacker, Computer Scientist & CEO of zSecurity"},{"_class":"user","id":41384972,"title":"z Security","name":"z","display_name":"z Security","job_title":"Leading provider of ethical hacking and cyber security training,"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/281138_ccf8_11.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/281138_ccf8_11.jpg","published_title":"wifi-hacking-penetration-testing-from-scratch","tracking_id":"U7AywJLDR3uKal4QMjMAgQ","favorite_time":null,"archive_time":null,"completion_ratio":6,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T11:03:23Z","enrollment_time":"2024-07-19T05:20:09Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1299854,"title":"Understanding Confluence for users, managers and admins","url":"/course/understanding-confluence-for-users-managers-and-admins/learn/","visible_instructors":[{"_class":"user","id":1293438,"title":"Dan LeFebvre","name":"Dan","display_name":"Dan LeFebvre","job_title":"Best-selling instructor and podcaster"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1299854_936f_3.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1299854_936f_3.jpg","published_title":"understanding-confluence-for-users-managers-and-admins","tracking_id":"0UbKzMFcSHmRwsl9XTeahQ","favorite_time":null,"archive_time":null,"completion_ratio":14,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T10:22:21Z","enrollment_time":"2024-07-20T05:08:09Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1708340,"title":"Flutter & Dart - The Complete Guide [2024 Edition]","url":"/course/learn-flutter-dart-to-build-ios-android-apps/learn/","visible_instructors":[{"_class":"user","id":31926668,"title":"Academind by Maximilian Schwarzmüller","name":"Academind by Maximilian","display_name":"Academind by Maximilian Schwarzmüller","job_title":"Online Education"},{"_class":"user","id":13952972,"title":"Maximilian Schwarzmüller","name":"Maximilian","display_name":"Maximilian Schwarzmüller","job_title":"AWS certified, Professional Web Developer and Instructor"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1708340_7108_5.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1708340_7108_5.jpg","published_title":"learn-flutter-dart-to-build-ios-android-apps","tracking_id":"v1GQV4RURHOD4cEVEZN7DA","favorite_time":null,"archive_time":null,"completion_ratio":11,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T10:01:12Z","enrollment_time":"2024-02-07T04:57:52Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":2184074,"title":"Cisco Collaboration Lab Course For CUCM CLCOR SIP CLTECH IMP","url":"/course/cisco-ccna-collaboration-210-060-cicd-voice-lab-course/learn/","visible_instructors":[{"_class":"user","id":45428814,"title":"Veyhurdam Dikmen","name":"Veyhurdam","display_name":"Veyhurdam Dikmen","job_title":"CCIEx2 RS & Wireless"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/2184074_64bd.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/2184074_64bd.jpg","published_title":"cisco-ccna-collaboration-210-060-cicd-voice-lab-course","tracking_id":"QoxJMm7wTquK026liFt9ug","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T09:44:04Z","enrollment_time":"2024-07-20T02:30:02Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":6028152,"title":"The Complete Agile & Scrum Project Management Course","url":"/course/the-complete-agile-scrum-project-management-course/learn/","visible_instructors":[{"_class":"user","id":8280056,"title":"365 Careers","name":"365","display_name":"365 Careers","job_title":"Creating opportunities for Data Science and Finance students"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/6028152_84b7.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/6028152_84b7.jpg","published_title":"the-complete-agile-scrum-project-management-course","tracking_id":"Dx5yAJBgQpWKjMPjdPSSpQ","favorite_time":null,"archive_time":null,"completion_ratio":54,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T09:27:52Z","enrollment_time":"2024-07-20T06:49:11Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":834690,"title":"Microsoft Access Complete Beginner to Advanced","url":"/course/microsoft-access-complete-beginner-to-advanced/learn/","visible_instructors":[{"_class":"user","id":16649710,"title":"Kyle Pew","name":"Kyle","display_name":"Kyle Pew","job_title":"Microsoft Certified Trainer - 1 Million+ Students"},{"_class":"user","id":98211038,"title":"Office Newb","name":"Office","display_name":"Office Newb","job_title":"Software Trainer"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/834690_d0f4_3.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/834690_d0f4_3.jpg","published_title":"microsoft-access-complete-beginner-to-advanced","tracking_id":"Th4VYHmrTgmxbPkukOBk3Q","favorite_time":null,"archive_time":null,"completion_ratio":99,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T09:26:10Z","enrollment_time":"2024-07-19T09:58:23Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5088684,"title":"The HTML & CSS Bootcamp 2024 Edition","url":"/course/html-and-css-bootcamp/learn/","visible_instructors":[{"_class":"user","id":4466306,"title":"Colt Steele","name":"Colt","display_name":"Colt Steele","job_title":"Developer and Bootcamp Instructor"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5088684_a587_7.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5088684_a587_7.jpg","published_title":"html-and-css-bootcamp","tracking_id":"ePN-ix7LQOGPg37aWri_sQ","favorite_time":null,"archive_time":null,"completion_ratio":2,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T09:22:56Z","enrollment_time":"2024-07-20T15:06:42Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":3223049,"title":"Understanding HTML and CSS  (2024 Edition)","url":"/course/understanding-html-and-css/learn/","visible_instructors":[{"_class":"user","id":2467626,"title":"Anthony Alicea","name":"Anthony","display_name":"Anthony Alicea","job_title":"Software Developer, Architect, and UX Designer"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/3223049_5074_2.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/3223049_5074_2.jpg","published_title":"understanding-html-and-css","tracking_id":"1xZwBancR-Wf9vm6klBCLg","favorite_time":null,"archive_time":null,"completion_ratio":17,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T09:08:58Z","enrollment_time":"2024-07-20T14:48:27Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":129118,"title":"Product Management 101","url":"/course/productmanagement101/learn/","visible_instructors":[{"_class":"user","id":2739412,"title":"Todd Birzer","name":"Todd","display_name":"Todd Birzer","job_title":"Product management leader"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/129118_fab9_11.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/129118_fab9_11.jpg","published_title":"productmanagement101","tracking_id":"dQJfFXHTSiKhQ2VoKTnNxA","favorite_time":null,"archive_time":null,"completion_ratio":98,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T09:02:41Z","enrollment_time":"2024-07-20T15:44:04Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":5966054,"title":"ChatGPT for Project Managers","url":"/course/chatgpt-for-project-managers/learn/","visible_instructors":[{"_class":"user","id":109311864,"title":"Tim Fairley","name":"Tim","display_name":"Tim Fairley","job_title":"Engineer"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/5966054_ed43.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/5966054_ed43.jpg","published_title":"chatgpt-for-project-managers","tracking_id":"cWadcPo7QSqhhZMKbG1nqg","favorite_time":null,"archive_time":null,"completion_ratio":27,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T09:01:48Z","enrollment_time":"2024-07-20T15:42:31Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":64572,"title":"Business Ethics: How to Create an Ethical Organization","url":"/course/business-ethics-how-to-create-an-ethical-organization/learn/","visible_instructors":[{"_class":"user","id":950976,"title":"Denis Collins","name":"Denis","display_name":"Denis Collins","job_title":"Professor"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/64572_ed86_8.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/64572_ed86_8.jpg","published_title":"business-ethics-how-to-create-an-ethical-organization","tracking_id":"D3_8iPghSb2CZgdhHHTuNg","favorite_time":null,"archive_time":null,"completion_ratio":63,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T06:59:45Z","enrollment_time":"2024-07-22T03:18:40Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":2342126,"title":"SSL/TLS Fundamentals","url":"/course/ssl-tls-intro/learn/","visible_instructors":[{"_class":"user","id":69834894,"title":"Danny L.","name":"Danny","display_name":"Danny L.","job_title":"IT, cyber security, and risk analysis"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/2342126_e253.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/2342126_e253.jpg","published_title":"ssl-tls-intro","tracking_id":"Pz-KokfDQXylbJ-hLk7VIQ","favorite_time":null,"archive_time":null,"completion_ratio":19,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T05:45:29Z","enrollment_time":"2023-11-01T06:16:32Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":4535188,"title":"AWS Lambda - A Practical Guide - Learn from an Expert","url":"/course/aws-lambda-a-practical-guide/learn/","visible_instructors":[{"_class":"user","id":185982726,"title":"Daniel Galati","name":"Daniel","display_name":"Daniel Galati","job_title":"Senior Software Development Engineer"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/4535188_a246.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/4535188_a246.jpg","published_title":"aws-lambda-a-practical-guide","tracking_id":"fPDWuZ4fS22AGvpNMAJe3A","favorite_time":null,"archive_time":null,"completion_ratio":2,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T05:42:35Z","enrollment_time":"2023-11-14T02:58:18Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":621408,"title":"New Manager's Five-week Success System: 25 Days > Management","url":"/course/new-managers-five-week-success-system/learn/","visible_instructors":[{"_class":"user","id":960449,"title":"Mike Clayton","name":"Mike","display_name":"Mike Clayton","job_title":"Real World Trainer in Personal Effectiveness"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/621408_ca09_3.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/621408_ca09_3.jpg","published_title":"new-managers-five-week-success-system","tracking_id":"pcbzZurUQoS5M6-Krz8L5w","favorite_time":null,"archive_time":null,"completion_ratio":4,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T05:05:02Z","enrollment_time":"2024-07-19T05:19:42Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":8139,"title":"14-Day Yoga Detox and Empowerment Course","url":"/course/yoga-for-weight-loss-and-core-strength-with-sadie-nardini/learn/","visible_instructors":[{"_class":"user","id":36460,"title":"Sadie Nardini","name":"Sadie","display_name":"Sadie Nardini","job_title":"Anatomy-Based Yoga & Yoga Shred® (Yoga + HIIT) Instructor!"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/8139_bbe5_11.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/8139_bbe5_11.jpg","published_title":"yoga-for-weight-loss-and-core-strength-with-sadie-nardini","tracking_id":"fnEijv6jQ_uQMmV0KEJWVA","favorite_time":null,"archive_time":null,"completion_ratio":45,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T02:49:36Z","enrollment_time":"2024-10-15T01:57:37Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1386294,"title":"Python for beginners","url":"/course/python-core-and-advanced/learn/","visible_instructors":[{"_class":"user","id":8735380,"title":"Bharath Thippireddy","name":"Bharath","display_name":"Bharath Thippireddy","job_title":"IT Architect and Best Selling Instructor- 800000+ students"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1386294_cf10_3.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1386294_cf10_3.jpg","published_title":"python-core-and-advanced","tracking_id":"Cdy2hF2ZQLaFk5YawMDd9g","favorite_time":null,"archive_time":null,"completion_ratio":3,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T02:31:41Z","enrollment_time":"2023-10-09T08:00:02Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":543600,"title":"Automate the Boring Stuff with Python Programming","url":"/course/automate/learn/","visible_instructors":[{"_class":"user","id":13922584,"title":"Al Sweigart","name":"Al","display_name":"Al Sweigart","job_title":"Software developer, tech book author"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/543600_64d1_4.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/543600_64d1_4.jpg","published_title":"automate","tracking_id":"sVLipuoKRIuMVl2QEiRPIQ","favorite_time":null,"archive_time":null,"completion_ratio":57,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T02:22:53Z","enrollment_time":"2024-10-09T06:12:55Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":834702,"title":"Building Your English Brain","url":"/course/building-your-english-brain/learn/","visible_instructors":[{"_class":"user","id":22274190,"title":"Luke Priddy","name":"Luke","display_name":"Luke Priddy","job_title":"Innovative English Courses"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/834702_d56e_8.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/834702_d56e_8.jpg","published_title":"building-your-english-brain","tracking_id":"Y7-1W9VmSHSwIaTu25N1wA","favorite_time":null,"archive_time":null,"completion_ratio":13,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T02:22:39Z","enrollment_time":"2024-11-02T09:46:40Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1759114,"title":"PMP Certification Exam Prep Course 35 PDU Contact Hours/PDU","url":"/course/pmp-certification-exam-prep-course-pmbok-6th-edition/learn/","visible_instructors":[{"_class":"user","id":4897424,"title":"TIA Education, Andrew Ramdayal","name":"TIA Education,","display_name":"TIA Education, Andrew Ramdayal","job_title":"Project Management and Security Trainer"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1759114_873a_13.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1759114_873a_13.jpg","published_title":"pmp-certification-exam-prep-course-pmbok-6th-edition","tracking_id":"JA9lePg0S1C4XyGzYm2F8A","favorite_time":null,"archive_time":null,"completion_ratio":1,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-03T02:05:08Z","enrollment_time":"2024-07-22T03:12:16Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":750914,"title":"LEED Green Associate V4 | Exam Preparation Course | English","url":"/course/leed-green-associate-exam-preparation/learn/","visible_instructors":[{"_class":"user","id":15744960,"title":"Karim Elnabawy Balbaa, USGBC Faculty","name":"Karim Elnabawy","display_name":"Karim Elnabawy Balbaa, USGBC Faculty","job_title":"Seasoned Sustainability and Climate Change Professional"},{"_class":"user","id":53690866,"title":"GBERA | Green Building Education and Research Academy","name":"GBERA","display_name":"GBERA | Green Building Education and Research Academy","job_title":"Green Building Education Initiative"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/750914_4a99_7.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/750914_4a99_7.jpg","published_title":"leed-green-associate-exam-preparation","tracking_id":"tSLhWjw4RhyCJTlf2T6GSg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-02T10:27:15Z","enrollment_time":"2024-10-14T04:24:20Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":59583,"title":"I.T. Project Management for Beginners: A Step-by-Step Guide","url":"/course/it-project-management-for-beginners-a-step-by-step-guide/learn/","visible_instructors":[{"_class":"user","id":841826,"title":"Lee Jones BSc. MSc. PMP","name":"Lee","display_name":"Lee Jones BSc. MSc. PMP","job_title":"Portfolio, Programme and Project Management"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/59583_8202_16.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/59583_8202_16.jpg","published_title":"it-project-management-for-beginners-a-step-by-step-guide","tracking_id":"Z4MQwv1RS_G3XEMyPNBxGA","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-11-02T09:34:02Z","enrollment_time":"2024-10-15T01:33:31Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":864146,"title":"Agile Crash Course: Agile Project Management; Agile Delivery","url":"/course/agile-crash-course/learn/","visible_instructors":[{"_class":"user","id":9413444,"title":"YESI EDUCATION","name":"YESI","display_name":"YESI EDUCATION","job_title":"Online courses & resources for professionals and businesses"},{"_class":"user","id":200064230,"title":"Mauricio Rubio - Agile Guru & Founder of YESI EDUCATION, AgileKB & Grabdl","name":"Mauricio","display_name":"Mauricio Rubio - Agile Guru & Founder of YESI EDUCATION, AgileKB & Grabdl","job_title":"Serial entrepreneur, techie, life hacker, expert PM & MBA"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/864146_dbd7_11.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/864146_dbd7_11.jpg","published_title":"agile-crash-course","tracking_id":"tXiZRIi3Sk6kzlfvBlaG7Q","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-10-14T22:47:12Z","enrollment_time":"2024-07-19T10:05:09Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":1361790,"title":"PMP Exam Prep Seminar - Complete Exam Coverage with 35 PDUs","url":"/course/pmp-pmbok6-35-pdus/learn/","visible_instructors":[{"_class":"user","id":8912846,"title":"Joseph Phillips","name":"Joseph","display_name":"Joseph Phillips","job_title":"PMP, PMI-ACP, Project+, ITIL, PSM I, CTT+"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/1361790_2eb7_2.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/1361790_2eb7_2.jpg","published_title":"pmp-pmbok6-35-pdus","tracking_id":"FUMNo3AqSq6UnfJlFyu8-w","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-10-14T22:47:09Z","enrollment_time":"2024-07-20T07:00:01Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":10971,"title":"How to Budget and Forecast for Your Business","url":"/course/how-to-budget-and-forecast-for-your-business/learn/","visible_instructors":[{"_class":"user","id":50016,"title":"Bplans School of Business","name":"Bplans School of Business","display_name":"Bplans School of Business","job_title":"Helping You Succeed in Business"},{"_class":"user","id":56504,"title":"Tim Berry","name":"Tim","display_name":"Tim Berry","job_title":"Business Planning Expert"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/10971_da21_5.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/10971_da21_5.jpg","published_title":"how-to-budget-and-forecast-for-your-business","tracking_id":"nZQdmJp2T7i-isRx6Negbw","favorite_time":null,"archive_time":null,"completion_ratio":94,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-10-11T04:05:12Z","enrollment_time":"2024-10-11T03:29:52Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":3098554,"title":"SAP MM-WM Integration Course","url":"/course/sap-mm-wm-integration-course-by-ganesh-padala/learn/","visible_instructors":[{"_class":"user","id":68817574,"title":"Ganesh Padala","name":"Ganesh","display_name":"Ganesh Padala","job_title":"SAP SCM Consultant"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/3098554_17b7.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/3098554_17b7.jpg","published_title":"sap-mm-wm-integration-course-by-ganesh-padala","tracking_id":"dvh2LpUSSCuXNT8I-VbozQ","favorite_time":null,"archive_time":null,"completion_ratio":0,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-10-09T09:14:09Z","enrollment_time":"2024-10-09T09:14:08Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":139200,"title":"Powerful speaking","url":"/course/powerful-speaking/learn/","visible_instructors":[{"_class":"user","id":305484,"title":"Julian Treasure","name":"Julian","display_name":"Julian Treasure","job_title":"Five-time TED speaker and author of \"How to be Heard\""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/139200_55b2_5.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/139200_55b2_5.jpg","published_title":"powerful-speaking","tracking_id":"HXqmogZsSMeR5OmD6_bU5Q","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-10-09T06:10:38Z","enrollment_time":"2023-10-26T03:01:50Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":235128,"title":"Learn  SQL For Oracle Databases - Using Toad From Scratch","url":"/course/introduction-to-oracle-sql-with-toad/learn/","visible_instructors":[{"_class":"user","id":1230724,"title":"Skill Tree","name":"Skill","display_name":"Skill Tree","job_title":"Skill based learning"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/235128_8ad8_6.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/235128_8ad8_6.jpg","published_title":"introduction-to-oracle-sql-with-toad","tracking_id":"vShfE-THQ-C0mwuLANxmzw","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-10-09T05:43:41Z","enrollment_time":"2024-10-09T04:12:05Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":857010,"title":"Learn Ethical Hacking From Scratch 2024","url":"/course/learn-ethical-hacking-from-scratch/learn/","visible_instructors":[{"_class":"user","id":6956218,"title":"Zaid Sabih","name":"Zaid","display_name":"Zaid Sabih","job_title":"Ethical Hacker, Computer Scientist & CEO of zSecurity"},{"_class":"user","id":41384972,"title":"z Security","name":"z","display_name":"z Security","job_title":"Leading provider of ethical hacking and cyber security training,"}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/857010_8239_5.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/857010_8239_5.jpg","published_title":"learn-ethical-hacking-from-scratch","tracking_id":"4iILK4yEQ8WPGFGI-zSMTg","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-10-08T08:51:23Z","enrollment_time":"2024-10-08T06:12:37Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":6055451,"title":"FPT_BRCMS awareness 2024 for FSO VN (Vietnamese)","url":"/course/fsoft-brcms-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/6055451_5034.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/6055451_5034.jpg","published_title":"fsoft-brcms-vi","tracking_id":"gn9T8CsvR6upLNf4ypNFuw","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-09-18T04:24:30Z","enrollment_time":"2024-09-18T03:03:35Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":6112197,"title":"FPT_Giá trị cốt lõi FPT","url":"/course/gia-tri-cot-loi-fpt-vi/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/6112197_72f8.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/6112197_72f8.jpg","published_title":"gia-tri-cot-loi-fpt-vi","tracking_id":"z5u9mDHLTHGcUhjj4lEswA","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-08-19T09:07:27Z","enrollment_time":"2024-08-19T06:41:53Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":6065169,"title":"FPT_Corporate Social Responsibility Training 2024","url":"/course/fsoft-csr-2024/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/6065169_9380.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/6065169_9380.jpg","published_title":"fsoft-csr-2024","tracking_id":"BzDTxhflRoCB3QaRElmVpw","favorite_time":null,"archive_time":null,"completion_ratio":100,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-23T04:20:22Z","enrollment_time":"2024-07-19T07:53:52Z","is_course_available_in_org":true,"num_collections":0},{"_class":"course","id":4223598,"title":"FPT_5 Ways to Respond to a Job Interview Question","url":"/course/respond-to-job-interview-question/learn/","visible_instructors":[{"_class":"user","id":212064344,"title":"FSOFT Content Development ㅤ","name":"FSOFT Content Development","display_name":"FSOFT Content Development ㅤ","job_title":""}],"image_240x135":"https://img-c.udemycdn.com/course/240x135/4223598_0529.jpg","is_practice_test_course":false,"image_480x270":"https://img-c.udemycdn.com/course/480x270/4223598_0529.jpg","published_title":"respond-to-job-interview-question","tracking_id":"fjz8zMstSXCXtEDfLV05PA","favorite_time":null,"archive_time":null,"completion_ratio":0,"is_private":false,"features":{"_class":"course","discussions_create":true,"discussions_view":true,"discussions_replies_create":true,"enroll":true,"reviews_create":true,"reviews_view":true,"reviews_responses_create":true,"announcements_comments_view":true,"educational_announcements_create":true,"promotional_announcements_create":true,"promotions_create":true,"promotions_view":true,"students_view":true},"is_published":true,"buyable_object_type":"course","last_accessed_time":"2024-07-22T03:38:28Z","enrollment_time":"2024-07-22T03:35:34Z","is_course_available_in_org":true,"num_collections":0}]}
+{
+    "count": 90,
+    "next": "https://fpt-software.udemy.com/api-2.0/users/me/subscribed-courses/?fields%5C%5Bcourse%5C%5D=archive_time%2Cbuyable_object_type%2Ccompletion_ratio%2Cenrollment_time%2Cfavorite_time%2Cfeatures%2Cimage_240x135%2Cimage_480x270%2Cis_practice_test_course%2Cis_private%2Cis_published%2Clast_accessed_time%2Cnum_collections%2Cpublished_title%2Ctitle%2Ctracking_id%2Curl%2Cvisible_instructors%2Cis_course_available_in_org&fields%5C%5Buser%5C%5D=%40min%2Cjob_title&is_archived=false&ordering=-last_accessed&page=2&page_size=40",
+    "previous": null,
+    "results": [
+        {
+            "_class": "course",
+            "id": 1906852,
+            "title": "MongoDB - The Complete Developer's Guide 2024",
+            "url": "/course/mongodb-the-complete-developers-guide/learn/",
+            "is_paid": true,
+            "price": "₫2,199,000",
+            "price_detail": {
+                "amount": 2199000.0,
+                "currency": "VND",
+                "price_string": "₫2,199,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "_5uP1xipR6S7oOdrNKp2nw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 31926668,
+                    "title": "Academind by Maximilian Schwarzmüller",
+                    "name": "Academind by Maximilian",
+                    "display_name": "Academind by Maximilian Schwarzmüller",
+                    "job_title": "Online Education",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/31926668_94e7_6.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/31926668_94e7_6.jpg",
+                    "initials": "AS",
+                    "url": "/user/academind/"
+                },
+                {
+                    "_class": "user",
+                    "id": 13952972,
+                    "title": "Maximilian Schwarzmüller",
+                    "name": "Maximilian",
+                    "display_name": "Maximilian Schwarzmüller",
+                    "job_title": "AWS certified, Professional Web Developer and Instructor",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/13952972_e853.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/13952972_e853.jpg",
+                    "initials": "MS",
+                    "url": "/user/maximilian-schwarzmuller/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1906852_93c6_2.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1906852_93c6_2.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1906852_93c6_2.jpg",
+            "published_title": "mongodb-the-complete-developers-guide",
+            "tracking_id": "51usQCUVSBmzLsnPWuf2Eg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1201172,
+            "title": "Best Way to Learn German Language: Full Beginner (A1.1)",
+            "url": "/course/best-way-to-learn-german-full-beginner-starter-kit/learn/",
+            "is_paid": true,
+            "price": "₫1,699,000",
+            "price_detail": {
+                "amount": 1699000.0,
+                "currency": "VND",
+                "price_string": "₫1,699,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "dzI4zVNRRpyh9SuOnUip6g",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 16912784,
+                    "title": "Sandra 11Percent",
+                    "name": "Sandra",
+                    "display_name": "Sandra 11Percent",
+                    "job_title": "Making German fun since 2011",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/16912784_49c6_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/16912784_49c6_3.jpg",
+                    "initials": "S1",
+                    "url": "/user/eleven-percent/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1201172_836c_4.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1201172_836c_4.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1201172_836c_4.jpg",
+            "published_title": "best-way-to-learn-german-full-beginner-starter-kit",
+            "tracking_id": "KBOv4s3dTKeJAjpDYy9PUA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 692188,
+            "title": "Python Mega Course: Learn Python in 60 Days, Build 20 Apps",
+            "url": "/course/the-python-mega-course/learn/",
+            "is_paid": true,
+            "price": "₫2,499,000",
+            "price_detail": {
+                "amount": 2499000.0,
+                "currency": "VND",
+                "price_string": "₫2,499,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "6YiyFSz1R9O4iniHFd1Rjw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 717783,
+                    "title": "Ardit Sulce",
+                    "name": "Ardit",
+                    "display_name": "Ardit Sulce",
+                    "job_title": "Python Programmer | Author at PythonHow | 10 Years on Udemy",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/717783_3157_8.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/717783_3157_8.jpg",
+                    "initials": "AS",
+                    "url": "/user/adiune/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/692188_9da7_34.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/692188_9da7_34.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/692188_9da7_34.jpg",
+            "published_title": "the-python-mega-course",
+            "tracking_id": "0eH9nrq8SCOEzEvYS2VV3Q",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 6212509,
+            "title": "FPT_ISMS Refresh Training S2 2024 (Vietnamese)",
+            "url": "/course/fpt-isms4r-s2-2024-vn-for-vi/learn/",
+            "is_paid": false,
+            "price": "Free",
+            "price_detail": null,
+            "price_serve_tracking_id": "8_NezDTCQc2Gg5zzgBsPkQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 212064344,
+                    "title": "FSOFT Content Development ㅤ",
+                    "name": "FSOFT Content Development",
+                    "display_name": "FSOFT Content Development ㅤ",
+                    "job_title": "",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/212064344_fa08_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/212064344_fa08_5.jpg",
+                    "initials": "F",
+                    "url": "/user/content1/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/6212509_4e9e.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/6212509_4e9e.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/6212509_4e9e.jpg",
+            "published_title": "fpt-isms4r-s2-2024-vn-for-vi",
+            "tracking_id": "09D7ksUaRf2sojt5ME2FuQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "vi_VN",
+                "title": "Tiếng Việt",
+                "english_title": "Vietnamese",
+                "simple_english_title": "Vietnamese"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 283222,
+            "title": "Surviving Digital Forensics: Resolving Attached USBs",
+            "url": "/course/surviving-digital-forensics-resolving-attached-usbs/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "VWqD4NqMT-y1Uq2CJ_hH2w",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 3804670,
+                    "title": "Michael Leclair",
+                    "name": "Michael",
+                    "display_name": "Michael Leclair",
+                    "job_title": "DFIR Professional",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/3804670_64b3_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/3804670_64b3_4.jpg",
+                    "initials": "ML",
+                    "url": "/user/michaelleclair2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/283222_5ed8.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/283222_5ed8.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/283222_5ed8.jpg",
+            "published_title": "surviving-digital-forensics-resolving-attached-usbs",
+            "tracking_id": "VBZ-b1djTYCq55e967VzHg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 2015076,
+            "title": "CompTIA Security+ (SY0-701) Complete Course & Exam",
+            "url": "/course/securityplus/learn/",
+            "is_paid": true,
+            "price": "₫1,699,000",
+            "price_detail": {
+                "amount": 1699000.0,
+                "currency": "VND",
+                "price_string": "₫1,699,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "f7rDpZQqQ2G-bWwuerpVTw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 27592028,
+                    "title": "Jason Dion • 1.8 Million+ Enrollments Worldwide",
+                    "name": "Jason Dion",
+                    "display_name": "Jason Dion • 1.8 Million+ Enrollments Worldwide",
+                    "job_title": "CISSP, CEH, Pentest+, CySA+, Sec+, Net+, A+, PRINCE2, ITIL",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/27592028_e3fb_6.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/27592028_e3fb_6.jpg",
+                    "initials": "J ",
+                    "url": "/user/jason-dion/"
+                },
+                {
+                    "_class": "user",
+                    "id": 53797544,
+                    "title": "Dion Training Solutions • ATO for ITIL & PRINCE2",
+                    "name": "Dion Training Solutions",
+                    "display_name": "Dion Training Solutions • ATO for ITIL & PRINCE2",
+                    "job_title": "Courses in IT Ops, Cyber Security, and Project Management",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/53797544_9c5d_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/53797544_9c5d_2.jpg",
+                    "initials": "D ",
+                    "url": "/user/llc-dion-training-solutions/"
+                },
+                {
+                    "_class": "user",
+                    "id": 155034650,
+                    "title": "Dion Training Solutions • ATO for ITIL & PRINCE2",
+                    "name": "Dion Training Solutions",
+                    "display_name": "Dion Training Solutions • ATO for ITIL & PRINCE2",
+                    "job_title": "Courses in IT Ops, Cyber Security, and Project Management",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/155034650_02d5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/155034650_02d5.jpg",
+                    "initials": "D ",
+                    "url": "/user/tamera-dion/"
+                },
+                {
+                    "_class": "user",
+                    "id": 238396730,
+                    "title": "Jamario Kelly",
+                    "name": "Jamario",
+                    "display_name": "Jamario Kelly",
+                    "job_title": "Instructor at Dion Training",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/238396730_00d3_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/238396730_00d3_2.jpg",
+                    "initials": "JK",
+                    "url": "/user/jamario-kelly-3/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/2015076_2944_7.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/2015076_2944_7.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/2015076_2944_7.jpg",
+            "published_title": "securityplus",
+            "tracking_id": "NBVNHv_XRFuNGsbVJC3eSg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 3659946,
+            "title": "Best Way to Learn German Language: Advancing Beginner (A2.1)",
+            "url": "/course/best-way-to-learn-german-language-beginner-intermediate-a2-1/learn/",
+            "is_paid": true,
+            "price": "₫1,499,000",
+            "price_detail": {
+                "amount": 1499000.0,
+                "currency": "VND",
+                "price_string": "₫1,499,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "E77NHD0cTeWlihKjNBInnQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 16912784,
+                    "title": "Sandra 11Percent",
+                    "name": "Sandra",
+                    "display_name": "Sandra 11Percent",
+                    "job_title": "Making German fun since 2011",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/16912784_49c6_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/16912784_49c6_3.jpg",
+                    "initials": "S1",
+                    "url": "/user/eleven-percent/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/3659946_cf61_4.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/3659946_cf61_4.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/3659946_cf61_4.jpg",
+            "published_title": "best-way-to-learn-german-language-beginner-intermediate-a2-1",
+            "tracking_id": "ys3A7eCmSjKe6zsFoTwRQQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1030682,
+            "title": "Learn German Language: Complete German Course - Beginners",
+            "url": "/course/german-course-for-beginners-learn-german/learn/",
+            "is_paid": true,
+            "price": "₫1,599,000",
+            "price_detail": {
+                "amount": 1599000.0,
+                "currency": "VND",
+                "price_string": "₫1,599,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "B_nj_HS5QYeaDVam0sEM9A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 23835596,
+                    "title": "AbcEdu Online",
+                    "name": "AbcEdu",
+                    "display_name": "AbcEdu Online",
+                    "job_title": "Interactive Board - 30+ years teaching, 200.000+ Students",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/23835596_e191_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/23835596_e191_3.jpg",
+                    "initials": "AO",
+                    "url": "/user/razvan-savu-2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1030682_5949_7.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1030682_5949_7.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1030682_5949_7.jpg",
+            "published_title": "german-course-for-beginners-learn-german",
+            "tracking_id": "Y17ML7vJSgysdDp3keeLaQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5928302,
+            "title": "AKYLADE Certified Cyber Resilience Fundamentals (A/CCRF)",
+            "url": "/course/akylade-certified-cyber-resilience-fundamentals-accrf/learn/",
+            "is_paid": true,
+            "price": "₫849,000",
+            "price_detail": {
+                "amount": 849000.0,
+                "currency": "VND",
+                "price_string": "₫849,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "zl262LKUR8CW3-ls5xZgAA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 27592028,
+                    "title": "Jason Dion • 1.8 Million+ Enrollments Worldwide",
+                    "name": "Jason Dion",
+                    "display_name": "Jason Dion • 1.8 Million+ Enrollments Worldwide",
+                    "job_title": "CISSP, CEH, Pentest+, CySA+, Sec+, Net+, A+, PRINCE2, ITIL",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/27592028_e3fb_6.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/27592028_e3fb_6.jpg",
+                    "initials": "J ",
+                    "url": "/user/jason-dion/"
+                },
+                {
+                    "_class": "user",
+                    "id": 155034650,
+                    "title": "Dion Training Solutions • ATO for ITIL & PRINCE2",
+                    "name": "Dion Training Solutions",
+                    "display_name": "Dion Training Solutions • ATO for ITIL & PRINCE2",
+                    "job_title": "Courses in IT Ops, Cyber Security, and Project Management",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/155034650_02d5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/155034650_02d5.jpg",
+                    "initials": "D ",
+                    "url": "/user/tamera-dion/"
+                },
+                {
+                    "_class": "user",
+                    "id": 53797544,
+                    "title": "Dion Training Solutions • ATO for ITIL & PRINCE2",
+                    "name": "Dion Training Solutions",
+                    "display_name": "Dion Training Solutions • ATO for ITIL & PRINCE2",
+                    "job_title": "Courses in IT Ops, Cyber Security, and Project Management",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/53797544_9c5d_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/53797544_9c5d_2.jpg",
+                    "initials": "D ",
+                    "url": "/user/llc-dion-training-solutions/"
+                },
+                {
+                    "_class": "user",
+                    "id": 238394698,
+                    "title": "Reed Bidgood",
+                    "name": "Reed",
+                    "display_name": "Reed Bidgood",
+                    "job_title": "Instructor for Dion Training",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/238394698_3e3a.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/238394698_3e3a.jpg",
+                    "initials": "RB",
+                    "url": "/user/reed-bidgood/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5928302_41b6.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5928302_41b6.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5928302_41b6.jpg",
+            "published_title": "akylade-certified-cyber-resilience-fundamentals-accrf",
+            "tracking_id": "jLhxrkLwT92BIlHJH0lmCQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 238934,
+            "title": "Pianoforall - Incredible New Way To Learn Piano & Keyboard",
+            "url": "/course/pianoforall-incredible-new-way-to-learn-piano-keyboard/learn/",
+            "is_paid": true,
+            "price": "₫2,399,000",
+            "price_detail": {
+                "amount": 2399000.0,
+                "currency": "VND",
+                "price_string": "₫2,399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "MvwUe0HsQpOlp8ildDEMYg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 5753906,
+                    "title": "Robin Hall",
+                    "name": "Robin",
+                    "display_name": "Robin Hall",
+                    "job_title": "Piano Teacher (450,000 students online), Artist, Therapist,",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/5753906_1b3f_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/5753906_1b3f_4.jpg",
+                    "initials": "RH",
+                    "url": "/user/robinhall3/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/238934_4d81_7.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/238934_4d81_7.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/238934_4d81_7.jpg",
+            "published_title": "pianoforall-incredible-new-way-to-learn-piano-keyboard",
+            "tracking_id": "ZM4WVvTWRESZL1X8bkJ5uQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5863758,
+            "title": "Custom GPTs for Non-Technical Business Leaders",
+            "url": "/course/custom-gpts-for-business-leaders/learn/",
+            "is_paid": true,
+            "price": "₫649,000",
+            "price_detail": {
+                "amount": 649000.0,
+                "currency": "VND",
+                "price_string": "₫649,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "LOyqRzwlS4asggQeg4QK7g",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 2234938,
+                    "title": "Hassan Osman",
+                    "name": "Hassan",
+                    "display_name": "Hassan Osman",
+                    "job_title": "Tech Leader & Bestselling Author focused on Future of Work",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/2234938_eb56_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/2234938_eb56_3.jpg",
+                    "initials": "HO",
+                    "url": "/user/hassanosman/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5863758_0cd8.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5863758_0cd8.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5863758_0cd8.jpg",
+            "published_title": "custom-gpts-for-business-leaders",
+            "tracking_id": "dYW7xihhQUeo7p6NeGp5tQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5953850,
+            "title": "Responsible AI: Principles, Practices, and Applications",
+            "url": "/course/responsible-ai-principles-practices-and-applications/learn/",
+            "is_paid": true,
+            "price": "₫649,000",
+            "price_detail": {
+                "amount": 649000.0,
+                "currency": "VND",
+                "price_string": "₫649,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "oSK5XVFOTIm57zhRG1KWbg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 248357270,
+                    "title": "Stuart Wesselby",
+                    "name": "Stuart",
+                    "display_name": "Stuart Wesselby",
+                    "job_title": "Instructor and Educator in Education, Digital, Growth",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/248357270_1131.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/248357270_1131.jpg",
+                    "initials": "SW",
+                    "url": "/user/stuart-wesselby-3/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5953850_b464.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5953850_b464.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5953850_b464.jpg",
+            "published_title": "responsible-ai-principles-practices-and-applications",
+            "tracking_id": "eIOhQC4-RbeC9n3hHlOapA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 3318530,
+            "title": "SAP Important Topics for all Functional Consultants",
+            "url": "/course/sap-generic-course-for-all-functional-consultants/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "sSgzju0KRfOeHHPMNWkTew",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 68817574,
+                    "title": "Ganesh Padala",
+                    "name": "Ganesh",
+                    "display_name": "Ganesh Padala",
+                    "job_title": "SAP SCM Consultant",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/68817574_5c7a_7.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/68817574_5c7a_7.jpg",
+                    "initials": "GP",
+                    "url": "/user/ganesh-padala-2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/3318530_36b6.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/3318530_36b6.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/3318530_36b6.jpg",
+            "published_title": "sap-generic-course-for-all-functional-consultants",
+            "tracking_id": "Ekiob3hUSPGKkv1nrsRo6Q",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 6100015,
+            "title": "LLM Engineering: Master AI & Large Language Models (LLMs)",
+            "url": "/course/llm-engineering-master-ai-and-large-language-models/learn/",
+            "is_paid": true,
+            "price": "₫949,000",
+            "price_detail": {
+                "amount": 949000.0,
+                "currency": "VND",
+                "price_string": "₫949,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "UVdEmRBpR9KPJUBGUHpj6g",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 150405524,
+                    "title": "Ligency Team",
+                    "name": "Ligency",
+                    "display_name": "Ligency Team",
+                    "job_title": "Helping Data Scientists Succeed",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/150405524_94b0_9.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/150405524_94b0_9.jpg",
+                    "initials": "LT",
+                    "url": "/user/ligency-team/"
+                },
+                {
+                    "_class": "user",
+                    "id": 276658919,
+                    "title": "Ed Donner",
+                    "name": "Ed",
+                    "display_name": "Ed Donner",
+                    "job_title": "AI startup co-founder and leader; Gen AI and LLM instructor",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/276658919_02e6_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/276658919_02e6_2.jpg",
+                    "initials": "ED",
+                    "url": "/user/ed-donner-3/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/6100015_1979_4.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/6100015_1979_4.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/6100015_1979_4.jpg",
+            "published_title": "llm-engineering-master-ai-and-large-language-models",
+            "tracking_id": "OaqW-tsiSrCT8m_35bQY0g",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 2779762,
+            "title": "DevOps, CI/CD(Continuous Integration/Delivery) for Beginners",
+            "url": "/course/ci-cd-devops/learn/",
+            "is_paid": true,
+            "price": "₫799,000",
+            "price_detail": {
+                "amount": 799000.0,
+                "currency": "VND",
+                "price_string": "₫799,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "iT_fxYEmTEKXWI_gORKuwg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 78777828,
+                    "title": "John Honai",
+                    "name": "John",
+                    "display_name": "John Honai",
+                    "job_title": "A Computer Science Engineer and a passionate teacher!",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/78777828_f573_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/78777828_f573_4.jpg",
+                    "initials": "JH",
+                    "url": "/user/john-honai/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/2779762_87e5_4.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/2779762_87e5_4.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/2779762_87e5_4.jpg",
+            "published_title": "ci-cd-devops",
+            "tracking_id": "YkOUqrFdRCKIODmVPCqVUg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1838018,
+            "title": "PHP Unit Testing with PHPUnit",
+            "url": "/course/php-unit-testing/learn/",
+            "is_paid": true,
+            "price": "₫1,149,000",
+            "price_detail": {
+                "amount": 1149000.0,
+                "currency": "VND",
+                "price_string": "₫1,149,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "dyy4yLs9TzucB-6a5x4sag",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 87452,
+                    "title": "Dave Hollingworth",
+                    "name": "Dave",
+                    "display_name": "Dave Hollingworth",
+                    "job_title": "IT Trainer",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/87452_81b9_7.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/87452_81b9_7.jpg",
+                    "initials": "DH",
+                    "url": "/user/davehollingworth/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1838018_0e2b.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1838018_0e2b.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1838018_0e2b.jpg",
+            "published_title": "php-unit-testing",
+            "tracking_id": "UNYl4_u6R-KItu9kSneobQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_GB",
+                "title": "English (UK)",
+                "english_title": "English (UK)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 51727,
+            "title": "How to Stop Stuttering & Speak Smoothly Using Pro90d",
+            "url": "/course/how-to-stop-stuttering-speak-smoothly-using-pro90d/learn/",
+            "is_paid": true,
+            "price": "₫1,099,000",
+            "price_detail": {
+                "amount": 1099000.0,
+                "currency": "VND",
+                "price_string": "₫1,099,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "5mUd8lqMSx6RIQ8LQM1YBw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 334286,
+                    "title": "Michael Williams",
+                    "name": "Michael",
+                    "display_name": "Michael Williams",
+                    "job_title": "\"Speech Coach for Professionals”",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/334286_eb2d_9.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/334286_eb2d_9.jpg",
+                    "initials": "MW",
+                    "url": "/user/michaelwilliams11/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/51727_33af_5.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/51727_33af_5.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/51727_33af_5.jpg",
+            "published_title": "how-to-stop-stuttering-speak-smoothly-using-pro90d",
+            "tracking_id": "hUSOGHlWSP6zNLYovlAyjw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 614772,
+            "title": "The Complete Cyber Security Course : Hackers Exposed!",
+            "url": "/course/the-complete-internet-security-privacy-course-volume-1/learn/",
+            "is_paid": true,
+            "price": "₫2,399,000",
+            "price_detail": {
+                "amount": 2399000.0,
+                "currency": "VND",
+                "price_string": "₫2,399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "3HOqy5UhQSOtavnbQF79aA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 15858120,
+                    "title": "Nathan House",
+                    "name": "Nathan",
+                    "display_name": "Nathan House",
+                    "job_title": "Leading Cyber Security Expert - CEO of StationX",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/15858120_4fac.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/15858120_4fac.jpg",
+                    "initials": "NH",
+                    "url": "/user/nathan-house/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/614772_233b_9.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/614772_233b_9.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/614772_233b_9.jpg",
+            "published_title": "the-complete-internet-security-privacy-course-volume-1",
+            "tracking_id": "nmMG9uJpSmm3xRKaI1yj1g",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 281138,
+            "title": "Learn Network Hacking From Scratch (WiFi & Wired)",
+            "url": "/course/wifi-hacking-penetration-testing-from-scratch/learn/",
+            "is_paid": true,
+            "price": "₫2,199,000",
+            "price_detail": {
+                "amount": 2199000.0,
+                "currency": "VND",
+                "price_string": "₫2,199,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "pmvHUnftRlKedlCNmNOBPg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 6956218,
+                    "title": "Zaid Sabih",
+                    "name": "Zaid",
+                    "display_name": "Zaid Sabih",
+                    "job_title": "Ethical Hacker, Computer Scientist & CEO of zSecurity",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/6956218_3564_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/6956218_3564_4.jpg",
+                    "initials": "ZS",
+                    "url": "/user/zaidsabih/"
+                },
+                {
+                    "_class": "user",
+                    "id": 41384972,
+                    "title": "z Security",
+                    "name": "z",
+                    "display_name": "z Security",
+                    "job_title": "Leading provider of ethical hacking and cyber security training,",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/41384972_fbb7_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/41384972_fbb7_2.jpg",
+                    "initials": "ZS",
+                    "url": "/user/zsecurity-2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/281138_ccf8_11.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/281138_ccf8_11.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/281138_ccf8_11.jpg",
+            "published_title": "wifi-hacking-penetration-testing-from-scratch",
+            "tracking_id": "sCvVFAwlRpeT6Zqoe_5ACA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1299854,
+            "title": "Understanding Confluence for users, managers and admins",
+            "url": "/course/understanding-confluence-for-users-managers-and-admins/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "rAJRs9QFQrC4Y-DeEmYa0g",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 1293438,
+                    "title": "Dan LeFebvre",
+                    "name": "Dan",
+                    "display_name": "Dan LeFebvre",
+                    "job_title": "Best-selling instructor and podcaster",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/1293438_9556_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/1293438_9556_3.jpg",
+                    "initials": "DL",
+                    "url": "/user/danlefebvre/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1299854_936f_3.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1299854_936f_3.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1299854_936f_3.jpg",
+            "published_title": "understanding-confluence-for-users-managers-and-admins",
+            "tracking_id": "hPfuDoKWQWWL17rJdVA2hQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1708340,
+            "title": "Flutter & Dart - The Complete Guide [2024 Edition]",
+            "url": "/course/learn-flutter-dart-to-build-ios-android-apps/learn/",
+            "is_paid": true,
+            "price": "₫2,199,000",
+            "price_detail": {
+                "amount": 2199000.0,
+                "currency": "VND",
+                "price_string": "₫2,199,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "1ZwZ-AroRaaocbq_jioqPQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 31926668,
+                    "title": "Academind by Maximilian Schwarzmüller",
+                    "name": "Academind by Maximilian",
+                    "display_name": "Academind by Maximilian Schwarzmüller",
+                    "job_title": "Online Education",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/31926668_94e7_6.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/31926668_94e7_6.jpg",
+                    "initials": "AS",
+                    "url": "/user/academind/"
+                },
+                {
+                    "_class": "user",
+                    "id": 13952972,
+                    "title": "Maximilian Schwarzmüller",
+                    "name": "Maximilian",
+                    "display_name": "Maximilian Schwarzmüller",
+                    "job_title": "AWS certified, Professional Web Developer and Instructor",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/13952972_e853.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/13952972_e853.jpg",
+                    "initials": "MS",
+                    "url": "/user/maximilian-schwarzmuller/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1708340_7108_5.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1708340_7108_5.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1708340_7108_5.jpg",
+            "published_title": "learn-flutter-dart-to-build-ios-android-apps",
+            "tracking_id": "-nrJppP0Tua-6HoVryyNew",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 2184074,
+            "title": "Cisco Collaboration Lab Course For CUCM CLCOR SIP CLTECH IMP",
+            "url": "/course/cisco-ccna-collaboration-210-060-cicd-voice-lab-course/learn/",
+            "is_paid": true,
+            "price": "₫449,000",
+            "price_detail": {
+                "amount": 449000.0,
+                "currency": "VND",
+                "price_string": "₫449,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "v1hZA7JRRVWzLC9lgh42NQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 45428814,
+                    "title": "Veyhurdam Dikmen",
+                    "name": "Veyhurdam",
+                    "display_name": "Veyhurdam Dikmen",
+                    "job_title": "CCIEx2 RS & Wireless",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/45428814_8b07_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/45428814_8b07_2.jpg",
+                    "initials": "VD",
+                    "url": "/user/veyhurdam-dikmen/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/2184074_64bd.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/2184074_64bd.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/2184074_64bd.jpg",
+            "published_title": "cisco-ccna-collaboration-210-060-cicd-voice-lab-course",
+            "tracking_id": "RzeCcCsHSFCvzjYBKDaA5Q",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 6028152,
+            "title": "The Complete Agile & Scrum Project Management Course",
+            "url": "/course/the-complete-agile-scrum-project-management-course/learn/",
+            "is_paid": true,
+            "price": "₫749,000",
+            "price_detail": {
+                "amount": 749000.0,
+                "currency": "VND",
+                "price_string": "₫749,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "i7Lh15KFT2u_tpod8BMzVA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 8280056,
+                    "title": "365 Careers",
+                    "name": "365",
+                    "display_name": "365 Careers",
+                    "job_title": "Creating opportunities for Data Science and Finance students",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/8280056_7887_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/8280056_7887_3.jpg",
+                    "initials": "3C",
+                    "url": "/user/365careers/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/6028152_84b7.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/6028152_84b7.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/6028152_84b7.jpg",
+            "published_title": "the-complete-agile-scrum-project-management-course",
+            "tracking_id": "lQ349k2BQy24PqOsQHC_sg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 834690,
+            "title": "Microsoft Access Complete Beginner to Advanced",
+            "url": "/course/microsoft-access-complete-beginner-to-advanced/learn/",
+            "is_paid": true,
+            "price": "₫2,199,000",
+            "price_detail": {
+                "amount": 2199000.0,
+                "currency": "VND",
+                "price_string": "₫2,199,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "v1igWYcITuCXRfCRc9tlIQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 16649710,
+                    "title": "Kyle Pew",
+                    "name": "Kyle",
+                    "display_name": "Kyle Pew",
+                    "job_title": "Microsoft Certified Trainer - 1 Million+ Students",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/16649710_ee35_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/16649710_ee35_3.jpg",
+                    "initials": "KP",
+                    "url": "/user/kyle-pew/"
+                },
+                {
+                    "_class": "user",
+                    "id": 98211038,
+                    "title": "Office Newb",
+                    "name": "Office",
+                    "display_name": "Office Newb",
+                    "job_title": "Software Trainer",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/anonymous_3.png",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/anonymous_3.png",
+                    "initials": "ON",
+                    "url": "/user/llc-office-newb/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/834690_d0f4_3.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/834690_d0f4_3.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/834690_d0f4_3.jpg",
+            "published_title": "microsoft-access-complete-beginner-to-advanced",
+            "tracking_id": "eeMmJgjxR2iw1WybVjknOw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5088684,
+            "title": "The HTML & CSS Bootcamp 2024 Edition",
+            "url": "/course/html-and-css-bootcamp/learn/",
+            "is_paid": true,
+            "price": "₫1,599,000",
+            "price_detail": {
+                "amount": 1599000.0,
+                "currency": "VND",
+                "price_string": "₫1,599,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "Pq_NoztAQ6OwlfZOCZmKbA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 4466306,
+                    "title": "Colt Steele",
+                    "name": "Colt",
+                    "display_name": "Colt Steele",
+                    "job_title": "Developer and Bootcamp Instructor",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/4466306_6fd8_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/4466306_6fd8_3.jpg",
+                    "initials": "CS",
+                    "url": "/user/coltsteele/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5088684_a587_7.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5088684_a587_7.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5088684_a587_7.jpg",
+            "published_title": "html-and-css-bootcamp",
+            "tracking_id": "re_rL7cbRVKLNY4ErovpyQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 3223049,
+            "title": "Understanding HTML and CSS  (2024 Edition)",
+            "url": "/course/understanding-html-and-css/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "7kYd6ttpSdCOrm6whXN9kw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 2467626,
+                    "title": "Anthony Alicea",
+                    "name": "Anthony",
+                    "display_name": "Anthony Alicea",
+                    "job_title": "Software Developer, Architect, and UX Designer",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/2467626_f2e0_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/2467626_f2e0_3.jpg",
+                    "initials": "AA",
+                    "url": "/user/anthonypalicea/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/3223049_5074_2.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/3223049_5074_2.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/3223049_5074_2.jpg",
+            "published_title": "understanding-html-and-css",
+            "tracking_id": "TBEeuebsTqO-qHVOGGc1iA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 129118,
+            "title": "Product Management 101",
+            "url": "/course/productmanagement101/learn/",
+            "is_paid": true,
+            "price": "₫1,899,000",
+            "price_detail": {
+                "amount": 1899000.0,
+                "currency": "VND",
+                "price_string": "₫1,899,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "BQxQGKXlQnmhtkRAclJOQQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 2739412,
+                    "title": "Todd Birzer",
+                    "name": "Todd",
+                    "display_name": "Todd Birzer",
+                    "job_title": "Product management leader",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/2739412_7a1c_6.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/2739412_7a1c_6.jpg",
+                    "initials": "TB",
+                    "url": "/user/kevolveproductmanagement/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/129118_fab9_11.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/129118_fab9_11.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/129118_fab9_11.jpg",
+            "published_title": "productmanagement101",
+            "tracking_id": "a2ACE64wQSGajiUYm4zaZA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 5966054,
+            "title": "ChatGPT for Project Managers",
+            "url": "/course/chatgpt-for-project-managers/learn/",
+            "is_paid": true,
+            "price": "₫649,000",
+            "price_detail": {
+                "amount": 649000.0,
+                "currency": "VND",
+                "price_string": "₫649,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "bUDmG_gHRES2XiWQ0O3K1w",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 109311864,
+                    "title": "Tim Fairley",
+                    "name": "Tim",
+                    "display_name": "Tim Fairley",
+                    "job_title": "Engineer",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/109311864_3e42_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/109311864_3e42_3.jpg",
+                    "initials": "TF",
+                    "url": "/user/tim-fairley-2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/5966054_ed43.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/5966054_ed43.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/5966054_ed43.jpg",
+            "published_title": "chatgpt-for-project-managers",
+            "tracking_id": "pTkvLW-TTGu27_bw_V3u6w",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 64572,
+            "title": "Business Ethics: How to Create an Ethical Organization",
+            "url": "/course/business-ethics-how-to-create-an-ethical-organization/learn/",
+            "is_paid": true,
+            "price": "₫449,000",
+            "price_detail": {
+                "amount": 449000.0,
+                "currency": "VND",
+                "price_string": "₫449,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "cDxe4NEmR5ivBYCzpdY1SQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 950976,
+                    "title": "Denis Collins",
+                    "name": "Denis",
+                    "display_name": "Denis Collins",
+                    "job_title": "Professor",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/950976_3203_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/950976_3203_3.jpg",
+                    "initials": "DC",
+                    "url": "/user/deniscollins/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/64572_ed86_8.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/64572_ed86_8.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/64572_ed86_8.jpg",
+            "published_title": "business-ethics-how-to-create-an-ethical-organization",
+            "tracking_id": "OjfzPsFnTsSgi62ZONFfHQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 2342126,
+            "title": "SSL/TLS Fundamentals",
+            "url": "/course/ssl-tls-intro/learn/",
+            "is_paid": true,
+            "price": "₫449,000",
+            "price_detail": {
+                "amount": 449000.0,
+                "currency": "VND",
+                "price_string": "₫449,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "BlRux5AdRFWj10EfffidBA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 69834894,
+                    "title": "Danny L.",
+                    "name": "Danny",
+                    "display_name": "Danny L.",
+                    "job_title": "IT, cyber security, and risk analysis",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/69834894_9b87_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/69834894_9b87_2.jpg",
+                    "initials": "DL",
+                    "url": "/user/dnn-8/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/2342126_e253.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/2342126_e253.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/2342126_e253.jpg",
+            "published_title": "ssl-tls-intro",
+            "tracking_id": "PXPyY7OcRnegGxPPVHwHkg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 4535188,
+            "title": "AWS Lambda - A Practical Guide - Learn from an Expert",
+            "url": "/course/aws-lambda-a-practical-guide/learn/",
+            "is_paid": true,
+            "price": "₫1,349,000",
+            "price_detail": {
+                "amount": 1349000.0,
+                "currency": "VND",
+                "price_string": "₫1,349,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "iEbdN2C6QBGufTuZKtTnBA",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 185982726,
+                    "title": "Daniel Galati",
+                    "name": "Daniel",
+                    "display_name": "Daniel Galati",
+                    "job_title": "Senior Software Development Engineer",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/185982726_43f8.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/185982726_43f8.jpg",
+                    "initials": "DG",
+                    "url": "/user/daniel-galati-6/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/4535188_a246.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/4535188_a246.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/4535188_a246.jpg",
+            "published_title": "aws-lambda-a-practical-guide",
+            "tracking_id": "1YGpOAZLQ4u7rSwfxRHcJg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 621408,
+            "title": "New Manager's Five-week Success System: 25 Days > Management",
+            "url": "/course/new-managers-five-week-success-system/learn/",
+            "is_paid": true,
+            "price": "₫399,000",
+            "price_detail": {
+                "amount": 399000.0,
+                "currency": "VND",
+                "price_string": "₫399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "5Zj5TzY2QDefKm-XzFRP6w",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 960449,
+                    "title": "Mike Clayton",
+                    "name": "Mike",
+                    "display_name": "Mike Clayton",
+                    "job_title": "Real World Trainer in Personal Effectiveness",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/960449_f7c9_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/960449_f7c9_4.jpg",
+                    "initials": "MC",
+                    "url": "/user/mikeclayton2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/621408_ca09_3.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/621408_ca09_3.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/621408_ca09_3.jpg",
+            "published_title": "new-managers-five-week-success-system",
+            "tracking_id": "Yf--0RzzQC27XUUwmDtw4A",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_GB",
+                "title": "English (UK)",
+                "english_title": "English (UK)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 8139,
+            "title": "14-Day Yoga Detox and Empowerment Course",
+            "url": "/course/yoga-for-weight-loss-and-core-strength-with-sadie-nardini/learn/",
+            "is_paid": true,
+            "price": "₫1,099,000",
+            "price_detail": {
+                "amount": 1099000.0,
+                "currency": "VND",
+                "price_string": "₫1,099,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "DjzGKlA1S5eQ0pJxQaJw4Q",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 36460,
+                    "title": "Sadie Nardini",
+                    "name": "Sadie",
+                    "display_name": "Sadie Nardini",
+                    "job_title": "Anatomy-Based Yoga & Yoga Shred® (Yoga + HIIT) Instructor!",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/36460_ee57_8.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/36460_ee57_8.jpg",
+                    "initials": "SN",
+                    "url": "/user/sadienardini/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/8139_bbe5_11.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/8139_bbe5_11.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/8139_bbe5_11.jpg",
+            "published_title": "yoga-for-weight-loss-and-core-strength-with-sadie-nardini",
+            "tracking_id": "joMlPLv2QHisu7k_c6AnTA",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1386294,
+            "title": "Python for beginners",
+            "url": "/course/python-core-and-advanced/learn/",
+            "is_paid": true,
+            "price": "₫499,000",
+            "price_detail": {
+                "amount": 499000.0,
+                "currency": "VND",
+                "price_string": "₫499,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "EYZumhWXRhGeD5c8BZMjZg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 8735380,
+                    "title": "Bharath Thippireddy",
+                    "name": "Bharath",
+                    "display_name": "Bharath Thippireddy",
+                    "job_title": "IT Architect and Best Selling Instructor- 800000+ students",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/8735380_e11b_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/8735380_e11b_4.jpg",
+                    "initials": "BT",
+                    "url": "/user/bharaththippireddy/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1386294_cf10_3.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1386294_cf10_3.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1386294_cf10_3.jpg",
+            "published_title": "python-core-and-advanced",
+            "tracking_id": "pOLnIn3mQGSeRSRmbN-VMQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 543600,
+            "title": "Automate the Boring Stuff with Python Programming",
+            "url": "/course/automate/learn/",
+            "is_paid": true,
+            "price": "₫1,699,000",
+            "price_detail": {
+                "amount": 1699000.0,
+                "currency": "VND",
+                "price_string": "₫1,699,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "-a6JyuclS2a5h6rxGUtWdw",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 13922584,
+                    "title": "Al Sweigart",
+                    "name": "Al",
+                    "display_name": "Al Sweigart",
+                    "job_title": "Software developer, tech book author",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/13922584_4ff5_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/13922584_4ff5_3.jpg",
+                    "initials": "AS",
+                    "url": "/user/al-sweigart/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/543600_64d1_4.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/543600_64d1_4.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/543600_64d1_4.jpg",
+            "published_title": "automate",
+            "tracking_id": "Lhm8kv_mTkCB-66V9QCxaw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 834702,
+            "title": "Building Your English Brain",
+            "url": "/course/building-your-english-brain/learn/",
+            "is_paid": true,
+            "price": "₫1,349,000",
+            "price_detail": {
+                "amount": 1349000.0,
+                "currency": "VND",
+                "price_string": "₫1,349,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "zkeJqnSAQFiFGY_DTcdnYg",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 22274190,
+                    "title": "Luke Priddy",
+                    "name": "Luke",
+                    "display_name": "Luke Priddy",
+                    "job_title": "Innovative English Courses",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/22274190_6619_4.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/22274190_6619_4.jpg",
+                    "initials": "LP",
+                    "url": "/user/alto-ray/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/834702_d56e_8.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/834702_d56e_8.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/834702_d56e_8.jpg",
+            "published_title": "building-your-english-brain",
+            "tracking_id": "ufVR_RXRRsOnM22saVT6Gg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 1759114,
+            "title": "PMP Certification Exam Prep Course 35 PDU Contact Hours/PDU",
+            "url": "/course/pmp-certification-exam-prep-course-pmbok-6th-edition/learn/",
+            "is_paid": true,
+            "price": "₫2,199,000",
+            "price_detail": {
+                "amount": 2199000.0,
+                "currency": "VND",
+                "price_string": "₫2,199,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "gNvux51BQtyUgh379LcE3Q",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 4897424,
+                    "title": "TIA Education, Andrew Ramdayal",
+                    "name": "TIA Education,",
+                    "display_name": "TIA Education, Andrew Ramdayal",
+                    "job_title": "Project Management and Security Trainer",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/4897424_a25c_11.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/4897424_a25c_11.jpg",
+                    "initials": "TA",
+                    "url": "/user/andrewramdayal/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/1759114_873a_13.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/1759114_873a_13.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/1759114_873a_13.jpg",
+            "published_title": "pmp-certification-exam-prep-course-pmbok-6th-edition",
+            "tracking_id": "z3TtaX2wQw2XghbjJrEuHg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 750914,
+            "title": "LEED Green Associate V4 | Exam Preparation Course | English",
+            "url": "/course/leed-green-associate-exam-preparation/learn/",
+            "is_paid": true,
+            "price": "₫699,000",
+            "price_detail": {
+                "amount": 699000.0,
+                "currency": "VND",
+                "price_string": "₫699,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "FrgFkz6LQayezUruguVH_A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 15744960,
+                    "title": "Karim Elnabawy Balbaa, USGBC Faculty",
+                    "name": "Karim Elnabawy",
+                    "display_name": "Karim Elnabawy Balbaa, USGBC Faculty",
+                    "job_title": "Seasoned Sustainability and Climate Change Professional",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/15744960_f142_6.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/15744960_f142_6.jpg",
+                    "initials": "KB",
+                    "url": "/user/karim-elnabawy/"
+                },
+                {
+                    "_class": "user",
+                    "id": 53690866,
+                    "title": "GBERA | Green Building Education and Research Academy",
+                    "name": "GBERA",
+                    "display_name": "GBERA | Green Building Education and Research Academy",
+                    "job_title": "Green Building Education Initiative",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/53690866_3c42_2.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/53690866_3c42_2.jpg",
+                    "initials": "G|",
+                    "url": "/user/green-building-education-and-research-academy/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/750914_4a99_7.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/750914_4a99_7.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/750914_4a99_7.jpg",
+            "published_title": "leed-green-associate-exam-preparation",
+            "tracking_id": "h3VagQOWRySF23h-769brg",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 59583,
+            "title": "I.T. Project Management for Beginners: A Step-by-Step Guide",
+            "url": "/course/it-project-management-for-beginners-a-step-by-step-guide/learn/",
+            "is_paid": true,
+            "price": "₫1,399,000",
+            "price_detail": {
+                "amount": 1399000.0,
+                "currency": "VND",
+                "price_string": "₫1,399,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "-05EGCMuSCCHUGZg2kq8WQ",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 841826,
+                    "title": "Lee Jones BSc. MSc. PMP",
+                    "name": "Lee",
+                    "display_name": "Lee Jones BSc. MSc. PMP",
+                    "job_title": "Portfolio, Programme and Project Management",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/841826_afc7_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/841826_afc7_3.jpg",
+                    "initials": "LJ",
+                    "url": "/user/leejones5/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/59583_8202_16.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/59583_8202_16.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/59583_8202_16.jpg",
+            "published_title": "it-project-management-for-beginners-a-step-by-step-guide",
+            "tracking_id": "zmk5Rc-OT3KmCsyCYymPBQ",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_GB",
+                "title": "English (UK)",
+                "english_title": "English (UK)",
+                "simple_english_title": "English"
+            }
+        },
+        {
+            "_class": "course",
+            "id": 864146,
+            "title": "Agile Crash Course: Agile Project Management; Agile Delivery",
+            "url": "/course/agile-crash-course/learn/",
+            "is_paid": true,
+            "price": "₫1,599,000",
+            "price_detail": {
+                "amount": 1599000.0,
+                "currency": "VND",
+                "price_string": "₫1,599,000",
+                "currency_symbol": "₫"
+            },
+            "price_serve_tracking_id": "TZ67UDpARbSt1TFyyAY4_A",
+            "visible_instructors": [
+                {
+                    "_class": "user",
+                    "id": 9413444,
+                    "title": "YESI EDUCATION",
+                    "name": "YESI",
+                    "display_name": "YESI EDUCATION",
+                    "job_title": "Online courses & resources for professionals and businesses",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/9413444_cea3_3.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/9413444_cea3_3.jpg",
+                    "initials": "YE",
+                    "url": "/user/yesieducation/"
+                },
+                {
+                    "_class": "user",
+                    "id": 200064230,
+                    "title": "Mauricio Rubio - Agile Guru & Founder of YESI EDUCATION, AgileKB & Grabdl",
+                    "name": "Mauricio",
+                    "display_name": "Mauricio Rubio - Agile Guru & Founder of YESI EDUCATION, AgileKB & Grabdl",
+                    "job_title": "Serial entrepreneur, techie, life hacker, expert PM & MBA",
+                    "image_50x50": "https://img-c.udemycdn.com/user/50x50/200064230_8953_5.jpg",
+                    "image_100x100": "https://img-c.udemycdn.com/user/100x100/200064230_8953_5.jpg",
+                    "initials": "MR",
+                    "url": "/user/mauriciorubio2/"
+                }
+            ],
+            "image_125_H": "https://img-c.udemycdn.com/course/125_H/864146_dbd7_11.jpg",
+            "image_240x135": "https://img-c.udemycdn.com/course/240x135/864146_dbd7_11.jpg",
+            "is_practice_test_course": false,
+            "image_480x270": "https://img-c.udemycdn.com/course/480x270/864146_dbd7_11.jpg",
+            "published_title": "agile-crash-course",
+            "tracking_id": "qa93rsYiRCibnBOTEJQDrw",
+            "locale": {
+                "_class": "locale",
+                "locale": "en_US",
+                "title": "English (US)",
+                "english_title": "English (US)",
+                "simple_english_title": "English"
+            }
+        }
+    ]
+}

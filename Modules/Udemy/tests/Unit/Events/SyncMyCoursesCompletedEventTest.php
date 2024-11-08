@@ -3,7 +3,7 @@
 namespace Modules\Udemy\Tests\Unit\Events;
 
 use Illuminate\Support\Facades\Notification;
-use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
+use Modules\Udemy\Events\Courses\SyncMyCoursesCompletedEvent;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Notifications\CoursesSyncCompletedNotification;
 use Modules\Udemy\Services\Client\Entities\CoursesEntity;

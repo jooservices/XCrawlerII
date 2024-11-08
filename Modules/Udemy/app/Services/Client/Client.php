@@ -55,11 +55,16 @@ class Client extends BaseClient
             throw new TokenNotFoundException('Token not set');
         }
 
+        if (app()->environment('testing')) {
+            $userAgent = 'testing';
+            $this->token = 'testing';
+        }
+
         $options = array_merge(
             $options,
             [
                 'headers' => [
-                    'User-Agent' => $this->getUserAgent(),
+                    'User-Agent' => $userAgent ?? $this->getUserAgent(),
                     'Authorization' => "Bearer {$this->token}",
                     'Accept' => 'application/json, text/plain',
                 ],

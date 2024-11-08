@@ -17,6 +17,7 @@ class BaseResponse implements IResponse
 
     private array $mappingResponseData = [
         'application/json' => JsonResponseData::class,
+        'application/json, text/plain' => JsonResponseData::class,
         'text/html; charset="utf-8"' => DomResponseData::class,
         'text/html; charset=utf-8' => DomResponseData::class,
         'text/html' => DomResponseData::class,
