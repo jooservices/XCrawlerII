@@ -1,7 +1,7 @@
 # XCrawlerII
 
-## Client
-Factory for `GuzzleHttp\Client` with
+## Factory
+Factory for `GuzzleHttp\Client` with middlewares
 - Mocking
 - Retries
 - Logging
@@ -42,11 +42,4 @@ In case you want to develop UnitTest with specific Client request by endpoint / 
   - JavMovie
 
 ### Udemy
-- Command `udemy:sync-my-courses {token}`
-  - Dispatch job `SyncMyCoursesJob`
-    -  Create UdemyCourse record 
-        -  Dispatch event UdemyCourseCreatedEvent 
-          -  Dispatch job `SyncCurriculumItemsJob` for fetching Curriculum items
-             - When item created will dispatch event and check if ALL items are fetch
-               - When all items are fetch than dispatch event `CourseReadyForStudy`. Now we are ready for study
-                 -  In this event we will process all items and complete it 
+- Client : Wrapped with specific configuration for Udemy ( `token` / `base_uri` )

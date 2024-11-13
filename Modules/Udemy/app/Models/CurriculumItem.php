@@ -64,4 +64,17 @@ class CurriculumItem extends Model
     {
         return $this->belongsTo(UdemyCourse::class);
     }
+
+    public function detectType(): string
+    {
+        if ($this->type !== null) {
+            return $this->type;
+        }
+
+        if ($this->asset_type !== null) {
+            return $this->asset_type;
+        }
+
+        return $this->class;
+    }
 }

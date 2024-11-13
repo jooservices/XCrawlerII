@@ -59,7 +59,8 @@ return [
     'prefix' => env(
         'HORIZON_PREFIX',
         Str::slug(
-            env('APP_NAME', 'laravel'), '_'
+            env('APP_NAME', 'laravel'),
+            '_'
         ) . '_horizon:'
     ),
 
@@ -193,8 +194,8 @@ return [
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
             'maxTime' => 0,
-            'maxJobs' => config('onejav.horizon.max_process', 3),
-            'memory' => config('onejav.horizon.memory_limit', 512),
+            'maxJobs' => env('HORIZON_MAX_PROCESS', 5),
+            'memory' => config('HORIZON_MEMORY_LIMIT', 512),
             'tries' => 1,
             'timeout' => 60,
             'nice' => 0,
@@ -202,14 +203,13 @@ return [
         OnejavService::ONEJAV_QUEUE_NAME => [
             'connection' => 'redis',
             'queue' => [
-                'default',
                 OnejavService::ONEJAV_QUEUE_NAME,
             ],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
-            'maxProcesses' => 1,
+            'maxProcesses' => config('onejav.horizon.max_processes', 3),
             'maxTime' => 0,
-            'maxJobs' => config('onejav.horizon.max_process', 3),
+            'maxJobs' => config('onejav.horizon.max_jobs', 3),
             'memory' => config('onejav.horizon.memory_limit', 512),
             'tries' => 1,
             'timeout' => 60,
@@ -218,14 +218,13 @@ return [
         UdemyService::UDEMY_QUEUE_NAME => [
             'connection' => 'redis',
             'queue' => [
-                'default',
                 UdemyService::UDEMY_QUEUE_NAME,
             ],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
-            'maxProcesses' => 1,
+            'maxProcesses' => config('udemy.horizon.max_jobs', 3),
             'maxTime' => 0,
-            'maxJobs' => config('udemy.horizon.max_process', 3),
+            'maxJobs' => config('udemy.horizon.max_jobs', 3),
             'memory' => config('udemy.horizon.memory_limit', 512),
             'tries' => 1,
             'timeout' => 60,
@@ -236,27 +235,19 @@ return [
     'environments' => [
         'production' => [
             'default' => [],
-            OnejavService::ONEJAV_QUEUE_NAME => [
-                'maxProcesses' => 10,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-            ],
+            OnejavService::ONEJAV_QUEUE_NAME => [],
             UdemyService::UDEMY_QUEUE_NAME => [],
         ],
 
         'local' => [
             'default' => [],
-            OnejavService::ONEJAV_QUEUE_NAME => [
-                'maxProcesses' => 3,
-            ],
+            OnejavService::ONEJAV_QUEUE_NAME => [],
             UdemyService::UDEMY_QUEUE_NAME => [],
         ],
 
         'uat' => [
             'default' => [],
-            OnejavService::ONEJAV_QUEUE_NAME => [
-                'maxProcesses' => 3,
-            ],
+            OnejavService::ONEJAV_QUEUE_NAME => [],
             UdemyService::UDEMY_QUEUE_NAME => [],
         ],
     ],

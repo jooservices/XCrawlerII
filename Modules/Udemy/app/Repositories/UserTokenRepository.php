@@ -3,8 +3,6 @@
 namespace Modules\Udemy\Repositories;
 
 use Carbon\Carbon;
-use Modules\Udemy\Events\Courses\CourseCreatedEvent;
-use Modules\Udemy\Events\Courses\SyncMyCourseCompletedEvent;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 
