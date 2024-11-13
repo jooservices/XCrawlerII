@@ -2,14 +2,16 @@
 
 namespace Modules\Udemy\Repositories;
 
+use Modules\Udemy\Client\Dto\CourseCurriculumItemDto;
+use Modules\Udemy\Client\Dto\CourseDto;
+use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UdemyCourse;
-use Modules\Udemy\Services\Client\Entities\CourseEntity;
 
 class UdemyCourseRepository
 {
-    public function createFromEntity(CourseEntity $courseEntity): UdemyCourse
+    public function createFromEntity(CourseDto $courseDto): UdemyCourse
     {
-        return $this->createCourse($courseEntity->toArray());
+        return $this->createCourse($courseDto->toArray());
     }
 
     public function createFromId(int $courseId): UdemyCourse
@@ -31,5 +33,17 @@ class UdemyCourseRepository
          */
 
         return $model;
+    }
+
+    public function syncCurriculumItem(
+        UdemyCourse $udemyCourse,
+        CourseCurriculumItemDto $itemDto
+    ): CurriculumItem {
+        return $udemyCourse->items()->updateOrCreate(
+            [
+                'id' => $itemDto->id,
+            ],
+            $itemDto->toArray()
+        );
     }
 }

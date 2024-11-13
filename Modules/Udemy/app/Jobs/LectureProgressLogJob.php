@@ -4,25 +4,22 @@ namespace Modules\Udemy\Jobs;
 
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Modules\Udemy\Client\UdemySdk;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
-use Modules\Udemy\Services\Client\UdemySdk;
 use Modules\Udemy\Services\UdemyService;
 
-/**
- * For lecture
- */
 class LectureProgressLogJob implements ShouldQueue
 {
-    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+    use Batchable;
 
     /**
      * Create a new job instance.
@@ -37,15 +34,12 @@ class LectureProgressLogJob implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @throws \Exception
      */
-    public function handle(): void
+    public function handle(UdemySdk $udemySdk): void
     {
-        $result = app(UdemySdk::class)
+        $result = $udemySdk->setToken($this->userToken)
             ->me()
             ->lectureProgressLogs(
-                $this->userToken,
                 $this->curriculumItem,
                 $this->payload
             );

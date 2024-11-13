@@ -4,10 +4,10 @@ namespace Modules\Client\Services\Clients;
 
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
+use Modules\Client\Events\ClientRequestWithoutCached;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Interfaces\IResponse;
 use Modules\Client\Services\Clients\Responses\BaseResponse;
@@ -76,10 +76,12 @@ class BaseClient implements IClient
         array $payload = [],
         array $options = []
     ): IResponse {
+        $cOptions = $options;
+        unset($cOptions['headers']['User-Agent']);
         $key = md5(
             Str::lower($method . $endpoint)
             . serialize($payload)
-            . serialize($options)
+            . serialize($cOptions)
         );
 
         /**
@@ -87,8 +89,10 @@ class BaseClient implements IClient
          */
         return Cache::remember(
             $key,
-            1,
+            config('client.cache.interval', 60),
             function () use ($method, $endpoint, $payload, $options) {
+                ClientRequestWithoutCached::dispatch();
+
                 $method = Str::upper($method);
                 $logService = app(RequestLogService::class);
                 $responseClass = $this->getResponseClass();

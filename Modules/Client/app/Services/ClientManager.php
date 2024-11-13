@@ -6,7 +6,7 @@ use Modules\Client\Exceptions\ClientNotFound;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\Clients\BaseClient;
 use Modules\Jav\Onejav\Client as OnejavClient;
-use Modules\Udemy\Services\Client\Client as UdemyClient;
+use Modules\Udemy\Client\Client as UdemyClient;
 
 class ClientManager
 {
@@ -31,6 +31,11 @@ class ClientManager
         return $this->classes;
     }
 
+    /**
+     * @TODO Support IClient with arguments
+     * @param string $client
+     * @return IClient
+     */
     public function getClient(string $client): IClient
     {
         if (!in_array($client, $this->classes)) {

@@ -57,4 +57,9 @@ class UdemyCourse extends Model
     {
         return UdemyCourseFactory::new();
     }
+
+    public function getLink(): string
+    {
+        return config('udemy.client.base_uri') . trim($this->url, '/');
+    }
 }

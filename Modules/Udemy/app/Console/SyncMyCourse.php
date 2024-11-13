@@ -25,6 +25,18 @@ class SyncMyCourse extends Command
      */
     public function handle(): void
     {
-        app(UdemyService::class)->syncMyCourses($this->getToken());
+        $this->output->title('Sync my courses');
+        $this->output->text('Processing courses for first page...');
+
+        /**
+         * Sync courses as sync queue
+         */
+        $coursesDto = app(UdemyService::class)
+            ->syncMyCourses($this->getToken());
+
+        $this->output->info('Courses: ' . $coursesDto->getCount());
+        $this->output->info('Pages: ' . $coursesDto->pages());
+
+        $this->output->success('Completed');
     }
 }

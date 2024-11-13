@@ -12,7 +12,7 @@ return [
         ],
     ],
     'horizon' => [
-        'memory_limit' => env('UDEMY_HORIZON_MEMORY', 1024),
-        'max_process' => env('UDEMY_HORIZON_MAX_PROCESS', 1),
+        'max_process' => env('UDEMY_HORIZON_MAX_PROCESS', 2),
+        'memory_limit' => env('UDEMY_HORIZON_MEMORY', 512),
     ],
 ];

@@ -6,121 +6,31 @@ use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Mockery\MockInterface;
 use Modules\Core\Zeus\AbstractWish;
+use Modules\Udemy\Client\Client;
+use Modules\Udemy\Client\Dto\CourseCategoryDto;
+use Modules\Udemy\Client\Dto\CourseDto;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class UdemyWish extends AbstractWish
 {
-    public const string CONTENT_TYPE = 'application/json, text/plain';
-
     private const array HEADERS = [
         'User-Agent' => 'testing',
         'Authorization' => 'Bearer testing',
-        'Accept' => self::CONTENT_TYPE,
+        'Accept' => Client::CONTENT_TYPE,
     ];
 
-    public function wish(MockInterface $clientMock): MockInterface
-    {
+    public function wish(
+        MockInterface $clientMock
+    ): MockInterface {
         $clientMock = $this->subscribedCoursesCategories($clientMock);
-
-        $clientMock->shouldReceive('request')
-            ->withSomeOfArgs(
-                Request::METHOD_GET,
-                'api-2.0/users/me/subscribed-courses',
-                [
-                    'headers' => self::HEADERS,
-                    'query' => [
-                        'fields' => [
-                            'course' => 'archive_time,buyable_object_type,completion_ratio,enrollment_time,favorite_time,features,image_240x135,image_480x270,is_practice_test_course,is_private,is_published,last_accessed_time,num_collections,published_title,title,tracking_id,url,visible_instructors,is_course_available_in_org',
-                            'users' => '@min,job_title',
-                        ],
-                        'ordering' => '-last_accessed',
-                        'page' => 1,
-                        'page_size' => 100,
-                        'is_archived' => false,
-                    ],
-                ]
-            )
-            ->andReturn(
-                new Response(
-                    SymfonyResponse::HTTP_OK,
-                    [
-                        'Content-Type' => self::CONTENT_TYPE,
-                    ],
-                    file_get_contents(__DIR__ . '/../Fixtures/subscribed-courses.json')
-                )
-            );
-        $clientMock->shouldReceive('request')
-            ->withSomeOfArgs(
-                Request::METHOD_GET,
-                'api-2.0/users/me/subscribed-courses',
-                [
-                    'headers' => self::HEADERS,
-                    'query' => [
-                        'fields' => [
-                            'course' => 'archive_time,buyable_object_type,completion_ratio,enrollment_time,favorite_time,features,image_240x135,image_480x270,is_practice_test_course,is_private,is_published,last_accessed_time,num_collections,published_title,title,tracking_id,url,visible_instructors,is_course_available_in_org',
-                            'users' => '@min,job_title',
-                        ],
-                        'ordering' => '-last_accessed',
-                        'page' => 1,
-                        'page_size' => 100,
-                        'is_archived' => false,
-                        'error' => 403,
-                    ],
-                ]
-            )
-            ->andReturn(
-                new Response(
-                    SymfonyResponse::HTTP_FORBIDDEN,
-                    [
-                        'Content-Type' => self::CONTENT_TYPE,
-                    ],
-                    ''
-                )
-            );
-
-        for($index = 1; $index <= 3; $index++) {
-            $clientMock->shouldReceive('request')
-                ->withSomeOfArgs(
-                    Request::METHOD_GET,
-                    'api-2.0/users/me/subscribed-courses',
-                    [
-                        'headers' => self::HEADERS,
-                        'query' => [
-                            'fields' => [
-                                'course' => 'archive_time,buyable_object_type,completion_ratio,enrollment_time,favorite_time,features,image_240x135,image_480x270,is_practice_test_course,is_private,is_published,last_accessed_time,num_collections,published_title,title,tracking_id,url,visible_instructors,is_course_available_in_org',
-                                'users' => '@min,job_title',
-                            ],
-                            'ordering' => '-last_accessed',
-                            'page' => $index,
-                            'page_size' => 40,
-                            'is_archived' => false,
-                        ],
-                    ]
-                )
-                ->andReturn(
-                    new Response(
-                        SymfonyResponse::HTTP_OK,
-                        [
-                            'Content-Type' => self::CONTENT_TYPE,
-                        ],
-                        file_get_contents(__DIR__ . '/../Fixtures/subscribed-courses_' . $index. '.json')
-                    )
-                );
-        }
-
+        $clientMock = $this->subscribedCourses($clientMock);
         $clientMock->shouldReceive('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
                 'api-2.0/courses/59583/subscriber-curriculum-items'
             )
             ->andReturn(
-                new Response(
-                    SymfonyResponse::HTTP_OK,
-                    [
-                        'Content-Type' => self::CONTENT_TYPE,
-                    ],
-                    file_get_contents(__DIR__ . '/../Fixtures/subscriber-curriculum-items.json')
-                )
+                $this->buildResponse(SymfonyResponse::HTTP_OK, 'subscriber-curriculum-items')
             );
 
         return $clientMock;
@@ -136,7 +46,7 @@ class UdemyWish extends AbstractWish
                     'headers' => self::HEADERS,
                     'query' => [
                         'fields' => [
-                            'course_category' => 'id,title',
+                            'course_category' => implode(',', CourseCategoryDto::FIELDS),
                         ],
                         'previewing' => false,
                         'page_size' => 15,
@@ -145,14 +55,9 @@ class UdemyWish extends AbstractWish
                 ]
             )
             ->andReturn(
-                new Response(
-                    SymfonyResponse::HTTP_OK,
-                    [
-                        'Content-Type' => self::CONTENT_TYPE,
-                    ],
-                    file_get_contents(__DIR__ . '/../Fixtures/subscribed-courses-categories.json')
-                )
+                $this->buildResponse(SymfonyResponse::HTTP_OK, 'subscribed-courses-categories')
             );
+
         $clientMock->shouldReceive('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
@@ -171,15 +76,95 @@ class UdemyWish extends AbstractWish
                 ]
             )
             ->andReturn(
-                new Response(
-                    SymfonyResponse::HTTP_FORBIDDEN,
-                    [
-                        'Content-Type' => self::CONTENT_TYPE,
-                    ],
-                    ''
-                )
+                $this->buildResponse(SymfonyResponse::HTTP_FORBIDDEN),
             );
 
         return $clientMock;
+    }
+
+    private function subscribedCourses(MockInterface $clientMock): MockInterface
+    {
+        $clientMock->shouldReceive('request')
+            ->withSomeOfArgs(
+                Request::METHOD_GET,
+                'api-2.0/users/me/subscribed-courses',
+                [
+                    'headers' => self::HEADERS,
+                    'query' => [
+                        'fields' => [
+                            'course' => implode(',', CourseDto::FIELDS),
+                            'users' => '@min,job_title',
+                        ],
+                        'ordering' => '-last_accessed',
+                        'page' => 1,
+                        'page_size' => 100,
+                        'is_archived' => false,
+                    ],
+                ]
+            )
+            ->andReturn(
+                $this->buildResponse(SymfonyResponse::HTTP_OK, 'subscribed-courses')
+            );
+        $clientMock->shouldReceive('request')
+            ->withSomeOfArgs(
+                Request::METHOD_GET,
+                'api-2.0/users/me/subscribed-courses',
+                [
+                    'headers' => self::HEADERS,
+                    'query' => [
+                        'fields' => [
+                            'course' => implode(',', CourseDto::FIELDS),
+                            'users' => '@min,job_title',
+                        ],
+                        'ordering' => '-last_accessed',
+                        'page' => 1,
+                        'page_size' => 100,
+                        'is_archived' => false,
+                        'error' => 403,
+                    ],
+                ]
+            )
+            ->andReturn(
+                $this->buildResponse(SymfonyResponse::HTTP_FORBIDDEN),
+            );
+
+        for ($index = 1; $index <= 3; $index++) {
+            $clientMock->shouldReceive('request')
+                ->withSomeOfArgs(
+                    Request::METHOD_GET,
+                    'api-2.0/users/me/subscribed-courses',
+                    [
+                        'headers' => self::HEADERS,
+                        'query' => [
+                            'fields' => [
+                                'course' => implode(',', CourseDto::FIELDS),
+                                'users' => '@min,job_title',
+                            ],
+                            'ordering' => '-last_accessed',
+                            'page' => $index,
+                            'page_size' => 40,
+                            'is_archived' => false,
+                        ],
+                    ]
+                )
+                ->andReturn(
+                    $this->buildResponse(SymfonyResponse::HTTP_OK, 'subscribed-courses_' . $index)
+                );
+        }
+
+        return $clientMock;
+    }
+
+    private function buildResponse(int $statusCode, ?string $bodyFile = null): Response
+    {
+        return new Response(
+            $statusCode,
+            [
+                'Content-Type' => Client::CONTENT_TYPE,
+            ],
+            $bodyFile
+                ? file_get_contents(__DIR__ . '/../Fixtures/' . $bodyFile . '.json')
+                : null
+        );
     }
 }
