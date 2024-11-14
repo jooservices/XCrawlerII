@@ -10,8 +10,8 @@ use Modules\Core\Models\Setting;
 
 abstract class TestCase extends BaseTestCase
 {
-    use WithFaker;
     use RefreshDatabase;
+    use WithFaker;
 
     public function setUp(): void
     {
