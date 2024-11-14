@@ -78,3 +78,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Setup application
+        if: success()
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          composer install --no-ansi --no-scripts --no-progress --prefer-dist
+          php artisan key:generate
+          chmod -R 777 storage bootstrap/cache
+          php artisan config:clear
+          php artisan migrate:fresh
+
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        if: success()
+        run: |
+          ./vendor/bin/phpunit --testsuite=${{ matrix.test }} --coverage-clover coverage-${{ matrix.test }}.xml
+
+      - name: Coverage
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: coverage-reports
+          path: coverage-${{ matrix.test }}.xml
