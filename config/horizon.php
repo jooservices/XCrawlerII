@@ -227,7 +227,7 @@ return [
             'maxJobs' => config('udemy.horizon.max_jobs', 3),
             'memory' => config('udemy.horizon.memory_limit', 512),
             'tries' => 1,
-            'timeout' => 60,
+            'timeout' => config('udemy.horizon.timeout', 120),
             'nice' => 0,
         ],
     ],
