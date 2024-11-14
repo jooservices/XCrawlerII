@@ -38,7 +38,7 @@ class OnejavWish extends AbstractWish
         $clientMock->shouldReceive('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
-                '/404'
+                '404'
             )
             ->andReturn(
                 new Response(
