@@ -13,6 +13,7 @@ use Psr\Container\NotFoundExceptionInterface;
 class OnejavService
 {
     public const string ONEJAV_QUEUE_NAME = 'onejav';
+
     public const string SETTING_GROUP = 'onejav';
 
     /**

@@ -14,6 +14,7 @@ class Setting extends Model
     use HasFactory;
 
     protected string $collection = 'settings';
+
     protected $connection = 'mongodb';
 
     /**
@@ -22,13 +23,13 @@ class Setting extends Model
     protected $fillable = [
         'group',
         'key',
-        'value'
+        'value',
     ];
 
     protected $casts = [
         'group' => 'string',
         'key' => 'string',
-        'value' => 'string'
+        'value' => 'string',
     ];
 
     protected static function newFactory(): SettingFactory

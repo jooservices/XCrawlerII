@@ -2,6 +2,8 @@
 
 namespace Modules\Client\Exceptions;
 
-class ClientNotFound extends \RuntimeException
+use RuntimeException;
+
+class ClientNotFound extends RuntimeException
 {
 }

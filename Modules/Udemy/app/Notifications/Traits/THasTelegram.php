@@ -1,17 +1,12 @@
 <?php
 
-namespace Modules\Udemy\Notifications;
+namespace Modules\Udemy\Notifications\Traits;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
 use Modules\Udemy\Models\UserToken;
 use NotificationChannels\Telegram\TelegramMessage;
 
-abstract class AbstractToTelegramNotification extends Notification implements ShouldQueue
+trait THasTelegram
 {
-    use Queueable;
-
     /**
      * Get the notification's delivery channels.
      */

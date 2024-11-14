@@ -4,9 +4,13 @@ namespace Modules\Udemy\Client\Dto;
 
 use Modules\Core\Dto\AbstractBaseDto;
 
+/**
+ * @property array $completed_lecture_ids
+ * @property array $completed_quiz_ids
+ * @property array $completed_assignment_ids
+ */
 class CourseProgressDto extends AbstractBaseDto
 {
-
     public function getFields(): array
     {
         return [];

@@ -20,7 +20,7 @@ jobs:
     name: Code standards check
     strategy:
       matrix:
-        lint: [ phpmd, phpstan ]
+        lint: [ phpmd, phpstan, pint ]
 
     runs-on:
       - self-hosted
@@ -39,3 +39,86 @@ jobs:
 
       - name: Lint
         run: composer ${{ matrix.lint }}
+
+  tests:
+    name: Execute UnitTest
+    strategy:
+      matrix:
+        test: [ Core, Client, Jav, Udemy ]
+    runs-on:
+      - self-hosted
+      - ubuntu
+    needs: [ code_standards ]
+
+    services:
+      mysql:
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: xcrawlerii
+        ports:
+          - 3306:3306
+
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+      mongo:
+        image: mongo:bionic
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup application
+        if: success()
+        run: |
+          php -r "file_exists('.env') || copy('.env.example', '.env');"
+          composer install --no-ansi --no-scripts --no-progress --prefer-dist
+          php artisan key:generate
+          chmod -R 777 storage bootstrap/cache
+          php artisan config:clear
+          php artisan migrate:fresh
+
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        if: success()
+        run: |
+          ./vendor/bin/phpunit --testsuite=${{ matrix.test }} --coverage-clover coverage-${{ matrix.test }}.xml
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: coverage-reports
+          path: coverage-${{ matrix.test }}.xml
+          overwrite: 'true'
+
+  test_finished:
+    name: Test Finished
+    runs-on:
+      - self-hosted
+      - ubuntu
+    needs: [ tests ]
+
+    steps:
+      - name: Download build from artifact
+        uses: actions/download-artifact@v4
+        if: success()
+        with:
+          name: coverage-reports
+          path: ./reports
+
+      - name: Upload coverage to codecov.io
+        uses: codecov/codecov-action@v4
+        if: success()
+        with:
+          directory: ./reports

@@ -5,6 +5,11 @@ namespace Modules\Udemy\Client\Dto;
 use Carbon\Carbon;
 use Modules\Core\Dto\AbstractBaseDto;
 
+/**
+ * @property string $url
+ * @property int $completion_ratio
+ * @property string $enrollment_time
+ */
 class CourseDto extends AbstractBaseDto
 {
     public const array FIELDS = [

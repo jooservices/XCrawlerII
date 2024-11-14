@@ -32,8 +32,7 @@ class OnejavReferenceFactory extends Factory
                 $this->faker->name,
                 $this->faker->name,
                 $this->faker->name,
-            ]
+            ],
         ];
     }
 }
-

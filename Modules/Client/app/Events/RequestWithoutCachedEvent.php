@@ -1,14 +1,12 @@
 <?php
 
-namespace Modules\Udemy\Events;
+namespace Modules\Client\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Modules\Udemy\Models\UdemyCourse;
-use Modules\Udemy\Models\UserToken;
 
-class CourseCreatedEvent
+class RequestWithoutCachedEvent
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -17,10 +15,8 @@ class CourseCreatedEvent
     /**
      * Create a new event instance.
      */
-    public function __construct(
-        public UserToken $userToken,
-        public UdemyCourse $udemyCourse
-    ) {
+    public function __construct()
+    {
         //
     }
 }

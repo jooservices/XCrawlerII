@@ -3,7 +3,6 @@
 namespace Modules\Core\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\Core\Models\Pool;
 use Modules\Core\Models\Queue;
 
 class QueueFactory extends Factory

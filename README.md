@@ -1,5 +1,10 @@
 # XCrawlerII
 
+## Conventions
+- Event suffixed with `Event`
+- Job suffixed with `Job`
+- Notifications suffixed with `Notif`
+
 ## Factory
 Factory for `GuzzleHttp\Client` with middlewares
 - Mocking

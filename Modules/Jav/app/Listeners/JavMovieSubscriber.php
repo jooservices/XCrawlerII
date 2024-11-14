@@ -11,10 +11,6 @@ use Modules\Jav\Repositories\JavMovieRepository;
 
 class JavMovieSubscriber
 {
-    /**
-     * @param OnejavReferenceCreatedEvent $event
-     * @return void
-     */
     public function handleJavMovieCreated(OnejavReferenceCreatedEvent $event): void
     {
         /**

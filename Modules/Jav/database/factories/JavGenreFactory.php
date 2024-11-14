@@ -19,4 +19,3 @@ class JavGenreFactory extends Factory
         return [];
     }
 }
-

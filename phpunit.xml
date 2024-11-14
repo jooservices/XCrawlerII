@@ -8,11 +8,11 @@
          stopOnFailure="true"
 >
     <testsuites>
-        <testsuite name="Client">
-            <directory>Modules/Client/tests</directory>
-        </testsuite>
         <testsuite name="Core">
             <directory>Modules/Core/tests</directory>
+        </testsuite>
+        <testsuite name="Client">
+            <directory>Modules/Client/tests</directory>
         </testsuite>
         <testsuite name="Jav">
             <directory>Modules/Jav/tests</directory>

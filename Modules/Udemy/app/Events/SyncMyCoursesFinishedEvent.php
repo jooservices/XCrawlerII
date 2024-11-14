@@ -7,7 +7,6 @@ use Illuminate\Bus\Batch;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Modules\Udemy\Client\Dto\CoursesDto;
-use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 
 class SyncMyCoursesFinishedEvent

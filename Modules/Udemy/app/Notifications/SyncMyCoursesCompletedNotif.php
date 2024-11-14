@@ -3,14 +3,22 @@
 namespace Modules\Udemy\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Modules\Udemy\Models\UserToken;
+use Modules\Udemy\Notifications\Traits\THasTelegram;
 use NotificationChannels\Telegram\TelegramMessage;
 
-class SyncMyCoursesCompletedNotif extends AbstractToTelegramNotification
+class SyncMyCoursesCompletedNotif extends Notification implements ShouldQueue
 {
+    use Queueable;
+    use THasTelegram;
+
+    public function __construct(
+        public UserToken $userToken
+    ) {
+    }
+
     public function toTelegram(UserToken $notifiable): TelegramMessage
     {
         $completedCourses = $notifiable->courses()

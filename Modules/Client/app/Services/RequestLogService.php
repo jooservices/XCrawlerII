@@ -17,7 +17,7 @@ class RequestLogService
         ?int $statusCode = null,
         mixed $body = null,
     ): RequestLog {
-        if (isset($this->model) && $this->model !== null) {
+        if (isset($this->model)) {
             throw new RequestLogWithoutResponding();
         }
 

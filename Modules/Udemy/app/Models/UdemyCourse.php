@@ -13,6 +13,7 @@ use Modules\Udemy\Database\Factories\UdemyCourseFactory;
 /**
  * @property int $id
  * @property string $title
+ * @property string $url
  * @property CurriculumItem|Collection $items
  */
 class UdemyCourse extends Model

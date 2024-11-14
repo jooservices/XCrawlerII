@@ -2,9 +2,15 @@
 
 namespace Modules\Udemy\Transformers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property string $uuid
+ * @property string $token
+ * @property Carbon $created_at
+ */
 class UserTokenResource extends JsonResource
 {
     /**
@@ -15,7 +21,7 @@ class UserTokenResource extends JsonResource
         return [
             'uuid' => $this->uuid,
             'token' => $this->token,
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at,
         ];
     }
 }

@@ -11,8 +11,8 @@ use Modules\Jav\Database\Factories\JavGenreFactory;
 
 class JavGenre extends Model
 {
-    use HasFactory;
     use GeneratesUuid;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.

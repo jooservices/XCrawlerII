@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Core\Interfaces;
+namespace Modules\Core\Zeus\Interfaces;
 
 use Mockery\MockInterface;
 

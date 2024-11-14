@@ -2,6 +2,9 @@
 
 namespace Modules\Udemy\Client\Dto\Traits;
 
+/**
+ * @property string $_class
+ */
 trait THasItemDto
 {
     public function getId(): int
