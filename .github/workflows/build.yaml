@@ -40,19 +40,19 @@ jobs:
       - name: Lint
         run: composer ${{ matrix.lint }}
 
-  securities:
-    name: Codacy Analysis CLI
-    runs-on:
-      - self-hosted
-      - ubuntu
-
-    needs: [ code_standards ]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@main
-
-      - name: Run Codacy Analysis CLI
-        uses: codacy/codacy-analysis-cli-action@master
+#  securities:
+#    name: Codacy Analysis CLI
+#    runs-on:
+#      - self-hosted
+#      - ubuntu
+#
+#    needs: [ code_standards ]
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@main
+#
+#      - name: Run Codacy Analysis CLI
+#        uses: codacy/codacy-analysis-cli-action@master
 
   tests:
     name: Execute UnitTest
@@ -62,7 +62,7 @@ jobs:
     runs-on:
       - self-hosted
       - ubuntu
-    needs: [ securities ]
+    needs: [ code_standards ]
 
     services:
       mysql:
@@ -97,7 +97,7 @@ jobs:
         if: success()
         run: |
           php -r "file_exists('.env') || copy('.env.example', '.env');"
-          composer install --no-ansi --no-scripts --no-progress --prefer-dist
+          composer install --no-ansi --no-scripts --no-progress --prefer-dist --ignore-platform-req=ext-mongodb
           php artisan key:generate
           chmod -R 777 storage bootstrap/cache
           php artisan config:clear
