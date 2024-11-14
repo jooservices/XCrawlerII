@@ -100,3 +100,4 @@ jobs:
         with:
           name: coverage-reports
           path: coverage-${{ matrix.test }}.xml
+          overwrite: 'true'
