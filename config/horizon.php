@@ -226,7 +226,7 @@ return [
             'maxTime' => 0,
             'maxJobs' => config('udemy.horizon.max_jobs', 3),
             'memory' => config('udemy.horizon.memory_limit', 512),
-            'tries' => 1,
+            'tries' => config('udemy.horizon.tries', 3),
             'timeout' => config('udemy.horizon.timeout', 120),
             'nice' => 0,
         ],
