@@ -1,12 +1,12 @@
 <?php
 
-namespace Modules\Jav\Services;
+namespace Modules\Jav\Services\Onejav;
 
 use Carbon\Carbon;
 use Modules\Core\Services\SettingService;
+use Modules\Jav\Dto\TagDto;
 use Modules\Jav\Jobs\OnejavDailyFetchJob;
 use Modules\Jav\Jobs\OnejavFetchItemsJob;
-use Modules\Jav\Onejav\CrawlingService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
@@ -45,6 +45,16 @@ class OnejavService
         OnejavDailyFetchJob::dispatch(
             Carbon::now()->format(CrawlingService::DEFAULT_DATE_FORMAT)
         );
+    }
+
+    public function tags(): void
+    {
+        app(CrawlingService::class)->tags()->map(function (TagDto $tag) {
+            OnejavFetchItemsJob::dispatch(
+                'tag/' . $tag->name,
+                $this->getSetting($tag->name . '_current_page', 1)
+            );
+        });
     }
 
     /**

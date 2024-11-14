@@ -4,7 +4,7 @@ namespace Modules\Jav\Tests\Unit\Onejav;
 
 use Illuminate\Support\Facades\Queue;
 use Modules\Jav\Jobs\OnejavFetchItemsJob;
-use Modules\Jav\Services\OnejavService;
+use Modules\Jav\Services\Onejav\OnejavService;
 use Modules\Jav\tests\TestCase;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;

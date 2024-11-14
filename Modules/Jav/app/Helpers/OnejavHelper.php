@@ -3,7 +3,7 @@
 namespace Modules\Jav\Helpers;
 
 use Carbon\Carbon;
-use Modules\Jav\Onejav\CrawlingService;
+use Modules\Jav\Services\Onejav\CrawlingService;
 
 class OnejavHelper
 {

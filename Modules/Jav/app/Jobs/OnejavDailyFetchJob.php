@@ -10,9 +10,9 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Str;
 use Modules\Core\Services\SettingService;
 use Modules\Jav\Events\OnejavDailyProcessedEvent;
-use Modules\Jav\Onejav\CrawlingService;
 use Modules\Jav\Repositories\OnejavRepository;
-use Modules\Jav\Services\OnejavService;
+use Modules\Jav\Services\Onejav\CrawlingService;
+use Modules\Jav\Services\Onejav\OnejavService;
 use Throwable;
 
 class OnejavDailyFetchJob implements ShouldQueue

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Jav\Onejav;
+namespace Modules\Jav\Client\Onejav;
 
 use Campo\UserAgent;
 use Exception;

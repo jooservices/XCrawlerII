@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use Modules\Jav\Events\OnejavDailyProcessedEvent;
 use Modules\Jav\Jobs\OnejavDailyFetchJob;
-use Modules\Jav\Onejav\CrawlingService;
+use Modules\Jav\Services\Onejav\CrawlingService;
 use Modules\Jav\tests\TestCase;
 
 class OnejavDailyFetchJobTest extends TestCase

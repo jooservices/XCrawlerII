@@ -8,9 +8,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\Core\Services\SettingService;
-use Modules\Jav\Onejav\CrawlingService;
 use Modules\Jav\Repositories\OnejavRepository;
-use Modules\Jav\Services\OnejavService;
+use Modules\Jav\Services\Onejav\CrawlingService;
+use Modules\Jav\Services\Onejav\OnejavService;
 use Throwable;
 
 class OnejavFetchItemsJob implements ShouldQueue

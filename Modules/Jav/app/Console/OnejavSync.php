@@ -3,7 +3,7 @@
 namespace Modules\Jav\Console;
 
 use Illuminate\Console\Command;
-use Modules\Jav\Services\OnejavService;
+use Modules\Jav\Services\Onejav\OnejavService;
 
 class OnejavSync extends Command
 {
@@ -32,6 +32,9 @@ class OnejavSync extends Command
                 break;
             case 'popular':
                 $service->popular();
+                break;
+            case 'tags':
+                $service->tags();
                 break;
         }
     }

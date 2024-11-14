@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Jav\Onejav;
+namespace Modules\Jav\Services\Onejav;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
@@ -8,12 +8,13 @@ use Illuminate\Support\Str;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\ClientManager;
 use Modules\Core\Services\SettingService;
+use Modules\Jav\Client\Onejav\Client;
+use Modules\Jav\Dto\TagDto;
 use Modules\Jav\Entities\OnejavItemEntity;
 use Modules\Jav\Events\CrawlingFailedEvent;
 use Modules\Jav\Events\OnejavHaveNextPageEvent;
 use Modules\Jav\Events\OnejavItemParsedEvent;
 use Modules\Jav\Helpers\OnejavHelper;
-use Modules\Jav\Services\OnejavService;
 use Symfony\Component\DomCrawler\Crawler;
 
 class CrawlingService
@@ -121,5 +122,27 @@ class CrawlingService
         Event::dispatch(new OnejavItemParsedEvent($item));
 
         return $item;
+    }
+
+    public function tags(): Collection
+    {
+        $response = $this->client->get('tag');
+
+        if (!$response->isSuccess()) {
+            CrawlingFailedEvent::dispatch($response);
+
+            return collect();
+        }
+
+        $element = $response->parseBody()->getData();
+
+        return collect($element->filter('.columns .column a')->each(function (Crawler $el) {
+            $tagDto = new TagDto();
+            $tagDto->name = trim($el->text());
+            $tagDto->slug = Str::slug($tagDto->name);
+            $tagDto->link = $el->attr('href');
+
+            return $tagDto;
+        }));
     }
 }
