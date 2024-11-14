@@ -94,10 +94,31 @@ jobs:
         run: |
           ./vendor/bin/phpunit --testsuite=${{ matrix.test }} --coverage-clover coverage-${{ matrix.test }}.xml
 
-      - name: Coverage
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         if: success()
         with:
           name: coverage-reports
           path: coverage-${{ matrix.test }}.xml
           overwrite: 'true'
+
+  test_finished:
+    name: Test Finished
+    runs-on:
+      - self-hosted
+      - ubuntu
+    needs: [ tests ]
+
+    steps:
+      - name: Download build from artifact
+        uses: actions/download-artifact@v4
+        if: success()
+        with:
+          name: coverage-reports
+          path: ./reports
+
+      - name: Upload coverage to codecov.io
+        uses: codecov/codecov-action@v4
+        if: success()
+        with:
+          directory: ./reports
