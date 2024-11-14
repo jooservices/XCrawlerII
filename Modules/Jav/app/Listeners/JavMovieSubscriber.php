@@ -31,7 +31,7 @@ class JavMovieSubscriber
         /**
          * @TODO Notification should be enable via configuration
          */
-        if (config('jav.onejav.notifications.enabled') ) {
+        if (config('jav.onejav.notifications.enabled')) {
             $model->notify(new JavMovieCreatedNotification());
         }
 
