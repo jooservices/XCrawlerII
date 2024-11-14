@@ -41,7 +41,7 @@ jobs:
         run: composer ${{ matrix.lint }}
 
   securities:
-    name: Codacy Analysis CLI
+    name: Security check
     runs-on:
       - self-hosted
       - ubuntu
@@ -54,6 +54,11 @@ jobs:
 
       - name: Run Codacy Analysis CLI
         uses: codacy/codacy-analysis-cli-action@master
+
+      - name: PHP Security Checker
+        uses: StephaneBour/actions-php-security-checker@1.1
+        with:
+          composer-lock: './composer.lock'
 
   tests:
     name: Execute UnitTest
