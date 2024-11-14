@@ -20,7 +20,7 @@ jobs:
     name: Code standards check
     strategy:
       matrix:
-        lint: [ phpmd, phpstan ]
+        lint: [ phpmd, phpstan, pint ]
 
     runs-on:
       - self-hosted
@@ -39,3 +39,42 @@ jobs:
 
       - name: Lint
         run: composer ${{ matrix.lint }}
+
+  tests:
+    name: Execute UnitTest
+    strategy:
+      matrix:
+        test: [ Core, Client, Jav, Udemy ]
+    runs-on:
+      - self-hosted
+      - ubuntu
+    needs: [ code_standards ]
+
+    services:
+      mysql:
+        image: mariadb:latest
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: xcrawlerii
+        ports:
+          - 3306:3306
+
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+
+      mongo:
+        image: mongo:bionic
+        options: >-
+          --health-cmd mongo
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 27017:27017
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0

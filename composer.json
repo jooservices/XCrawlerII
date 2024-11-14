@@ -79,6 +79,9 @@
         ],
         "phpstan": [
             "@php vendor/bin/phpstan analyze --level=1 Modules"
+        ],
+        "pint": [
+            "@php vendor/bin/pint --test ./Modules"
         ]
     },
     "extra": {
