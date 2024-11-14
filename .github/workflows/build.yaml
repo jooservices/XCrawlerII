@@ -122,3 +122,5 @@ jobs:
         if: success()
         with:
           directory: ./reports
+          token: ${{ secrets.CODECOV_TOKEN }}
+          os: linux-arm64
