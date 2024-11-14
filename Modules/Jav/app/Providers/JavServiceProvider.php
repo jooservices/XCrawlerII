@@ -50,7 +50,7 @@ class JavServiceProvider extends ServiceProvider
     protected function registerCommands(): void
     {
         $this->commands([
-            OnejavSync::class
+            OnejavSync::class,
         ]);
     }
 

@@ -15,20 +15,19 @@ use Modules\Udemy\Services\UdemyService;
 
 class StudyCurriculumItemJob implements ShouldQueue
 {
+    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
-    use Batchable;
 
     /**
      * Create a new job instance.
      */
     public function __construct(
-        public UserToken      $userToken,
+        public UserToken $userToken,
         public CurriculumItem $curriculumItem
-    )
-    {
+    ) {
         $this->onQueue(UdemyService::UDEMY_QUEUE_NAME);
     }
 

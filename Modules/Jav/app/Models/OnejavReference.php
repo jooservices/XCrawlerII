@@ -21,7 +21,9 @@ class OnejavReference extends Model implements IJavMovie
     use HasFactory;
 
     protected $table = 'onejav';
+
     protected $connection = 'mongodb';
+
     /**
      * The attributes that are mass assignable.
      */

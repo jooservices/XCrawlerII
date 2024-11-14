@@ -32,39 +32,39 @@ class OnejavServiceTest extends TestCase
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-//    public function testPopular(): void
-//    {
-//        $service = app(OnejavService::class);
-//        $service->popular();
-//
-//        $this->assertDatabaseHas(
-//            'settings',
-//            [
-//                'group' => 'onejav',
-//                'key' => 'popular_last_page',
-//                'value' => 4,
-//            ],
-//            'mongodb'
-//        );
-//        $this->assertDatabaseHas(
-//            'settings',
-//            [
-//                'group' => 'onejav',
-//                'key' => 'popular_current_page',
-//                'value' => 2,
-//            ],
-//            'mongodb'
-//        );
-//
-//        $service->popular();
-//        $this->assertDatabaseHas(
-//            'settings',
-//            [
-//                'group' => 'onejav',
-//                'key' => 'popular_current_page',
-//                'value' => 3,
-//            ],
-//            'mongodb'
-//        );
-//    }
+    //    public function testPopular(): void
+    //    {
+    //        $service = app(OnejavService::class);
+    //        $service->popular();
+    //
+    //        $this->assertDatabaseHas(
+    //            'settings',
+    //            [
+    //                'group' => 'onejav',
+    //                'key' => 'popular_last_page',
+    //                'value' => 4,
+    //            ],
+    //            'mongodb'
+    //        );
+    //        $this->assertDatabaseHas(
+    //            'settings',
+    //            [
+    //                'group' => 'onejav',
+    //                'key' => 'popular_current_page',
+    //                'value' => 2,
+    //            ],
+    //            'mongodb'
+    //        );
+    //
+    //        $service->popular();
+    //        $this->assertDatabaseHas(
+    //            'settings',
+    //            [
+    //                'group' => 'onejav',
+    //                'key' => 'popular_current_page',
+    //                'value' => 3,
+    //            ],
+    //            'mongodb'
+    //        );
+    //    }
 }

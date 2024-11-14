@@ -17,9 +17,9 @@ use Modules\Udemy\Database\Factories\UserTokenFactory;
  */
 class UserToken extends Model
 {
+    use GeneratesUuid;
     use HasFactory;
     use Notifiable;
-    use GeneratesUuid;
 
     /**
      * The attributes that are mass assignable.

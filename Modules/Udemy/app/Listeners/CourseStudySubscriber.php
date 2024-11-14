@@ -5,7 +5,6 @@ namespace Modules\Udemy\Listeners;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Modules\Udemy\Events\CourseReadyForStudyEvent;
 use Modules\Udemy\Events\StudyInProgressEvent;
-use Modules\Udemy\Notifications\StudyInProgressNotif;
 use Modules\Udemy\Services\StudyService;
 use Throwable;
 
@@ -22,10 +21,9 @@ class CourseStudySubscriber
 
     public function onStudyInProgress(StudyInProgressEvent $event)
     {
-        $event->userToken->notify(new StudyInProgressNotif(
-            $event->course,
-            $event->batch
-        ));
+        /**
+         * @TODO Notification for each progress
+         */
     }
 
     public function subscribe(): array

@@ -3,7 +3,7 @@
 namespace Modules\Core\Zeus;
 
 use Illuminate\Foundation\Testing\WithFaker;
-use Modules\Core\Interfaces\IWish;
+use Modules\Core\Zeus\Interfaces\IWish;
 
 abstract class AbstractWish implements IWish
 {

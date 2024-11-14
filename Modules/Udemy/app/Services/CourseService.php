@@ -76,6 +76,7 @@ class CourseService
             return true;
         }
 
+        $batch = [];
         if (
             $items->pages() > 1
             && $items->pages() > $page

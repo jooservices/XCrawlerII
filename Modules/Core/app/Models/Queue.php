@@ -2,8 +2,8 @@
 
 namespace Modules\Core\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Core\Database\Factories\QueueFactory;
 
@@ -14,7 +14,9 @@ class Queue extends Model
     protected $table = 'queues';
 
     public const string STATE_CODE_INIT = 'INIT';
+
     public const string STATE_CODE_STARTED = 'STARTED';
+
     public const string STATE_CODE_COMPLETED = 'COMPLETED';
 
     public const string STATE_CODE_FAILED = 'FAILED';

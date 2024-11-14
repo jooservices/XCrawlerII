@@ -2,7 +2,6 @@
 
 namespace Modules\Udemy\Client\Dto;
 
-use Illuminate\Support\Collection;
 use Modules\Core\Dto\AbstractBaseDto;
 use Modules\Udemy\Client\Dto\Interfaces\IHasListDto;
 use Modules\Udemy\Client\Dto\Traits\THasListDto;

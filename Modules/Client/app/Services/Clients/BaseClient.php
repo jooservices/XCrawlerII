@@ -7,15 +7,23 @@ use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use Modules\Client\Events\ClientRequestWithoutCached;
+use Modules\Client\Events\PrepareRequestOptionsCompletedEvent;
+use Modules\Client\Events\PrepareRequestOptionsEvent;
+use Modules\Client\Events\RequestCompletedEvent;
+use Modules\Client\Events\RequestWithoutCachedEvent;
+use Modules\Client\Helpers\StringHelper;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Interfaces\IResponse;
 use Modules\Client\Services\Clients\Responses\BaseResponse;
+use Modules\Client\Services\Clients\Traits\THasRequests;
 use Modules\Client\Services\Factory;
 use Modules\Client\Services\RequestLogService;
+use Modules\Core\Helpers\KeyHelper;
 
 class BaseClient implements IClient
 {
+    use THasRequests;
+
     protected ClientInterface $client;
 
     protected string $contentType = 'x-www-form-urlencoded';
@@ -30,46 +38,6 @@ class BaseClient implements IClient
             ->make($options);
     }
 
-    public function get(
-        string $endpoint,
-        array $payload = [],
-        array $options = []
-    ): IResponse {
-        return $this->request(__FUNCTION__, $endpoint, $payload, $options);
-    }
-
-    public function post(
-        string $endpoint,
-        array $payload = [],
-        array $options = []
-    ): IResponse {
-        return $this->request(__FUNCTION__, $endpoint, $payload, $options);
-    }
-
-    public function put(
-        string $endpoint,
-        array $payload = [],
-        array $options = []
-    ): IResponse {
-        return $this->request(__FUNCTION__, $endpoint, $payload, $options);
-    }
-
-    public function delete(
-        string $endpoint,
-        array $payload = [],
-        array $options = []
-    ): IResponse {
-        return $this->request(__FUNCTION__, $endpoint, $payload, $options);
-    }
-
-    public function patch(
-        string $endpoint,
-        array $payload = [],
-        array $options = []
-    ): IResponse {
-        return $this->request(__FUNCTION__, $endpoint, $payload, $options);
-    }
-
     public function request(
         string $method,
         string $endpoint,
@@ -78,10 +46,11 @@ class BaseClient implements IClient
     ): IResponse {
         $cOptions = $options;
         unset($cOptions['headers']['User-Agent']);
-        $key = md5(
-            Str::lower($method . $endpoint)
-            . serialize($payload)
-            . serialize($cOptions)
+        $key = KeyHelper::generateKey(
+            __FUNCTION__,
+            Str::lower($method . $endpoint),
+            $payload,
+            $cOptions
         );
 
         /**
@@ -91,14 +60,16 @@ class BaseClient implements IClient
             $key,
             config('client.cache.interval', 60),
             function () use ($method, $endpoint, $payload, $options) {
-                ClientRequestWithoutCached::dispatch();
+                RequestWithoutCachedEvent::dispatch();
 
                 $method = Str::upper($method);
                 $logService = app(RequestLogService::class);
                 $responseClass = $this->getResponseClass();
 
                 try {
-                    $payload = $this->convertToUTF8($payload);
+                    PrepareRequestOptionsEvent::dispatch();
+
+                    $payload = StringHelper::convertToUTF8a($payload);
 
                     if ($method == 'GET') {
                         $options['query'] = $payload;
@@ -114,11 +85,15 @@ class BaseClient implements IClient
                         }
                     }
 
+                    PrepareRequestOptionsCompletedEvent::dispatch();
+
                     $logService->request(
                         $method,
                         $endpoint,
                         $options
                     );
+
+                    RequestCompletedEvent::dispatch();
 
                     return new $responseClass(
                         $this->client->request($method, $endpoint, $options)
@@ -135,16 +110,5 @@ class BaseClient implements IClient
     protected function getResponseClass(): string
     {
         return BaseResponse::class;
-    }
-
-    protected function convertToUTF8(array $array): array
-    {
-        array_walk_recursive($array, function (&$item) {
-            if (!mb_detect_encoding($item, 'utf-8', true)) {
-                $item = mb_convert_encoding($item, 'UTF-8', 'ISO-8859-1');
-            }
-        });
-
-        return $array;
     }
 }

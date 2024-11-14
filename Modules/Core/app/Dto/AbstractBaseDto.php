@@ -36,9 +36,11 @@ abstract class AbstractBaseDto implements IDto
 
     public function toArray(): array
     {
+        $class = $this->_class ?? null;
+
         return array_merge(
             (array) $this->data,
-            ['class' => $this->_class]
+            ['class' => $class]
         );
     }
 

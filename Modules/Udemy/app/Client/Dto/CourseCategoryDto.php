@@ -15,6 +15,7 @@ class CourseCategoryDto extends AbstractBaseDto implements IHasItemDto
     use THasItemDto;
 
     public const string DTO_NAME = 'course_category';
+
     public const array FIELDS = [
         'id',
         'title',

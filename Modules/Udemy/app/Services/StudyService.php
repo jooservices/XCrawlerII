@@ -64,10 +64,6 @@ class StudyService
 
     /**
      * This one will be called inside a job
-     *
-     * @param UserToken $userToken
-     * @param CurriculumItem $curriculumItem
-     * @return void
      */
     public function studyCurriculum(UserToken $userToken, CurriculumItem $curriculumItem): void
     {

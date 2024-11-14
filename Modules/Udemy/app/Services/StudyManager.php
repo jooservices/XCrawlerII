@@ -26,8 +26,11 @@ class StudyManager
         UserToken $userToken,
         CurriculumItem $curriculumItem
     ): void {
-        $class = $this->detectType($curriculumItem);
-
-        app($class)->study($userToken, $curriculumItem);
+        try {
+            $class = $this->detectType($curriculumItem);
+            app($class)->study($userToken, $curriculumItem);
+        } catch (StudyClassTypeNotFound $exception) {
+            return;
+        }
     }
 }

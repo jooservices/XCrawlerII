@@ -15,7 +15,6 @@ class CrawlingServiceTest extends TestCase
 {
     /**
      * @TODO Testing with parsing cases
-     * @return void
      */
     public function testGetItem(): void
     {

@@ -2,9 +2,7 @@
 
 namespace Modules\Udemy\Client\Sdk;
 
-
 use Modules\Udemy\Client\Dto\CourseCurriculumItemsDto;
-
 use Symfony\Component\HttpFoundation\Request;
 
 class CoursesApi extends AbstractApi

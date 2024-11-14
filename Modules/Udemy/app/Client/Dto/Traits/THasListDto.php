@@ -3,8 +3,6 @@
 namespace Modules\Udemy\Client\Dto\Traits;
 
 use Illuminate\Support\Collection;
-use Modules\Core\Dto\Interfaces\IDto;
-use Modules\Udemy\Client\Dto\AssessmentDto;
 
 trait THasListDto
 {
@@ -37,7 +35,6 @@ trait THasListDto
 
     /**
      * This one maybe not incorrect
-     * @return int
      */
     public function pages(): int
     {

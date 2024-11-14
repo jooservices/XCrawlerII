@@ -4,17 +4,10 @@ namespace Modules\Udemy\Client\Sdk;
 
 use Exception;
 use Modules\Udemy\Client\Dto\AssessmentDto;
-use Modules\Udemy\Client\Dto\AssessmentsDto;
 use Modules\Udemy\Client\Dto\CourseCategoriesDto;
-use Modules\Udemy\Client\Dto\CourseCategoryDto;
 use Modules\Udemy\Client\Dto\CourseProgressDto;
 use Modules\Udemy\Client\Dto\CoursesDto;
-use Modules\Udemy\Client\Entities\AssessmentEntity;
-use Modules\Udemy\Client\Entities\CoursesCategoriesEntity;
-use Modules\Udemy\Client\Entities\CoursesEntity;
-use Modules\Udemy\Client\Entities\ProgressEntity;
 use Modules\Udemy\Models\CurriculumItem;
-use Modules\Udemy\Models\UserToken;
 use Symfony\Component\HttpFoundation\Request;
 
 class MeApi extends AbstractApi

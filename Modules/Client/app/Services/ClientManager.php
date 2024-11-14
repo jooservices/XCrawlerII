@@ -33,8 +33,6 @@ class ClientManager
 
     /**
      * @TODO Support IClient with arguments
-     * @param string $client
-     * @return IClient
      */
     public function getClient(string $client): IClient
     {

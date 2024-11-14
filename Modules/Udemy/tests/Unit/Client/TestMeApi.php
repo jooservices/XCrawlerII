@@ -13,6 +13,7 @@ use Modules\Udemy\Tests\TestCase;
 class TestMeApi extends TestCase
 {
     protected MeApi $meApi;
+
     /**
      * @throws BindingResolutionException
      */
@@ -22,6 +23,7 @@ class TestMeApi extends TestCase
 
         $this->meApi = $this->udemySdk->me();
     }
+
     /**
      * @throws Exception
      */

@@ -16,7 +16,7 @@ class JavMovieCreatedTest extends TestCase
         $onejav = OnejavReference::factory()->create();
 
         Event::fake([
-            JavMovieCreateCompleted::class
+            JavMovieCreateCompleted::class,
         ]);
 
         Event::dispatch(

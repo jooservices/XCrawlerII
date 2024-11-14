@@ -16,7 +16,7 @@ class RequestLog extends Model
         'endpoint',
         'payload',
         'status_code',
-        'body'
+        'body',
     ];
 
     protected $casts = [
