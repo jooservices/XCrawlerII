@@ -118,7 +118,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: coverage-reports-${{ matrix.test }}
+          name: coverage-reports
           path: coverage-${{ matrix.test }}.xml
           overwrite: 'true'
           retention-days: 1
