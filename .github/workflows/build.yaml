@@ -40,6 +40,20 @@ jobs:
       - name: Lint
         run: composer ${{ matrix.lint }}
 
+  securities:
+    name: Codacy Analysis CLI
+    runs-on:
+      - self-hosted
+      - ubuntu
+
+    needs: [ code_standards ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
+
   tests:
     name: Execute UnitTest
     strategy:
@@ -48,7 +62,7 @@ jobs:
     runs-on:
       - self-hosted
       - ubuntu
-    needs: [ code_standards ]
+    needs: [ securities ]
 
     services:
       mysql:
