@@ -121,6 +121,7 @@ jobs:
           name: coverage-reports
           path: coverage-${{ matrix.test }}.xml
           overwrite: 'true'
+          retention-days: 1
 
   test_finished:
     name: Upload coverage to codecov.io
