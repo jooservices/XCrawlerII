@@ -103,7 +103,7 @@ jobs:
           overwrite: 'true'
 
   test_finished:
-    name: Test Finished
+    name: Upload coverage to codecov.io
     runs-on:
       - self-hosted
       - ubuntu
