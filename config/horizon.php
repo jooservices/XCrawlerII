@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Str;
-use Modules\Jav\Services\OnejavService;
+use Modules\Jav\Services\Onejav\OnejavService;
 use Modules\Udemy\Services\UdemyService;
 
 return [

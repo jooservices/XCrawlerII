@@ -5,7 +5,7 @@ namespace Modules\Client\Services;
 use Modules\Client\Exceptions\ClientNotFound;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\Clients\BaseClient;
-use Modules\Jav\Onejav\Client as OnejavClient;
+use Modules\Jav\Client\Onejav\Client as OnejavClient;
 use Modules\Udemy\Client\Client as UdemyClient;
 
 class ClientManager

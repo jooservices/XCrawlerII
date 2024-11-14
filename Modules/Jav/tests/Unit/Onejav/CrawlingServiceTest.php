@@ -4,11 +4,11 @@ namespace Modules\Jav\Tests\Unit\Onejav;
 
 use Illuminate\Support\Facades\Event;
 use Modules\Client\Services\ClientManager;
+use Modules\Jav\Client\Onejav\Client as OnejavClient;
 use Modules\Jav\Entities\OnejavItemEntity;
 use Modules\Jav\Events\CrawlingFailedEvent;
 use Modules\Jav\Events\OnejavHaveNextPageEvent;
-use Modules\Jav\Onejav\Client as OnejavClient;
-use Modules\Jav\Onejav\CrawlingService;
+use Modules\Jav\Services\Onejav\CrawlingService;
 use Modules\Jav\tests\TestCase;
 
 class CrawlingServiceTest extends TestCase
