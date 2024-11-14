@@ -10,9 +10,9 @@ on:
   push:
     branches: [ develop ]
 
-#concurrency:
-#  group: staging_build_test_${{ github.head_ref }}
-#  cancel-in-progress: true
+concurrency:
+  group: staging_build_test_${{ github.head_ref }}
+  cancel-in-progress: true
 
 jobs:
 
