@@ -40,19 +40,25 @@ jobs:
       - name: Lint
         run: composer ${{ matrix.lint }}
 
-#  securities:
-#    name: Codacy Analysis CLI
-#    runs-on:
-#      - self-hosted
-#      - ubuntu
-#
-#    needs: [ code_standards ]
-#    steps:
-#      - name: Checkout code
-#        uses: actions/checkout@main
-#
-#      - name: Run Codacy Analysis CLI
-#        uses: codacy/codacy-analysis-cli-action@master
+  securities:
+    name: Security check
+    runs-on:
+      - self-hosted
+      - ubuntu
+      - X64
+
+    needs: [ code_standards ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+
+      - name: Run Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
+
+      - name: PHP Security Checker
+        uses: StephaneBour/actions-php-security-checker@1.1
+        with:
+          composer-lock: './composer.lock'
 
   tests:
     name: Execute UnitTest
@@ -62,7 +68,7 @@ jobs:
     runs-on:
       - self-hosted
       - ubuntu
-    needs: [ code_standards ]
+    needs: [ securities ]
 
     services:
       mysql:
@@ -115,6 +121,7 @@ jobs:
           name: coverage-reports
           path: coverage-${{ matrix.test }}.xml
           overwrite: 'true'
+          retention-days: 1
 
   test_finished:
     name: Upload coverage to codecov.io
