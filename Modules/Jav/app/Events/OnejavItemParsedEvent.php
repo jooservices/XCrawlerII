@@ -5,6 +5,7 @@ namespace Modules\Jav\Events;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Modules\Jav\Dto\ItemDto;
 use Modules\Jav\Entities\OnejavItemEntity;
 
 class OnejavItemParsedEvent
@@ -14,7 +15,7 @@ class OnejavItemParsedEvent
     /**
      * Create a new event instance.
      */
-    public function __construct(public OnejavItemEntity $item)
+    public function __construct(public ItemDto $item)
     {
         //
     }

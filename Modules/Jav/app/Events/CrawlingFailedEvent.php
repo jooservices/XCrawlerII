@@ -21,14 +21,4 @@ class CrawlingFailedEvent
     {
         //
     }
-
-    /**
-     * Get the channels the event should be broadcast on.
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
-    }
 }

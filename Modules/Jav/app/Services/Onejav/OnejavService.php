@@ -4,6 +4,7 @@ namespace Modules\Jav\Services\Onejav;
 
 use Carbon\Carbon;
 use Modules\Core\Services\SettingService;
+use Modules\Jav\Client\Onejav\CrawlingService;
 use Modules\Jav\Dto\TagDto;
 use Modules\Jav\Jobs\OnejavDailyFetchJob;
 use Modules\Jav\Jobs\OnejavFetchItemsJob;

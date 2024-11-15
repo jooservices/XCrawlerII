@@ -8,7 +8,7 @@ use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Mockery\MockInterface;
 use Modules\Core\Zeus\AbstractWish;
-use Modules\Jav\Services\Onejav\CrawlingService;
+use Modules\Jav\Client\Onejav\CrawlingService;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class OnejavWish extends AbstractWish

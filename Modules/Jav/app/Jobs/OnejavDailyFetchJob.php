@@ -2,16 +2,18 @@
 
 namespace Modules\Jav\Jobs;
 
+use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Modules\Core\Services\SettingService;
+use Modules\Jav\Client\Onejav\CrawlingService;
 use Modules\Jav\Events\OnejavDailyProcessedEvent;
 use Modules\Jav\Repositories\OnejavRepository;
-use Modules\Jav\Services\Onejav\CrawlingService;
 use Modules\Jav\Services\Onejav\OnejavService;
 use Throwable;
 
@@ -42,21 +44,13 @@ class OnejavDailyFetchJob implements ShouldQueue
             $repository->insert($item->toArray());
         }
 
-        OnejavDailyProcessedEvent::dispatch(
-            $items,
-            $this->date,
-            $this->page
-        );
-
         $totalPages = (int) app(SettingService::class)->get(
             OnejavService::SETTING_GROUP,
             Str::slug($this->date, '_') . '_last_page',
         );
 
         if ($totalPages > 1 && $this->page < $totalPages) {
-            for ($page = 2; $page <= $totalPages; $page++) {
-                OnejavDailyFetchJob::dispatch($this->date, $page);
-            }
+            OnejavDailyFetchJob::dispatch($this->date, $this->page + 1);
         }
     }
 
