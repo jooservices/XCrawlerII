@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Modules\Core\Dto\AbstractBaseDto;
 use Modules\Core\Dto\Traits\TDefaultDto;
 use Modules\Jav\Helpers\OnejavHelper;
+use stdClass;
 
 /**
  * @property string $url
@@ -25,7 +26,7 @@ class ItemDto extends AbstractBaseDto
 
     public function transform(mixed $response): ?static
     {
-        $this->data = new \stdClass();
+        $this->data = new stdClass();
 
         if ($response->filter('h5.title a')->count()) {
             $this->url = $response->filter('h5.title a')->attr('href');
