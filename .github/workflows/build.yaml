@@ -135,7 +135,6 @@ jobs:
         uses: actions/download-artifact@v4
         if: success()
         with:
-          name: coverage-reports
           path: ./reports
 
       - name: Upload coverage to codecov.io
