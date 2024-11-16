@@ -68,7 +68,6 @@ class CrawlingService
     public function tags(): Collection
     {
         $response = $this->client->get('tag');
-
         if (!$response->isSuccess()) {
             CrawlingFailedEvent::dispatch($response);
 

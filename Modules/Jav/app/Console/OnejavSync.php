@@ -23,19 +23,8 @@ class OnejavSync extends Command
     public function handle()
     {
         $service = app(OnejavService::class);
-        switch ($this->argument('type')) {
-            case 'daily':
-                $service->daily();
-                break;
-            case 'new':
-                $service->new();
-                break;
-            case 'popular':
-                $service->popular();
-                break;
-            case 'tags':
-                $service->tags();
-                break;
+        if (method_exists($service, $this->argument('type'))) {
+            $service->{$this->argument('type')}();
         }
     }
 }
