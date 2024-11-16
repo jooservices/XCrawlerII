@@ -3,9 +3,7 @@
 namespace Modules\Jav\Tests\Unit\Jobs;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Event;
 use Modules\Jav\Client\Onejav\CrawlingService;
-use Modules\Jav\Events\OnejavDailyProcessedEvent;
 use Modules\Jav\Jobs\OnejavDailyFetchJob;
 use Modules\Jav\tests\TestCase;
 

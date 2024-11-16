@@ -2,17 +2,14 @@
 
 namespace Modules\Jav\Jobs;
 
-use Illuminate\Bus\Batch;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Modules\Core\Services\SettingService;
 use Modules\Jav\Client\Onejav\CrawlingService;
-use Modules\Jav\Events\OnejavDailyProcessedEvent;
 use Modules\Jav\Repositories\OnejavRepository;
 use Modules\Jav\Services\Onejav\OnejavService;
 use Throwable;

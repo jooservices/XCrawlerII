@@ -18,7 +18,7 @@ class JavGenreFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->name
+            'name' => $this->faker->unique()->name,
         ];
     }
 }
