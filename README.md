@@ -1,4 +1,5 @@
 # XCrawlerII
+[![codecov](https://codecov.io/gh/jooservices/XCrawlerII/branch/develop/graph/badge.svg?token=AKXrrTgTiN)](https://codecov.io/gh/jooservices/XCrawlerII)
 
 ## Conventions
 - Event suffixed with `Event`
