@@ -3,6 +3,7 @@
 namespace Modules\Jav\Dto;
 
 use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\Traits\TDefaultDto;
 
 /**
  * @property string $name
@@ -10,8 +11,5 @@ use Modules\Core\Dto\AbstractBaseDto;
  */
 class TagDto extends AbstractBaseDto
 {
-    public function getFields(): array
-    {
-        return [];
-    }
+    use TDefaultDto;
 }

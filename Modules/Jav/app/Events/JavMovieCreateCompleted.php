@@ -3,7 +3,6 @@
 namespace Modules\Jav\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Modules\Jav\Models\JavMovie;
@@ -20,15 +19,5 @@ class JavMovieCreateCompleted
     public function __construct(public JavMovie $model)
     {
         //
-    }
-
-    /**
-     * Get the channels the event should be broadcast on.
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
     }
 }

@@ -41,7 +41,7 @@ jobs:
         run: composer ${{ matrix.lint }}
 
   securities:
-    name: Security check
+    name: Securities check
     runs-on:
       - self-hosted
       - ubuntu
@@ -118,7 +118,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: coverage-reports
+          name: coverage-reports-${{ matrix.test }}
           path: coverage-${{ matrix.test }}.xml
           overwrite: 'true'
           retention-days: 1
@@ -135,7 +135,6 @@ jobs:
         uses: actions/download-artifact@v4
         if: success()
         with:
-          name: coverage-reports
           path: ./reports
 
       - name: Upload coverage to codecov.io

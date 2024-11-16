@@ -3,13 +3,14 @@
 namespace Modules\Jav\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Jav\Models\OnejavReference;
 
 class OnejavReferenceFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      */
-    protected $model = \Modules\Jav\Models\OnejavReference::class;
+    protected $model = OnejavReference::class;
 
     /**
      * Define the model's default state.

@@ -34,6 +34,16 @@ abstract class AbstractBaseDto implements IDto
         return $this->data->{$name} ?? null;
     }
 
+    public function __set($name, $value)
+    {
+        $this->data->{$name} = $value;
+    }
+
+    public function __isset($name)
+    {
+        return isset($this->data->{$name});
+    }
+
     public function toArray(): array
     {
         $class = $this->_class ?? null;
