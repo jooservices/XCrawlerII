@@ -45,6 +45,7 @@ jobs:
     runs-on:
       - self-hosted
       - ubuntu
+      - X64
 
     steps:
       - uses: actions/checkout@v3
@@ -57,7 +58,7 @@ jobs:
       - ubuntu
       - X64
 
-    needs: [ code_standards ]
+    needs: [ lint ]
     steps:
       - name: Checkout code
         uses: actions/checkout@main
