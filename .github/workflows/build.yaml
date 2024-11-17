@@ -40,6 +40,19 @@ jobs:
       - name: Lint
         run: composer ${{ matrix.lint }}
 
+  lint:
+    name: Lint
+    runs-on:
+      - self-hosted
+      - ubuntu
+      - X64
+
+    needs: [ code_standards ]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: firehed/lint-php-action@v1
+
   securities:
     name: Securities check
     runs-on:
@@ -47,7 +60,7 @@ jobs:
       - ubuntu
       - X64
 
-    needs: [ code_standards ]
+    needs: [ lint ]
     steps:
       - name: Checkout code
         uses: actions/checkout@main
