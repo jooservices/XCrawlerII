@@ -36,6 +36,10 @@ abstract class AbstractBaseDto implements IDto
 
     public function __set($name, $value)
     {
+        if (!isset($this->data)) {
+            $this->data = new stdClass();
+        }
+
         $this->data->{$name} = $value;
     }
 
