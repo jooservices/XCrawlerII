@@ -47,6 +47,8 @@ jobs:
       - ubuntu
       - X64
 
+    needs: [ code_standards ]
+
     steps:
       - uses: actions/checkout@v4
       - uses: firehed/lint-php-action@v1
