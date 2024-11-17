@@ -1,5 +1,6 @@
 # XCrawlerII
 [![codecov](https://codecov.io/gh/jooservices/XCrawlerII/branch/develop/graph/badge.svg?token=AKXrrTgTiN)](https://codecov.io/gh/jooservices/XCrawlerII)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/1b261d4fdb6749c09a9cdd2afad52648)](https://app.codacy.com/gh/jooservices/XCrawlerII/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ## Conventions
 - Event suffixed with `Event`
