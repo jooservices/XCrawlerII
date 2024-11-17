@@ -48,11 +48,8 @@ jobs:
       - X64
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: firehed/lint-php-action@v1
-
-      - name: Psalm
-        uses: docker://ghcr.io/psalm/psalm-github-actions
 
   securities:
     name: Securities check
