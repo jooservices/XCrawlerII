@@ -186,7 +186,7 @@ return [
 
     'defaults' => [
         'default' => [
-            'connection' => 'redis',
+            'connection' => config('queue.default', 'redis'),
             'queue' => [
                 'default',
             ],
@@ -201,7 +201,7 @@ return [
             'nice' => 0,
         ],
         OnejavService::ONEJAV_QUEUE_NAME => [
-            'connection' => 'redis',
+            'connection' => config('queue.default', 'redis'),
             'queue' => [
                 OnejavService::ONEJAV_QUEUE_NAME,
             ],
@@ -216,7 +216,7 @@ return [
             'nice' => 0,
         ],
         UdemyService::UDEMY_QUEUE_NAME => [
-            'connection' => 'redis',
+            'connection' => config('queue.default', 'redis'),
             'queue' => [
                 UdemyService::UDEMY_QUEUE_NAME,
             ],
