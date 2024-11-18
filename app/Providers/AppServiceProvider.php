@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Exceptions\MySQLConnectionIssue;
+use App\Exceptions\RedisConnectionIssue;
+use Exception;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +24,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        try {
+            DB::connection()->getPdo();
+        } catch (Exception $e) {
+            throw new MySQLConnectionIssue($e->getMessage());
+        }
+
+        try {
+            $redis = Redis::connection();
+            $redis->connect();
+            $redis->disconnect();
+        } catch (Exception $e) {
+            throw new RedisConnectionIssue($e->getMessage());
+        }
     }
 }
