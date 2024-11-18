@@ -2,9 +2,9 @@
 
 namespace Modules\Core\Tests\Unit\Services;
 
+use Modules\Core\Facades\Setting as SettingFacade;
 use Modules\Core\Models\Setting;
 use Modules\Core\Tests\TestCase;
-use Modules\Core\Facades\Setting as SettingFacade;
 
 class SettingServiceTest extends TestCase
 {
