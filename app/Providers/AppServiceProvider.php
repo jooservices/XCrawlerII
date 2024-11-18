@@ -32,7 +32,9 @@ class AppServiceProvider extends ServiceProvider
 
         try {
             $redis = Redis::connection();
-            $redis->connect();
+            if (!$redis->client()->isConnected()) {
+                throw new RedisConnectionIssue();
+            }
             $redis->disconnect();
         } catch (Exception $e) {
             throw new RedisConnectionIssue($e->getMessage());
