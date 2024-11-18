@@ -24,12 +24,23 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (app()->environment('production')) {
+            $this->verifyMySQLConnection();
+            $this->verifyRedisConnection();
+        }
+    }
+
+    private function verifyMySQLConnection(): void
+    {
         try {
             DB::connection()->getPdo();
         } catch (Exception $e) {
             throw new MySQLConnectionIssue($e->getMessage());
         }
+    }
 
+    private function verifyRedisConnection(): void
+    {
         try {
             $redis = Redis::connection();
             if (!$redis->client()->isConnected()) {
