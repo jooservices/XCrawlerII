@@ -4,13 +4,13 @@ namespace Modules\Jav\Listeners;
 
 use Illuminate\Events\Dispatcher;
 use Modules\Jav\Events\JavMovieCreateCompleted;
-use Modules\Jav\Events\OnejavReferenceCreatedEvent;
+use Modules\Jav\Events\Onejav\ReferenceCreatedEvent;
 use Modules\Jav\Notifications\JavMovieCreatedNotification;
 use Modules\Jav\Repositories\JavMovieRepository;
 
 class JavMovieSubscriber
 {
-    public function onJavMovieCreated(OnejavReferenceCreatedEvent $event): void
+    public function onJavMovieCreated(ReferenceCreatedEvent $event): void
     {
         $model = app(JavMovieRepository::class)->create($event->movie);
 
@@ -24,7 +24,7 @@ class JavMovieSubscriber
     public function subscribe(Dispatcher $events): array
     {
         return [
-            OnejavReferenceCreatedEvent::class => 'onJavMovieCreated',
+            ReferenceCreatedEvent::class => 'onJavMovieCreated',
         ];
     }
 }

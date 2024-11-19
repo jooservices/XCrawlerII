@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
+use Mockery;
 use Mockery\MockInterface;
 use Modules\Core\Zeus\AbstractWish;
 use Modules\Jav\Client\Onejav\CrawlingService;
@@ -18,7 +19,7 @@ class OnejavWish extends AbstractWish
     public function wish(MockInterface $clientMock): MockInterface
     {
         foreach (['new', 'popular'] as $endpoint) {
-            $clientMock = \Mockery::mock(ClientInterface::class);
+            $clientMock = Mockery::mock(ClientInterface::class);
             $clientMock->shouldReceive('request')
                 ->withSomeOfArgs(
                     Request::METHOD_GET,

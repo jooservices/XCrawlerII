@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Jav\Tests\Unit\Onejav;
+namespace Modules\Jav\Tests\Unit\Services\Onejav;
 
 use Illuminate\Support\Facades\Event;
 use Modules\Client\Services\ClientManager;
@@ -8,7 +8,7 @@ use Modules\Jav\Client\Onejav\Client as OnejavClient;
 use Modules\Jav\Client\Onejav\CrawlingService;
 use Modules\Jav\Dto\ItemDto;
 use Modules\Jav\Events\CrawlingFailedEvent;
-use Modules\Jav\Events\OnejavHaveNextPageEvent;
+use Modules\Jav\Events\Onejav\HaveNextPageEvent;
 use Modules\Jav\tests\TestCase;
 
 class CrawlingServiceTest extends TestCase
@@ -36,13 +36,13 @@ class CrawlingServiceTest extends TestCase
     public function testGetItemsSuccess()
     {
         Event::fake([
-            OnejavHaveNextPageEvent::class,
+            HaveNextPageEvent::class,
         ]);
 
-        $result = app(CrawlingService::class)
+        $items = app(CrawlingService::class)
             ->getItems();
 
-        $this->assertCount(10, $result);
+        $this->assertCount(10, $items->getItems());
         $this->assertDatabaseHas(
             'settings',
             [
@@ -53,7 +53,7 @@ class CrawlingServiceTest extends TestCase
             'mongodb'
         );
 
-        Event::assertDispatched(OnejavHaveNextPageEvent::class, function ($event) {
+        Event::assertDispatched(HaveNextPageEvent::class, function ($event) {
             return $event->endpoint === 'new'
                 && $event->currentPage === 1
                 && $event->lastPage === 4;

@@ -1,14 +1,13 @@
 <?php
 
-namespace Modules\Jav\Events;
+namespace Modules\Jav\Events\Onejav;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Modules\Jav\Models\OnejavReference;
 
-class OnejavMovieCreatedEvent
+class MovieCreatedEvent
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -21,15 +20,5 @@ class OnejavMovieCreatedEvent
         public OnejavReference $model
     ) {
         //
-    }
-
-    /**
-     * Get the channels the event should be broadcast on.
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
     }
 }

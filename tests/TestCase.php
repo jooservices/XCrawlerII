@@ -5,6 +5,7 @@ namespace Tests;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Modules\Client\Models\RequestLog;
 use Modules\Core\Models\Setting;
 
@@ -27,7 +28,7 @@ abstract class TestCase extends BaseTestCase
             'settings',
             [
                 'group' => $group,
-                'key' => $key,
+                'key' => Str::slug($key, '_'),
                 'value' => $value,
             ],
             'mongodb'
