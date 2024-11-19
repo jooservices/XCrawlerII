@@ -1,13 +1,13 @@
 <?php
 
-namespace Modules\Jav\Events;
+namespace Modules\Jav\Events\Onejav;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Modules\Jav\Dto\ItemDto;
+use Modules\Jav\Models\Interfaces\IJavMovie;
 
-class OnejavItemParsedEvent
+class ReferenceCreatedEvent
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -16,7 +16,7 @@ class OnejavItemParsedEvent
     /**
      * Create a new event instance.
      */
-    public function __construct(public ItemDto $item)
+    public function __construct(public IJavMovie $movie)
     {
         //
     }

@@ -4,7 +4,7 @@ namespace Modules\Jav\Tests\Unit\Events;
 
 use Illuminate\Support\Facades\Event;
 use Modules\Jav\Events\JavMovieCreateCompleted;
-use Modules\Jav\Events\OnejavReferenceCreatedEvent;
+use Modules\Jav\Events\Onejav\ReferenceCreatedEvent;
 use Modules\Jav\Models\JavMovie;
 use Modules\Jav\Models\OnejavReference;
 use Modules\Jav\tests\TestCase;
@@ -20,7 +20,7 @@ class JavMovieCreatedTest extends TestCase
         ]);
 
         Event::dispatch(
-            new OnejavReferenceCreatedEvent($onejav)
+            new ReferenceCreatedEvent($onejav)
         );
 
         $this->assertDatabaseHas(

@@ -3,8 +3,8 @@
 namespace Modules\Jav\Repositories;
 
 use Illuminate\Support\Facades\Event;
-use Modules\Jav\Events\OnejavMovieCreatedEvent;
-use Modules\Jav\Events\OnejavReferenceCreatedEvent;
+use Modules\Jav\Events\Onejav\MovieCreatedEvent;
+use Modules\Jav\Events\Onejav\ReferenceCreatedEvent;
 use Modules\Jav\Models\OnejavReference;
 
 class OnejavRepository
@@ -16,10 +16,10 @@ class OnejavRepository
             'dvd_id' => $data['dvd_id'],
         ], $data);
 
-        Event::dispatch(new OnejavReferenceCreatedEvent($model));
+        Event::dispatch(new ReferenceCreatedEvent($model));
 
         if ($model->wasRecentlyCreated) {
-            OnejavMovieCreatedEvent::dispatch($model);
+            MovieCreatedEvent::dispatch($model);
         }
 
         return $model;

@@ -141,6 +141,7 @@ jobs:
     runs-on:
       - self-hosted
       - ubuntu
+      - X64
     needs: [ tests ]
 
     steps:
@@ -156,4 +157,5 @@ jobs:
         with:
           directory: ./reports
           token: ${{ secrets.CODECOV_TOKEN }}
-          os: linux-arm64
+          os: linux
+          verbose: true

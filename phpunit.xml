@@ -26,6 +26,9 @@
         <include>
             <directory>Modules</directory>
         </include>
+        <exclude>
+            <directory>Modules/*/tests</directory>
+        </exclude>
     </source>
 
     <coverage includeUncoveredFiles="true"

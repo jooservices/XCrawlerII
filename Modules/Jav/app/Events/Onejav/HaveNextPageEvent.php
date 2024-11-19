@@ -1,13 +1,12 @@
 <?php
 
-namespace Modules\Jav\Events;
+namespace Modules\Jav\Events\Onejav;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 
-class OnejavDailyProcessedEvent
+class HaveNextPageEvent
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -17,10 +16,9 @@ class OnejavDailyProcessedEvent
      * Create a new event instance.
      */
     public function __construct(
-        public Collection $items,
-        public string $date,
-        public int $page
+        public string $endpoint,
+        public int $currentPage,
+        public int $lastPage,
     ) {
-        //
     }
 }

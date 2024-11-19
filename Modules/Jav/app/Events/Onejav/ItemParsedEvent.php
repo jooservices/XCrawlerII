@@ -1,12 +1,13 @@
 <?php
 
-namespace Modules\Jav\Events;
+namespace Modules\Jav\Events\Onejav;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Modules\Jav\Dto\ItemDto;
 
-class OnejavHaveNextPageEvent
+class ItemParsedEvent
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -15,10 +16,8 @@ class OnejavHaveNextPageEvent
     /**
      * Create a new event instance.
      */
-    public function __construct(
-        public string $endpoint,
-        public int $currentPage,
-        public int $lastPage,
-    ) {
+    public function __construct(public ItemDto $item)
+    {
+        //
     }
 }
