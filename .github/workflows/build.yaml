@@ -157,4 +157,5 @@ jobs:
         with:
           directory: ./reports
           token: ${{ secrets.CODECOV_TOKEN }}
-          os: linux-arm64
+          os: linux
+          verbose: true
