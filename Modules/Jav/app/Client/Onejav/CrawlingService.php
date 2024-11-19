@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\ClientManager;
 use Modules\Core\Facades\Setting;
-use Modules\Core\Services\SettingService;
 use Modules\Jav\Dto\ItemDto;
 use Modules\Jav\Dto\TagDto;
 use Modules\Jav\Events\CrawlingFailedEvent;

@@ -14,7 +14,7 @@ class OnejavFetchItemsJobTest extends TestCase
     {
         Event::fake([
             OnejavReferenceCreatedEvent::class,
-            OnejavHaveNextPageEvent::class
+            OnejavHaveNextPageEvent::class,
         ]);
 
         OnejavFetchItemsJob::dispatch('new');

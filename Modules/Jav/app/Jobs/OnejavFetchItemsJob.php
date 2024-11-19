@@ -25,9 +25,8 @@ class OnejavFetchItemsJob implements ShouldQueue
      */
     public function __construct(
         public string $endpoint,
-        public int    $page = 1
-    )
-    {
+        public int $page = 1
+    ) {
         $this->onQueue(OnejavService::ONEJAV_QUEUE_NAME);
     }
 
@@ -38,7 +37,7 @@ class OnejavFetchItemsJob implements ShouldQueue
     {
         $items = $service->getItems($this->endpoint, $this->page);
 
-        $lastPage = (int)Setting::get(
+        $lastPage = (int) Setting::get(
             'onejav',
             $this->endpoint . '_last_page',
             1
