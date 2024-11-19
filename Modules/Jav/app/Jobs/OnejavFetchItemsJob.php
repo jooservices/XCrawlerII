@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Modules\Core\Services\SettingService;
+use Modules\Core\Facades\Setting;
 use Modules\Jav\Client\Onejav\CrawlingService;
 use Modules\Jav\Repositories\OnejavRepository;
 use Modules\Jav\Services\Onejav\OnejavService;
@@ -25,8 +25,9 @@ class OnejavFetchItemsJob implements ShouldQueue
      */
     public function __construct(
         public string $endpoint,
-        public int $page = 1
-    ) {
+        public int    $page = 1
+    )
+    {
         $this->onQueue(OnejavService::ONEJAV_QUEUE_NAME);
     }
 
@@ -36,12 +37,25 @@ class OnejavFetchItemsJob implements ShouldQueue
     public function handle(CrawlingService $service): void
     {
         $items = $service->getItems($this->endpoint, $this->page);
-        app(SettingService::class)
-            ->set(
-                'onejav',
-                $this->endpoint . '_current_page',
-                $this->page + 1
-            );
+
+        $lastPage = (int)Setting::get(
+            'onejav',
+            $this->endpoint . '_last_page',
+            1
+        );
+
+        if ($lastPage === $this->page) {
+            $this->page = 0;
+            /**
+             * Dispatch event
+             */
+        }
+
+        Setting::set(
+            'onejav',
+            $this->endpoint . '_current_page',
+            $this->page + 1
+        );
 
         $repository = app(OnejavRepository::class);
 

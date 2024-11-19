@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\ClientManager;
+use Modules\Core\Facades\Setting;
 use Modules\Core\Services\SettingService;
 use Modules\Jav\Dto\ItemDto;
 use Modules\Jav\Dto\TagDto;
@@ -32,6 +33,7 @@ class CrawlingService
     public function getItems(string $endpoint = 'new', int $page = 1): Collection
     {
         $response = $this->client->get($endpoint, ['page' => $page]);
+
         if (!$response->isSuccess()) {
             CrawlingFailedEvent::dispatch($response);
 
@@ -41,7 +43,7 @@ class CrawlingService
         $pageNode = $response->parseBody()->getData()->filter('a.pagination-link')->last();
         $lastPage = $pageNode->count() === 0 ? 1 : (int) $pageNode->text();
 
-        app(SettingService::class)->set(
+        Setting::set(
             OnejavService::SETTING_GROUP,
             Str::slug($endpoint, '_') . '_last_page',
             $lastPage

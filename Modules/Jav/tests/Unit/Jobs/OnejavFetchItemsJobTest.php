@@ -3,6 +3,7 @@
 namespace Modules\Jav\Tests\Unit\Jobs;
 
 use Illuminate\Support\Facades\Event;
+use Modules\Jav\Events\OnejavHaveNextPageEvent;
 use Modules\Jav\Events\OnejavReferenceCreatedEvent;
 use Modules\Jav\Jobs\OnejavFetchItemsJob;
 use Modules\Jav\tests\TestCase;
@@ -13,45 +14,47 @@ class OnejavFetchItemsJobTest extends TestCase
     {
         Event::fake([
             OnejavReferenceCreatedEvent::class,
+            OnejavHaveNextPageEvent::class
         ]);
+
         OnejavFetchItemsJob::dispatch('new');
 
         // Fetched last page
-        $this->assertDatabaseHas(
-            'settings',
-            [
-                'group' => 'onejav',
-                'key' => 'new_last_page',
-                'value' => 4,
-            ],
-            'mongodb'
+        $this->assertSetting(
+            'onejav',
+            'new_last_page',
+            4,
         );
         // Fetched current page
-        $this->assertDatabaseHas(
-            'settings',
-            [
-                'group' => 'onejav',
-                'key' => 'new_current_page',
-                'value' => 2,
-            ],
-            'mongodb'
+        $this->assertSetting(
+            'onejav',
+            'new_current_page',
+            2,
         );
+
         // Fetched items
         $this->assertDatabaseCount('onejav', 10, 'mongodb');
         Event::assertDispatched(OnejavReferenceCreatedEvent::class);
 
-        OnejavFetchItemsJob::dispatch(
-            'new',
-            2
+        OnejavFetchItemsJob::dispatch('new', 2);
+        $this->assertSetting(
+            'onejav',
+            'new_current_page',
+            3,
         );
-        $this->assertDatabaseHas(
-            'settings',
-            [
-                'group' => 'onejav',
-                'key' => 'new_current_page',
-                'value' => 3,
-            ],
-            'mongodb'
+
+        OnejavFetchItemsJob::dispatch('new', 3);
+        $this->assertSetting(
+            'onejav',
+            'new_current_page',
+            4,
+        );
+
+        OnejavFetchItemsJob::dispatch('new', 4);
+        $this->assertSetting(
+            'onejav',
+            'new_current_page',
+            1,
         );
     }
 }

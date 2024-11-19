@@ -20,4 +20,17 @@ abstract class TestCase extends BaseTestCase
         RequestLog::truncate();
         Setting::truncate();
     }
+
+    protected function assertSetting(string $group, string $key, mixed $value): void
+    {
+        $this->assertDatabaseHas(
+            'settings',
+            [
+                'group' => $group,
+                'key' => $key,
+                'value' => $value,
+            ],
+            'mongodb'
+        );
+    }
 }
