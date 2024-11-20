@@ -86,6 +86,21 @@ class OnejavWish extends AbstractWish
                 );
         }
 
+        $clientMock->shouldReceive('request')
+            ->withSomeOfArgs(
+                Request::METHOD_GET,
+                'tag'
+            )
+            ->andReturn(
+                new Response(
+                    SymfonyResponse::HTTP_OK,
+                    [
+                        'Content-Type' => self::CONTENT_TYPE,
+                    ],
+                    file_get_contents(__DIR__ . '/../Fixtures/Onejav/tag.html')
+                )
+            );
+
         return $clientMock;
     }
 }

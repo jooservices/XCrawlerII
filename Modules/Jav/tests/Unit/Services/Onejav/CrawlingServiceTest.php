@@ -7,6 +7,7 @@ use Modules\Client\Services\ClientManager;
 use Modules\Jav\Client\Onejav\Client as OnejavClient;
 use Modules\Jav\Client\Onejav\CrawlingService;
 use Modules\Jav\Dto\ItemDto;
+use Modules\Jav\Dto\TagDto;
 use Modules\Jav\Events\CrawlingFailedEvent;
 use Modules\Jav\Events\Onejav\HaveNextPageEvent;
 use Modules\Jav\tests\TestCase;
@@ -70,5 +71,13 @@ class CrawlingServiceTest extends TestCase
             ->getItems('404');
 
         Event::assertDispatched(CrawlingFailedEvent::class);
+    }
+
+    public function testGetTags()
+    {
+        $tags = app(CrawlingService::class)->tags();
+
+        $this->assertCount(353, $tags);
+        $this->assertInstanceOf(TagDto::class, $tags->first());
     }
 }
