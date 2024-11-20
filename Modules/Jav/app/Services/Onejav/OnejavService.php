@@ -61,27 +61,18 @@ class OnejavService
      */
     public function new(): void
     {
-        FetchItemsJob::dispatch(
-            __FUNCTION__,
-            Setting::get('onejav', 'new_current_page', 1)
-        );
+        FetchItemsJob::dispatch(__FUNCTION__);
     }
 
     public function popular(): void
     {
-        FetchItemsJob::dispatch(
-            __FUNCTION__,
-            Setting::get('onejav', 'popular_current_page', 1)
-        );
+        FetchItemsJob::dispatch(__FUNCTION__);
     }
 
     public function daily(): void
     {
-        FetchItemsJob::dispatch(
-            Carbon::now()->format(CrawlingService::DEFAULT_DATE_FORMAT),
-            1,
-            true
-        );
+        $date = Carbon::now()->format(CrawlingService::DEFAULT_DATE_FORMAT);
+        FetchItemsJob::dispatch($date, 1, true);
     }
 
     public function tags(): void

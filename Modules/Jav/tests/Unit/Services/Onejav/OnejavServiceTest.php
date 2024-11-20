@@ -62,7 +62,6 @@ class OnejavServiceTest extends TestCase
 
         Queue::assertPushed(FetchItemsJob::class, function ($job) use ($with) {
             return $job->endpoint === $with
-                && $job->page === 1
                 && $job->queue === OnejavService::ONEJAV_QUEUE_NAME;
         });
     }

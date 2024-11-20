@@ -21,7 +21,7 @@ class FetchItemsJob implements ShouldQueue
      */
     public function __construct(
         public string $endpoint,
-        public int $page = 1,
+        public ?int $page = null,
         public bool $loop = false
     ) {
         $this->onQueue(OnejavService::ONEJAV_QUEUE_NAME);
@@ -35,7 +35,7 @@ class FetchItemsJob implements ShouldQueue
         $items = $service->crawl($this->endpoint, $this->page);
 
         if ($this->loop && !$items->isLastPage()) {
-            self::dispatch($this->endpoint, $this->page + 1);
+            self::dispatch($this->endpoint, (int) $this->page + 1);
         }
     }
 }
