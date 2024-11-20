@@ -35,7 +35,7 @@ class FetchItemsJob implements ShouldQueue
         $items = $service->crawl($this->endpoint, $this->page);
 
         if ($this->loop && !$items->isLastPage()) {
-            self::dispatch($this->endpoint, (int) $this->page + 1);
+            self::dispatch($this->endpoint, (int) $this->page + 1, $this->loop);
         }
     }
 }

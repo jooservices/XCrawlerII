@@ -72,13 +72,19 @@ class OnejavService
     public function daily(): void
     {
         $date = Carbon::now()->format(CrawlingService::DEFAULT_DATE_FORMAT);
+        /**
+         * Daily will be loop until finished
+         */
         FetchItemsJob::dispatch($date, 1, true);
     }
 
     public function tags(): void
     {
         $this->service->tags()->map(function (TagDto $tag) {
-            FetchItemsJob::dispatch('tag/' . $tag->name);
+            /**
+             * Tag will be loop until finished
+             */
+            FetchItemsJob::dispatch('tag/' . $tag->name, 1, true);
         });
     }
 
