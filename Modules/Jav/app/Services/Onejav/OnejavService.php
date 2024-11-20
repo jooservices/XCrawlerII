@@ -20,7 +20,7 @@ class OnejavService
 
     public const string SETTING_GROUP = 'onejav';
 
-    public function __construct(private CrawlingService $service)
+    public function __construct(private readonly CrawlingService $service)
     {
     }
 
@@ -61,12 +61,18 @@ class OnejavService
      */
     public function new(): void
     {
-        FetchItemsJob::dispatch(__FUNCTION__);
+        FetchItemsJob::dispatch(
+            __FUNCTION__,
+            Setting::get('onejav', 'new_current_page', 1)
+        );
     }
 
     public function popular(): void
     {
-        FetchItemsJob::dispatch(__FUNCTION__);
+        FetchItemsJob::dispatch(
+            __FUNCTION__,
+            Setting::get('onejav', 'popular_current_page', 1)
+        );
     }
 
     public function daily(): void
