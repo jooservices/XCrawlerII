@@ -12,7 +12,7 @@ use Modules\Jav\tests\TestCase;
 
 class FetchItemsJobTest extends TestCase
 {
-    public function testWithDaily(): void
+    public function test_with_daily(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
@@ -28,7 +28,7 @@ class FetchItemsJobTest extends TestCase
         $this->assertSetting(OnejavService::SETTING_GROUP, $daily . '_last_page', 2);
     }
 
-    public function testWithDailyLoop(): void
+    public function test_with_daily_loop(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
@@ -44,7 +44,7 @@ class FetchItemsJobTest extends TestCase
         $this->assertSetting(OnejavService::SETTING_GROUP, $daily . '_last_page', 2);
     }
 
-    public function testNewEndOfPages()
+    public function test_new_end_of_pages()
     {
         Event::fake([
             HaveNextPageEvent::class,

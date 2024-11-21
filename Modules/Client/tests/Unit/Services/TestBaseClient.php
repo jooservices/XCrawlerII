@@ -16,7 +16,7 @@ class TestBaseClient extends TestCase
 {
     private BaseClient $client;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -25,7 +25,7 @@ class TestBaseClient extends TestCase
         $this->client = app(ClientManager::class)->getClient(BaseClient::class);
     }
 
-    public function testSuccessJsonResponse(): void
+    public function test_success_json_response(): void
     {
         $this->assertInstanceOf(BaseClient::class, $this->client);
         $response = $this->client->request(Request::METHOD_GET, '/json', []);
@@ -45,7 +45,7 @@ class TestBaseClient extends TestCase
         );
     }
 
-    public function testResponseWithDom(): void
+    public function test_response_with_dom(): void
     {
         $response = $this->client->request(Request::METHOD_GET, '/html', []);
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
