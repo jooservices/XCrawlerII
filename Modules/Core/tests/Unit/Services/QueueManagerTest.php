@@ -4,7 +4,6 @@ namespace Modules\Core\Tests\Unit\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Modules\Core\Models\Pool;
-use Modules\Core\Models\Queue;
 use Modules\Core\Services\QueueManager;
 use Modules\Core\Tests\TestCase;
 

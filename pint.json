@@ -5,6 +5,7 @@
         "new_with_parentheses": false,
         "concat_space": false,
         "single_line_empty_body" : false,
-        "php_unit_set_up_tear_down_visibility": false
+        "php_unit_set_up_tear_down_visibility": false,
+        "php_unit_method_casing": false
     }
 }
