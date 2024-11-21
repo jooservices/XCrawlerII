@@ -20,7 +20,8 @@
         "sentry/sentry-laravel": "^4.9",
         "symfony/dom-crawler": "^7.1",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.1",
-        "wikimedia/composer-merge-plugin": "^2.1"
+        "wikimedia/composer-merge-plugin": "^2.1",
+        "ext-fileinfo": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.2",

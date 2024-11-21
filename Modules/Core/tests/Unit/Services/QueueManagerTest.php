@@ -4,7 +4,6 @@ namespace Modules\Core\Tests\Unit\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Modules\Core\Models\Pool;
-use Modules\Core\Models\Queue;
 use Modules\Core\Services\QueueManager;
 use Modules\Core\Tests\TestCase;
 
@@ -22,19 +21,6 @@ class QueueManagerTest extends TestCase
 
         $this->assertInstanceOf(Pool::class, $pool);
     }
-
-    //    public function testPushJob()
-    //    {
-    //        $pool = Pool::factory()->create();
-    //        $manager = app(QueueManager::class);
-    //
-    //        $job = $manager->pushQueue(
-    //            $pool,
-    //            $this->faker->word,
-    //        );
-    //        $this->assertInstanceOf(Queue::class, $job);
-    //        $this->assertTrue($pool->queues->first()->is($job));
-    //    }
 
     public function testGetPoolWithBalancing()
     {
