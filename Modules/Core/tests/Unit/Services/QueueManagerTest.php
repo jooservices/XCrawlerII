@@ -10,7 +10,7 @@ use Modules\Core\Tests\TestCase;
 
 class QueueManagerTest extends TestCase
 {
-    public function test_register_queue()
+    public function testRegisterQueue()
     {
         $manager = app(QueueManager::class);
         $pool = $manager->register(
@@ -23,20 +23,7 @@ class QueueManagerTest extends TestCase
         $this->assertInstanceOf(Pool::class, $pool);
     }
 
-    //    public function testPushJob()
-    //    {
-    //        $pool = Pool::factory()->create();
-    //        $manager = app(QueueManager::class);
-    //
-    //        $job = $manager->pushQueue(
-    //            $pool,
-    //            $this->faker->word,
-    //        );
-    //        $this->assertInstanceOf(Queue::class, $job);
-    //        $this->assertTrue($pool->queues->first()->is($job));
-    //    }
-
-    public function test_get_pool_with_balancing()
+    public function testGetPoolWithBalancing()
     {
         Pool::factory()
             ->count(10)

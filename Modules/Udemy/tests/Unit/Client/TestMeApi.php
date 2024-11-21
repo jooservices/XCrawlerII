@@ -17,7 +17,7 @@ class TestMeApi extends TestCase
     /**
      * @throws BindingResolutionException
      */
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -27,7 +27,7 @@ class TestMeApi extends TestCase
     /**
      * @throws Exception
      */
-    public function test_get_subscribed_courses_categories()
+    public function testGetSubscribedCoursesCategories()
     {
         $this->assertInstanceOf(MeApi::class, $this->meApi);
 
@@ -49,7 +49,7 @@ class TestMeApi extends TestCase
     /**
      * @throws Exception
      */
-    public function test_get_subscribed_courses()
+    public function testGetSubscribedCourses()
     {
         $this->assertInstanceOf(MeApi::class, $this->udemySdk->me());
 

@@ -18,7 +18,7 @@ class FactoryTest extends TestCase
     /**
      * @throws BindingResolutionException
      */
-    public function test_make_client()
+    public function testMakeClient()
     {
         $this->assertInstanceOf(
             ClientInterface::class,
@@ -30,7 +30,7 @@ class FactoryTest extends TestCase
      * @throws GuzzleException
      * @throws BindingResolutionException
      */
-    public function test_mock_success()
+    public function testMockSuccess()
     {
         $factory = app(Factory::class);
         $text = $this->faker->sentence;
@@ -47,7 +47,7 @@ class FactoryTest extends TestCase
      * @throws GuzzleException
      * @throws BindingResolutionException
      */
-    public function test_mock_with_exception()
+    public function testMockWithException()
     {
         $factory = app(Factory::class);
         $client = $factory
@@ -62,7 +62,7 @@ class FactoryTest extends TestCase
      * @throws GuzzleException
      * @throws BindingResolutionException
      */
-    public function test_enable_history(): void
+    public function testEnableHistory(): void
     {
         $factory = app(Factory::class);
         $text = $this->faker->sentence;
@@ -84,7 +84,7 @@ class FactoryTest extends TestCase
     /**
      * @throws GuzzleException|BindingResolutionException
      */
-    public function test_enable_history_count(): void
+    public function testEnableHistoryCount(): void
     {
         $factory = app(Factory::class);
         $text = $this->faker->sentence;
@@ -104,7 +104,7 @@ class FactoryTest extends TestCase
      * @throws GuzzleException
      * @throws BindingResolutionException
      */
-    public function test_enable_retries(): void
+    public function testEnableRetries(): void
     {
         $factory = app(Factory::class);
         $text = $this->faker->sentence;

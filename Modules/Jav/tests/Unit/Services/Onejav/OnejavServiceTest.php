@@ -16,7 +16,7 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class OnejavServiceTest extends TestCase
 {
-    public function test_crawl(): void
+    public function testCrawl(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
@@ -31,7 +31,7 @@ class OnejavServiceTest extends TestCase
         Event::assertDispatched(HaveNextPageEvent::class);
     }
 
-    public function test_crawl_at_end_of_pages(): void
+    public function testCrawlAtEndOfPages(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
@@ -51,7 +51,7 @@ class OnejavServiceTest extends TestCase
      * @throws NotFoundExceptionInterface
      */
     #[DataProvider('functions')]
-    public function test_with(string $with): void
+    public function testWith(string $with): void
     {
         Queue::fake([
             FetchItemsJob::class,
@@ -74,7 +74,7 @@ class OnejavServiceTest extends TestCase
         ];
     }
 
-    public function test_daily(): void
+    public function testDaily(): void
     {
         Queue::fake([
             FetchItemsJob::class,

@@ -17,7 +17,7 @@ class CrawlingServiceTest extends TestCase
     /**
      * @TODO Testing with parsing cases
      */
-    public function test_get_item(): void
+    public function testGetItem(): void
     {
         $response = app(ClientManager::class)
             ->getClient(OnejavClient::class)
@@ -34,7 +34,7 @@ class CrawlingServiceTest extends TestCase
         $this->assertEquals(7.0, $item->size);
     }
 
-    public function test_get_items_success()
+    public function testGetItemsSuccess()
     {
         Event::fake([
             HaveNextPageEvent::class,
@@ -61,7 +61,7 @@ class CrawlingServiceTest extends TestCase
         });
     }
 
-    public function test_get_items_failed()
+    public function testGetItemsFailed()
     {
         Event::fake([
             CrawlingFailedEvent::class,
@@ -73,7 +73,7 @@ class CrawlingServiceTest extends TestCase
         Event::assertDispatched(CrawlingFailedEvent::class);
     }
 
-    public function test_get_tags()
+    public function testGetTags()
     {
         $tags = app(CrawlingService::class)->tags();
 

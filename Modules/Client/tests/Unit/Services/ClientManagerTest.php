@@ -9,7 +9,7 @@ use Modules\Client\Tests\TestCase;
 
 class ClientManagerTest extends TestCase
 {
-    public function test_get_client_success(): void
+    public function testGetClientSuccess(): void
     {
         $this->assertInstanceOf(
             BaseClient::class,
@@ -17,7 +17,7 @@ class ClientManagerTest extends TestCase
         );
     }
 
-    public function test_get_client_not_found(): void
+    public function testGetClientNotFound(): void
     {
         $this->expectException(ClientNotFound::class);
 

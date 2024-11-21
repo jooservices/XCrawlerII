@@ -8,7 +8,7 @@ use Modules\Core\Tests\TestCase;
 
 class SettingServiceTest extends TestCase
 {
-    public function test_get_value()
+    public function testGetValue()
     {
         /**
          * @var Setting $setting
@@ -26,7 +26,7 @@ class SettingServiceTest extends TestCase
         );
     }
 
-    public function test_update_value()
+    public function testUpdateValue()
     {
         $this->assertEquals(
             'fake-value',

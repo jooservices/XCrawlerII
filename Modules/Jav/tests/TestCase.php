@@ -9,7 +9,7 @@ use Tests\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
