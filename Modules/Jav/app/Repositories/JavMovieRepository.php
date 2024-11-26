@@ -5,7 +5,9 @@ namespace Modules\Jav\Repositories;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Modules\Jav\Models\Interfaces\IJavMovie;
+use Modules\Jav\Models\JavGenre;
 use Modules\Jav\Models\JavMovie;
+use Modules\Jav\Models\JavPerformer;
 
 class JavMovieRepository
 {
@@ -33,11 +35,11 @@ class JavMovieRepository
         $genres
             ->map(function ($genre) {
                 return [
-                    'uuid' => Str::orderedUuid()->toString(),
                     'name' => $genre,
                 ];
             })->each(function ($genre) use ($movie) {
-                $movie->genres()->updateOrCreate($genre);
+                $model = JavGenre::updateOrCreate($genre);
+                $movie->genres()->syncWithoutDetaching($model->id);
             });
     }
 
@@ -46,11 +48,11 @@ class JavMovieRepository
         $performers
             ->map(function ($performer) {
                 return [
-                    'uuid' => Str::orderedUuid()->toString(),
                     'name' => $performer,
                 ];
             })->each(function ($performer) use ($movie) {
-                $movie->performers()->updateOrCreate($performer);
+                $model = JavPerformer::updateOrCreate($performer);
+                $movie->performers()->syncWithoutDetaching($model->id);
             });
     }
 }
