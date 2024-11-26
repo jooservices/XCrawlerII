@@ -37,7 +37,7 @@ class JavMovieRepository
                     'name' => $genre,
                 ];
             })->each(function ($genre) use ($movie) {
-                $movie->genres()->create($genre);
+                $movie->genres()->updateOrCreate($genre);
             });
     }
 
@@ -50,7 +50,7 @@ class JavMovieRepository
                     'name' => $performer,
                 ];
             })->each(function ($performer) use ($movie) {
-                $movie->performers()->create($performer);
+                $movie->performers()->updateOrCreate($performer);
             });
     }
 }
