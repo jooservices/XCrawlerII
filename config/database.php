@@ -124,6 +124,32 @@ return [
             ],
         ],
 
+        'elasticsearch' => [
+            'driver' => 'elasticsearch',
+            'auth_type' => env('ES_AUTH_TYPE', 'http'), //http or cloud
+            'hosts' => explode(',', env('ES_HOSTS', 'http://localhost:9200')),
+            'username' => env('ES_USERNAME', ''),
+            'password' => env('ES_PASSWORD', ''),
+            'cloud_id' => env('ES_CLOUD_ID', ''),
+            'api_id' => env('ES_API_ID', ''),
+            'api_key' => env('ES_API_KEY', ''),
+            'ssl_cert' => env('ES_SSL_CA', ''),
+            'ssl' => [
+                'cert' => env('ES_SSL_CERT', ''),
+                'cert_password' => env('ES_SSL_CERT_PASSWORD', ''),
+                'key' => env('ES_SSL_KEY', ''),
+                'key_password' => env('ES_SSL_KEY_PASSWORD', ''),
+            ],
+            'index_prefix' => env('ES_INDEX_PREFIX', false),
+            'options' => [
+                'allow_id_sort' => env('ES_OPT_ID_SORTABLE', false),
+                'ssl_verification' => env('ES_OPT_VERIFY_SSL', true),
+                'retires' => env('ES_OPT_RETRIES', null),
+                'meta_header' => env('ES_OPT_META_HEADERS', true),
+            ],
+            'error_log_index' => env('ES_ERROR_INDEX', false), //If set will log ES errors to this index, ex: 'laravel_es_errors'
+        ],
+
     ],
 
     /*
