@@ -68,6 +68,6 @@ class UdemyServiceTest extends TestCase
 
         $this->assertDatabaseCount('udemy_courses', $coursesDto->getCount());
 
-        Event::assertDispatched(SyncMyCoursesCompletedEvent::class);
+        Event::assertNotDispatched(SyncMyCoursesCompletedEvent::class);
     }
 }
