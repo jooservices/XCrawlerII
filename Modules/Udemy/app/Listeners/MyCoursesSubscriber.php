@@ -2,25 +2,16 @@
 
 namespace Modules\Udemy\Listeners;
 
-use Modules\Udemy\Events\CourseCreatedEvent;
-use Modules\Udemy\Events\CourseCurriculumItemAttachedEvent;
 use Modules\Udemy\Events\CourseReadyForStudyEvent;
 use Modules\Udemy\Events\SyncCourseCurriculumItemsCompletedEvent;
 use Modules\Udemy\Events\SyncMyCourseCompletedEvent;
-use Modules\Udemy\Events\SyncMyCourseFailedEvent;
-use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
-use Modules\Udemy\Events\SyncMyCoursesProgressingEvent;
-use Modules\Udemy\Jobs\SyncCourseCurriculumItemJob;
 use Modules\Udemy\Jobs\SyncCourseCurriculumItemsJob;
 use Modules\Udemy\Models\UdemyCourse;
-use Modules\Udemy\Notifications\SyncMyCoursesCompletedNotif;
 
 class MyCoursesSubscriber
 {
     /**
      * Sync items after course created
-     * @param SyncMyCourseCompletedEvent $event
-     * @return void
      */
     final public function onSyncMyCourseCompleted(SyncMyCourseCompletedEvent $event): void
     {

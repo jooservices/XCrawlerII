@@ -3,7 +3,6 @@
 namespace Modules\Jav\Repositories;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Modules\Jav\Models\Interfaces\IJavMovie;
 use Modules\Jav\Models\JavGenre;
 use Modules\Jav\Models\JavMovie;

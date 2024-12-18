@@ -53,7 +53,7 @@ class UdemyServiceProvider extends ServiceProvider
         $this->commands([
             SyncCourses::class,
             SyncCourseCurriculumItems::class,
-            StudyCourse::class
+            StudyCourse::class,
         ]);
     }
 

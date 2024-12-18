@@ -45,7 +45,7 @@ class UdemyServiceTest extends TestCase
         Event::fake([
             CourseCreatedEvent::class,
             SyncMyCourseCompletedEvent::class,
-            SyncMyCoursesCompletedEvent::class
+            SyncMyCoursesCompletedEvent::class,
         ]);
 
         $userToken = UserToken::factory()->create([

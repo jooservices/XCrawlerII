@@ -59,7 +59,7 @@ class TestBaseClient extends TestCase
     public function testWithCache()
     {
         Event::fake([
-            RequestWithoutCachedEvent::class
+            RequestWithoutCachedEvent::class,
         ]);
 
         Config::set('client.cache.enable', true);
@@ -71,7 +71,7 @@ class TestBaseClient extends TestCase
     public function testWithoutCache()
     {
         Event::fake([
-            RequestWithoutCachedEvent::class
+            RequestWithoutCachedEvent::class,
         ]);
 
         Config::set('client.cache.enable', false);

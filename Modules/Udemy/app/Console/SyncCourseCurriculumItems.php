@@ -37,6 +37,7 @@ class SyncCourseCurriculumItems extends Command
 
         if (!$userToken) {
             $this->error('Invalid token');
+
             return;
         }
 

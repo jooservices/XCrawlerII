@@ -11,7 +11,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
-use Modules\Udemy\Services\CourseService;
 use Modules\Udemy\Services\UdemyService;
 
 class SyncCourseCurriculumItemJob implements ShouldQueue

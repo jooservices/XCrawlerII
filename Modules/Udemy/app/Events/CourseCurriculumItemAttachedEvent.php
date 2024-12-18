@@ -19,10 +19,10 @@ class CourseCurriculumItemAttachedEvent
      * Create a new event instance.
      */
     public function __construct(
-        public UserToken      $userToken,
-        public UdemyCourse    $udemyCourse,
+        public UserToken $userToken,
+        public UdemyCourse $udemyCourse,
         public CurriculumItem $curriculumItem,
-        public int            $total
+        public int $total
     ) {
         //
     }

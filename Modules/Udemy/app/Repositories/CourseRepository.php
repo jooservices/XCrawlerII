@@ -36,7 +36,7 @@ class CourseRepository
     }
 
     public function syncCurriculumItem(
-        UdemyCourse             $udemyCourse,
+        UdemyCourse $udemyCourse,
         CourseCurriculumItemDto $itemDto
     ): CurriculumItem {
         return $udemyCourse->items()->updateOrCreate(
