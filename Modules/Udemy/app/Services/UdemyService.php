@@ -93,32 +93,34 @@ class UdemyService
 
         $page = isset($payload['page']) ? (int) $payload['page'] : 1;
 
-        if ($coursesDto->pages() > $page) {
-            $batch = [];
-
-            for ($index = 2; $index <= $coursesDto->pages(); $index++) {
-                $batch[] = new SyncMyCourseJob($userToken, $index);
-            }
-
-            Bus::batch($batch)->before(function (Batch $batch) {
-                // The batch has been created but no jobs have been added...
-            })->progress(function (Batch $batch) {
-                SyncMyCoursesProgressingEvent::dispatch($batch);
-            })->then(function (Batch $batch) {
-                // All jobs completed successfully...
-            })->catch(function (Batch $batch, Throwable $e) {
-                // First batch job failure detected...
-            })->finally(function (Batch $batch) use ($userToken, $coursesDto) {
-                // The batch has finished executing...
-                SyncMyCoursesCompletedEvent::dispatch(
-                    $userToken,
-                    $coursesDto
-                );
-            })
-                ->name('Sync my courses ' . $userToken->id)
-                ->onQueue(self::UDEMY_QUEUE_NAME)
-                ->dispatch();
+        if ($coursesDto->pages() <= $page) {
+            return $coursesDto;
         }
+
+        $batch = [];
+
+        for ($index = 2; $index <= $coursesDto->pages(); $index++) {
+            $batch[] = new SyncMyCourseJob($userToken, $index);
+        }
+
+        Bus::batch($batch)->before(function (Batch $batch) {
+            // The batch has been created but no jobs have been added...
+        })->progress(function (Batch $batch) {
+            SyncMyCoursesProgressingEvent::dispatch($batch);
+        })->then(function (Batch $batch) {
+            // All jobs completed successfully...
+        })->catch(function (Batch $batch, Throwable $e) {
+            // First batch job failure detected...
+        })->finally(function (Batch $batch) use ($userToken, $coursesDto) {
+            // The batch has finished executing...
+            SyncMyCoursesCompletedEvent::dispatch(
+                $userToken,
+                $coursesDto
+            );
+        })
+            ->name('Sync my courses ' . $userToken->id)
+            ->onQueue(self::UDEMY_QUEUE_NAME)
+            ->dispatch();
 
         return $coursesDto;
     }
