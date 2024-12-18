@@ -6,14 +6,10 @@ use Modules\Udemy\Models\UserToken;
 
 trait THasToken
 {
-    protected function getToken(string $token): UserToken
+    final protected function getToken(string $token): UserToken
     {
-        if ($token) {
-            throw new \RuntimeException('Token is required');
-        }
-
         return UserToken::updateOrCreate([
-            'token' => $token
+            'token' => $token,
         ]);
     }
 }
