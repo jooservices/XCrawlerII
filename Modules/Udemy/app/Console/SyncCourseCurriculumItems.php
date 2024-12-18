@@ -3,14 +3,11 @@
 namespace Modules\Udemy\Console;
 
 use Illuminate\Console\Command;
-use Modules\Udemy\Console\Traits\THasToken;
 use Modules\Udemy\Jobs\SyncCourseCurriculumItemsJob;
 use Modules\Udemy\Models\UserToken;
 
 class SyncCourseCurriculumItems extends Command
 {
-    use THasToken;
-
     /**
      * The name and signature of the console command.
      */
@@ -37,6 +34,12 @@ class SyncCourseCurriculumItems extends Command
          * @var UserToken $userToken
          */
         $userToken = UserToken::where('token', $token)->first();
+
+        if (!$userToken) {
+            $this->error('Invalid token');
+            return;
+        }
+
         $courses = $userToken->notCompletedCourses();
 
         $this->table([

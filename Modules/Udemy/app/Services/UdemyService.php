@@ -111,12 +111,9 @@ class UdemyService
             // All jobs completed successfully...
         })->catch(function (Batch $batch, Throwable $e) {
             // First batch job failure detected...
-        })->finally(function (Batch $batch) use ($userToken, $coursesDto) {
+        })->finally(function (Batch $batch) use ($userToken) {
             // The batch has finished executing...
-            SyncMyCoursesCompletedEvent::dispatch(
-                $userToken,
-                $coursesDto
-            );
+            SyncMyCoursesCompletedEvent::dispatch($userToken);
         })
             ->name('Sync my courses ' . $userToken->id)
             ->onQueue(self::UDEMY_QUEUE_NAME)

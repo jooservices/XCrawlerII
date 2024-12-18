@@ -3,15 +3,12 @@
 namespace Modules\Udemy\Console;
 
 use Illuminate\Console\Command;
-use Modules\Udemy\Console\Traits\THasToken;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\StudyService;
 
 class StudyCourse extends Command
 {
-    use THasToken;
-
     /**
      * The name and signature of the console command.
      */

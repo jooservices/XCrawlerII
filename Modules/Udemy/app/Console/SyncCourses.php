@@ -23,7 +23,7 @@ class SyncCourses extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    final public function handle(): void
     {
         $token = $this->ask('Enter your Udemy token');
 

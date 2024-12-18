@@ -20,8 +20,6 @@ use Modules\Client\Services\Factory;
 use Modules\Client\Services\RequestLogService;
 use Modules\Core\Helpers\KeyHelper;
 
-use function Laravel\Prompts\confirm;
-
 class BaseClient implements IClient
 {
     use THasRequests;
@@ -95,7 +93,7 @@ class BaseClient implements IClient
 
             $payload = StringHelper::convertToUTF8a($payload);
 
-            if ($method == 'GET') {
+            if ($method === 'GET') {
                 $options['query'] = $payload;
             } else {
                 switch ($this->contentType) {
@@ -127,6 +125,8 @@ class BaseClient implements IClient
                 return new $responseClass($exception->getResponse());
             }
         }
+
+        return new $responseClass();
     }
 
     protected function getResponseClass(): string
