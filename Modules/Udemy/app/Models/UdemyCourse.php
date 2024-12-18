@@ -49,17 +49,17 @@ class UdemyCourse extends Model
         'class' => 'string',
     ];
 
-    public function items(): HasMany
-    {
-        return $this->hasMany(CurriculumItem::class, 'course_id');
-    }
-
     protected static function newFactory(): UdemyCourseFactory
     {
         return UdemyCourseFactory::new();
     }
 
-    public function getLink(): string
+    final public function items(): HasMany
+    {
+        return $this->hasMany(CurriculumItem::class, 'course_id');
+    }
+
+    final public function getLink(): string
     {
         return config('udemy.client.base_uri') . trim($this->url, '/');
     }

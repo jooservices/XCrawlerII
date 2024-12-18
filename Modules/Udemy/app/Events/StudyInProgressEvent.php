@@ -19,9 +19,9 @@ class StudyInProgressEvent
      * Create a new event instance.
      */
     public function __construct(
-        public UserToken $userToken,
+        public UserToken   $userToken,
         public UdemyCourse $course,
-        public Batch $batch
+        public Batch       $batch
     ) {
         //
     }

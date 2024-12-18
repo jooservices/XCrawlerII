@@ -20,6 +20,8 @@ use Modules\Client\Services\Factory;
 use Modules\Client\Services\RequestLogService;
 use Modules\Core\Helpers\KeyHelper;
 
+use function Laravel\Prompts\confirm;
+
 class BaseClient implements IClient
 {
     use THasRequests;
@@ -53,58 +55,78 @@ class BaseClient implements IClient
             $cOptions
         );
 
-        /**
-         * @TODO Cache is optional
-         */
-        return Cache::remember(
-            $key,
-            config('client.cache.interval', 60),
-            function () use ($method, $endpoint, $payload, $options) {
-                RequestWithoutCachedEvent::dispatch();
+        if (config('client.cache.enable')) {
+            return Cache::remember(
+                $key,
+                config('client.cache.interval', 60),
+                function () use ($method, $endpoint, $payload, $options) {
+                    RequestWithoutCachedEvent::dispatch();
 
-                $method = Str::upper($method);
-                $logService = app(RequestLogService::class);
-                $responseClass = $this->getResponseClass();
-
-                try {
-                    PrepareRequestOptionsEvent::dispatch();
-
-                    $payload = StringHelper::convertToUTF8a($payload);
-
-                    if ($method == 'GET') {
-                        $options['query'] = $payload;
-                    } else {
-                        switch ($this->contentType) {
-                            case 'application/x-www-form-urlencoded':
-                                $options['form_params'] = $payload;
-                                break;
-                            case 'json':
-                            default:
-                                $options['json'] = $payload;
-                                break;
-                        }
-                    }
-
-                    PrepareRequestOptionsCompletedEvent::dispatch();
-
-                    $logService->request(
+                    return $this->clientRequest(
                         $method,
                         $endpoint,
+                        $payload,
                         $options
                     );
+                }
+            );
+        }
 
-                    RequestCompletedEvent::dispatch();
+        return $this->clientRequest(
+            $method,
+            $endpoint,
+            $payload,
+            $options
+        );
+    }
 
-                    return new $responseClass(
-                        $this->client->request($method, $endpoint, $options)
-                    );
-                } catch (BadResponseException $exception) {
-                    if ($exception->hasResponse()) {
-                        return new $responseClass($exception->getResponse());
-                    }
+    private function clientRequest(
+        string $method,
+        string $endpoint,
+        array $payload,
+        array $options
+    ): IResponse {
+        $method = Str::upper($method);
+        $logService = app(RequestLogService::class);
+        $responseClass = $this->getResponseClass();
+
+        try {
+            PrepareRequestOptionsEvent::dispatch();
+
+            $payload = StringHelper::convertToUTF8a($payload);
+
+            if ($method == 'GET') {
+                $options['query'] = $payload;
+            } else {
+                switch ($this->contentType) {
+                    case 'application/x-www-form-urlencoded':
+                        $options['form_params'] = $payload;
+                        break;
+                    case 'json':
+                    default:
+                        $options['json'] = $payload;
+                        break;
                 }
             }
-        );
+
+            PrepareRequestOptionsCompletedEvent::dispatch();
+
+            $logService->request(
+                $method,
+                $endpoint,
+                $options
+            );
+
+            RequestCompletedEvent::dispatch();
+
+            return new $responseClass(
+                $this->client->request($method, $endpoint, $options)
+            );
+        } catch (BadResponseException $exception) {
+            if ($exception->hasResponse()) {
+                return new $responseClass($exception->getResponse());
+            }
+        }
     }
 
     protected function getResponseClass(): string

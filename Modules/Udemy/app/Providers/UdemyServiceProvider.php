@@ -5,7 +5,9 @@ namespace Modules\Udemy\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use Modules\Udemy\Console\SyncMyCourse;
+use Modules\Udemy\Console\StudyCourse;
+use Modules\Udemy\Console\SyncCourseCurriculumItems;
+use Modules\Udemy\Console\SyncCourses;
 use Modules\Udemy\Listeners\CourseStudySubscriber;
 use Modules\Udemy\Listeners\MyCoursesSubscriber;
 use Nwidart\Modules\Traits\PathNamespace;
@@ -49,7 +51,9 @@ class UdemyServiceProvider extends ServiceProvider
     protected function registerCommands(): void
     {
         $this->commands([
-            SyncMyCourse::class,
+            SyncCourses::class,
+            SyncCourseCurriculumItems::class,
+            StudyCourse::class
         ]);
     }
 

@@ -2,6 +2,9 @@
 
 namespace Modules\Client\Tests\Unit\Services;
 
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Event;
+use Modules\Client\Events\RequestWithoutCachedEvent;
 use Modules\Client\Services\ClientManager;
 use Modules\Client\Services\Clients\BaseClient;
 use Modules\Client\Services\Clients\ResponseData\DomResponseData;
@@ -51,5 +54,29 @@ class TestBaseClient extends TestCase
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
         $this->assertTrue($response->isSuccess());
         $this->assertInstanceOf(DomResponseData::class, $response->parseBody());
+    }
+
+    public function testWithCache()
+    {
+        Event::fake([
+            RequestWithoutCachedEvent::class
+        ]);
+
+        Config::set('client.cache.enable', true);
+        $this->client->request(Request::METHOD_GET, '/html');
+
+        Event::assertDispatched(RequestWithoutCachedEvent::class);
+    }
+
+    public function testWithoutCache()
+    {
+        Event::fake([
+            RequestWithoutCachedEvent::class
+        ]);
+
+        Config::set('client.cache.enable', false);
+        $this->client->request(Request::METHOD_GET, '/html');
+
+        Event::assertNotDispatched(RequestWithoutCachedEvent::class);
     }
 }

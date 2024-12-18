@@ -6,19 +6,21 @@ use Exception;
 use Illuminate\Bus\Batch;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Bus;
+use Modules\Udemy\Client\Dto\CourseCurriculumItemDto;
+use Modules\Udemy\Client\Dto\CourseCurriculumItemsDto;
 use Modules\Udemy\Client\Dto\CourseDto;
 use Modules\Udemy\Client\Dto\CoursesDto;
 use Modules\Udemy\Client\UdemySdk;
 use Modules\Udemy\Events\CourseCreatedEvent;
 use Modules\Udemy\Events\SyncMyCourseCompletedEvent;
+use Modules\Udemy\Events\SyncMyCourseFailedEvent;
 use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
-use Modules\Udemy\Events\SyncMyCoursesFinishedEvent;
 use Modules\Udemy\Events\SyncMyCoursesProgressingEvent;
-use Modules\Udemy\Events\UserAttachedCourseEvent;
-use Modules\Udemy\Events\UserSyncMyCourseFailedEvent;
+use Modules\Udemy\Jobs\SyncCourseCurriculumItemJob;
 use Modules\Udemy\Jobs\SyncMyCourseJob;
+use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
-use Modules\Udemy\Repositories\UdemyCourseRepository;
+use Modules\Udemy\Repositories\CourseRepository;
 use Modules\Udemy\Repositories\UserTokenRepository;
 use Throwable;
 
@@ -30,7 +32,7 @@ class UdemyService
      * @throws BindingResolutionException
      * @throws Exception
      */
-    public function syncMyCourse(
+    final public function syncMyCourse(
         UserToken $userToken,
         array $payload = []
     ): ?CoursesDto {
@@ -40,12 +42,12 @@ class UdemyService
             ->subscribedCourses($payload);
 
         if ($coursesDto === null) {
-            UserSyncMyCourseFailedEvent::dispatch($userToken);
+            SyncMyCourseFailedEvent::dispatch($userToken);
 
             return null;
         }
 
-        $courseRepository = app(UdemyCourseRepository::class);
+        $courseRepository = app(CourseRepository::class);
         $userTokenRepository = app(UserTokenRepository::class);
 
         $coursesDto->getResults()->each(
@@ -66,11 +68,6 @@ class UdemyService
                     CourseCreatedEvent::dispatch($userToken, $udemyCourse);
                 }
 
-                /**
-                 * @TODO Only dispatch when it's first time attached
-                 */
-                UserAttachedCourseEvent::dispatch($userToken, $udemyCourse);
-
                 SyncMyCourseCompletedEvent::dispatch($userToken, $udemyCourse);
             }
         );
@@ -81,24 +78,22 @@ class UdemyService
     /**
      * @throws BindingResolutionException|Throwable
      */
-    public function syncMyCourses(
+    final public function syncMyCourses(
         UserToken $userToken,
         array $payload = [],
-    ): bool|CoursesDto {
+    ): ?CoursesDto {
         /**
          * Sync first time to get init data
          */
         $coursesDto = $this->syncMyCourse($userToken, $payload);
-        $page = isset($payload['page']) ? (int) $payload['page'] : 1;
 
         if ($coursesDto === null) {
-            return false;
+            return null;
         }
 
-        if (
-            $coursesDto->pages() > 1
-            && $coursesDto->pages() > $page
-        ) {
+        $page = isset($payload['page']) ? (int) $payload['page'] : 1;
+
+        if ($coursesDto->pages() > $page) {
             $batch = [];
 
             for ($index = 2; $index <= $coursesDto->pages(); $index++) {
@@ -109,28 +104,85 @@ class UdemyService
                 // The batch has been created but no jobs have been added...
             })->progress(function (Batch $batch) {
                 SyncMyCoursesProgressingEvent::dispatch($batch);
-            })->then(function (Batch $batch) use ($userToken) {
-                SyncMyCoursesCompletedEvent::dispatch(
-                    $userToken,
-                    $batch
-                );
+            })->then(function (Batch $batch) {
+                // All jobs completed successfully...
             })->catch(function (Batch $batch, Throwable $e) {
                 // First batch job failure detected...
             })->finally(function (Batch $batch) use ($userToken, $coursesDto) {
-                /**
-                 * Everything completed finished
-                 */
-                SyncMyCoursesFinishedEvent::dispatch(
-                    $batch,
+                // The batch has finished executing...
+                SyncMyCoursesCompletedEvent::dispatch(
                     $userToken,
                     $coursesDto
                 );
             })
                 ->name('Sync my courses ' . $userToken->id)
-                ->onQueue(UdemyService::UDEMY_QUEUE_NAME)
+                ->onQueue(self::UDEMY_QUEUE_NAME)
                 ->dispatch();
         }
 
         return $coursesDto;
+    }
+
+    /**
+     * @throws BindingResolutionException
+     */
+    final public function syncCurriculumItem(
+        UserToken $userToken,
+        UdemyCourse $udemyCourse,
+        array $payload = []
+    ): ?CourseCurriculumItemsDto {
+        $items = app(UdemySdk::class)
+            ->setToken($userToken)
+            ->courses()
+            ->subscriberCurriculumItems($udemyCourse->id, $payload);
+
+        if ($items === null) {
+            /**
+             * @TODO Failed event
+             */
+            return null;
+        }
+
+        $repository = app(CourseRepository::class);
+        $items->getResults()->each(
+            function (CourseCurriculumItemDto $item) use ($udemyCourse, $repository) {
+                $repository->syncCurriculumItem($udemyCourse, $item);
+            }
+        );
+
+        return $items;
+    }
+
+    /**
+     * @throws BindingResolutionException
+     */
+    final public function syncCurriculumItems(
+        UserToken $userToken,
+        UdemyCourse $udemyCourse,
+        array $payload = []
+    ): ?CourseCurriculumItemsDto {
+        $items = $this->syncCurriculumItem($userToken, $udemyCourse, $payload);
+
+        if ($items === null) {
+            return null;
+        }
+
+        $page = isset($payload['page']) ? (int) $payload['page'] : 1;
+
+        $batch = [];
+        if ($items->pages() > $page) {
+            for ($index = 2; $index <= $items->pages(); $index++) {
+                $batch[] = new SyncCourseCurriculumItemJob($userToken, $udemyCourse, $index);
+            }
+
+            /**
+             * @TODO Determine when chain completed
+             */
+            Bus::chain($batch)
+                ->onQueue(self::UDEMY_QUEUE_NAME)
+                ->dispatch();
+        }
+
+        return $items;
     }
 }

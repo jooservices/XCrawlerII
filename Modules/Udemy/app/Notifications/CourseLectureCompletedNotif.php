@@ -17,7 +17,7 @@ class CourseLectureCompletedNotif extends Notification implements ShouldQueue
     use THasTelegram;
 
     public function __construct(
-        public UdemyCourse $udemyCourse,
+        public UdemyCourse    $udemyCourse,
         public CurriculumItem $curriculumItem
     ) {
         //

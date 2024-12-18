@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Config;
 use Modules\Client\Services\Factory;
 use Modules\Client\Tests\TestCase;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;

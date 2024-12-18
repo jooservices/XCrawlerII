@@ -6,6 +6,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Bus\Batch;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Modules\Udemy\Client\Dto\CoursesDto;
 use Modules\Udemy\Models\UserToken;
 
 class SyncMyCoursesCompletedEvent
@@ -18,8 +19,7 @@ class SyncMyCoursesCompletedEvent
      * Create a new event instance.
      */
     public function __construct(
-        public UserToken $userToken,
-        public Batch $batch
+        public UserToken $userToken
     ) {
         //
     }

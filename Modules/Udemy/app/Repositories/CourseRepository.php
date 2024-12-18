@@ -7,7 +7,7 @@ use Modules\Udemy\Client\Dto\CourseDto;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UdemyCourse;
 
-class UdemyCourseRepository
+class CourseRepository
 {
     public function createFromEntity(CourseDto $courseDto): UdemyCourse
     {
@@ -36,7 +36,7 @@ class UdemyCourseRepository
     }
 
     public function syncCurriculumItem(
-        UdemyCourse $udemyCourse,
+        UdemyCourse             $udemyCourse,
         CourseCurriculumItemDto $itemDto
     ): CurriculumItem {
         return $udemyCourse->items()->updateOrCreate(

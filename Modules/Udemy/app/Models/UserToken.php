@@ -44,7 +44,7 @@ class UserToken extends Model
 
     public function notCompletedCourses(): Collection
     {
-        return $this->courses()->wherePivot('completion_ratio', '!=', 0)
+        return $this->courses()->wherePivot('completion_ratio', '!=', 100)
             ->get();
     }
 

@@ -11,7 +11,9 @@ use Modules\Udemy\Models\UserToken;
 
 class SyncCourseCurriculumItemsCompletedEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     /**
      * Create a new event instance.
@@ -21,15 +23,5 @@ class SyncCourseCurriculumItemsCompletedEvent
         public UdemyCourse $udemyCourse,
     ) {
         //
-    }
-
-    /**
-     * Get the channels the event should be broadcast on.
-     */
-    public function broadcastOn(): array
-    {
-        return [
-            new PrivateChannel('channel-name'),
-        ];
     }
 }
