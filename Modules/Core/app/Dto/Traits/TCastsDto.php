@@ -3,8 +3,6 @@
 namespace Modules\Core\Dto\Traits;
 
 use Illuminate\Support\Str;
-use Modules\Client\Interfaces\IResponse;
-use Modules\Core\Exceptions\InvalidDtoDataException;
 
 trait TCastsDto
 {
@@ -71,8 +69,8 @@ trait TCastsDto
                 return $this->getObject($name);
             case 'string':
                 return $this->getString($name);
-            case 'null':
-                return $this->getNull($name);
         }
+
+        return null;
     }
 }

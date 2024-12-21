@@ -6,7 +6,7 @@ use stdClass;
 
 trait THasProperties
 {
-    final public function toArray(): array
+    public function toArray(): array
     {
         $class = $this->_class ?? null;
 
