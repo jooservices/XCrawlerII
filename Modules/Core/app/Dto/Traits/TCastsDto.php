@@ -45,43 +45,11 @@ trait TCastsDto
         return (string) $this->data->{$name};
     }
 
-    public function transform(mixed $response): ?static
-    {
-        if ($response === null) {
-            throw new InvalidDtoDataException('Response is null');
-        }
-
-        switch (true) {
-            case $response instanceof IResponse:
-                if (!$response->isSuccess()) {
-                    throw new InvalidDtoDataException('Response is not successful');
-                }
-
-                $this->data = $response->parseBody()->getData();
-                break;
-            case is_array($response):
-                $this->data = json_decode(json_encode($response), false);
-                break;
-            case is_object($response):
-                $this->data = $response;
-                break;
-            default:
-                return $this->data = $response;
-        }
-
-        /**
-         * @TODO Validate data
-         */
-
-        return $this;
-    }
-
     public function __call(string $name, array $arguments): mixed
     {
         $name = str_replace('get', '', $name);
         $name = Str::snake($name);
 
-        // Cast to the correct type
         if (!isset($this->casts[$name])) {
             return $this->data->{$name} ?? null;
         }
@@ -90,10 +58,12 @@ trait TCastsDto
 
         switch ($castTo) {
             case 'int':
+            case 'integer':
                 return $this->getInt($name);
             case 'float':
                 return $this->getFloat($name);
             case 'bool':
+            case 'boolean':
                 return $this->getBool($name);
             case 'array':
                 return $this->getArray($name);
