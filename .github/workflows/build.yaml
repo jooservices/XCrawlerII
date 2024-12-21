@@ -152,7 +152,7 @@ jobs:
           path: ./reports
 
       - name: Upload coverage to codecov.io
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: success()
         with:
           directory: ./reports
