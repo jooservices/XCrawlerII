@@ -2,6 +2,7 @@
 
 namespace Modules\Core\Dto;
 
+use JsonException;
 use Modules\Client\Interfaces\IResponse;
 use Modules\Core\Dto\Interfaces\IDto;
 use Modules\Core\Dto\Traits\TCastsDto;
@@ -16,6 +17,9 @@ class BaseDto implements IDto
 
     protected ?stdClass $data;
 
+    /**
+     * @throws JsonException
+     */
     public function transform(mixed $response): ?static
     {
         if ($response === null) {
@@ -31,7 +35,12 @@ class BaseDto implements IDto
                 $this->data = $response->parseBody()->getData();
                 break;
             case is_array($response):
-                $this->data = json_decode(json_encode($response), false);
+                $this->data = json_decode(
+                    json_encode($response, JSON_THROW_ON_ERROR),
+                    false,
+                    512,
+                    JSON_THROW_ON_ERROR
+                );
                 break;
             case is_object($response):
                 $this->data = $response;

@@ -46,7 +46,7 @@ class CourseDto extends BaseDto
 
     public function getCompletionRatio(): int
     {
-        return $this->completion_ratio;
+        return $this->completion_ratio ?? 0;
     }
 
     public function getEnrollmentTime(): ?Carbon
