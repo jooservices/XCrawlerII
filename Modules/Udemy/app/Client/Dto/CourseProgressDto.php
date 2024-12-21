@@ -11,11 +11,6 @@ use Modules\Core\Dto\BaseDto;
  */
 class CourseProgressDto extends BaseDto
 {
-    public function getFields(): array
-    {
-        return [];
-    }
-
     public function getCompletedIds(): array
     {
         return array_merge(

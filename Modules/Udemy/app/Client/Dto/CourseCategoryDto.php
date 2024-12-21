@@ -16,15 +16,15 @@ class CourseCategoryDto extends BaseDto implements IHasItemDto
 
     public const string DTO_NAME = 'course_category';
 
+    protected array $casts = [
+        'id' => 'int',
+        'title' => 'string',
+    ];
+
     public const array FIELDS = [
         'id',
         'title',
     ];
-
-    public function getFields(): array
-    {
-        return self::FIELDS;
-    }
 
     public function getTitle(): string
     {

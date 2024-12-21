@@ -10,11 +10,6 @@ class AssessmentsDto extends BaseDto implements IHasListDto
 {
     use THasListDto;
 
-    public function getFields(): array
-    {
-        return [];
-    }
-
     protected function getSingular(): string
     {
         return AssessmentDto::class;

@@ -44,6 +44,6 @@ class TestAssessmentDto extends TestCase
     final public function testGetFields(): void
     {
         $dto = new AssessmentDto();
-        $this->assertEquals(['id', 'correct_response'], $dto->getFields());
+        $this->assertEquals(['id', 'correct_response'], $dto->getCasts());
     }
 }

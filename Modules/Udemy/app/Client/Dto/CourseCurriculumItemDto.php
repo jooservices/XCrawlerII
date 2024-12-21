@@ -6,15 +6,6 @@ use Modules\Core\Dto\BaseDto;
 
 class CourseCurriculumItemDto extends BaseDto
 {
-    public const array FIELDS = [
-
-    ];
-
-    public function getFields(): array
-    {
-        return self::FIELDS;
-    }
-
     public function toArray(): array
     {
         return array_merge(

@@ -27,6 +27,8 @@
             <directory>Modules</directory>
         </include>
         <exclude>
+            <directory>Modules/*/Zeus</directory>
+            <directory>Modules/*/Providers</directory>
             <directory>Modules/*/tests</directory>
         </exclude>
     </source>
