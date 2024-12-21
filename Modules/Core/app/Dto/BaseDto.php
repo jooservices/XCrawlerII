@@ -50,7 +50,10 @@ class BaseDto implements IDto
 
     public function __get(string $name)
     {
-        if (!empty($this->fields) && !in_array($name, $this->fields)) {
+        if (
+            !empty($this->fields)
+            && !in_array($name, $this->getFields(), true)
+        ) {
             return null;
         }
 
@@ -66,12 +69,12 @@ class BaseDto implements IDto
         $this->data->{$name} = $value;
     }
 
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         return isset($this->data->{$name});
     }
 
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         unset($this->data->{$name});
     }

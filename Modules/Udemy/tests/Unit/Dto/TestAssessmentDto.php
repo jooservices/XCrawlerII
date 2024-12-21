@@ -16,6 +16,7 @@ class TestAssessmentDto extends TestCase
         ]);
 
         $this->assertEquals(1, $dto->getId());
+        $this->assertEquals(1, $dto->id);
     }
 
     final public function testGetCorrectResponse(): void
