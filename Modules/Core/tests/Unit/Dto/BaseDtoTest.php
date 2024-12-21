@@ -26,11 +26,11 @@ class BaseDtoTest extends TestCase
         $this->assertEquals(1, $baseDto->getInt('id'));
         $this->assertEquals('Test', $baseDto->getString('name'));
         $this->assertEquals(10.5, $baseDto->getFloat('price'));
-        $this->assertEquals(true, $baseDto->getBool('is_active'));
+        $this->assertTrue($baseDto->getBool('is_active'));
         $this->assertEquals(1, $baseDto->getObject('data')->id);
         $this->assertEquals('Test', $baseDto->getObject('data')->name);
         $this->assertEquals(10.5, $baseDto->getObject('data')->price);
-        $this->assertEquals(true, $baseDto->getObject('data')->is_active);
+        $this->assertTrue($baseDto->getObject('data')->is_active);
     }
 
     final public function testInvalidBaseDto(): void

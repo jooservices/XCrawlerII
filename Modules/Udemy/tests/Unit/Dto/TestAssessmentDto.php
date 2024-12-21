@@ -7,7 +7,7 @@ use Modules\Udemy\Tests\TestCase;
 
 class TestAssessmentDto extends TestCase
 {
-    public function testGetId(): void
+    final public function testGetId(): void
     {
         $dto = new AssessmentDto();
         $dto->transform([
@@ -18,7 +18,7 @@ class TestAssessmentDto extends TestCase
         $this->assertEquals(1, $dto->getId());
     }
 
-    public function testGetCorrectResponse(): void
+    final public function testGetCorrectResponse(): void
     {
         $dto = new AssessmentDto();
         $dto->transform([
@@ -27,5 +27,22 @@ class TestAssessmentDto extends TestCase
         ]);
 
         $this->assertEquals(['a', 'b', 'c'], $dto->getCorrectResponse());
+    }
+
+    final public function testInvalidField(): void
+    {
+        $dto = new AssessmentDto();
+        $dto->transform([
+            'id' => 1,
+            'correct_response' => ['a', 'b', 'c'],
+        ]);
+
+        $this->assertNull($dto->invalid_field);
+    }
+
+    final public function testGetFields(): void
+    {
+        $dto = new AssessmentDto();
+        $this->assertEquals(['id', 'correct_response'], $dto->getFields());
     }
 }

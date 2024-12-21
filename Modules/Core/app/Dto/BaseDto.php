@@ -25,7 +25,7 @@ class BaseDto implements IDto
         switch (true) {
             case $response instanceof IResponse:
                 if (!$response->isSuccess()) {
-                    throw new InvalidDtoDataException($response->getMessage());
+                    throw new InvalidDtoDataException('Response is not successful');
                 }
 
                 $this->data = $response->parseBody()->getData();
@@ -49,6 +49,10 @@ class BaseDto implements IDto
 
     public function __get(string $name)
     {
+        if (!empty($this->fields) && !in_array($name, $this->fields)) {
+            return null;
+        }
+
         return $this->data->{$name} ?? null;
     }
 
