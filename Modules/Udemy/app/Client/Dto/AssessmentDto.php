@@ -15,9 +15,4 @@ class AssessmentDto extends BaseDto
     {
         return $this->data->correct_response;
     }
-
-    public function getFields(): array
-    {
-        return [];
-    }
 }
