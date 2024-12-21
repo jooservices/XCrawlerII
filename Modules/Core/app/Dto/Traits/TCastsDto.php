@@ -76,37 +76,33 @@ trait TCastsDto
         return $this;
     }
 
-    public function __call(string $name, array $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         $name = str_replace('get', '', $name);
         $name = Str::snake($name);
 
         // Cast to the correct type
-        if (isset($this->casts[$name])) {
-            $castTo = $this->casts[$name];
-
-            switch ($castTo) {
-                case 'int':
-                    return $this->getInt($name);
-                case 'float':
-                    return $this->getFloat($name);
-                case 'bool':
-                    return $this->getBool($name);
-                case 'array':
-                    return $this->getArray($name);
-                case 'object':
-                    return $this->getObject($name);
-                case 'string':
-                    return $this->getString($name);
-                case 'null':
-                    return $this->getNull($name);
-            }
+        if (!isset($this->casts[$name])) {
+            return $this->data->{$name} ?? null;
         }
 
-        if (isset($this->data->{$name})) {
-            return $this->data->{$name};
-        }
+        $castTo = $this->casts[$name];
 
-        return null;
+        switch ($castTo) {
+            case 'int':
+                return $this->getInt($name);
+            case 'float':
+                return $this->getFloat($name);
+            case 'bool':
+                return $this->getBool($name);
+            case 'array':
+                return $this->getArray($name);
+            case 'object':
+                return $this->getObject($name);
+            case 'string':
+                return $this->getString($name);
+            case 'null':
+                return $this->getNull($name);
+        }
     }
 }
