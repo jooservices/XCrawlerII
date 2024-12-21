@@ -3,11 +3,11 @@
 namespace Modules\Udemy\Client\Dto;
 
 use Illuminate\Support\Collection;
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 use Modules\Udemy\Client\Dto\Interfaces\IHasListDto;
 use Modules\Udemy\Client\Dto\Traits\THasListDto;
 
-class CourseCurriculumItemsDto extends AbstractBaseDto implements IHasListDto
+class CourseCurriculumItemsDto extends BaseDto implements IHasListDto
 {
     use THasListDto;
 

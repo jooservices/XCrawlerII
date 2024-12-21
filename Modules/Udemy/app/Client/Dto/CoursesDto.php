@@ -2,11 +2,11 @@
 
 namespace Modules\Udemy\Client\Dto;
 
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 use Modules\Udemy\Client\Dto\Interfaces\IHasListDto;
 use Modules\Udemy\Client\Dto\Traits\THasListDto;
 
-class CoursesDto extends AbstractBaseDto implements IHasListDto
+class CoursesDto extends BaseDto implements IHasListDto
 {
     use THasListDto;
 

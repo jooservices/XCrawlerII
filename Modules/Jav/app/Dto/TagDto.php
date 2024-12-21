@@ -2,7 +2,7 @@
 
 namespace Modules\Jav\Dto;
 
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 use Modules\Core\Dto\Traits\TDefaultDto;
 
 /**
@@ -11,7 +11,7 @@ use Modules\Core\Dto\Traits\TDefaultDto;
  * @property string $slug
  * @property string $link
  */
-class TagDto extends AbstractBaseDto
+class TagDto extends BaseDto
 {
     use TDefaultDto;
 }

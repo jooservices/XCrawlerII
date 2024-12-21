@@ -3,7 +3,7 @@
 namespace Modules\Jav\Dto;
 
 use Illuminate\Support\Collection;
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 use Modules\Core\Dto\Traits\TDefaultDto;
 use stdClass;
 
@@ -12,7 +12,7 @@ use stdClass;
  * @property int $last_page
  * @property Collection|ItemDto $items
  */
-class ItemsDto extends AbstractBaseDto
+class ItemsDto extends BaseDto
 {
     use TDefaultDto;
 

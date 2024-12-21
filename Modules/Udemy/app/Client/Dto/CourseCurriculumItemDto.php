@@ -2,9 +2,9 @@
 
 namespace Modules\Udemy\Client\Dto;
 
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 
-class CourseCurriculumItemDto extends AbstractBaseDto
+class CourseCurriculumItemDto extends BaseDto
 {
     public const array FIELDS = [
 

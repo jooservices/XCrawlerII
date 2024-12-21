@@ -2,9 +2,9 @@
 
 namespace Modules\Udemy\Client\Dto;
 
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 
-class AssessmentDto extends AbstractBaseDto
+class AssessmentDto extends BaseDto
 {
     public function getId(): int
     {

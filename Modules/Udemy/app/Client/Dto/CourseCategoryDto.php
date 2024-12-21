@@ -2,7 +2,7 @@
 
 namespace Modules\Udemy\Client\Dto;
 
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 use Modules\Udemy\Client\Dto\Interfaces\IHasItemDto;
 use Modules\Udemy\Client\Dto\Traits\THasItemDto;
 
@@ -10,7 +10,7 @@ use Modules\Udemy\Client\Dto\Traits\THasItemDto;
  * @property int $id
  * @property string $title
  */
-class CourseCategoryDto extends AbstractBaseDto implements IHasItemDto
+class CourseCategoryDto extends BaseDto implements IHasItemDto
 {
     use THasItemDto;
 
