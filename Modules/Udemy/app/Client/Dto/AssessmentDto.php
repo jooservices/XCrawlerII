@@ -7,17 +7,7 @@ use Modules\Core\Dto\BaseDto;
 class AssessmentDto extends BaseDto
 {
     protected array $fields = [
-        'id',
-        'correct_response',
+        'id' => 'int',
+        'correct_response' => 'array',
     ];
-
-    public function getId(): int
-    {
-        return $this->data->id;
-    }
-
-    public function getCorrectResponse(): array
-    {
-        return $this->data->correct_response;
-    }
 }

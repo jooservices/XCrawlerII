@@ -2,6 +2,7 @@
 
 namespace Modules\Core\Dto;
 
+use Illuminate\Support\Str;
 use Modules\Client\Interfaces\IResponse;
 use Modules\Core\Dto\Interfaces\IDto;
 use Modules\Core\Dto\Traits\TCastsDto;
@@ -70,6 +71,45 @@ class BaseDto implements IDto
         return isset($this->data->{$name});
     }
 
+    public function __unset($name)
+    {
+        unset($this->data->{$name});
+    }
+
+    public function __call(string $name, array $arguments)
+    {
+        $name = str_replace('get', '', $name);
+        $name = Str::snake($name);
+
+        // Cast to the correct type
+        if (isset($this->fields[$name])) {
+            $castTo = $this->fields[$name];
+
+            switch ($castTo) {
+                case 'int':
+                    return $this->getInt($name);
+                case 'float':
+                    return $this->getFloat($name);
+                case 'bool':
+                    return $this->getBool($name);
+                case 'array':
+                    return $this->getArray($name);
+                case 'object':
+                    return $this->getObject($name);
+                case 'string':
+                    return $this->getString($name);
+                case 'null':
+                    return $this->getNull($name);
+            }
+        }
+
+        if (isset($this->data->{$name})) {
+            return $this->data->{$name};
+        }
+
+        return null;
+    }
+
     public function toArray(): array
     {
         $class = $this->_class ?? null;
@@ -82,6 +122,6 @@ class BaseDto implements IDto
 
     public function getFields(): array
     {
-        return $this->fields;
+        return array_keys($this->fields);
     }
 }
