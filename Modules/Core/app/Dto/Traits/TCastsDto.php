@@ -54,23 +54,14 @@ trait TCastsDto
 
         $castTo = $this->casts[$name];
 
-        switch ($castTo) {
-            case 'int':
-            case 'integer':
-                return $this->getInt($name);
-            case 'float':
-                return $this->getFloat($name);
-            case 'bool':
-            case 'boolean':
-                return $this->getBool($name);
-            case 'array':
-                return $this->getArray($name);
-            case 'object':
-                return $this->getObject($name);
-            case 'string':
-                return $this->getString($name);
-        }
-
-        return null;
+        return match ($castTo) {
+            'int', 'integer' => $this->getInt($name),
+            'float' => $this->getFloat($name),
+            'bool', 'boolean' => $this->getBool($name),
+            'array' => $this->getArray($name),
+            'object' => $this->getObject($name),
+            'string' => $this->getString($name),
+            default => null,
+        };
     }
 }
