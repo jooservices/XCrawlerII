@@ -17,6 +17,7 @@ use Throwable;
 class UdemyServiceTest extends TestCase
 {
     private UdemyService $service;
+
     public function setUp(): void
     {
         parent::setUp();
