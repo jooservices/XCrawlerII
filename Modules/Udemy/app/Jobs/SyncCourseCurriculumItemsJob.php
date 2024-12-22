@@ -39,6 +39,10 @@ class SyncCourseCurriculumItemsJob implements ShouldQueue
      */
     final public function handle(UdemyService $service): void
     {
-        $service->syncCurriculumItems($this->userToken, $this->udemyCourse, ['page' => $this->page]);
+        $service->syncCurriculumItems(
+            $this->userToken,
+            $this->udemyCourse,
+            ['page' => $this->page]
+        );
     }
 }

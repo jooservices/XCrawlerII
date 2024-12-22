@@ -147,7 +147,10 @@ return [
                 'retires' => env('ES_OPT_RETRIES', null),
                 'meta_header' => env('ES_OPT_META_HEADERS', true),
             ],
-            'error_log_index' => env('ES_ERROR_INDEX', false), //If set will log ES errors to this index, ex: 'laravel_es_errors'
+            'error_log_index' => env(
+                'ES_ERROR_INDEX',
+                false
+            ), //If set will log ES errors to this index, ex: 'laravel_es_errors'
         ],
 
     ],
@@ -185,7 +188,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [
