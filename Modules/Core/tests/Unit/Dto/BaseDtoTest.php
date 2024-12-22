@@ -45,7 +45,7 @@ class BaseDtoTest extends TestCase
         $baseDto = new AssessmentDto();
         $baseDto->transform([
             'id' => '1',
-            'correct_response' => ["A", "B"],
+            'correct_response' => ['A', 'B'],
         ]);
 
         $this->assertEquals(1, $baseDto->getId());
