@@ -5,6 +5,7 @@ namespace Modules\Core\Tests\Unit\Dto;
 use Modules\Core\Dto\BaseDto;
 use Modules\Core\Exceptions\InvalidDtoDataException;
 use Modules\Core\Tests\TestCase;
+use Modules\Udemy\Client\Dto\AssessmentDto;
 
 class BaseDtoTest extends TestCase
 {
@@ -37,5 +38,17 @@ class BaseDtoTest extends TestCase
     {
         $this->expectException(InvalidDtoDataException::class);
         (new BaseDto())->transform(null);
+    }
+
+    final public function testCasting(): void
+    {
+        $baseDto = new AssessmentDto();
+        $baseDto->transform([
+            'id' => '1',
+            'correct_response' => ["A", "B"],
+        ]);
+
+        $this->assertEquals(1, $baseDto->getId());
+        $this->assertEquals(['A', 'B'], $baseDto->getCorrectResponse());
     }
 }

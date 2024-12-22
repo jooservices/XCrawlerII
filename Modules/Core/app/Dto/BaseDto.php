@@ -28,19 +28,10 @@ class BaseDto implements IDto
 
         switch (true) {
             case $response instanceof IResponse:
-                if (!$response->isSuccess()) {
-                    throw new InvalidDtoDataException('Response is not successful');
-                }
-
-                $this->data = $response->parseBody()->getData();
+                $this->loadDataFromResponse($response);
                 break;
             case is_array($response):
-                $this->data = json_decode(
-                    json_encode($response, JSON_THROW_ON_ERROR),
-                    false,
-                    512,
-                    JSON_THROW_ON_ERROR
-                );
+                $this->loadDataFromArray($response);
                 break;
             case is_object($response):
                 $this->data = $response;
@@ -54,5 +45,24 @@ class BaseDto implements IDto
          */
 
         return $this;
+    }
+
+    private function loadDataFromResponse(IResponse $response)
+    {
+        if (!$response->isSuccess()) {
+            throw new InvalidDtoDataException('Response is not successful');
+        }
+
+        $this->data = $response->parseBody()->getData();
+    }
+
+    private function loadDataFromArray(array $response)
+    {
+        $this->data = json_decode(
+            json_encode($response, JSON_THROW_ON_ERROR),
+            false,
+            512,
+            JSON_THROW_ON_ERROR
+        );
     }
 }
