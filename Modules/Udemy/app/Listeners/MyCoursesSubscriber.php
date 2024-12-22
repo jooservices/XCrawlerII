@@ -13,16 +13,18 @@ class MyCoursesSubscriber
     /**
      * Sync items after course created
      */
-    final public function onSyncMyCourseCompleted(SyncMyCourseCompletedEvent $event): void
-    {
+    final public function onSyncMyCourseCompleted(
+        SyncMyCourseCompletedEvent $event
+    ): void {
         $userToken = $event->userToken;
         $udemyCourse = $event->udemyCourse;
 
         SyncCourseCurriculumItemsJob::dispatch($userToken, $udemyCourse);
     }
 
-    public function onSyncCourseCurriculumItemsCompleted(SyncCourseCurriculumItemsCompletedEvent $event)
-    {
+    public function onSyncCourseCurriculumItemsCompleted(
+        SyncCourseCurriculumItemsCompletedEvent $event
+    ): void {
         /**
          * @var UdemyCourse $item
          */

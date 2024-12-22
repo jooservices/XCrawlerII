@@ -34,8 +34,9 @@ class UdemyService
      */
     final public function syncMyCourse(
         UserToken $userToken,
-        array $payload = []
-    ): ?CoursesDto {
+        array     $payload = []
+    ): ?CoursesDto
+    {
         $coursesDto = app(UdemySdk::class)
             ->setToken($userToken)
             ->me()
@@ -80,8 +81,9 @@ class UdemyService
      */
     final public function syncMyCourses(
         UserToken $userToken,
-        array $payload = [],
-    ): ?CoursesDto {
+        array     $payload = [],
+    ): ?CoursesDto
+    {
         /**
          * Sync first time to get init data
          */
@@ -91,7 +93,7 @@ class UdemyService
             return null;
         }
 
-        $page = isset($payload['page']) ? (int) $payload['page'] : 1;
+        $page = isset($payload['page']) ? (int)$payload['page'] : 1;
 
         if ($coursesDto->pages() <= $page) {
             return $coursesDto;
@@ -126,10 +128,11 @@ class UdemyService
      * @throws BindingResolutionException
      */
     final public function syncCurriculumItem(
-        UserToken $userToken,
+        UserToken   $userToken,
         UdemyCourse $udemyCourse,
-        array $payload = []
-    ): ?CourseCurriculumItemsDto {
+        array       $payload = []
+    ): ?CourseCurriculumItemsDto
+    {
         $items = app(UdemySdk::class)
             ->setToken($userToken)
             ->courses()
@@ -144,7 +147,8 @@ class UdemyService
 
         $repository = app(CourseRepository::class);
         $items->getResults()->each(
-            function (CourseCurriculumItemDto $item) use ($udemyCourse, $repository) {
+            function (CourseCurriculumItemDto $item)
+            use ($udemyCourse, $repository) {
                 $repository->syncCurriculumItem($udemyCourse, $item);
             }
         );
@@ -156,17 +160,18 @@ class UdemyService
      * @throws BindingResolutionException
      */
     final public function syncCurriculumItems(
-        UserToken $userToken,
+        UserToken   $userToken,
         UdemyCourse $udemyCourse,
-        array $payload = []
-    ): ?CourseCurriculumItemsDto {
+        array       $payload = []
+    ): ?CourseCurriculumItemsDto
+    {
         $items = $this->syncCurriculumItem($userToken, $udemyCourse, $payload);
 
         if ($items === null) {
             return null;
         }
 
-        $page = isset($payload['page']) ? (int) $payload['page'] : 1;
+        $page = isset($payload['page']) ? (int)$payload['page'] : 1;
 
         $batch = [];
         if ($items->pages() > $page) {
