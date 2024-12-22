@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\StudyService;
+use RuntimeException;
 
 class StudyCourse extends Command
 {
@@ -49,6 +50,10 @@ class StudyCourse extends Command
         $courseId = $this->ask('Choose a course to study');
         $course = $courses->find($courseId);
 
+        if (!$course) {
+            throw new RuntimeException('Course not found');
+        }
+
         $this->table(
             [
                 'ID',
@@ -68,6 +73,11 @@ class StudyCourse extends Command
 
         $this->output->info('Studying course: ' . $course->title . '...');
 
-        app(StudyService::class)->study($userToken, $course);
+        if (
+            app()->environment('production')
+            || app()->environment('staging')
+        ) {
+            app(StudyService::class)->study($userToken, $course);
+        }
     }
 }
