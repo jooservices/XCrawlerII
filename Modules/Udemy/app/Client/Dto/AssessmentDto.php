@@ -2,22 +2,19 @@
 
 namespace Modules\Udemy\Client\Dto;
 
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 
-class AssessmentDto extends AbstractBaseDto
+/**
+ * @property int $id
+ * @property array $correct_response
+ *
+ * @method int getId()
+ * @method array getCorrectResponse()
+ */
+class AssessmentDto extends BaseDto
 {
-    public function getId(): int
-    {
-        return $this->data->id;
-    }
-
-    public function getCorrectResponse(): array
-    {
-        return $this->data->correct_response;
-    }
-
-    public function getFields(): array
-    {
-        return [];
-    }
+    protected array $casts = [
+        'id' => 'int',
+        'correct_response' => 'array',
+    ];
 }

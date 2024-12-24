@@ -42,9 +42,11 @@ class UserToken extends Model
             ]);
     }
 
-    public function notCompletedCourses(): Collection
+    final public function notCompletedCourses(): Collection
     {
-        return $this->courses()->wherePivot('completion_ratio', '!=', 0)
+        return $this->courses()
+            ->wherePivot('completion_ratio', '!=', 100)
+            ->orWherePivot('completion_ratio', null)
             ->get();
     }
 

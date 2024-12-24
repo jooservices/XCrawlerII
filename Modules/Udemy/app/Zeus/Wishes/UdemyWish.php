@@ -142,12 +142,11 @@ class UdemyWish extends AbstractWish
                             ],
                             'ordering' => '-last_accessed',
                             'page' => $index,
-                            'page_size' => 40,
+                            'page_size' => $index === 1 ? 40 : 100,
                             'is_archived' => false,
                         ],
                     ]
-                )
-                ->andReturn(
+                )->andReturn(
                     $this->buildResponse(SymfonyResponse::HTTP_OK, 'subscribed-courses_' . $index)
                 );
         }

@@ -32,13 +32,13 @@ class JavMovieCreatedTest extends TestCase
 
         $movie = JavMovie::where('dvd_id', $onejav->dvd_id)->first();
 
-        $this->assertEquals(
+        $this->assertCount(
             count($movie->performers),
-            count($onejav->performers)
+            $onejav->performers
         );
-        $this->assertEquals(
+        $this->assertCount(
             count($movie->genres),
-            count($onejav->genres)
+            $onejav->genres
         );
 
         Event::assertDispatched(JavMovieCreateCompleted::class);

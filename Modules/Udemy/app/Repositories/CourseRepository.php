@@ -7,7 +7,7 @@ use Modules\Udemy\Client\Dto\CourseDto;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UdemyCourse;
 
-class UdemyCourseRepository
+class CourseRepository
 {
     public function createFromEntity(CourseDto $courseDto): UdemyCourse
     {

@@ -2,19 +2,10 @@
 
 namespace Modules\Udemy\Client\Dto;
 
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 
-class CourseCurriculumItemDto extends AbstractBaseDto
+class CourseCurriculumItemDto extends BaseDto
 {
-    public const array FIELDS = [
-
-    ];
-
-    public function getFields(): array
-    {
-        return self::FIELDS;
-    }
-
     public function toArray(): array
     {
         return array_merge(

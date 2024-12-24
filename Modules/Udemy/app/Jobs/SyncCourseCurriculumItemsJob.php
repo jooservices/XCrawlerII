@@ -13,7 +13,7 @@ use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\UdemyService;
 
-class SyncCourseCurriculumItemJob implements ShouldQueue
+class SyncCourseCurriculumItemsJob implements ShouldQueue
 {
     use Batchable;
     use Dispatchable;
@@ -27,7 +27,7 @@ class SyncCourseCurriculumItemJob implements ShouldQueue
     public function __construct(
         public UserToken $userToken,
         public UdemyCourse $udemyCourse,
-        public int $page
+        public int $page = 1
     ) {
         $this->onQueue(UdemyService::UDEMY_QUEUE_NAME);
     }
@@ -37,8 +37,12 @@ class SyncCourseCurriculumItemJob implements ShouldQueue
      *
      * @throws BindingResolutionException
      */
-    public function handle(UdemyService $service): void
+    final public function handle(UdemyService $service): void
     {
-        $service->syncCurriculumItem($this->userToken, $this->udemyCourse, ['page' => $this->page]);
+        $service->syncCurriculumItems(
+            $this->userToken,
+            $this->udemyCourse,
+            ['page' => $this->page]
+        );
     }
 }

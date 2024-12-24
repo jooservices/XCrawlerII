@@ -2,20 +2,15 @@
 
 namespace Modules\Udemy\Client\Dto;
 
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 
 /**
  * @property array $completed_lecture_ids
  * @property array $completed_quiz_ids
  * @property array $completed_assignment_ids
  */
-class CourseProgressDto extends AbstractBaseDto
+class CourseProgressDto extends BaseDto
 {
-    public function getFields(): array
-    {
-        return [];
-    }
-
     public function getCompletedIds(): array
     {
         return array_merge(

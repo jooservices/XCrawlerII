@@ -3,14 +3,14 @@
 namespace Modules\Udemy\Client\Dto;
 
 use Carbon\Carbon;
-use Modules\Core\Dto\AbstractBaseDto;
+use Modules\Core\Dto\BaseDto;
 
 /**
  * @property string $url
  * @property int $completion_ratio
  * @property string $enrollment_time
  */
-class CourseDto extends AbstractBaseDto
+class CourseDto extends BaseDto
 {
     public const array FIELDS = [
         'archive_time',
@@ -46,7 +46,7 @@ class CourseDto extends AbstractBaseDto
 
     public function getCompletionRatio(): int
     {
-        return $this->completion_ratio;
+        return $this->completion_ratio ?? 0;
     }
 
     public function getEnrollmentTime(): ?Carbon
