@@ -20,8 +20,10 @@ class StudyService
      * @throws BindingResolutionException
      * @throws Throwable
      */
-    public function study(UserToken $userToken, UdemyCourse $udemyCourse): void
-    {
+    final public function study(
+        UserToken $userToken,
+        UdemyCourse $udemyCourse
+    ): void {
         /**
          * @TODO Notification
          */
@@ -65,8 +67,10 @@ class StudyService
     /**
      * This one will be called inside a job
      */
-    public function studyCurriculum(UserToken $userToken, CurriculumItem $curriculumItem): void
-    {
+    public function studyCurriculum(
+        UserToken $userToken,
+        CurriculumItem $curriculumItem
+    ): void {
         app(StudyManager::class)->study($userToken, $curriculumItem);
     }
 }
