@@ -37,7 +37,7 @@ class SyncCourseCurriculumItemJob implements ShouldQueue
      *
      * @throws BindingResolutionException
      */
-    public function handle(UdemyService $service): void
+    final public function handle(UdemyService $service): void
     {
         $service->syncCurriculumItem($this->userToken, $this->udemyCourse, ['page' => $this->page]);
     }
