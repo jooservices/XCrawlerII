@@ -2,6 +2,7 @@
 
 namespace Modules\Core\Zeus;
 
+use Closure;
 use GuzzleHttp\ClientInterface;
 use Mockery;
 use Modules\Client\Services\Factory;
@@ -16,25 +17,25 @@ class ZeusService
         $this->clientMock = Mockery::mock(ClientInterface::class);
     }
 
-    public function getClientMock(): Mockery\MockInterface
+    final public function getClientMock(): Mockery\MockInterface
     {
         return $this->clientMock;
     }
 
-    public function setClientMock(Mockery\MockInterface $clientMock): self
+    final public function setClientMock(Mockery\MockInterface $clientMock): self
     {
         $this->clientMock = $clientMock;
 
         return $this;
     }
 
-    public function apply()
+    final public function apply(): void
     {
         $factoryMock = Mockery::mock(Factory::class);
-        $factoryMock->shouldReceive('enableRetries')
+        $factoryMock->allows('enableRetries')
             ->andReturnSelf();
-        $factoryMock->shouldReceive('make')
-            ->andReturn($this->clientMock);
+        $factoryMock->allows('make')
+            ->andReturns($this->clientMock);
 
         app()->instance(Factory::class, $factoryMock);
     }
@@ -42,13 +43,21 @@ class ZeusService
     /**
      * @throws \Exception
      */
-    public function wish(string $wish): self
-    {
+    final public function wish(
+        string $wish,
+        ?Closure $callback = null
+    ): self {
+        Mockery::close();
         if (!class_exists($wish)) {
             throw new ClassNotFoundException("Wish class $wish does not exist");
         }
 
         $this->clientMock = app($wish)->wish($this->clientMock);
+
+        if ($callback) {
+            $this->clientMock = $callback($this->clientMock);
+        }
+
         $this->apply();
 
         return $this;
