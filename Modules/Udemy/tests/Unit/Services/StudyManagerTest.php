@@ -50,7 +50,8 @@ class StudyManagerTest extends TestCase
                 $mock->expects('request')
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
-                        'api-2.0/users/me/subscribed-courses/' . $curriculumItem->course->id
+                        'api-2.0/users/me/subscribed-courses/'
+                        . $curriculumItem->course->id
                         . '/lectures/' . $curriculumItem->id . '/view-logs'
                     )
                     ->andReturn($response);
