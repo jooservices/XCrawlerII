@@ -51,7 +51,7 @@ class StudyManagerTest extends TestCase
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
                         UdemyWish::ME_SUBSCRIBED_COURSES
-                        . $curriculumItem->course->id
+                        . '/' . $curriculumItem->course->id
                         . '/lectures/' . $curriculumItem->id . '/view-logs'
                     )
                     ->andReturn($response);
@@ -60,7 +60,7 @@ class StudyManagerTest extends TestCase
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
                         UdemyWish::ME_SUBSCRIBED_COURSES
-                        . $curriculumItem->course->id
+                        . '/' .  $curriculumItem->course->id
                         . '/lectures/' . $curriculumItem->id . '/progress-logs'
                     )
                     ->andReturn($response);
@@ -69,7 +69,7 @@ class StudyManagerTest extends TestCase
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
                         UdemyWish::ME_SUBSCRIBED_COURSES
-                        . $curriculumItem->course->id
+                        . '/' .  $curriculumItem->course->id
                         . '/completed-lectures',
                     )
                     ->andReturn($response);
