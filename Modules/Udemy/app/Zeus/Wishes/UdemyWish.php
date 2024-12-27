@@ -124,7 +124,7 @@ class UdemyWish extends AbstractWish
         $clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
-                'api-2.0/users/me/subscribed-courses',
+                self::ME_SUBSCRIBED_COURSES,
                 [
                     'headers' => self::HEADERS,
                     'query' => [
@@ -148,7 +148,7 @@ class UdemyWish extends AbstractWish
             $clientMock->allows('request')
                 ->withSomeOfArgs(
                     Request::METHOD_GET,
-                    'api-2.0/users/me/subscribed-courses',
+                    self::ME_SUBSCRIBED_COURSES,
                     [
                         'headers' => self::HEADERS,
                         'query' => [
