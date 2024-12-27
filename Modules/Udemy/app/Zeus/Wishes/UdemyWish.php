@@ -19,6 +19,8 @@ class UdemyWish extends AbstractWish
         'Accept' => Client::CONTENT_TYPE,
     ];
 
+    private const string ME_SUBSCRIBED_COURSES = 'api-2.0/users/me/subscribed-courses';
+
     public const COURSE_ID = 59583;
 
     public const LECTURE_ID = 632;
@@ -101,7 +103,7 @@ class UdemyWish extends AbstractWish
         $clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
-                'api-2.0/users/me/subscribed-courses',
+                self::ME_SUBSCRIBED_COURSES,
                 [
                     'headers' => self::HEADERS,
                     'query' => [
@@ -168,7 +170,7 @@ class UdemyWish extends AbstractWish
         $clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_POST,
-                'api-2.0/users/me/subscribed-courses/'
+                self::ME_SUBSCRIBED_COURSES
                 . self::COURSE_ID . '/lectures/'
                 . self::LECTURE_ID . '/view-logs',
             )
