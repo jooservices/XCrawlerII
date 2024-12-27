@@ -19,26 +19,42 @@ class UdemyWish extends AbstractWish
         'Accept' => Client::CONTENT_TYPE,
     ];
 
-    public function wish(
-        MockInterface $clientMock
+    public const string ME_SUBSCRIBED_COURSES = 'api-2.0/users/me/subscribed-courses';
+
+    public const int COURSE_ID = 59583;
+
+    public const int LECTURE_ID = 632;
+
+    final public function wish(
+        MockInterface $clientMock,
     ): MockInterface {
         $clientMock = $this->subscribedCoursesCategories($clientMock);
         $clientMock = $this->subscribedCourses($clientMock);
-        $clientMock->shouldReceive('request')
+        $clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
                 'api-2.0/courses/59583/subscriber-curriculum-items'
             )
-            ->andReturn(
+            ->andReturns(
                 $this->buildResponse(SymfonyResponse::HTTP_OK, 'subscriber-curriculum-items')
             );
+        $clientMock->allows('request')
+            ->withSomeOfArgs(
+                Request::METHOD_GET,
+                'api-2.0/courses/59583/progress'
+            )
+            ->andReturn([
+                'completed_lecture_ids' => [1, 2, 3],
+                'completed_quiz_ids' => [4, 5, 6],
+                'completed_assignment_ids' => [7, 8, 9],
+            ]);
 
         return $clientMock;
     }
 
     private function subscribedCoursesCategories(MockInterface $clientMock): MockInterface
     {
-        $clientMock->shouldReceive('request')
+        $clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
                 'api-2.0/users/me/subscribed-courses-categories',
@@ -54,11 +70,11 @@ class UdemyWish extends AbstractWish
                     ],
                 ]
             )
-            ->andReturn(
+            ->andReturns(
                 $this->buildResponse(SymfonyResponse::HTTP_OK, 'subscribed-courses-categories')
             );
 
-        $clientMock->shouldReceive('request')
+        $clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
                 'api-2.0/users/me/subscribed-courses-categories',
@@ -75,7 +91,7 @@ class UdemyWish extends AbstractWish
                     ],
                 ]
             )
-            ->andReturn(
+            ->andReturns(
                 $this->buildResponse(SymfonyResponse::HTTP_FORBIDDEN),
             );
 
@@ -84,10 +100,10 @@ class UdemyWish extends AbstractWish
 
     private function subscribedCourses(MockInterface $clientMock): MockInterface
     {
-        $clientMock->shouldReceive('request')
+        $clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
-                'api-2.0/users/me/subscribed-courses',
+                self::ME_SUBSCRIBED_COURSES,
                 [
                     'headers' => self::HEADERS,
                     'query' => [
@@ -102,13 +118,13 @@ class UdemyWish extends AbstractWish
                     ],
                 ]
             )
-            ->andReturn(
+            ->andReturns(
                 $this->buildResponse(SymfonyResponse::HTTP_OK, 'subscribed-courses')
             );
-        $clientMock->shouldReceive('request')
+        $clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
-                'api-2.0/users/me/subscribed-courses',
+                self::ME_SUBSCRIBED_COURSES,
                 [
                     'headers' => self::HEADERS,
                     'query' => [
@@ -124,15 +140,15 @@ class UdemyWish extends AbstractWish
                     ],
                 ]
             )
-            ->andReturn(
+            ->andReturns(
                 $this->buildResponse(SymfonyResponse::HTTP_FORBIDDEN),
             );
 
         for ($index = 1; $index <= 3; $index++) {
-            $clientMock->shouldReceive('request')
+            $clientMock->allows('request')
                 ->withSomeOfArgs(
                     Request::METHOD_GET,
-                    'api-2.0/users/me/subscribed-courses',
+                    self::ME_SUBSCRIBED_COURSES,
                     [
                         'headers' => self::HEADERS,
                         'query' => [
@@ -146,10 +162,19 @@ class UdemyWish extends AbstractWish
                             'is_archived' => false,
                         ],
                     ]
-                )->andReturn(
+                )->andReturns(
                     $this->buildResponse(SymfonyResponse::HTTP_OK, 'subscribed-courses_' . $index)
                 );
         }
+
+        $clientMock->allows('request')
+            ->withSomeOfArgs(
+                Request::METHOD_POST,
+                self::ME_SUBSCRIBED_COURSES
+                . self::COURSE_ID . '/lectures/'
+                . self::LECTURE_ID . '/view-logs',
+            )
+            ->andReturns(true);
 
         return $clientMock;
     }

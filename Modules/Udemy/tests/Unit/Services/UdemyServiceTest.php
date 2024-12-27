@@ -9,6 +9,7 @@ use Illuminate\Support\Testing\Fakes\PendingBatchFake;
 use Modules\Udemy\Events\CourseCreatedEvent;
 use Modules\Udemy\Events\SyncMyCourseCompletedEvent;
 use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
+use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\UdemyService;
 use Modules\Udemy\Tests\TestCase;
@@ -117,5 +118,49 @@ class UdemyServiceTest extends TestCase
         Bus::assertBatched(static function (PendingBatchFake $callback) {
             return $callback->jobs->count() === 2;
         });
+    }
+
+    final public function testSyncCurriculumItem(): void
+    {
+        $userToken = UserToken::factory()->create([
+            'token' => 'testing',
+        ]);
+        $course = UdemyCourse::factory()->create([
+            'id' => 59583,
+        ]);
+
+        $userToken->courses()->attach($course, [
+            'completion_ratio' => 100,
+            'enrollment_time' => now(),
+        ]);
+
+        $this->service->syncCurriculumItem(
+            $userToken,
+            $course
+        );
+
+        $this->assertDatabaseCount('curriculum_items', 54);
+    }
+
+    final public function testSyncCurriculumItems(): void
+    {
+        $userToken = UserToken::factory()->create([
+            'token' => 'testing',
+        ]);
+        $course = UdemyCourse::factory()->create([
+            'id' => 59583,
+        ]);
+
+        $userToken->courses()->attach($course, [
+            'completion_ratio' => 100,
+            'enrollment_time' => now(),
+        ]);
+
+        $this->service->syncCurriculumItems(
+            $userToken,
+            $course
+        );
+
+        $this->assertDatabaseCount('curriculum_items', 54);
     }
 }

@@ -23,14 +23,14 @@ class SyncCourses extends Command
     /**
      * Execute the console command.
      */
-    final public function handle(): void
+    final public function handle(UdemyService $service): void
     {
         $token = $this->ask('Enter your Udemy token');
 
         /**
          * Sync courses as sync queue
          */
-        $coursesDto = app(UdemyService::class)->syncMyCourses($this->getToken($token));
+        $coursesDto = $service->syncMyCourses($this->getToken($token));
 
         $this->output->info('Courses: ' . $coursesDto->getCount());
 

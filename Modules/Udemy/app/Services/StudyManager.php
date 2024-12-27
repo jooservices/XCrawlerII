@@ -9,11 +9,13 @@ use Modules\Udemy\Models\UserToken;
 
 class StudyManager
 {
-    protected function detectType(CurriculumItem $curriculumItem): string
-    {
-        $class = $curriculumItem->detectType();
+    private const string NAMESPACE = 'Modules\\Udemy\\Services\\Study\\';
 
-        $class = 'Modules\\Udemy\\Services\\Study\\' . (Str::ucfirst(Str::camel($class)));
+    private function detectType(CurriculumItem $curriculumItem): string
+    {
+        $class = self::NAMESPACE . (Str::ucfirst(Str::camel(
+            $curriculumItem->detectType()
+        )));
 
         if (!class_exists($class)) {
             throw new StudyClassTypeNotFound("Class $class does not exist");
@@ -22,15 +24,11 @@ class StudyManager
         return $class;
     }
 
-    public function study(
+    final public function study(
         UserToken $userToken,
         CurriculumItem $curriculumItem
     ): void {
-        try {
-            $class = $this->detectType($curriculumItem);
-            app($class)->study($userToken, $curriculumItem);
-        } catch (StudyClassTypeNotFound $exception) {
-            return;
-        }
+        $class = $this->detectType($curriculumItem);
+        app($class)->study($userToken, $curriculumItem);
     }
 }

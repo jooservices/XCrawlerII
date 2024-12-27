@@ -4,6 +4,7 @@ namespace Modules\Udemy\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Udemy\Database\Factories\CurriculumItemFactory;
 
 /**
@@ -61,12 +62,12 @@ class CurriculumItem extends Model
         return CurriculumItemFactory::new();
     }
 
-    public function course()
+    final public function course(): BelongsTo
     {
         return $this->belongsTo(UdemyCourse::class);
     }
 
-    public function detectType(): string
+    final public function detectType(): string
     {
         if ($this->type !== null) {
             return $this->type;
