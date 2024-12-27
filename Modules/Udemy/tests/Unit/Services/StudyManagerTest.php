@@ -50,7 +50,7 @@ class StudyManagerTest extends TestCase
                 $mock->expects('request')
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
-                        'api-2.0/users/me/subscribed-courses/'
+                        UdemyWish::ME_SUBSCRIBED_COURSES
                         . $curriculumItem->course->id
                         . '/lectures/' . $curriculumItem->id . '/view-logs'
                     )
@@ -59,7 +59,8 @@ class StudyManagerTest extends TestCase
                 $mock->expects('request')
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
-                        'api-2.0/users/me/subscribed-courses/' . $curriculumItem->course->id
+                        UdemyWish::ME_SUBSCRIBED_COURSES
+                        . $curriculumItem->course->id
                         . '/lectures/' . $curriculumItem->id . '/progress-logs'
                     )
                     ->andReturn($response);
@@ -67,7 +68,8 @@ class StudyManagerTest extends TestCase
                 $mock->expects('request')
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
-                        'api-2.0/users/me/subscribed-courses/' . $curriculumItem->course->id
+                        UdemyWish::ME_SUBSCRIBED_COURSES
+                        . $curriculumItem->course->id
                         . '/completed-lectures',
                     )
                     ->andReturn($response);

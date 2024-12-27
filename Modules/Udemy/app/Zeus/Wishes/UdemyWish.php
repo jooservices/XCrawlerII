@@ -19,11 +19,11 @@ class UdemyWish extends AbstractWish
         'Accept' => Client::CONTENT_TYPE,
     ];
 
-    private const string ME_SUBSCRIBED_COURSES = 'api-2.0/users/me/subscribed-courses';
+    public const string ME_SUBSCRIBED_COURSES = 'api-2.0/users/me/subscribed-courses';
 
-    public const COURSE_ID = 59583;
+    public const int COURSE_ID = 59583;
 
-    public const LECTURE_ID = 632;
+    public const int LECTURE_ID = 632;
 
     final public function wish(
         MockInterface $clientMock,
