@@ -32,9 +32,9 @@ class MeApi extends AbstractApi
     /**
      * @throws Exception
      */
-    public function subscribedCourses(
+    final public function subscribedCourses(
         array $payload = []
-    ): ?CoursesDto {
+    ): CoursesDto {
         $response = $this->client->request(
             Request::METHOD_GET,
             $this->getEndpoint('subscribed-courses'),

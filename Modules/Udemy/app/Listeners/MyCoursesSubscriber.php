@@ -22,7 +22,7 @@ class MyCoursesSubscriber
         SyncCourseCurriculumItemsJob::dispatch($userToken, $udemyCourse);
     }
 
-    public function onSyncCourseCurriculumItemsCompleted(
+    final public function onSyncCourseCurriculumItemsCompleted(
         SyncCourseCurriculumItemsCompletedEvent $event
     ): void {
         /**

@@ -23,21 +23,17 @@ class SyncCourses extends Command
     /**
      * Execute the console command.
      */
-    final public function handle(UdemyService $service): void
+    final public function handle(UdemyService $service): int
     {
         /**
          * Sync courses as sync queue
          */
         $coursesDto = $service->syncMyCourses($this->getToken());
 
-        if ($coursesDto === null) {
-            $this->output->error('Failed to sync courses');
-
-            return;
-        }
-
         $this->output->info('Courses: ' . $coursesDto->getCount());
 
         $this->output->success('Completed');
+
+        return 0;
     }
 }

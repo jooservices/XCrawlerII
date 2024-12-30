@@ -27,9 +27,11 @@
             <directory>Modules</directory>
         </include>
         <exclude>
+            <directory>Modules/*/app/Providers</directory>
             <directory>Modules/*/Zeus</directory>
-            <directory>Modules/*/Providers</directory>
+            <directory>Modules/*/config</directory>
             <directory>Modules/*/tests</directory>
+            <directory>Modules/*/database</directory>
         </exclude>
     </source>
 
