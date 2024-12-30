@@ -6,7 +6,7 @@ use Closure;
 
 class FilesService
 {
-    public function scanFiles(
+    final public function scanFiles(
         string $dir,
         ?Closure $filterCallback = null,
         ?Closure $callback = null,
@@ -14,7 +14,7 @@ class FilesService
         $files = [];
         $items = scandir($dir);
         foreach ($items as $item) {
-            if ($item == '.' || $item == '..') {
+            if ($item === '.' || $item === '..') {
                 continue;
             }
             $path = $dir . '/' . $item;

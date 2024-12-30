@@ -4,9 +4,12 @@ namespace Modules\Udemy\Client\Dto;
 
 use Modules\Core\Dto\BaseDto;
 
+/**
+ * @property int $id
+ */
 class CourseCurriculumItemDto extends BaseDto
 {
-    public function toArray(): array
+    final public function toArray(): array
     {
         return array_merge(
             (array) $this->data,

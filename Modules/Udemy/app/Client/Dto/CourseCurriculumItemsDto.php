@@ -13,7 +13,7 @@ class CourseCurriculumItemsDto extends BaseDto implements IHasListDto
 
     public const string DTO_NAME = 'course';
 
-    public function getResults(): Collection
+    final public function getResults(): Collection
     {
         return collect($this->data->results)->map(function ($item) {
             return (new CourseCurriculumItemDto())->transform($item);
@@ -34,7 +34,7 @@ class CourseCurriculumItemsDto extends BaseDto implements IHasListDto
         ];
     }
 
-    protected function getSingular(): string
+    final protected function getSingular(): string
     {
         return CourseCurriculumItemDto::class;
     }

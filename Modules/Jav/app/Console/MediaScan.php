@@ -20,9 +20,8 @@ class MediaScan extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): void
+    final public function handle(MediaService $service): void
     {
-        $service = app(MediaService::class);
         $service->mediaScan(
             gethostname(),
             gethostbyname(gethostname()),
