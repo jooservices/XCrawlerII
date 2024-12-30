@@ -44,7 +44,9 @@ readonly class MediaService
                     pathinfo($file, PATHINFO_EXTENSION)
                 );
 
-                if (!$media = $this->mediaCheck($file)) {
+                $media = $this->mediaCheck($file);
+
+                if (!$media) {
                     return;
                 }
 
