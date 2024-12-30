@@ -40,7 +40,7 @@ class CourseRepository
         CourseCurriculumItemDto $itemDto
     ): CurriculumItem {
 
-        if ((CurriculumItem::where('id', $itemDto->id)->exists())) {
+        if (CurriculumItem::where('id', $itemDto->id)->exists()) {
             return CurriculumItem::where('id', $itemDto->id)->first();
         }
 
