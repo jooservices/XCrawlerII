@@ -4,28 +4,19 @@ namespace Modules\Client\Zeus\Wishes;
 
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
-use Mockery\MockInterface;
-use Modules\Core\Zeus\AbstractWish;
+use Modules\Core\Zeus\Wishes\FactoryWish;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-class BaseClientWish extends AbstractWish
+class BaseClientWish extends FactoryWish
 {
-    public function wish(MockInterface $clientMock): MockInterface
+    final public function wishJson(): self
     {
-        $clientMock = $this->json($clientMock);
-        $clientMock = $this->html($clientMock);
-
-        return $clientMock;
-    }
-
-    private function json(MockInterface $clientMock): MockInterface
-    {
-        $clientMock->shouldReceive('request')
+        $this->clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
                 '/json'
             )
-            ->andReturn(
+            ->andReturns(
                 new Response(
                     SymfonyResponse::HTTP_OK,
                     [
@@ -35,17 +26,17 @@ class BaseClientWish extends AbstractWish
                 )
             );
 
-        return $clientMock;
+        return $this;
     }
 
-    public function html(MockInterface $clientMock): MockInterface
+    final public function wishHtml(): self
     {
-        $clientMock->shouldReceive('request')
+        $this->clientMock->allows('request')
             ->withSomeOfArgs(
                 Request::METHOD_GET,
                 '/html'
             )
-            ->andReturn(
+            ->andReturns(
                 new Response(
                     SymfonyResponse::HTTP_OK,
                     [
@@ -55,6 +46,6 @@ class BaseClientWish extends AbstractWish
                 )
             );
 
-        return $clientMock;
+        return $this;
     }
 }

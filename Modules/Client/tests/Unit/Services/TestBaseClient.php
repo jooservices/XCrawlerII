@@ -11,7 +11,6 @@ use Modules\Client\Services\Clients\ResponseData\DomResponseData;
 use Modules\Client\Services\Clients\ResponseData\JsonResponseData;
 use Modules\Client\Tests\TestCase;
 use Modules\Client\Zeus\Wishes\BaseClientWish;
-use Modules\Core\Zeus\ZeusService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -23,7 +22,10 @@ class TestBaseClient extends TestCase
     {
         parent::setUp();
 
-        app(ZeusService::class)->wish(BaseClientWish::class);
+        app(BaseClientWish::class)
+            ->wishJson()
+            ->wishHtml()
+            ->wish();
 
         $this->client = app(ClientManager::class)->getClient(BaseClient::class);
     }
