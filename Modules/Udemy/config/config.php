@@ -15,4 +15,5 @@ return [
         'max_process' => env('UDEMY_HORIZON_MAX_PROCESS', 2),
         'memory_limit' => env('UDEMY_HORIZON_MEMORY', 512),
     ],
+    'token' => env('UDEMY_TOKEN'),
 ];

@@ -47,7 +47,7 @@ class BaseDto implements IDto
         return $this;
     }
 
-    private function loadDataFromResponse(IResponse $response)
+    private function loadDataFromResponse(IResponse $response): void
     {
         if (!$response->isSuccess()) {
             throw new InvalidDtoDataException('Response is not successful');
@@ -56,7 +56,7 @@ class BaseDto implements IDto
         $this->data = $response->parseBody()->getData();
     }
 
-    private function loadDataFromArray(array $response)
+    private function loadDataFromArray(array $response): void
     {
         $this->data = json_decode(
             json_encode($response, JSON_THROW_ON_ERROR),

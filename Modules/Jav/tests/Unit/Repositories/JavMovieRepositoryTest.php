@@ -8,7 +8,7 @@ use Modules\Jav\tests\TestCase;
 
 class JavMovieRepositoryTest extends TestCase
 {
-    public function testCreate()
+    final public function testCreate(): void
     {
         $model = OnejavReference::factory()->create([
             'genres' => [

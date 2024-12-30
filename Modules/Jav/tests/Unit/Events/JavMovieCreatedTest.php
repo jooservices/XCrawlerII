@@ -11,7 +11,7 @@ use Modules\Jav\tests\TestCase;
 
 class JavMovieCreatedTest extends TestCase
 {
-    public function testMovieCreatedEvent()
+    final public function testMovieCreatedEvent(): void
     {
         $onejav = OnejavReference::factory()->create();
 

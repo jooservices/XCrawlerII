@@ -16,7 +16,7 @@ class UserTokenFactory extends Factory
     /**
      * Define the model's default state.
      */
-    public function definition(): array
+    final public function definition(): array
     {
         return [
             'token' => $this->faker->uuid,
@@ -27,7 +27,7 @@ class UserTokenFactory extends Factory
     /**
      * Configure the model factory.
      */
-    public function configure(): static
+    final public function configure(): static
     {
         return $this->afterMaking(function (UserToken $user) {
             // ...
@@ -46,7 +46,9 @@ class UserTokenFactory extends Factory
             // ...
         })->afterCreating(function (UserToken $user) {
             $user->courses()->syncWithoutDetaching([
-                UdemyCourse::factory()->create()->id,
+                UdemyCourse::factory()->create([
+                    'id' => 59583,
+                ])->id,
             ]);
         });
     }

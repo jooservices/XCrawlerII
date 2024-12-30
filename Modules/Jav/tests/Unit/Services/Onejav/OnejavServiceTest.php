@@ -16,11 +16,13 @@ use Psr\Container\NotFoundExceptionInterface;
 
 class OnejavServiceTest extends TestCase
 {
-    public function testCrawl(): void
+    final public function testCrawl(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
         ]);
+
+        $this->wish->wishNew()->wish();
 
         $service = app(OnejavService::class);
         $items = $service->crawl('new');
@@ -31,11 +33,13 @@ class OnejavServiceTest extends TestCase
         Event::assertDispatched(HaveNextPageEvent::class);
     }
 
-    public function testCrawlAtEndOfPages(): void
+    final public function testCrawlAtEndOfPages(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
         ]);
+
+        $this->wish->wishNew()->wish();
 
         $service = app(OnejavService::class);
         $items = $service->crawl('new', 4);
@@ -51,11 +55,16 @@ class OnejavServiceTest extends TestCase
      * @throws NotFoundExceptionInterface
      */
     #[DataProvider('functions')]
-    public function testWith(string $with): void
+    final public function testWith(string $with): void
     {
         Queue::fake([
             FetchItemsJob::class,
         ]);
+
+        $this->wish
+            ->wishNew()
+            ->wishPopular()
+            ->wish();
 
         $service = app(OnejavService::class);
         $service->{$with}();
@@ -74,12 +83,13 @@ class OnejavServiceTest extends TestCase
         ];
     }
 
-    public function testDaily(): void
+    final public function testDaily(): void
     {
         Queue::fake([
             FetchItemsJob::class,
         ]);
 
+        $this->wish->wishDaily()->wish();
         $service = app(OnejavService::class);
         $service->daily();
 

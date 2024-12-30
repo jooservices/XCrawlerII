@@ -9,7 +9,7 @@ use Modules\Udemy\Services\Study\Interfaces\IStudy;
 
 class PracticeTest implements IStudy
 {
-    public function study(UserToken $userToken, CurriculumItem $curriculumItem): void
+    final public function study(UserToken $userToken, CurriculumItem $curriculumItem): void
     {
         $sdk = app(UdemySdk::class)
             ->setToken($userToken);
@@ -33,5 +33,7 @@ class PracticeTest implements IStudy
                 $assessment
             );
         }
+
+        // Progress
     }
 }

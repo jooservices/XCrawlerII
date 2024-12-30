@@ -2,7 +2,9 @@
 
 namespace Modules\Jav\Tests\Unit\Services\Onejav;
 
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Event;
+use Mockery\MockInterface;
 use Modules\Client\Services\ClientManager;
 use Modules\Jav\Client\Onejav\Client as OnejavClient;
 use Modules\Jav\Client\Onejav\CrawlingService;
@@ -17,11 +19,12 @@ class CrawlingServiceTest extends TestCase
     /**
      * @TODO Testing with parsing cases
      */
-    public function testGetItem(): void
+    final public function testGetItem(): void
     {
+        $this->wish->wishItem()->wish();
         $response = app(ClientManager::class)
             ->getClient(OnejavClient::class)
-            ->get('/item');
+            ->get('item');
 
         $body = $response->parseBody();
 
@@ -34,12 +37,13 @@ class CrawlingServiceTest extends TestCase
         $this->assertEquals(7.0, $item->size);
     }
 
-    public function testGetItemsSuccess()
+    final public function testGetItemsSuccess(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
         ]);
 
+        $this->wish->wishNew()->wish();
         $items = app(CrawlingService::class)
             ->getItems();
 
@@ -61,20 +65,29 @@ class CrawlingServiceTest extends TestCase
         });
     }
 
-    public function testGetItemsFailed()
+    final public function testGetItemsFailed(): void
     {
         Event::fake([
             CrawlingFailedEvent::class,
         ]);
 
+        $this->wish->wish(function (MockInterface $mock) {
+            $mock->allows('request')
+                ->andReturn(new Response(404));
+
+            return $mock;
+        });
+
         app(CrawlingService::class)
-            ->getItems('404');
+            ->getItems();
 
         Event::assertDispatched(CrawlingFailedEvent::class);
     }
 
-    public function testGetTags()
+    final public function testGetTags(): void
     {
+        $this->wish->wishTags()->wish();
+
         $tags = app(CrawlingService::class)->tags();
 
         $this->assertCount(353, $tags);

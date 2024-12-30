@@ -47,6 +47,7 @@ class UserToken extends Model
         return $this->courses()
             ->wherePivot('completion_ratio', '!=', 100)
             ->orWherePivot('completion_ratio', null)
+            ->orderByPivot('completion_ratio', 'DESC')
             ->get();
     }
 

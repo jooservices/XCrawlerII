@@ -30,7 +30,7 @@ class FetchItemsJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(OnejavService $service): void
+    final public function handle(OnejavService $service): void
     {
         $items = $service->crawl($this->endpoint, $this->page);
 
