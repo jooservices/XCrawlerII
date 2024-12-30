@@ -44,7 +44,7 @@ class StudyService
             $itemsBatch[] = new StudyCurriculumItemJob($userToken, $item);
         });
 
-        $userToken->notify(new CourseReadyForStudyNotif($udemyCourse));
+        //$userToken->notify(new CourseReadyForStudyNotif($udemyCourse));
 
         Bus::batch($itemsBatch)->before(function (Batch $batch) {
             /**

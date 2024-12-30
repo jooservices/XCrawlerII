@@ -19,6 +19,7 @@ class CourseCategoryDto extends BaseDto implements IHasItemDto
     protected array $casts = [
         'id' => 'int',
         'title' => 'string',
+        'class' => 'string',
     ];
 
     public const array FIELDS = [
@@ -26,7 +27,7 @@ class CourseCategoryDto extends BaseDto implements IHasItemDto
         'title',
     ];
 
-    public function getTitle(): string
+    final public function getTitle(): string
     {
         return $this->title;
     }

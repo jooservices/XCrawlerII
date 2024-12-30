@@ -59,7 +59,6 @@ class Client extends BaseClient
 
         if (app()->environment('testing')) {
             $userAgent = 'testing';
-            $this->token = 'testing';
         }
 
         $options = array_merge(

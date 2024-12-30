@@ -59,7 +59,17 @@ class UdemyCourse extends Model
         return $this->hasMany(CurriculumItem::class, 'course_id');
     }
 
+    final public function lectures(): HasMany
+    {
+        return $this->items()->where('class', 'lecture');
+    }
+
     final public function getLink(): string
+    {
+        return config('udemy.client.base_uri') . trim($this->url, '/');
+    }
+
+    public function getUrl(): string
     {
         return config('udemy.client.base_uri') . trim($this->url, '/');
     }

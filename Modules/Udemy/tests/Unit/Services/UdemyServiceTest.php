@@ -10,9 +10,9 @@ use Modules\Udemy\Events\CourseCreatedEvent;
 use Modules\Udemy\Events\SyncMyCourseCompletedEvent;
 use Modules\Udemy\Events\SyncMyCoursesCompletedEvent;
 use Modules\Udemy\Models\UdemyCourse;
-use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\UdemyService;
 use Modules\Udemy\Tests\TestCase;
+use Modules\Udemy\Zeus\Wishes\UdemyWish;
 use Throwable;
 
 class UdemyServiceTest extends TestCase
@@ -32,16 +32,17 @@ class UdemyServiceTest extends TestCase
      */
     final public function testSyncMyCourse(): void
     {
+        $this->wish
+            ->setToken($this->userToken)
+            ->wishSubscribedCourses()
+            ->wish();
+
         Event::fake([
             CourseCreatedEvent::class,
             SyncMyCourseCompletedEvent::class,
         ]);
 
-        $userToken = UserToken::factory()->create([
-            'token' => 'testing',
-        ]);
-
-        $coursesDto = $this->service->syncMyCourses($userToken);
+        $coursesDto = $this->service->syncMyCourse($this->userToken);
 
         $this->assertEquals(1, $coursesDto->pages());
 
@@ -57,23 +58,41 @@ class UdemyServiceTest extends TestCase
         $this->assertDatabaseCount('udemy_courses', $coursesDto->getCount());
     }
 
+    final public function testSyncMyCoursePaging(): void
+    {
+        $this->wish
+            ->setToken($this->userToken)
+            ->wishSubscribedCoursesPaging()
+            ->wish();
+
+        Event::fake([
+            CourseCreatedEvent::class,
+            SyncMyCourseCompletedEvent::class,
+        ]);
+
+        $coursesDto = $this->service->syncMyCourse($this->userToken);
+
+        $this->assertEquals(3, $coursesDto->pages());
+    }
+
     /**
      * @throws Throwable
      * @throws BindingResolutionException
      */
     final public function testSyncMyCourses(): void
     {
+        $this->wish
+            ->setToken($this->userToken)
+            ->wishSubscribedCourses()
+            ->wish();
+
         Event::fake([
             CourseCreatedEvent::class,
             SyncMyCourseCompletedEvent::class,
             SyncMyCoursesCompletedEvent::class,
         ]);
 
-        $userToken = UserToken::factory()->create([
-            'token' => 'testing',
-        ]);
-
-        $coursesDto = $this->service->syncMyCourses($userToken);
+        $coursesDto = $this->service->syncMyCourses($this->userToken);
 
         $this->assertEquals(1, $coursesDto->pages());
 
@@ -97,6 +116,11 @@ class UdemyServiceTest extends TestCase
      */
     final public function testSyncMyCoursesMultiPages(): void
     {
+        $this->wish
+            ->setToken($this->userToken)
+            ->wishSubscribedCoursesPaging()
+            ->wish();
+
         Event::fake([
             CourseCreatedEvent::class,
             SyncMyCourseCompletedEvent::class,
@@ -105,13 +129,7 @@ class UdemyServiceTest extends TestCase
 
         Bus::fake();
 
-        $userToken = UserToken::factory()->create([
-            'token' => 'testing',
-        ]);
-
-        $coursesDto = $this->service->syncMyCourses($userToken, [
-            'page_size' => 40,
-        ]);
+        $coursesDto = $this->service->syncMyCourses($this->userToken);
 
         $this->assertEquals(3, $coursesDto->pages());
 
@@ -120,22 +138,25 @@ class UdemyServiceTest extends TestCase
         });
     }
 
+    /**
+     * @throws BindingResolutionException
+     */
     final public function testSyncCurriculumItem(): void
     {
-        $userToken = UserToken::factory()->create([
-            'token' => 'testing',
-        ]);
-        $course = UdemyCourse::factory()->create([
-            'id' => 59583,
-        ]);
+        $this->wish
+            ->setToken($this->userToken)
+            ->wishSubscriberCurriculumItems()
+            ->wish();
 
-        $userToken->courses()->attach($course, [
+        $course = UdemyCourse::factory()->create(['id' => UdemyWish::COURSE_ID]);
+
+        $this->userToken->courses()->attach($course, [
             'completion_ratio' => 100,
             'enrollment_time' => now(),
         ]);
 
         $this->service->syncCurriculumItem(
-            $userToken,
+            $this->userToken,
             $course
         );
 
@@ -144,20 +165,20 @@ class UdemyServiceTest extends TestCase
 
     final public function testSyncCurriculumItems(): void
     {
-        $userToken = UserToken::factory()->create([
-            'token' => 'testing',
-        ]);
-        $course = UdemyCourse::factory()->create([
-            'id' => 59583,
-        ]);
+        $this->wish
+            ->setToken($this->userToken)
+            ->wishSubscriberCurriculumItems()
+            ->wish();
 
-        $userToken->courses()->attach($course, [
+        $course = UdemyCourse::factory()->create(['id' => UdemyWish::COURSE_ID]);
+
+        $this->userToken->courses()->attach($course, [
             'completion_ratio' => 100,
             'enrollment_time' => now(),
         ]);
 
         $this->service->syncCurriculumItems(
-            $userToken,
+            $this->userToken,
             $course
         );
 

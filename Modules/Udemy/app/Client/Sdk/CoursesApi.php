@@ -7,12 +7,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 class CoursesApi extends AbstractApi
 {
-    private const string ENDPOINT = 'api-2.0/courses';
+    public const string ENDPOINT = 'api-2.0/courses';
 
-    public function subscriberCurriculumItems(
+    final public function subscriberCurriculumItems(
         int $courseId,
         array $payload = []
-    ) {
+    ): CourseCurriculumItemsDto {
         $payload = array_merge($payload, [
             'fields' => [
                 'lecture' => 'title,object_index,is_published,sort_order,created,asset,supplementary_assets,is_free',

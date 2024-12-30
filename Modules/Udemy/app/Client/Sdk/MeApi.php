@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class MeApi extends AbstractApi
 {
-    private const string ENDPOINT = 'api-2.0/users/me';
+    public const string ENDPOINT = 'api-2.0/users/me';
 
     /**
      * @throws Exception
@@ -44,14 +44,23 @@ class MeApi extends AbstractApi
         return (new CoursesDto())->transform($response);
     }
 
-    public function progress(
+    final public function progress(
         int $courseId,
         array $payload = []
     ): ?CourseProgressDto {
         $payload = array_merge(
             [
                 'fields' => [
-                    'course' => 'completed_lecture_ids,completed_quiz_ids,last_seen_page,completed_assignment_ids,first_completion_time',
+                    'course' => implode(
+                        ',',
+                        [
+                            'completed_lecture_ids',
+                            'completed_quiz_ids',
+                            'last_seen_page',
+                            'completed_assignment_ids',
+                            'first_completion_time',
+                        ]
+                    ),
                 ],
                 'page' => 1,
                 'page_size' => 100,

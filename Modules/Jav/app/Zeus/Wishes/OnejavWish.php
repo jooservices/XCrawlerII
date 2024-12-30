@@ -3,104 +3,105 @@
 namespace Modules\Jav\Zeus\Wishes;
 
 use Carbon\Carbon;
-use GuzzleHttp\ClientInterface;
-use GuzzleHttp\Psr7\Response;
-use Illuminate\Http\Request;
-use Mockery;
-use Mockery\MockInterface;
-use Modules\Core\Zeus\AbstractWish;
+use Modules\Core\Zeus\Wishes\FactoryWish;
 use Modules\Jav\Client\Onejav\CrawlingService;
+use Symfony\Component\HttpFoundation\Request as RequestAlias;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-class OnejavWish extends AbstractWish
+class OnejavWish extends FactoryWish
 {
     public const string CONTENT_TYPE = 'text/html';
 
-    public function wish(MockInterface $clientMock): MockInterface
+    final public function wishNew(string $response = 'Onejav/new_1.html'): self
     {
-        foreach (['new', 'popular'] as $endpoint) {
-            $clientMock = Mockery::mock(ClientInterface::class);
-            $clientMock->shouldReceive('request')
-                ->withSomeOfArgs(
-                    Request::METHOD_GET,
-                    'new'
-                )
-                ->andReturn(
-                    new Response(
-                        SymfonyResponse::HTTP_OK,
-                        [
-                            'Content-Type' => self::CONTENT_TYPE,
-                        ],
-                        file_get_contents(__DIR__ . '/../Fixtures/Onejav/' . $endpoint . '_1.html')
-                    )
-                );
-        }
-
-        $clientMock->shouldReceive('request')
+        $this->clientMock->allows('request')
             ->withSomeOfArgs(
-                Request::METHOD_GET,
-                '404'
+                RequestAlias::METHOD_GET,
+                'new'
             )
             ->andReturn(
-                new Response(
-                    SymfonyResponse::HTTP_NOT_FOUND,
-                    [
-                        'Content-Type' => self::CONTENT_TYPE,
-                    ],
-                    'Not Found'
-                )
-            );
-
-        $clientMock->shouldReceive('request')
-            ->withSomeOfArgs(
-                Request::METHOD_GET,
-                '/item'
-            )
-            ->andReturn(
-                new Response(
+                $this->buildResponse(
                     SymfonyResponse::HTTP_OK,
-                    [
-                        'Content-Type' => self::CONTENT_TYPE,
-                    ],
-                    file_get_contents(__DIR__ . '/../Fixtures/Onejav/item_1.html')
+                    self::CONTENT_TYPE,
+                    $response
                 )
             );
 
-        for ($index = 1; $index <= 2; $index++) {
-            $clientMock->shouldReceive('request')
-                ->withSomeOfArgs(
-                    Request::METHOD_GET,
-                    Carbon::now()->format(CrawlingService::DEFAULT_DATE_FORMAT),
-                    [
-                        'query' => ['page' => $index],
-                    ]
-                )
-                ->andReturn(
-                    new Response(
-                        SymfonyResponse::HTTP_OK,
-                        [
-                            'Content-Type' => self::CONTENT_TYPE,
-                        ],
-                        file_get_contents(__DIR__ . '/../Fixtures/Onejav/daily_' . $index . '.html')
-                    )
-                );
-        }
+        return $this;
+    }
 
-        $clientMock->shouldReceive('request')
+    final public function wishPopular(string $response = 'Onejav/popular_1.html'): self
+    {
+        $this->clientMock->allows('request')
             ->withSomeOfArgs(
-                Request::METHOD_GET,
+                RequestAlias::METHOD_GET,
+                'popular'
+            )
+            ->andReturn(
+                $this->buildResponse(
+                    SymfonyResponse::HTTP_OK,
+                    self::CONTENT_TYPE,
+                    $response
+                )
+            );
+
+        return $this;
+    }
+
+    final public function wishItem(string $response = 'Onejav/item_1.html'): self
+    {
+        $this->clientMock->allows('request')
+            ->withSomeOfArgs(
+                RequestAlias::METHOD_GET,
+                'item'
+            )
+            ->andReturn(
+                $this->buildResponse(
+                    SymfonyResponse::HTTP_OK,
+                    self::CONTENT_TYPE,
+                    $response
+                )
+            );
+
+        return $this;
+    }
+
+    final public function wishTags(string $response = 'Onejav/tag.html'): self
+    {
+        $this->clientMock->allows('request')
+            ->withSomeOfArgs(
+                RequestAlias::METHOD_GET,
                 'tag'
             )
             ->andReturn(
-                new Response(
+                $this->buildResponse(
                     SymfonyResponse::HTTP_OK,
-                    [
-                        'Content-Type' => self::CONTENT_TYPE,
-                    ],
-                    file_get_contents(__DIR__ . '/../Fixtures/Onejav/tag.html')
+                    self::CONTENT_TYPE,
+                    $response
                 )
             );
 
-        return $clientMock;
+        return $this;
+    }
+
+    final public function wishDaily(): self
+    {
+        for ($index = 1; $index <= 2; $index++) {
+            $this->clientMock->allows('request')
+                ->withSomeOfArgs(
+                    RequestAlias::METHOD_GET,
+                    Carbon::now()->format(CrawlingService::DEFAULT_DATE_FORMAT),
+                    ['query' => ['page' => $index]]
+                )
+                ->andReturn(
+                    $this->buildResponse(
+                        SymfonyResponse::HTTP_OK,
+                        self::CONTENT_TYPE,
+                        'Onejav/daily_' . $index . '.html'
+                    )
+                );
+        }
+
+        return $this;
     }
 }

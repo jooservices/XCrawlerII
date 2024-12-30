@@ -8,7 +8,7 @@ use Modules\Udemy\Tests\TestCase;
 
 class StudyCaseTest extends TestCase
 {
-    public function testInvalid(): void
+    final public function testInvalid(): void
     {
         $this->expectException(Exception::class);
         $userToken = UserToken::factory()->create();
@@ -17,13 +17,17 @@ class StudyCaseTest extends TestCase
             ->expectsQuestion('Choose a course to study', 1);
     }
 
-    public function testSuccess(): void
+    final public function testSuccess(): void
     {
-        $userToken = UserToken::factory()
-            ->withCourse()->create();
+        $userToken = UserToken::factory()->withCourse()->create();
+        $this->wish
+            ->setToken($this->userToken)
+            ->wishProgress($userToken->courses->first()->id)
+            ->wish();
 
         $this->artisan('udemy:study-course')
             ->expectsQuestion('Enter your Udemy token', $userToken->token)
-            ->expectsQuestion('Choose a course to study', $userToken->courses->first()->id);
+            ->expectsQuestion('Choose a course to study', $userToken->courses->first()->id)
+            ->expectsQuestion('Ready to study?', 'No');
     }
 }

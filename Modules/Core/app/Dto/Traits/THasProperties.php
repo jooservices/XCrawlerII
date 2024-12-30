@@ -2,6 +2,7 @@
 
 namespace Modules\Core\Dto\Traits;
 
+use JsonException;
 use stdClass;
 
 trait THasProperties
@@ -16,24 +17,20 @@ trait THasProperties
         );
     }
 
+    /**
+     * @throws JsonException
+     */
     final public function toJson(): string
     {
-        return json_encode($this->toArray());
+        return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
     }
 
-    public function __get(string $name)
+    public function __get(string $name): mixed
     {
-        if (
-            !empty($this->casts)
-            && !in_array($name, $this->getCasts(), true)
-        ) {
-            return null;
-        }
-
         return $this->data->{$name} ?? null;
     }
 
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         if (!isset($this->data)) {
             $this->data = new stdClass();

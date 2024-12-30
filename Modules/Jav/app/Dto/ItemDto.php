@@ -24,7 +24,7 @@ class ItemDto extends BaseDto
 {
     use TDefaultDto;
 
-    public function transform(mixed $response): ?static
+    final public function transform(mixed $response): ?static
     {
         $this->data = new stdClass();
 
@@ -86,17 +86,17 @@ class ItemDto extends BaseDto
         return $this;
     }
 
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->data->{$name} = is_string($value) ? trim($value) : $value;
     }
 
-    public function getDownloadLink(): string
+    final public function getDownloadLink(): string
     {
         return config('jav.onejav.base_uri') . trim($this->torrent, '/');
     }
 
-    public function getCover(
+    final public function getCover(
         bool $showAdult = false,
         int $width = 600,
         int $height = 600

@@ -6,10 +6,13 @@ use Modules\Udemy\Models\UserToken;
 
 trait THasToken
 {
-    final protected function getToken(string $token): UserToken
+    final protected function getToken(): UserToken
     {
         return UserToken::updateOrCreate([
-            'token' => $token,
+            'token' => $this->ask(
+                'Enter your Udemy token',
+                config('udemy.token')
+            ),
         ]);
     }
 }

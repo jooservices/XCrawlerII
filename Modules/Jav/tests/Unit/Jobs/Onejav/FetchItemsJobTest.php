@@ -12,11 +12,13 @@ use Modules\Jav\tests\TestCase;
 
 class FetchItemsJobTest extends TestCase
 {
-    public function testWithDaily(): void
+    final public function testWithDaily(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
         ]);
+
+        $this->wish->wishDaily()->wish();
 
         $daily = Carbon::now()->format(CrawlingService::DEFAULT_DATE_FORMAT);
         FetchItemsJob::dispatch($daily);
@@ -28,11 +30,13 @@ class FetchItemsJobTest extends TestCase
         $this->assertSetting(OnejavService::SETTING_GROUP, $daily . '_last_page', 2);
     }
 
-    public function testWithDailyLoop(): void
+    final public function testWithDailyLoop(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
         ]);
+
+        $this->wish->wishDaily()->wish();
 
         $daily = Carbon::now()->format(CrawlingService::DEFAULT_DATE_FORMAT);
         FetchItemsJob::dispatch($daily, 1, true);
@@ -44,11 +48,13 @@ class FetchItemsJobTest extends TestCase
         $this->assertSetting(OnejavService::SETTING_GROUP, $daily . '_last_page', 2);
     }
 
-    public function testNewEndOfPages()
+    final public function testNewEndOfPages(): void
     {
         Event::fake([
             HaveNextPageEvent::class,
         ]);
+
+        $this->wish->wishNew()->wish();
 
         FetchItemsJob::dispatch('new', 4);
         $this->assertSetting(
