@@ -10,7 +10,7 @@ class RequestLogService
 {
     private ?RequestLog $model;
 
-    public function request(
+    final public function request(
         string $method,
         string $endpoint,
         array $payload,
@@ -32,7 +32,7 @@ class RequestLogService
         return $this->model;
     }
 
-    public function respond(
+    final public function respond(
         ?int $statusCode = null,
         mixed $body = null
     ): void {
@@ -44,7 +44,7 @@ class RequestLogService
         unset($this->model);
     }
 
-    public function exception(Exception $exception): void
+    final public function exception(Exception $exception): void
     {
         unset($this->model);
     }
