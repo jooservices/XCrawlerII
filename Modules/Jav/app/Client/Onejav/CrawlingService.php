@@ -5,6 +5,7 @@ namespace Modules\Jav\Client\Onejav;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use JsonException;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\ClientManager;
 use Modules\Core\Facades\Setting;
@@ -64,6 +65,9 @@ final readonly class CrawlingService
         ]);
     }
 
+    /**
+     * @throws JsonException
+     */
     public function item(Crawler $element): ItemDto
     {
         $item = (new ItemDto())->transform($element);

@@ -9,12 +9,12 @@ use Modules\Udemy\Models\UdemyCourse;
 
 class CourseRepository
 {
-    public function createFromEntity(CourseDto $courseDto): UdemyCourse
+    final public function createFromEntity(CourseDto $courseDto): UdemyCourse
     {
         return $this->createCourse($courseDto->toArray());
     }
 
-    public function createFromId(int $courseId): UdemyCourse
+    final public function createFromId(int $courseId): UdemyCourse
     {
         return $this->createCourse([
             'id' => $courseId,
@@ -35,10 +35,15 @@ class CourseRepository
         return $model;
     }
 
-    public function syncCurriculumItem(
+    final public function syncCurriculumItem(
         UdemyCourse $udemyCourse,
         CourseCurriculumItemDto $itemDto
     ): CurriculumItem {
+
+        if (CurriculumItem::where('id', $itemDto->id)->exists()) {
+            return CurriculumItem::where('id', $itemDto->id)->first();
+        }
+
         return $udemyCourse->items()->updateOrCreate(
             [
                 'id' => $itemDto->id,

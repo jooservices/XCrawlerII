@@ -11,7 +11,6 @@ use Modules\Udemy\Jobs\StudyCurriculumItemJob;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
-use Modules\Udemy\Notifications\CourseReadyForStudyNotif;
 use Throwable;
 
 class StudyService
@@ -43,8 +42,6 @@ class StudyService
         $items->each(function ($item) use ($userToken, &$itemsBatch) {
             $itemsBatch[] = new StudyCurriculumItemJob($userToken, $item);
         });
-
-        //$userToken->notify(new CourseReadyForStudyNotif($udemyCourse));
 
         Bus::batch($itemsBatch)->before(function (Batch $batch) {
             /**

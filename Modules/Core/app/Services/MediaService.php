@@ -3,25 +3,29 @@
 namespace Modules\Core\Services;
 
 use Illuminate\Support\Str;
-use Modules\Core\Models\File;
-use Modules\Core\Models\Server;
+use Modules\Jav\Services\ServerService;
 use Symfony\Component\Process\Process;
 
 readonly class MediaService
 {
-    public function __construct(private FilesService $filesService)
-    {
+    final public function __construct(
+        private FilesService $filesService,
+        private ServerService $serverService
+    ) {
     }
 
-    public function mediaScan(
+    final public function mediaScan(
         string $serverName,
         string $ip,
         string $dir
     ): ?array {
-        $server = Server::updateOrCreate([
-            'name' => $serverName,
-            'ip' => $ip,
-        ]);
+
+        $server = $this
+            ->serverService
+            ->register(
+                $ip,
+                $serverName
+            );
 
         return $this->filesService->scanFiles(
             $dir,
@@ -31,15 +35,14 @@ readonly class MediaService
                 return in_array($fileExt, config('core.video_extensions'));
             },
             function ($file) use ($server) {
-                $model = File::updateOrCreate([
-                    'server_id' => $server->id,
-                    'path' => dirname($file),
-                    'filename' => basename($file),
-                    'size' => filesize($file),
-                ], [
-                    'mime_type' => mime_content_type($file),
-                    'extension' => pathinfo($file, PATHINFO_EXTENSION),
-                ]);
+                $fileModel = $this->serverService->addFile(
+                    $server,
+                    dirname($file),
+                    basename($file),
+                    filesize($file),
+                    mime_content_type($file),
+                    pathinfo($file, PATHINFO_EXTENSION)
+                );
 
                 $media = $this->mediaCheck($file);
 
@@ -47,24 +50,24 @@ readonly class MediaService
                     return;
                 }
 
-                $model->encoder = $media->Encoder ?? null;
-                $model->frame_rate = $media->VideoFrameRate ?? null;
-                $model->width = $media->ImageWidth ?? null;
-                $model->height = $media->ImageHeight ?? null;
-                $model->metadata = $media;
-                $model->save();
+                $fileModel->encoder = $media->Encoder ?? null;
+                $fileModel->frame_rate = $media->VideoFrameRate ?? null;
+                $fileModel->width = $media->ImageWidth ?? null;
+                $fileModel->height = $media->ImageHeight ?? null;
+                $fileModel->metadata = $media;
+                $fileModel->save();
             }
         );
     }
 
-    private function mediaCheck(string $filePath)
+    private function mediaCheck(string $filePath): ?object
     {
         $process = new Process(['exiftool', '-json', $filePath]);
         $process->run();
         $output = $process->getOutput();
 
         if (!empty($output)) {
-            return json_decode($output)[0];
+            return json_decode($output, false)[0];
         }
 
         return null;

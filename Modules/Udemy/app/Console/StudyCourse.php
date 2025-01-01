@@ -10,7 +10,7 @@ use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\StudyService;
 use RuntimeException;
 
-class StudyCourse extends Command
+final class StudyCourse extends Command
 {
     use THasToken;
 
@@ -27,7 +27,7 @@ class StudyCourse extends Command
     /**
      * Execute the console command.
      */
-    final public function handle(): void
+    public function handle(): void
     {
         /**
          * @var UserToken $userToken
@@ -91,10 +91,6 @@ class StudyCourse extends Command
 
         $this->output->info('Studying course: ' . $course->title . '...');
 
-        if (
-            !app()->environment('testing')
-        ) {
-            app(StudyService::class)->study($userToken, $course);
-        }
+        app(StudyService::class)->study($userToken, $course);
     }
 }

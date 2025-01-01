@@ -20,11 +20,13 @@ class OnejavService
 
     public const string SETTING_GROUP = 'onejav';
 
-    public function __construct(private readonly CrawlingService $service)
-    {
+    public function __construct(
+        private readonly CrawlingService $service,
+        private readonly OnejavRepository $repository
+    ) {
     }
 
-    public function crawl(string $endpoint, ?int $page = null): ItemsDto
+    final public function crawl(string $endpoint, ?int $page = null): ItemsDto
     {
         if (!$page) {
             $page = Setting::get('onejav', $endpoint . '_current_page', 1);
@@ -46,10 +48,8 @@ class OnejavService
             HaveNextPageEvent::dispatch($endpoint, $items->getPage() + 1, $items->getLastPage());
         }
 
-        $repository = app(OnejavRepository::class);
-
         foreach ($items->getItems() as $item) {
-            $repository->insert($item->toArray());
+            $this->repository->insert($item->toArray());
         }
 
         return $items;
@@ -59,17 +59,17 @@ class OnejavService
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function new(): void
+    final public function new(): void
     {
         FetchItemsJob::dispatch(__FUNCTION__);
     }
 
-    public function popular(): void
+    final public function popular(): void
     {
         FetchItemsJob::dispatch(__FUNCTION__);
     }
 
-    public function daily(): void
+    final public function daily(): void
     {
         $date = Carbon::now()->format(CrawlingService::DEFAULT_DATE_FORMAT);
         /**
@@ -78,7 +78,7 @@ class OnejavService
         FetchItemsJob::dispatch($date, 1, true);
     }
 
-    public function tags(): void
+    final public function tags(): void
     {
         $this->service->tags()->map(function (TagDto $tag) {
             /**
@@ -92,7 +92,7 @@ class OnejavService
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function getSetting(string $key, mixed $default = null)
+    final public function getSetting(string $key, mixed $default = null): mixed
     {
         return app(SettingService::class)
             ->get(self::SETTING_GROUP, $key, $default);

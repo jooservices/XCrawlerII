@@ -6,7 +6,7 @@ use Exception;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Tests\TestCase;
 
-class StudyCaseTest extends TestCase
+class StudyCourseTest extends TestCase
 {
     final public function testInvalid(): void
     {
