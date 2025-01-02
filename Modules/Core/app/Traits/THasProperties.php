@@ -21,7 +21,8 @@ trait THasProperties
 
     public function setProperty(string $name, mixed $value): static
     {
-        if ($methodName = $this->hasSetter($name, $value)) {
+        $methodName = $this->hasSetter($name, $value);
+        if ($methodName !== false) {
             $this->{$methodName}($value);
 
             return $this;
@@ -34,7 +35,8 @@ trait THasProperties
 
     public function getProperty(string $name, mixed $default = null): mixed
     {
-        if ($methodName = $this->hasGetter($name)) {
+        $methodName = $this->hasGetter($name);
+        if ($methodName !== false) {
             $this->{$methodName}();
 
             return $this;
