@@ -31,16 +31,4 @@ class Client extends BaseClient
                 )
             );
     }
-
-    /**
-     * @TODO Move this function to Core with enhancement
-     *
-     * @throws Exception
-     */
-    private function getUserAgent(): string
-    {
-        return UserAgent::random([
-            'device_type' => 'Desktop',
-        ]);
-    }
 }
