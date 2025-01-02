@@ -21,7 +21,10 @@ final readonly class MissAvService
     public function recentUpdate(int $page = 1): void
     {
         $items = $this->crawlingService->getItems(
-            config('jav.missav.recent_update', 'https://missav123.com/dm514/en/new'),
+            config(
+                'jav.missav.recent_update',
+                'https://missav123.com/dm514/en/new'
+            ),
             $page,
         );
 

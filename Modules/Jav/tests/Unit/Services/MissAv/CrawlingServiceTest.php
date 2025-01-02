@@ -22,8 +22,9 @@ class CrawlingServiceTest extends TestCase
 
     final public function testGetItemDetail(): void
     {
+        $url = 'https://missav123.com/dm15/en/achj-038-english-subtitle';
         $service = app(CrawlingService::class);
-        $itemDetail = $service->itemDetail('https://missav123.com/dm15/en/achj-038-english-subtitle');
+        $itemDetail = $service->itemDetail($url);
 
         $this->assertInstanceOf(ItemDetailDto::class, $itemDetail);
     }

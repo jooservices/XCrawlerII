@@ -25,7 +25,12 @@ class ItemDetailDto extends BaseDto
                 $value = Carbon::createFromFormat('Y-m-d', $value);
             }
 
-            if (in_array($label, ['genre', 'actress', 'actor', 'director', 'studio', 'label'])) {
+            if (
+                in_array(
+                    $label,
+                    ['genre', 'actress', 'actor', 'director', 'studio', 'label']
+                )
+            ) {
                 $value = explode(',', $value);
                 $value = array_map(static function ($value) {
                     return trim($value);
@@ -35,7 +40,9 @@ class ItemDetailDto extends BaseDto
             $this->{$label} = $value;
         });
 
-        $this->cover = trim($response->filter('video.player')->attr('data-poster'));
+        $this->cover = trim(
+            $response->filter('video.player')->attr('data-poster')
+        );
 
         return $this;
     }

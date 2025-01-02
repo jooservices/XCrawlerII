@@ -66,6 +66,8 @@ final readonly class CrawlingService
             return null;
         }
 
-        return (new ItemDetailDto())->transform($response->parseBody()->getData());
+        return (new ItemDetailDto())->transform(
+            $response->parseBody()->getData()
+        );
     }
 }
