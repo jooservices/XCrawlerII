@@ -2,13 +2,14 @@
 
 namespace Modules\Jav\Dto\MissAv;
 
-use Modules\Core\Dto\BaseDto;
+use Modules\Jav\Dto\BaseDto;
+use stdClass;
 
 class ItemDto extends BaseDto
 {
     final public function transform(mixed $response): static
     {
-        $this->data = new \stdClass();
+        $this->data = new stdClass();
 
         $this->data->cover = $response->filter('img')->attr('data-src');
         $this->data->preview = $response->filter('video')->attr('data-src');

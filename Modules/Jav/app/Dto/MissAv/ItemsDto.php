@@ -3,8 +3,7 @@
 namespace Modules\Jav\Dto\MissAv;
 
 use Illuminate\Support\Collection;
-use Modules\Core\Dto\BaseDto;
-use Modules\Core\Dto\Traits\TDefaultDto;
+use Modules\Jav\Dto\BaseDto;
 use Modules\Jav\Dto\ItemDto;
 use stdClass;
 
@@ -15,8 +14,6 @@ use stdClass;
  */
 class ItemsDto extends BaseDto
 {
-    use TDefaultDto;
-
     final public function transform(mixed $response): ?static
     {
         $this->data = new stdClass();

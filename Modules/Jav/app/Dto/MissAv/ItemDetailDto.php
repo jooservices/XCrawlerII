@@ -4,7 +4,8 @@ namespace Modules\Jav\Dto\MissAv;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
-use Modules\Core\Dto\BaseDto;
+use Modules\Jav\Dto\BaseDto;
+use stdClass;
 
 /**
  * @property string $meta_title
@@ -14,7 +15,7 @@ class ItemDetailDto extends BaseDto
 {
     final public function transform(mixed $response): static
     {
-        $this->data = new \stdClass();
+        $this->data = new stdClass();
         $this->meta_title = $response->filter('title')->text();
         $response->filter('.space-y-2 .text-secondary')->each(function ($node) {
             $data = explode(':', trim($node->text()));

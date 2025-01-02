@@ -3,7 +3,6 @@
 namespace Modules\Jav\Dto;
 
 use Modules\Core\Dto\BaseDto;
-use Modules\Core\Dto\Traits\TDefaultDto;
 
 /**
  * @property string $name
@@ -13,5 +12,4 @@ use Modules\Core\Dto\Traits\TDefaultDto;
  */
 class TagDto extends BaseDto
 {
-    use TDefaultDto;
 }
