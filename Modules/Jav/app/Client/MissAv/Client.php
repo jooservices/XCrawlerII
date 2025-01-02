@@ -2,8 +2,6 @@
 
 namespace Modules\Jav\Client\MissAv;
 
-use Campo\UserAgent;
-use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Modules\Client\Services\Clients\BaseClient;
 use Modules\Client\Services\Factory;

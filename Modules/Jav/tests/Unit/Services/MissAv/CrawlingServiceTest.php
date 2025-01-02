@@ -6,11 +6,15 @@ use Modules\Jav\Client\MissAv\CrawlingService;
 use Modules\Jav\Dto\MissAv\ItemDetailDto;
 use Modules\Jav\Dto\MissAv\ItemsDto;
 use Modules\Jav\tests\TestCase;
+use Modules\Jav\Zeus\Wishes\MissAvWish;
 
 class CrawlingServiceTest extends TestCase
 {
     final public function testGetItems(): void
     {
+        $this->wish = app(MissAvWish::class);
+        $this->wish->wishRecentUpdate()->wish();
+
         $service = app(CrawlingService::class);
         $itemsDto = $service->getItems();
 
@@ -22,9 +26,11 @@ class CrawlingServiceTest extends TestCase
 
     final public function testGetItemDetail(): void
     {
-        $url = 'https://missav123.com/dm15/en/achj-038-english-subtitle';
+        $this->wish = app(MissAvWish::class);
+        $this->wish->wishDetail()->wish();
+
         $service = app(CrawlingService::class);
-        $itemDetail = $service->itemDetail($url);
+        $itemDetail = $service->itemDetail($this->faker->url);
 
         $this->assertInstanceOf(ItemDetailDto::class, $itemDetail);
     }

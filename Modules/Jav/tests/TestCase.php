@@ -8,8 +8,6 @@ use Tests\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    protected OnejavWish $wish;
-
     public function setUp(): void
     {
         parent::setUp();
