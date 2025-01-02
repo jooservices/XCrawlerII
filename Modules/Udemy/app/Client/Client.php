@@ -2,7 +2,6 @@
 
 namespace Modules\Udemy\Client;
 
-use Campo\UserAgent;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Modules\Client\Interfaces\IResponse;
