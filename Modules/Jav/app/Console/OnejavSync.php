@@ -20,10 +20,8 @@ class OnejavSync extends Command
     /**
      * Execute the console command.
      */
-    final public function handle(): void
+    final public function handle(OnejavService $service): void
     {
-        $service = app(OnejavService::class);
-
         if (!method_exists($service, $this->argument('type'))) {
             return;
         }

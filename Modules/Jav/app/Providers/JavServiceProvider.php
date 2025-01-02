@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Modules\Jav\Console\MediaScan;
+use Modules\Jav\Console\MissAvSync;
 use Modules\Jav\Console\OnejavSync;
 use Modules\Jav\Listeners\JavMovieSubscriber;
 use Modules\Jav\Models\OnejavReference;
@@ -23,7 +24,7 @@ class JavServiceProvider extends ServiceProvider
     /**
      * Boot the application events.
      */
-    public function boot(): void
+    final public function boot(): void
     {
         $this->registerCommands();
         $this->registerCommandSchedules();
@@ -39,7 +40,7 @@ class JavServiceProvider extends ServiceProvider
     /**
      * Register the service provider.
      */
-    public function register(): void
+    final public function register(): void
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
@@ -53,6 +54,7 @@ class JavServiceProvider extends ServiceProvider
         $this->commands([
             OnejavSync::class,
             MediaScan::class,
+            MissAvSync::class,
         ]);
     }
 
@@ -70,7 +72,7 @@ class JavServiceProvider extends ServiceProvider
     /**
      * Register translations.
      */
-    public function registerTranslations(): void
+    final public function registerTranslations(): void
     {
         $langPath = resource_path('lang/modules/' . $this->nameLower);
 
@@ -95,7 +97,7 @@ class JavServiceProvider extends ServiceProvider
     /**
      * Register views.
      */
-    public function registerViews(): void
+    final public function registerViews(): void
     {
         $viewPath = resource_path('views/modules/' . $this->nameLower);
         $sourcePath = module_path($this->name, 'resources/views');
@@ -111,7 +113,7 @@ class JavServiceProvider extends ServiceProvider
     /**
      * Get the services provided by the provider.
      */
-    public function provides(): array
+    final public function provides(): array
     {
         return [];
     }

@@ -15,7 +15,6 @@ class MissAvWish extends FactoryWish
         $this->clientMock->allows('request')
             ->withSomeOfArgs(
                 RequestAlias::METHOD_GET,
-                'new'
             )
             ->andReturn(
                 $this->buildResponse(

@@ -3,12 +3,13 @@
 namespace Modules\Jav\Services\MissAv;
 
 use JsonException;
+use Modules\Core\Services\CoreService;
 use Modules\Jav\Client\MissAv\CrawlingService;
 use Modules\Jav\Jobs\MissAv\FetchItemDetailJob;
 use Modules\Jav\Jobs\MissAv\FetchItemsRecentUpdateJob;
 use Modules\Jav\Models\MissAvReference;
 
-final readonly class MissAvService
+final class MissAvService extends CoreService
 {
     public function __construct(
         private CrawlingService $crawlingService,
