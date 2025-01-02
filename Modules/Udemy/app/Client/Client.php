@@ -2,7 +2,6 @@
 
 namespace Modules\Udemy\Client;
 
-use Campo\UserAgent;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Modules\Client\Interfaces\IResponse;
@@ -73,15 +72,5 @@ class Client extends BaseClient
         );
 
         return parent::request($method, $endpoint, $payload, $options);
-    }
-
-    /**
-     * @TODO Move this function to Core with enhancement
-     *
-     * @throws Exception
-     */
-    private function getUserAgent(): string
-    {
-        return UserAgent::random(['device_type' => 'Desktop']);
     }
 }

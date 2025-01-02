@@ -5,6 +5,7 @@ namespace Modules\Client\Services;
 use Modules\Client\Exceptions\ClientNotFound;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\Clients\BaseClient;
+use Modules\Jav\Client\MissAv\Client as MissAvClient;
 use Modules\Jav\Client\Onejav\Client as OnejavClient;
 use Modules\Udemy\Client\Client as UdemyClient;
 
@@ -16,6 +17,7 @@ class ClientManager
     {
         $this->register(BaseClient::class);
         $this->register(OnejavClient::class);
+        $this->register(MissAvClient::class);
         $this->register(UdemyClient::class);
     }
 
@@ -34,7 +36,7 @@ class ClientManager
     /**
      * @TODO Support IClient with arguments
      */
-    public function getClient(string $client): IClient
+    final public function getClient(string $client): IClient
     {
         if (!in_array($client, $this->classes)) {
             throw new ClientNotFound("Client [$client] not found");

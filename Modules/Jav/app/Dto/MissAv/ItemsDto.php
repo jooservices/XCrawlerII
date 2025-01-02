@@ -1,9 +1,10 @@
 <?php
 
-namespace Modules\Jav\Dto;
+namespace Modules\Jav\Dto\MissAv;
 
 use Illuminate\Support\Collection;
-use Modules\Core\Dto\BaseDto;
+use Modules\Jav\Dto\BaseDto;
+use Modules\Jav\Dto\ItemDto;
 use stdClass;
 
 /**
@@ -13,7 +14,7 @@ use stdClass;
  */
 class ItemsDto extends BaseDto
 {
-    public function transform(mixed $response): ?static
+    final public function transform(mixed $response): ?static
     {
         $this->data = new stdClass();
         $this->data->items = $response['items'];
@@ -23,27 +24,27 @@ class ItemsDto extends BaseDto
         return $this;
     }
 
-    public function getItems(): Collection
+    final public function getItems(): Collection
     {
         return $this->items;
     }
 
-    public function getPage(): int
+    final public function getPage(): int
     {
         return $this->page;
     }
 
-    public function getLastPage(): int
+    final public function getLastPage(): int
     {
         return $this->last_page ?? 1;
     }
 
-    public function isLastPage(): bool
+    final public function isLastPage(): bool
     {
         return $this->page >= $this->last_page;
     }
 
-    public function count(): int
+    final public function count(): int
     {
         return $this->items->count();
     }

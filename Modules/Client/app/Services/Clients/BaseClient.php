@@ -2,6 +2,7 @@
 
 namespace Modules\Client\Services\Clients;
 
+use Campo\UserAgent;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\BadResponseException;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -132,5 +133,12 @@ class BaseClient implements IClient
     protected function getResponseClass(): string
     {
         return BaseResponse::class;
+    }
+
+    protected function getUserAgent(): string
+    {
+        return UserAgent::random([
+            'device_type' => 'Desktop',
+        ]);
     }
 }

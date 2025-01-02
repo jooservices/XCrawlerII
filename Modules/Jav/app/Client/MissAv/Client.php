@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Jav\Client\Onejav;
+namespace Modules\Jav\Client\MissAv;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Modules\Client\Services\Clients\BaseClient;
@@ -19,8 +19,8 @@ class Client extends BaseClient
                 array_merge(
                     $options,
                     [
-                        'base_uri' => config('jav.onejav.base_uri'),
-                        'referer' => config('jav.onejav.base_uri'),
+                        'base_uri' => config('jav.missav.base_uri'),
+                        'referer' => config('jav.missav.base_uri'),
                         'headers' => [
                             'User-Agent' => $this->getUserAgent(),
                             'Accept' => 'text/html; charset=utf-8',
