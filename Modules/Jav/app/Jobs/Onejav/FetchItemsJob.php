@@ -32,6 +32,7 @@ class FetchItemsJob implements ShouldQueue
      */
     final public function handle(OnejavService $service): void
     {
+        dd('xxx');
         $items = $service->crawl($this->endpoint, $this->page);
 
         if ($this->loop && !$items->isLastPage()) {

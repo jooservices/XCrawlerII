@@ -8,10 +8,13 @@ use Modules\Client\Services\ClientManager;
 use Modules\Udemy\Client\Sdk\CoursesApi;
 use Modules\Udemy\Client\Sdk\MeApi;
 use Modules\Udemy\Client\Sdk\QuizzesApi;
+use Modules\Udemy\Client\Traits\TMe;
 use Modules\Udemy\Models\UserToken;
 
 class UdemySdk
 {
+    use TMe;
+
     /**
      * @var Client
      */

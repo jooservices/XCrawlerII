@@ -8,10 +8,9 @@ return [
         'notifications' => [
             'enabled' => env('ONEJAV_NOTIFICATIONS_ENABLED', false),
         ],
-    ],
-    'horizon' => [
-        'memory_limit' => env('ONEJAV_HORIZON_MEMORY', 1024),
-        'max_process' => env('ONEJAV_HORIZON_MAX_PROCESS', 1),
+        'queue' => [
+            'name' => env('ONEJAV_QUEUE_NAME', 'onejav'),
+        ],
     ],
     'missav' => [
         'base_uri' => env(
@@ -26,5 +25,13 @@ return [
         'notifications' => [
             'enabled' => env('MISSAV_NOTIFICATIONS_ENABLED', false),
         ],
+        'queue' => [
+            'name' => env('MISSAV_QUEUE_NAME', 'missav'),
+        ],
     ],
+    'horizon' => [
+        'memory_limit' => env('ONEJAV_HORIZON_MEMORY', 1024),
+        'max_process' => env('ONEJAV_HORIZON_MAX_PROCESS', 1),
+    ],
+
 ];

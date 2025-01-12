@@ -28,7 +28,7 @@ class StudyService
          */
         $ids = app(UdemySdk::class)
             ->setToken($userToken)
-            ->me()->progress($udemyCourse->id)->getCompletedIds();
+            ->getCompletedIds($udemyCourse->id);
 
         /**
          * Split $itemsBatch to multi batches
@@ -43,28 +43,22 @@ class StudyService
             $itemsBatch[] = new StudyCurriculumItemJob($userToken, $item);
         });
 
-        Bus::batch($itemsBatch)->before(function (Batch $batch) {
-            /**
-             * @TODO Dispatch event and notification to let user know their course started
-             */
-        })->progress(function (Batch $batch) use ($userToken, $udemyCourse) {
-            StudyInProgressEvent::dispatch($userToken, $udemyCourse, $batch);
-        })->then(function (Batch $batch) {
-        })->catch(function (Batch $batch, Throwable $e) {
-            // First batch job failure detected...
-        })->finally(function (Batch $batch) {
-            /**
-             * @TODO Dispatch event and notification to let user know their course completed
-             */
-        })->name(
-            'Complete curriculum items: ' . $udemyCourse->title
-        )->onQueue(UdemyService::UDEMY_QUEUE_NAME)->dispatch();
+        if (empty($itemsBatch)) {
+            return;
+        }
+
+        Bus::batch($itemsBatch)
+            ->progress(function (Batch $batch) use ($userToken, $udemyCourse) {
+                StudyInProgressEvent::dispatch($userToken, $udemyCourse, $batch);
+            })->name(
+                'Complete curriculum items: ' . $udemyCourse->title
+            )->onQueue(UdemyService::UDEMY_QUEUE_NAME)->dispatch();
     }
 
     /**
      * This one will be called inside a job
      */
-    public function studyCurriculum(
+    final public function studyCurriculum(
         UserToken $userToken,
         CurriculumItem $curriculumItem
     ): void {

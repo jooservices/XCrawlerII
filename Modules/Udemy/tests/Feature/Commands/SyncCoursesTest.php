@@ -23,6 +23,7 @@ class SyncCoursesTest extends TestCase
             ->wish();
         $this->artisan('udemy:sync-courses')
             ->expectsQuestion('Enter your Udemy token', $this->userToken->token)
+            ->expectsQuestion('Sync curriculum items', 'Yes')
             ->assertExitCode(0);
     }
 

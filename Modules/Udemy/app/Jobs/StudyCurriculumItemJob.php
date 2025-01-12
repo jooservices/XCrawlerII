@@ -34,7 +34,7 @@ class StudyCurriculumItemJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(StudyService $service): void
+    final public function handle(StudyService $service): void
     {
         $service->studyCurriculum(
             $this->userToken,

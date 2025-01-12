@@ -14,12 +14,12 @@ class CourseStudySubscriber
      * @throws Throwable
      * @throws BindingResolutionException
      */
-    public function onCourseReadyForStudy(CourseReadyForStudyEvent $event): void
+    final public function onCourseReadyForStudy(CourseReadyForStudyEvent $event): void
     {
         app(StudyService::class)->study($event->userToken, $event->udemyCourse);
     }
 
-    public function onStudyInProgress(StudyInProgressEvent $event)
+    final public function onStudyInProgress(StudyInProgressEvent $event): void
     {
         /**
          * @TODO Notification for each progress
