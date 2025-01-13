@@ -3,8 +3,6 @@
 namespace Modules\Jav\Dto;
 
 use Carbon\Carbon;
-use Modules\Core\Dto\BaseDto;
-use Modules\Core\Dto\Traits\TDefaultDto;
 use Modules\Jav\Helpers\OnejavHelper;
 use stdClass;
 
@@ -22,8 +20,6 @@ use stdClass;
  */
 class ItemDto extends BaseDto
 {
-    use TDefaultDto;
-
     final public function transform(mixed $response): ?static
     {
         $this->data = new stdClass();

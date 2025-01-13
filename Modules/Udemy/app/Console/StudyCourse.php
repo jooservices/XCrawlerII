@@ -3,12 +3,16 @@
 namespace Modules\Udemy\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Collection;
+use JsonException;
 use Modules\Udemy\Client\UdemySdk;
 use Modules\Udemy\Console\Traits\THasToken;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\StudyService;
 use RuntimeException;
+use Throwable;
 
 final class StudyCourse extends Command
 {
@@ -33,23 +37,36 @@ final class StudyCourse extends Command
          * @var UserToken $userToken
          */
         $userToken = $this->getToken();
-
         $courses = $userToken->notCompletedCourses();
 
         $this->table([
             'ID',
             'Course',
+            'Curriculums',
+            'Curriculums time',
             'Completion Ratio',
             'URL',
         ], $courses->map(function ($course) {
             return [
                 $course->id,
                 $course->title,
+                $course->items->count(),
+                $course->items->sum('asset_time_estimation') / 60 / 60,
                 $course->pivot->completion_ratio,
                 $course->getUrl(),
             ];
         }));
 
+        $this->study($userToken, $courses);
+    }
+
+    /**
+     * @throws BindingResolutionException
+     * @throws Throwable
+     * @throws JsonException
+     */
+    private function study(UserToken $userToken, Collection $courses): void
+    {
         $courseId = $this->ask('Choose a course to study');
         $course = $courses->find($courseId);
 
@@ -62,7 +79,7 @@ final class StudyCourse extends Command
         $this->info('Getting complete course details...');
         $ids = app(UdemySdk::class)
             ->setToken($userToken)
-            ->me()->progress($courseId)->getCompletedIds();
+            ->getCompletedIds($courseId);
 
         $this->table(
             [
@@ -70,17 +87,23 @@ final class StudyCourse extends Command
                 'ID',
                 'Title',
                 'Type',
+                'Length',
                 'Completed',
             ],
-            $course->items->map(function (CurriculumItem $item, $index) use ($ids) {
-                return [
-                    $index,
-                    $item->id,
-                    $item->title,
-                    $item->detectType(),
-                    in_array($item->id, $ids, true) ? 'Yes' : 'No',
-                ];
-            })
+            $course->items()
+                ->where('class', '<>', 'chapter')
+                ->where('asset_type', '<>', 'E-Book')
+                ->get()
+                ->map(function (CurriculumItem $item, $index) use ($ids) {
+                    return [
+                        $index,
+                        $item->id,
+                        $item->title,
+                        $item->detectType(),
+                        $item->asset_time_estimation / 60 / 60,
+                        in_array($item->id, $ids, true) ? 'Yes' : 'No',
+                    ];
+                })
         );
 
         $choice = $this->choice('Ready to study?', ['Yes', 'No'], 'Yes');

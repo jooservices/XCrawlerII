@@ -20,6 +20,7 @@ class BaseResponse implements IResponse
         'application/json, text/plain' => JsonResponseData::class,
         'text/html; charset="utf-8"' => DomResponseData::class,
         'text/html; charset=utf-8' => DomResponseData::class,
+        'text/html; charset=UTF-8' => DomResponseData::class,
         'text/html' => DomResponseData::class,
     ];
 

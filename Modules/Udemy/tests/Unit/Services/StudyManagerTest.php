@@ -30,6 +30,7 @@ class StudyManagerTest extends TestCase
     {
         $curriculumItem = CurriculumItem::factory()->create([
             'type' => 'article',
+            'asset_type' => 'article',
         ]);
 
         app(UdemyWish::class)

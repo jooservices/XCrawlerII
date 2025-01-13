@@ -25,10 +25,22 @@ class SyncCourses extends Command
      */
     final public function handle(UdemyService $service): int
     {
+        $token = $this->getToken();
+        $choice = $this->choice('Sync curriculum items', ['Yes', 'No'], 'Yes');
+        $this->output->info('Syncing courses...');
+
         /**
          * Sync courses as sync queue
          */
-        $coursesDto = $service->syncMyCourses($this->getToken());
+        $coursesDto = $service->syncMyCourses(
+            $token,
+            [],
+            $choice === 'Yes'
+        );
+
+        if (!$coursesDto) {
+            $this->error('Can\'t sync courses');
+        }
 
         $this->output->info('Courses: ' . $coursesDto->getCount());
 

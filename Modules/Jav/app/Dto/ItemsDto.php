@@ -4,7 +4,6 @@ namespace Modules\Jav\Dto;
 
 use Illuminate\Support\Collection;
 use Modules\Core\Dto\BaseDto;
-use Modules\Core\Dto\Traits\TDefaultDto;
 use stdClass;
 
 /**
@@ -14,8 +13,6 @@ use stdClass;
  */
 class ItemsDto extends BaseDto
 {
-    use TDefaultDto;
-
     public function transform(mixed $response): ?static
     {
         $this->data = new stdClass();

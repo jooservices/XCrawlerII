@@ -25,7 +25,8 @@ class SyncMyCourseJob implements ShouldQueue
      */
     public function __construct(
         public UserToken $userToken,
-        public int $page
+        public int $page,
+        public bool $syncCurriculumItems = true
     ) {
         $this->onQueue(UdemyService::UDEMY_QUEUE_NAME);
     }
@@ -37,6 +38,10 @@ class SyncMyCourseJob implements ShouldQueue
      */
     final public function handle(UdemyService $service): void
     {
-        $service->syncMyCourse($this->userToken, ['page' => $this->page]);
+        $service->syncMyCourse(
+            $this->userToken,
+            ['page' => $this->page],
+            $this->syncCurriculumItems
+        );
     }
 }

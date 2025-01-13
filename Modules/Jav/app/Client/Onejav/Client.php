@@ -2,8 +2,6 @@
 
 namespace Modules\Jav\Client\Onejav;
 
-use Campo\UserAgent;
-use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Modules\Client\Services\Clients\BaseClient;
 use Modules\Client\Services\Factory;
@@ -30,17 +28,5 @@ class Client extends BaseClient
                     ]
                 )
             );
-    }
-
-    /**
-     * @TODO Move this function to Core with enhancement
-     *
-     * @throws Exception
-     */
-    private function getUserAgent(): string
-    {
-        return UserAgent::random([
-            'device_type' => 'Desktop',
-        ]);
     }
 }

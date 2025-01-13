@@ -16,10 +16,14 @@ class MyCoursesSubscriber
     final public function onSyncMyCourseCompleted(
         SyncMyCourseCompletedEvent $event
     ): void {
-        $userToken = $event->userToken;
-        $udemyCourse = $event->udemyCourse;
+        if (!$event->syncCurriculumItems) {
+            return;
+        }
 
-        SyncCourseCurriculumItemsJob::dispatch($userToken, $udemyCourse);
+        SyncCourseCurriculumItemsJob::dispatch(
+            $event->userToken,
+            $event->udemyCourse
+        );
     }
 
     final public function onSyncCourseCurriculumItemsCompleted(

@@ -3,6 +3,7 @@
 namespace Modules\Udemy\Client\Sdk;
 
 use Exception;
+use JsonException;
 use Modules\Udemy\Client\Dto\AssessmentDto;
 use Modules\Udemy\Client\Dto\CourseCategoriesDto;
 use Modules\Udemy\Client\Dto\CourseProgressDto;
@@ -44,10 +45,13 @@ class MeApi extends AbstractApi
         return (new CoursesDto())->transform($response);
     }
 
+    /**
+     * @throws JsonException
+     */
     final public function progress(
         int $courseId,
         array $payload = []
-    ): ?CourseProgressDto {
+    ): CourseProgressDto {
         $payload = array_merge(
             [
                 'fields' => [
@@ -75,7 +79,12 @@ class MeApi extends AbstractApi
         );
 
         if (!$response->isSuccess()) {
-            return null;
+            return (new CourseProgressDto())
+                ->transform([
+                    'completed_lecture_ids' => [],
+                    'completed_quiz_ids' => [],
+                    'completed_assignment_ids' => [],
+                ]);
         }
 
         return (new CourseProgressDto())->transform($response->parseBody()->getData());

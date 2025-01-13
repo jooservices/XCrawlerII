@@ -19,7 +19,8 @@ class SyncMyCourseCompletedEvent
      */
     public function __construct(
         public UserToken $userToken,
-        public UdemyCourse $udemyCourse
+        public UdemyCourse $udemyCourse,
+        public bool $syncCurriculumItems = true
     ) {
         //
     }
