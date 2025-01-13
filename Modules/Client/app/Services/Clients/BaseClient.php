@@ -137,6 +137,10 @@ class BaseClient implements IClient
 
     protected function getUserAgent(): string
     {
+        if (app()->environment('testing')) {
+            return 'testing';
+        }
+
         return UserAgent::random([
             'device_type' => 'Desktop',
         ]);

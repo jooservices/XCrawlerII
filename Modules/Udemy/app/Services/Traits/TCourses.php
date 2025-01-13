@@ -31,6 +31,7 @@ trait TCourses
         array $payload = [],
         bool $syncCurriculumItems = true
     ): ?CoursesDto {
+
         $coursesDto = app(UdemySdk::class)
             ->setToken($userToken)
             ->me()
