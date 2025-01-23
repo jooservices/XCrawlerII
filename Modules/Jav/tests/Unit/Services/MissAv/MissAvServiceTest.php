@@ -3,6 +3,7 @@
 namespace Modules\Jav\Tests\Unit\Services\MissAv;
 
 use Illuminate\Support\Facades\Bus;
+use Modules\Core\Facades\Setting;
 use Modules\Jav\Jobs\MissAv\FetchItemDetailJob;
 use Modules\Jav\Jobs\MissAv\FetchItemsRecentUpdateJob;
 use Modules\Jav\Services\MissAv\MissAvService;
@@ -25,5 +26,7 @@ class MissAvServiceTest extends TestCase
 
         Bus::assertDispatchedTimes(FetchItemDetailJob::class, 12);
         Bus::assertDispatchedTimes(FetchItemsRecentUpdateJob::class, 1999);
+
+        $this->assertEquals(2, Setting::get('missav', 'recent_update_current_page'));
     }
 }

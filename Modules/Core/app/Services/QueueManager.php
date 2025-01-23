@@ -9,7 +9,7 @@ use Modules\Core\Models\Queue;
 
 class QueueManager
 {
-    public function register(
+    final public function register(
         string $serverIp,
         string $serverName,
         string $serverWanIp,
@@ -26,10 +26,10 @@ class QueueManager
         ]);
     }
 
-    public function pushQueue(
+    final public function pushQueue(
         Pool $pool,
         string $jobClass
-    ) {
+    ): Queue {
         return Queue::create([
             'pool_id' => $pool->id,
             'job_class' => $jobClass,
@@ -37,38 +37,36 @@ class QueueManager
         ]);
     }
 
-    public function startQueue(Queue $queue): bool
+    final public function startQueue(Queue $queue): bool
     {
         return $queue->update(['state_code' => Queue::STATE_CODE_STARTED]);
     }
 
-    public function completeQueue(Queue $queue): bool
+    final public function completeQueue(Queue $queue): bool
     {
         return $queue->update(['state_code' => Queue::STATE_CODE_COMPLETED]);
     }
 
-    public function failQueue(Queue $queue): bool
+    final public function failQueue(Queue $queue): bool
     {
         return $queue->update(['state_code' => Queue::STATE_CODE_FAILED]);
     }
 
-    public function getPoolsWithBalancing(): Collection
+    final public function getPoolsWithBalancing(): Collection
     {
         /**
          * Try to get pool with less queues
          */
-        $pools = Pool::with('queues')
+        return Pool::with('queues')
             ->withCount('queues')
             ->when(Cache::has('last_pool_id'), function ($query) {
                 $query->where('id', '<>', Cache::get('last_pool_id'));
             })
             ->orderBy('queues_count')
             ->get();
-
-        return $pools;
     }
 
-    public function getPoolWithBalancing(): Pool
+    final public function getPoolWithBalancing(): Pool
     {
         $pools = $this->getPoolsWithBalancing();
         $pool = $pools->first();
