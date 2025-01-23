@@ -27,6 +27,7 @@ class StudyManager
         CurriculumItem $curriculumItem
     ): void {
         $class = $this->detectType($curriculumItem);
+
         app()->makeWith(
             $class,
             [

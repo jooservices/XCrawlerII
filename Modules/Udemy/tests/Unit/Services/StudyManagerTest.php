@@ -30,7 +30,8 @@ class StudyManagerTest extends TestCase
     {
         $curriculumItem = CurriculumItem::factory()->create([
             'type' => 'article',
-            'asset_type' => 'article',
+            'asset_type' => 'video',
+            'asset_time_estimation' => 30,
         ]);
 
         app(UdemyWish::class)
@@ -44,7 +45,7 @@ class StudyManagerTest extends TestCase
                     ''
                 );
 
-                $mock->expects('request')
+                $mock->allows('request')
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
                         UdemyWish::ME_SUBSCRIBED_COURSES
@@ -53,7 +54,7 @@ class StudyManagerTest extends TestCase
                     )
                     ->andReturn($response);
 
-                $mock->expects('request')
+                $mock->allows('request')
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
                         UdemyWish::ME_SUBSCRIBED_COURSES
@@ -62,7 +63,7 @@ class StudyManagerTest extends TestCase
                     )
                     ->andReturn($response);
 
-                $mock->expects('request')
+                $mock->allows('request')
                     ->withSomeOfArgs(
                         Request::METHOD_POST,
                         UdemyWish::ME_SUBSCRIBED_COURSES

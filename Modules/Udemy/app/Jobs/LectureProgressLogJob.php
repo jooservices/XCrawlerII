@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Modules\Udemy\Client\UdemySdk;
 use Modules\Udemy\Models\CurriculumItem;
 use Modules\Udemy\Models\UserToken;
@@ -34,8 +35,9 @@ class LectureProgressLogJob implements ShouldQueue
 
     /**
      * Execute the job.
+     * @throws \Exception
      */
-    public function handle(UdemySdk $udemySdk): void
+    final public function handle(UdemySdk $udemySdk): void
     {
         $result = $udemySdk->setToken($this->userToken)
             ->me()
@@ -43,6 +45,16 @@ class LectureProgressLogJob implements ShouldQueue
                 $this->curriculumItem,
                 $this->payload
             );
+
+        $udemyCourse = $this->curriculumItem->course;
+
+        Log::debug(
+            'Course [' . $udemyCourse->id . ']: ' . $udemyCourse->title,
+            [
+                'result' => $result,
+                'payload' => $this->payload,
+            ]
+        );
 
         if (!$result) {
             $this->fail();
