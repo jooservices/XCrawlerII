@@ -5,6 +5,7 @@ namespace Modules\Udemy\Services;
 use Illuminate\Bus\Batch;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 use Modules\Udemy\Client\UdemySdk;
 use Modules\Udemy\Events\StudyInProgressEvent;
 use Modules\Udemy\Jobs\StudyCurriculumItemJob;
@@ -30,6 +31,8 @@ class StudyService
             ->setToken($userToken)
             ->getCompletedIds($udemyCourse->id);
 
+        Log::debug('Course [' . $udemyCourse->id . ']: ' . $udemyCourse->title);
+
         /**
          * Split $itemsBatch to multi batches
          */
@@ -42,6 +45,14 @@ class StudyService
         $items->each(function ($item) use ($userToken, &$itemsBatch) {
             $itemsBatch[] = new StudyCurriculumItemJob($userToken, $item);
         });
+
+        Log::debug(
+            'Course [' . $udemyCourse->id . ']: ' . $udemyCourse->title,
+            [
+                'items' => count($items),
+                'itemsBatch' => count($itemsBatch),
+            ]
+        );
 
         if (empty($itemsBatch)) {
             return;
