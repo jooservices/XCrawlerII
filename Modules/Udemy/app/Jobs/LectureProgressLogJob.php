@@ -35,6 +35,7 @@ class LectureProgressLogJob implements ShouldQueue
 
     /**
      * Execute the job.
+     *
      * @throws \Exception
      */
     final public function handle(UdemySdk $udemySdk): void
