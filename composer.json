@@ -98,7 +98,8 @@
                 "Modules/Client/composer.json",
                 "Modules/Jav/composer.json",
                 "Modules/Core/composer.json",
-                "Modules/Udemy/composer.json"
+                "Modules/Udemy/composer.json",
+                "Modules/StableDiffusion/composer.json"
             ],
             "require": [
             ],

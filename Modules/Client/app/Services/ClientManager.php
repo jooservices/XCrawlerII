@@ -7,6 +7,7 @@ use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\Clients\BaseClient;
 use Modules\Jav\Client\MissAv\Client as MissAvClient;
 use Modules\Jav\Client\Onejav\Client as OnejavClient;
+use Modules\StableDiffusion\Client\Client as StableDiffusionClient;
 use Modules\Udemy\Client\Client as UdemyClient;
 
 class ClientManager
@@ -19,6 +20,7 @@ class ClientManager
         $this->register(OnejavClient::class);
         $this->register(MissAvClient::class);
         $this->register(UdemyClient::class);
+        $this->register(StableDiffusionClient::class);
     }
 
     public function register(string $class): static
