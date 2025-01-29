@@ -5,10 +5,12 @@ namespace Modules\Udemy\Console;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use JsonException;
 use Modules\Udemy\Client\UdemySdk;
 use Modules\Udemy\Console\Traits\THasToken;
 use Modules\Udemy\Models\CurriculumItem;
+use Modules\Udemy\Models\UdemyCourse;
 use Modules\Udemy\Models\UserToken;
 use Modules\Udemy\Services\StudyService;
 use RuntimeException;
@@ -33,9 +35,6 @@ final class StudyCourse extends Command
      */
     public function handle(): void
     {
-        /**
-         * @var UserToken $userToken
-         */
         $userToken = $this->getToken();
         $courses = $userToken->notCompletedCourses();
 
@@ -70,6 +69,9 @@ final class StudyCourse extends Command
     private function study(UserToken $userToken, Collection $courses): void
     {
         $courseId = $this->ask('Choose a course to study');
+        /**
+         * @var UdemyCourse $course
+         */
         $course = $courses->find($courseId);
 
         if (!$course) {
@@ -82,6 +84,16 @@ final class StudyCourse extends Command
         $ids = app(UdemySdk::class)
             ->setToken($userToken)
             ->getCompletedIds($courseId);
+
+        /**
+         * Show detail information
+         */
+        $classes = $course->items->pluck('class')->unique()->toArray();
+        foreach ($classes as $class) {
+            $this->output->text(Str::ucfirst($class) . ': ' . $course->items()->where('class', $class)->count());
+        }
+
+        $this->output->text('Total time: ' . $course->items()->sum('asset_time_estimation') / 60 / 60 . ' hours');
 
         $this->table(
             [
