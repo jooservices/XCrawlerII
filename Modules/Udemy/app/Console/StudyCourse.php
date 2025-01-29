@@ -57,7 +57,9 @@ final class StudyCourse extends Command
             ];
         }));
 
-        $this->study($userToken, $courses);
+        do {
+            $this->study($userToken, $courses);
+        } while ($this->choice('Study another course', ['Yes', 'No'], 'Yes') === 'Yes');
     }
 
     /**
