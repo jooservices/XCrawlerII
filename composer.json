@@ -20,7 +20,8 @@
         "nwidart/laravel-modules": "^11.1",
         "pdphilip/elasticsearch": "^4.5",
         "predis/predis": "^2.2",
-        "sentry/sentry-laravel": "^4.9",
+        "sentry/sentry-laravel": "^4.11",
+        "spatie/laravel-ignition": "^2.9",
         "symfony/dom-crawler": "^7.1",
         "vladimir-yuldashev/laravel-queue-rabbitmq": "^14.1",
         "wikimedia/composer-merge-plugin": "^2.1"
