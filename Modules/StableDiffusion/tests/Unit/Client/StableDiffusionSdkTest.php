@@ -19,6 +19,6 @@ class StableDiffusionSdkTest extends TestCase
             app(PromptDto::class)->addPrompts('(worst quality:2),(low quality:2),(normal quality:2),lowres,bad anatomy,watermark,(worst quality:2),(low quality:2),(normal quality:2),lowres,badhandv4,(deformed iris, deformed pupils, semi-realistic, cgi, 3d, render, sketch, cartoon, drawing, anime, mutated hands and fingers:1.4),(deformed, distorted, disfigured:1.3),poorly drawn,bad anatomy,wrong anatomy,extra limb,missing limb,floating limbs,disconnected limbs,mutation,mutated,ugly,disgusting,amputation')
         );
 
-        //app(StableDiffusionSdk::class)->txt2img($text2Image);
+        // app(StableDiffusionSdk::class)->txt2img($text2Image);
     }
 }

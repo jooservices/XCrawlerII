@@ -4,10 +4,8 @@ namespace Modules\StableDiffusion\Client;
 
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Modules\Client\Interfaces\IResponse;
 use Modules\Client\Services\Clients\BaseClient;
 use Modules\Client\Services\Factory;
-use Modules\Udemy\Exceptions\TokenNotFoundException;
 
 class Client extends BaseClient
 {

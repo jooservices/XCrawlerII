@@ -3,8 +3,6 @@
 namespace Modules\StableDiffusion\Console;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class GenerateText2Image extends Command
 {
@@ -17,7 +15,6 @@ class GenerateText2Image extends Command
      * The console command description.
      */
     protected $description = 'Command description.';
-
 
     /**
      * Execute the console command.
