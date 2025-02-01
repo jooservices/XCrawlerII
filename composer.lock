@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "94d4dfab58d0294ab0f7253b6e2cdae7",
+    "content-hash": "1100ebf8f016bf002736bfd879c5c544",
     "packages": [
         {
             "name": "brick/math",
@@ -1495,16 +1495,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v11.41.0",
+            "version": "v11.41.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "42d6ae000c868c2abfa946da46702f2358493482"
+                "reference": "3ef433d5865f30a19b6b1be247586068399b59cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/42d6ae000c868c2abfa946da46702f2358493482",
-                "reference": "42d6ae000c868c2abfa946da46702f2358493482",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/3ef433d5865f30a19b6b1be247586068399b59cc",
+                "reference": "3ef433d5865f30a19b6b1be247586068399b59cc",
                 "shasum": ""
             },
             "require": {
@@ -1706,7 +1706,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-01-28T15:22:55+00:00"
+            "time": "2025-01-30T13:25:22+00:00"
         },
         {
             "name": "laravel/horizon",
@@ -10509,16 +10509,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "11.5.4",
+            "version": "11.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e0da3559ec50a91f6a6a201473b607b5ccfd9a1b"
+                "reference": "3c3ae14c90f244cdda95028c3e469028e8d1c02c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e0da3559ec50a91f6a6a201473b607b5ccfd9a1b",
-                "reference": "e0da3559ec50a91f6a6a201473b607b5ccfd9a1b",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/3c3ae14c90f244cdda95028c3e469028e8d1c02c",
+                "reference": "3c3ae14c90f244cdda95028c3e469028e8d1c02c",
                 "shasum": ""
             },
             "require": {
@@ -10590,7 +10590,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.4"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/11.5.6"
             },
             "funding": [
                 {
@@ -10606,7 +10606,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2025-01-28T15:03:46+00:00"
+            "time": "2025-01-31T07:03:30+00:00"
         },
         {
             "name": "sebastian/cli-parser",
