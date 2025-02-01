@@ -15,7 +15,7 @@ class BaseDto implements IDto
     use TCastsDto;
     use THasProperties;
 
-    protected ?stdClass $data;
+    protected stdClass $data;
 
     /**
      * @throws JsonException
