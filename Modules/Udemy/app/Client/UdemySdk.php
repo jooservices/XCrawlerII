@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Modules\Client\Interfaces\IClient;
 use Modules\Client\Services\ClientManager;
 use Modules\Udemy\Client\Sdk\CoursesApi;
+use Modules\Udemy\Client\Sdk\LearningPaths;
 use Modules\Udemy\Client\Sdk\MeApi;
 use Modules\Udemy\Client\Sdk\QuizzesApi;
 use Modules\Udemy\Client\Traits\TMe;
@@ -38,6 +39,11 @@ class UdemySdk
     public function me(): MeApi
     {
         return app()->makeWith(MeApi::class, ['client' => $this->client]);
+    }
+
+    public function learningPaths(): LearningPaths
+    {
+        return app()->makeWith(LearningPaths::class, ['client' => $this->client]);
     }
 
     /**

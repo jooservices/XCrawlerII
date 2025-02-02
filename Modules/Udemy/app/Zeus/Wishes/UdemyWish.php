@@ -10,6 +10,7 @@ use Modules\Udemy\Client\Client;
 use Modules\Udemy\Client\Dto\CourseCategoryDto;
 use Modules\Udemy\Client\Dto\CourseDto;
 use Modules\Udemy\Client\Sdk\CoursesApi;
+use Modules\Udemy\Client\Sdk\LearningPaths;
 use Modules\Udemy\Client\Sdk\MeApi;
 use Modules\Udemy\Models\UserToken;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
@@ -167,6 +168,26 @@ class UdemyWish extends FactoryWish
                         'completed_quiz_ids' => [4, 5, 6],
                         'completed_assignment_ids' => [7, 8, 9],
                     ], JSON_THROW_ON_ERROR)
+                )
+            );
+
+        return $this;
+    }
+
+    final public function wishEnrollment(int $pathId): self
+    {
+        $this->clientMock->allows('request')
+            ->withSomeOfArgs(
+                Request::METHOD_POST,
+                LearningPaths::ENDPOINT .'/'. $pathId . '/enrollments'
+            )
+            ->andReturn(
+                new Response(
+                    SymfonyResponse::HTTP_OK,
+                    [
+                        'Content-Type' => Client::CONTENT_TYPE,
+                    ],
+                    '{"_class":"learning_path_has_user","id":16289313}'
                 )
             );
 
