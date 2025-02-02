@@ -1,0 +1,11 @@
+{
+    "name": "StableDiffusion",
+    "alias": "stablediffusion",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\StableDiffusion\\Providers\\StableDiffusionServiceProvider"
+    ],
+    "files": []
+}
