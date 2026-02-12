@@ -4,7 +4,9 @@ namespace Modules\JAV\Services;
 
 use Illuminate\Support\Facades\Log;
 use Modules\JAV\Dtos\Item;
+use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
+use Modules\JAV\Models\Tag;
 
 class JavManager
 {
@@ -16,7 +18,6 @@ class JavManager
     public function store(Item $item, string $source): Jav
     {
         try {
-            // Transform Item DTO to database format
             $data = [
                 'item_id' => $item->id,
                 'code' => $item->code,
@@ -26,13 +27,10 @@ class JavManager
                 'date' => $item->date,
                 'size' => $item->size,
                 'description' => $item->description,
-                'tags' => $item->tags->toArray(),
-                'actresses' => $item->actresses->toArray(),
                 'download' => $item->download,
                 'source' => $source,
             ];
 
-            // Use updateOrCreate to handle duplicates based on (code, source)
             $jav = Jav::updateOrCreate(
                 [
                     'code' => $item->code,
@@ -40,6 +38,18 @@ class JavManager
                 ],
                 $data
             );
+
+            // Sync actors
+            $actorIds = $item->actresses->map(
+                fn (string $name) => Actor::firstOrCreate(['name' => $name])->id
+            )->toArray();
+            $jav->actors()->sync($actorIds);
+
+            // Sync tags
+            $tagIds = $item->tags->map(
+                fn (string $name) => Tag::firstOrCreate(['name' => $name])->id
+            )->toArray();
+            $jav->tags()->sync($tagIds);
 
             Log::info('JAV item stored successfully', [
                 'code' => $item->code,

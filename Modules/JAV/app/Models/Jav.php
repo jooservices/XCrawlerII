@@ -3,17 +3,12 @@
 namespace Modules\JAV\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Jav extends Model
 {
-    /**
-     * The table associated with the model.
-     */
     protected $table = 'jav';
 
-    /**
-     * The attributes that are mass assignable.
-     */
     protected $fillable = [
         'item_id',
         'code',
@@ -23,19 +18,22 @@ class Jav extends Model
         'date',
         'size',
         'description',
-        'tags',
-        'actresses',
         'download',
         'source',
     ];
 
-    /**
-     * The attributes that should be cast.
-     */
     protected $casts = [
-        'tags' => 'array',
-        'actresses' => 'array',
         'date' => 'datetime',
         'size' => 'float',
     ];
+
+    public function actors(): BelongsToMany
+    {
+        return $this->belongsToMany(Actor::class, 'jav_actor');
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'jav_tag');
+    }
 }
