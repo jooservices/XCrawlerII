@@ -48,8 +48,8 @@ class JavStorageFeatureTest extends TestCase
         $this->assertEquals('ABP462', $jav->code);
         $this->assertEquals('feature-test', $jav->source);
         $this->assertEquals(1.2, $jav->size);
-        $this->assertEquals(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy'], $jav->tags);
-        $this->assertEquals(['Nao Wakana'], $jav->actresses);
+        $this->assertEquals(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy'], $jav->tags->pluck('name')->sort()->values()->toArray());
+        $this->assertEquals(['Nao Wakana'], $jav->actors->pluck('name')->sort()->values()->toArray());
     }
 
     public function test_subscriber_stores_real_data(): void
@@ -77,8 +77,8 @@ class JavStorageFeatureTest extends TestCase
         $this->assertEquals('IPZ725', $jav->code);
         $this->assertEquals('feature-test', $jav->source);
         $this->assertEquals(1.1, $jav->size);
-        $this->assertEquals(['Beautiful Girl', 'Digital Mosaic', 'Kiss', 'Solowork', 'Subjectivity'], $jav->tags);
-        $this->assertEquals(['Arisa Shindo'], $jav->actresses);
+        $this->assertEquals(['Beautiful Girl', 'Digital Mosaic', 'Kiss', 'Solowork', 'Subjectivity'], $jav->tags->pluck('name')->sort()->values()->toArray());
+        $this->assertEquals(['Arisa Shindo'], $jav->actors->pluck('name')->sort()->values()->toArray());
     }
 
     public function test_duplicate_handling(): void

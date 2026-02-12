@@ -62,21 +62,21 @@ class JavStorageIntegrationTest extends TestCase
         $this->assertEquals('/torrent/abp462', $jav->url);
         $this->assertEquals(1.2, $jav->size);
         $this->assertEquals('2016-10-16', $jav->date->format('Y-m-d'));
-        $this->assertEquals(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy'], $jav->tags);
-        $this->assertEquals(['Nao Wakana'], $jav->actresses);
+        $this->assertEquals(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy'], $jav->tags->pluck('name')->sort()->values()->toArray());
+        $this->assertEquals(['Nao Wakana'], $jav->actors->pluck('name')->sort()->values()->toArray());
         $this->assertEquals('/torrent/abp462/download/91625328/onejav.com_abp462.torrent', $jav->download);
 
         // Verify IPZ725
         $jav = Jav::where('code', 'IPZ725')->where('source', 'onejav')->first();
         $this->assertNotNull($jav);
         $this->assertEquals(1.1, $jav->size);
-        $this->assertEquals(['Arisa Shindo'], $jav->actresses);
+        $this->assertEquals(['Arisa Shindo'], $jav->actors->pluck('name')->sort()->values()->toArray());
 
         // Verify TEK074
         $jav = Jav::where('code', 'TEK074')->where('source', 'onejav')->first();
         $this->assertNotNull($jav);
         $this->assertEquals(1.4, $jav->size);
-        $this->assertEquals(['Miharu Usa'], $jav->actresses);
+        $this->assertEquals(['Miharu Usa'], $jav->actors->pluck('name')->sort()->values()->toArray());
 
         // Verify remaining items exist
         $this->assertDatabaseHas('jav', ['code' => 'ABP459', 'source' => 'onejav']);

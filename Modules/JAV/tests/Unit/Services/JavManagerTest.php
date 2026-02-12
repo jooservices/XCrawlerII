@@ -48,9 +48,9 @@ class JavManagerTest extends TestCase
             'source' => 'manager-test',
         ]);
 
-        // Verify JSON fields
-        $this->assertEquals(['Lingerie', 'Masturbation'], $jav->tags);
-        $this->assertEquals(['Nao Wakana'], $jav->actresses);
+        // Verify relationships
+        $this->assertEquals(['Lingerie', 'Masturbation'], $jav->tags->pluck('name')->sort()->values()->toArray());
+        $this->assertEquals(['Nao Wakana'], $jav->actors->pluck('name')->sort()->values()->toArray());
         $this->assertEquals(1.2, $jav->size);
         $this->assertEquals('2016-10-16', $jav->date->format('Y-m-d'));
     }
@@ -94,8 +94,8 @@ class JavManagerTest extends TestCase
         $this->assertEquals('ABP462 Updated', $jav2->title);
         $this->assertEquals('Updated description', $jav2->description);
         $this->assertEquals(1.5, $jav2->size);
-        $this->assertEquals(['Lingerie', 'Masturbation'], $jav2->tags);
-        $this->assertEquals(['Nao Wakana', 'Another Actress'], $jav2->actresses);
+        $this->assertEquals(['Lingerie', 'Masturbation'], $jav2->tags->pluck('name')->sort()->values()->toArray());
+        $this->assertEquals(['Another Actress', 'Nao Wakana'], $jav2->actors->pluck('name')->sort()->values()->toArray());
 
         $this->assertEquals(1, Jav::where('code', 'ABP462')->where('source', 'manager-test')->count());
     }
@@ -150,8 +150,8 @@ class JavManagerTest extends TestCase
         $this->assertNull($jav->size);
         $this->assertNull($jav->description);
         $this->assertNull($jav->download);
-        $this->assertEquals([], $jav->tags);
-        $this->assertEquals([], $jav->actresses);
+        $this->assertEmpty($jav->tags);
+        $this->assertEmpty($jav->actors);
     }
 
     public function test_store_handles_empty_collections(): void
@@ -173,7 +173,7 @@ class JavManagerTest extends TestCase
         $jav = $this->manager->store($item, 'manager-test');
 
         $this->assertInstanceOf(Jav::class, $jav);
-        $this->assertEquals([], $jav->tags);
-        $this->assertEquals([], $jav->actresses);
+        $this->assertEmpty($jav->tags);
+        $this->assertEmpty($jav->actors);
     }
 }

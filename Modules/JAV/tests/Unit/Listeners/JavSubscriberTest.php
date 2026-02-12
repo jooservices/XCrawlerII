@@ -56,8 +56,8 @@ class JavSubscriberTest extends TestCase
         $this->assertEquals('2016-10-16', $jav->date->format('Y-m-d'));
         $this->assertEquals(1.2, $jav->size);
         $this->assertEquals('Cum Lingerie Na 14 Nao Wakana', $jav->description);
-        $this->assertEquals(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy'], $jav->tags);
-        $this->assertEquals(['Nao Wakana'], $jav->actresses);
+        $this->assertEquals(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy'], $jav->tags->pluck('name')->sort()->values()->toArray());
+        $this->assertEquals(['Nao Wakana'], $jav->actors->pluck('name')->sort()->values()->toArray());
         $this->assertEquals('/torrent/abp462/download/91625328/onejav.com_abp462.torrent', $jav->download);
     }
 
@@ -135,8 +135,8 @@ class JavSubscriberTest extends TestCase
         $this->assertEquals($firstId, $updated->id);
         $this->assertEquals('TEK074 - Updated', $updated->title);
         $this->assertEquals(1.5, $updated->size);
-        $this->assertEquals(['NewTag'], $updated->tags);
-        $this->assertEquals(['Miharu Usa', 'Another Actress'], $updated->actresses);
+        $this->assertEquals(['NewTag'], $updated->tags->pluck('name')->sort()->values()->toArray());
+        $this->assertEquals(['Another Actress', 'Miharu Usa'], $updated->actors->pluck('name')->sort()->values()->toArray());
     }
 
     public function test_dispatch_with_null_fields(): void
@@ -165,8 +165,8 @@ class JavSubscriberTest extends TestCase
         $this->assertNull($jav->size);
         $this->assertNull($jav->description);
         $this->assertNull($jav->download);
-        $this->assertEquals([], $jav->tags);
-        $this->assertEquals([], $jav->actresses);
+        $this->assertEmpty($jav->tags);
+        $this->assertEmpty($jav->actors);
     }
 
     public function test_handle_throws_exception_on_manager_failure(): void
