@@ -39,3 +39,6 @@ Thumbs.db
 # Local
 Homestead.json
 Homestead.yaml
+
+# Runtime logs
+/logs/
