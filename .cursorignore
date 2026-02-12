@@ -1,0 +1,50 @@
+# Check .aiignore for the source of truth
+# This file mirrors .aiignore for Cursor specific ignore rules
+
+# Version Control
+.git/
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Lock files (noise for general coding, useful only for dependency debugging)
+composer.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build Outputs & Assets
+/public/build/
+/public/hot/
+/public/storage/
+*.min.js
+*.min.css
+*.map
+
+# Framework & Storage
+/bootstrap/cache/
+/storage/
+/storage/phpstan
+*.log
+
+# Testing & Quality
+.phpunit.result.cache
+/.phpunit.cache/
+/coverage/
+
+# IDE & Editor
+.idea/
+.vscode/
+.fleet/
+.zed/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+!.env.example
+/auth.json

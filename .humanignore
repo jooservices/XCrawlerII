@@ -1,0 +1,42 @@
+# Human review ignore list
+# Use for manual code reading/review focus.
+
+# Version Control
+.git/
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Lock files
+composer.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build Outputs
+/public/build/
+/public/hot/
+/public/storage/
+*.min.js
+*.min.css
+*.map
+
+# Framework & Storage
+/bootstrap/cache/
+/storage/
+/storage/phpstan
+*.log
+
+# IDE & Editor
+.idea/
+.vscode/
+.fleet/
+.zed/
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+!.env.example
