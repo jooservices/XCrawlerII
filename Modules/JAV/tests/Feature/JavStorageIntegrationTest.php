@@ -1,0 +1,205 @@
+<?php
+
+namespace Modules\JAV\Tests\Feature;
+
+use Illuminate\Support\Facades\Event;
+use Mockery;
+use Modules\JAV\Events\ItemParsed;
+use Modules\JAV\Listeners\JavSubscriber;
+use Modules\JAV\Models\Jav;
+use Modules\JAV\Services\Clients\OneFourOneJavClient;
+use Modules\JAV\Services\Clients\OnejavClient;
+use Modules\JAV\Services\OneFourOneJavService;
+use Modules\JAV\Services\OnejavService;
+use Modules\JAV\Tests\TestCase;
+
+/**
+ * Integration tests: Service (mocked HTTP with fixtures) -> Parse -> Event -> Subscriber -> DB.
+ * No RefreshDatabase - data persists for manual inspection.
+ */
+class JavStorageIntegrationTest extends TestCase
+{
+    private JavSubscriber $subscriber;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Clean up previous integration test data
+        Jav::where('source', 'onejav')->delete();
+        Jav::where('source', '141jav')->delete();
+
+        $this->subscriber = app(JavSubscriber::class);
+
+        // Wire up sync listener so queued subscriber runs immediately
+        Event::listen(ItemParsed::class, function (ItemParsed $event) {
+            $this->subscriber->handle($event);
+        });
+    }
+
+    public function test_onejav_new_stores_items_in_database(): void
+    {
+        $client = Mockery::mock(OnejavClient::class);
+        $client->shouldReceive('get')
+            ->with('/new?page=15670')
+            ->once()
+            ->andReturn($this->getMockResponse('onejav_new_15670.html'));
+
+        $service = new OnejavService($client);
+        $adapter = $service->new(15670);
+        $items = $adapter->items();
+
+        $this->assertCount(6, $items->items);
+
+        // Assert all 6 items stored
+        $storedCount = Jav::where('source', 'onejav')->count();
+        $this->assertEquals(6, $storedCount);
+
+        // Verify data integrity for ABP462
+        $jav = Jav::where('code', 'ABP462')->where('source', 'onejav')->first();
+        $this->assertNotNull($jav);
+        $this->assertEquals('ABP462', $jav->title);
+        $this->assertEquals('/torrent/abp462', $jav->url);
+        $this->assertEquals(1.2, $jav->size);
+        $this->assertEquals('2016-10-16', $jav->date->format('Y-m-d'));
+        $this->assertEquals(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy'], $jav->tags);
+        $this->assertEquals(['Nao Wakana'], $jav->actresses);
+        $this->assertEquals('/torrent/abp462/download/91625328/onejav.com_abp462.torrent', $jav->download);
+
+        // Verify IPZ725
+        $jav = Jav::where('code', 'IPZ725')->where('source', 'onejav')->first();
+        $this->assertNotNull($jav);
+        $this->assertEquals(1.1, $jav->size);
+        $this->assertEquals(['Arisa Shindo'], $jav->actresses);
+
+        // Verify TEK074
+        $jav = Jav::where('code', 'TEK074')->where('source', 'onejav')->first();
+        $this->assertNotNull($jav);
+        $this->assertEquals(1.4, $jav->size);
+        $this->assertEquals(['Miharu Usa'], $jav->actresses);
+
+        // Verify remaining items exist
+        $this->assertDatabaseHas('jav', ['code' => 'ABP459', 'source' => 'onejav']);
+        $this->assertDatabaseHas('jav', ['code' => 'TEK075', 'source' => 'onejav']);
+        $this->assertDatabaseHas('jav', ['code' => 'SGA049', 'source' => 'onejav']);
+    }
+
+    public function test_onejav_popular_stores_items_in_database(): void
+    {
+        $client = Mockery::mock(OnejavClient::class);
+        $client->shouldReceive('get')
+            ->with('/popular/?page=1')
+            ->once()
+            ->andReturn($this->getMockResponse('onejav_popular.html'));
+
+        $service = new OnejavService($client);
+        $adapter = $service->popular();
+        $items = $adapter->items();
+
+        $storedCount = Jav::where('source', 'onejav')->count();
+        $this->assertGreaterThan(0, $storedCount);
+        $this->assertEquals($items->items->count(), $storedCount);
+
+        // Every stored item must have required fields
+        Jav::where('source', 'onejav')->get()->each(function ($jav) {
+            $this->assertNotNull($jav->code);
+            $this->assertNotNull($jav->url);
+            $this->assertNotNull($jav->title);
+        });
+    }
+
+    public function test_141jav_new_stores_items_in_database(): void
+    {
+        $client = Mockery::mock(OneFourOneJavClient::class);
+        $client->shouldReceive('get')
+            ->with('/new?page=1')
+            ->once()
+            ->andReturn($this->getMockResponse('141jav_new.html'));
+
+        $service = new OneFourOneJavService($client);
+        $adapter = $service->new();
+        $items = $adapter->items();
+
+        $storedCount = Jav::where('source', '141jav')->count();
+        $this->assertGreaterThan(0, $storedCount);
+        $this->assertEquals($items->items->count(), $storedCount);
+
+        // Verify source is correct for all records
+        Jav::where('source', '141jav')->get()->each(function ($jav) {
+            $this->assertEquals('141jav', $jav->source);
+            $this->assertNotNull($jav->code);
+        });
+    }
+
+    public function test_141jav_popular_stores_items_in_database(): void
+    {
+        $client = Mockery::mock(OneFourOneJavClient::class);
+        $client->shouldReceive('get')
+            ->with('/popular/?page=1')
+            ->once()
+            ->andReturn($this->getMockResponse('141jav_popular.html'));
+
+        $service = new OneFourOneJavService($client);
+        $adapter = $service->popular();
+        $items = $adapter->items();
+
+        $storedCount = Jav::where('source', '141jav')->count();
+        $this->assertGreaterThan(0, $storedCount);
+        $this->assertEquals($items->items->count(), $storedCount);
+    }
+
+    public function test_duplicate_items_are_updated_not_duplicated(): void
+    {
+        $client = Mockery::mock(OnejavClient::class);
+        $client->shouldReceive('get')
+            ->with('/new?page=15670')
+            ->andReturn($this->getMockResponse('onejav_new_15670.html'));
+
+        $service = new OnejavService($client);
+
+        // First parse
+        $service->new(15670)->items();
+        $firstCount = Jav::where('source', 'onejav')->count();
+        $firstRecord = Jav::where('code', 'ABP462')->where('source', 'onejav')->first();
+        $firstId = $firstRecord->id;
+
+        // Second parse (same fixture)
+        $service->new(15670)->items();
+        $secondCount = Jav::where('source', 'onejav')->count();
+
+        // Count should not change
+        $this->assertEquals($firstCount, $secondCount);
+
+        // ABP462 should still be 1 record with same ID
+        $this->assertEquals(1, Jav::where('code', 'ABP462')->where('source', 'onejav')->count());
+        $secondRecord = Jav::where('code', 'ABP462')->where('source', 'onejav')->first();
+        $this->assertEquals($firstId, $secondRecord->id);
+    }
+
+    public function test_same_code_different_source_creates_separate_records(): void
+    {
+        // Parse from onejav
+        $onejavClient = Mockery::mock(OnejavClient::class);
+        $onejavClient->shouldReceive('get')
+            ->andReturn($this->getMockResponse('onejav_new_15670.html'));
+        $onejavService = new OnejavService($onejavClient);
+        $onejavService->new(15670)->items();
+
+        $onejavCount = Jav::where('source', 'onejav')->count();
+        $this->assertGreaterThan(0, $onejavCount);
+
+        // Parse from 141jav
+        $jav141Client = Mockery::mock(OneFourOneJavClient::class);
+        $jav141Client->shouldReceive('get')
+            ->andReturn($this->getMockResponse('141jav_new.html'));
+        $jav141Service = new OneFourOneJavService($jav141Client);
+        $jav141Service->new()->items();
+
+        $jav141Count = Jav::where('source', '141jav')->count();
+        $this->assertGreaterThan(0, $jav141Count);
+
+        // Total from both sources should be sum
+        $totalCount = Jav::whereIn('source', ['onejav', '141jav'])->count();
+        $this->assertEquals($onejavCount + $jav141Count, $totalCount);
+    }
+}
