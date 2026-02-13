@@ -14,7 +14,9 @@
         "jooservices/dto": "^1.0",
         "jooservices/useragent": "^1.1",
         "laravel/framework": "^12.0",
+        "laravel/scout": "^10.24",
         "laravel/tinker": "^2.10.1",
+        "matchish/laravel-scout-elasticsearch": "^7.12",
         "nwidart/laravel-modules": "^12.0",
         "symfony/dom-crawler": "^8.0"
     },
@@ -57,7 +59,8 @@
         ],
         "test": [
             "@php artisan config:clear --ansi",
-            "@php artisan test"
+            "@php artisan test --testsuite=Unit",
+            "@php artisan test --testsuite=Feature"
         ],
         "lint": [
             "@php vendor/bin/pint --test",
