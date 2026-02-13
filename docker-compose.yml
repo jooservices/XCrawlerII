@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+    elasticsearch:
+        image: elasticsearch:8.12.0
+        environment:
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+            - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        ports:
+            - "9200:9200"
+        volumes:
+            - elasticsearch-data:/usr/share/elasticsearch/data
+        networks:
+            - sail
+
+    kibana:
+        image: kibana:8.12.0
+        environment:
+            - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+        ports:
+            - "5601:5601"
+        depends_on:
+            - elasticsearch
+        networks:
+            - sail
+
+networks:
+    sail:
+        driver: bridge
+
+volumes:
+    elasticsearch-data:
+        driver: local
