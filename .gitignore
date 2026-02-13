@@ -42,3 +42,4 @@ Homestead.yaml
 
 # Runtime logs
 /logs/
+/public/logs/
