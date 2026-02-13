@@ -3,6 +3,8 @@
 namespace Modules\JAV\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\JAV\Events\ItemParsed;
+use Modules\JAV\Listeners\JavSubscriber;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -11,7 +13,11 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array<string, array<int, string>>
      */
-    protected $listen = [];
+    protected $listen = [
+        ItemParsed::class => [
+            JavSubscriber::class,
+        ],
+    ];
 
     /**
      * Indicates if events should be discovered.
@@ -19,9 +25,4 @@ class EventServiceProvider extends ServiceProvider
      * @var bool
      */
     protected static $shouldDiscoverEvents = true;
-
-    /**
-     * Configure the proper event listeners for email verification.
-     */
-    protected function configureEmailVerification(): void {}
 }

@@ -3,6 +3,7 @@
 namespace Modules\JAV\Services;
 
 use Modules\JAV\Dtos\Item;
+use Modules\Core\Facades\Config;
 use Modules\JAV\Services\Clients\OneFourOneJavClient;
 use Modules\JAV\Services\OneFourOneJav\ItemAdapter;
 use Modules\JAV\Services\OneFourOneJav\ItemsAdapter;
@@ -15,14 +16,44 @@ class OneFourOneJavService
     ) {
     }
 
-    public function new(int $page = 1): ItemsAdapter
+    public function new(?int $page = null): ItemsAdapter
     {
-        return app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/new?page=' . $page)]);
+        $isAuto = $page === null;
+        $page = $page ?? Config::get('onefourone', 'new_page', 1);
+
+        $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/new?page=' . $page)]);
+
+        \Modules\JAV\Events\ItemsFetched::dispatch(
+            $items->items(),
+            '141jav',
+            $items->currentPage()
+        );
+
+        if ($isAuto && $items->hasNextPage()) {
+            Config::set('onefourone', 'new_page', $items->nextPage());
+        }
+
+        return $items;
     }
 
-    public function popular(int $page = 1): ItemsAdapter
+    public function popular(?int $page = null): ItemsAdapter
     {
-        return app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/popular/?page=' . $page)]);
+        $isAuto = $page === null;
+        $page = $page ?? Config::get('onefourone', 'popular_page', 1);
+
+        $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/popular/?page=' . $page)]);
+
+        \Modules\JAV\Events\ItemsFetched::dispatch(
+            $items->items(),
+            '141jav',
+            $items->currentPage()
+        );
+
+        if ($isAuto && $items->hasNextPage()) {
+            Config::set('onefourone', 'popular_page', $items->nextPage());
+        }
+
+        return $items;
     }
 
     public function tags()

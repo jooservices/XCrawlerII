@@ -3,6 +3,7 @@
 namespace Modules\JAV\Tests\Unit\Listeners;
 
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\JAV\Dtos\Item;
 use Modules\JAV\Events\ItemParsed;
 use Modules\JAV\Listeners\JavSubscriber;
@@ -12,12 +13,7 @@ use Modules\JAV\Tests\TestCase;
 
 class JavSubscriberTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Jav::where('source', 'unit-test')->delete();
-    }
+    use RefreshDatabase;
 
     public function test_listener_implements_should_queue(): void
     {

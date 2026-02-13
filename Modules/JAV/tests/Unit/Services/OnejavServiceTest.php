@@ -5,6 +5,7 @@ namespace Modules\JAV\Tests\Unit\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use Modules\Core\Facades\Config;
 use JOOservices\Client\Response\Response;
 use JOOservices\Client\Response\ResponseWrapper;
 use Mockery;
@@ -18,17 +19,25 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class OnejavServiceTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        \Modules\JAV\Models\Jav::disableSearchSyncing();
+        \Modules\JAV\Models\Tag::disableSearchSyncing();
+        \Modules\JAV\Models\Actor::disableSearchSyncing();
+    }
+
     public function test_new(): void
     {
-        Event::fake([ItemParsed::class]);
+        Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
 
         $responseWrapper = $this->getMockResponse('onejav_new_15670.html');
 
         $client = Mockery::mock(OnejavClient::class);
-        $client->shouldReceive('get')->with('/new?page=15670')->once()->andReturn($responseWrapper);
+        $client->shouldReceive('get')->with('/new?page=16570')->once()->andReturn($responseWrapper);
 
         $service = new OnejavService($client);
-        $adapter = $service->new(15670);
+        $adapter = $service->new(16570);
 
         $this->assertInstanceOf(ItemsAdapter::class, $adapter);
         $items = $adapter->items();
@@ -138,6 +147,12 @@ class OnejavServiceTest extends TestCase
 
             return false;
         });
+
+        Event::assertDispatched(\Modules\JAV\Events\ItemsFetched::class, function (\Modules\JAV\Events\ItemsFetched $event) {
+            return $event->source === 'onejav'
+                && $event->currentPage === 16570
+                && $event->items->items->count() === 6;
+        });
     }
 
     public function test_new_last_page(): void
@@ -186,9 +201,22 @@ class OnejavServiceTest extends TestCase
 
     public function test_popular(): void
     {
-        Event::fake([ItemParsed::class]);
+        Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
 
         $responseWrapper = $this->getMockResponse('onejav_popular.html');
+
+        // Mock Config because popular() is called without args (auto mode)
+        Config::shouldReceive('get')
+            ->once()
+            ->with('onejav', 'popular_page', 1)
+            ->andReturn(1); // Default to 1
+
+        // Mock Config set because next page will be extracted
+        // In onejav_popular.html, let's assume valid next page.
+        // It's page 1, next is 2.
+        Config::shouldReceive('set')
+            ->once()
+            ->with('onejav', 'popular_page', 2);
 
         $client = Mockery::mock(OnejavClient::class);
         $client->shouldReceive('get')->with('/popular/?page=1')->once()->andReturn($responseWrapper);
@@ -215,6 +243,12 @@ class OnejavServiceTest extends TestCase
         // Assert all events have correct source
         Event::assertDispatched(ItemParsed::class, function (ItemParsed $event) {
             return $event->source === 'onejav';
+        });
+
+        Event::assertDispatched(\Modules\JAV\Events\ItemsFetched::class, function (\Modules\JAV\Events\ItemsFetched $event) {
+            return $event->source === 'onejav'
+                && $event->currentPage === 1
+                && $event->items->items->count() > 0;
         });
     }
 
@@ -385,6 +419,63 @@ class OnejavServiceTest extends TestCase
                 && $event->item->title === $expected['title']
                 && $event->item->url === $expected['url']
                 && $event->item->image === $item->image;
+        });
+    }
+
+    public function test_new_with_auto_mode()
+    {
+        Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
+        Config::shouldReceive('get')
+            ->once()
+            ->with('onejav', 'new_page', 1)
+            ->andReturn(16569);
+
+        $responseWrapper = $this->getMockResponse('onejav_new_16569.html');
+
+        $client = Mockery::mock(OnejavClient::class);
+        $client->shouldReceive('get')
+            ->once()
+            ->with('/new?page=16569')
+            ->andReturn($responseWrapper);
+
+        Config::shouldReceive('set')
+            ->once()
+            ->with('onejav', 'new_page', 16570);
+
+        $service = new OnejavService($client);
+        $items = $service->new();
+
+        $this->assertInstanceOf(ItemsAdapter::class, $items);
+        $this->assertEquals(16570, $items->nextPage());
+
+        Event::assertDispatched(\Modules\JAV\Events\ItemsFetched::class, function (\Modules\JAV\Events\ItemsFetched $event) {
+            return $event->source === 'onejav'
+                && $event->currentPage === 16569;
+        });
+    }
+
+    public function test_new_with_manual_page()
+    {
+        Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
+        Config::shouldReceive('get')->never();
+        Config::shouldReceive('set')->never();
+
+        $responseWrapper = $this->getMockResponse('onejav_new_16569.html');
+
+        $client = Mockery::mock(OnejavClient::class);
+        $client->shouldReceive('get')
+            ->once()
+            ->with('/new?page=16569') // Using 16569 for manual test too
+            ->andReturn($responseWrapper);
+
+        $service = new OnejavService($client);
+        $items = $service->new(16569);
+
+        $this->assertInstanceOf(ItemsAdapter::class, $items);
+
+        Event::assertDispatched(\Modules\JAV\Events\ItemsFetched::class, function (\Modules\JAV\Events\ItemsFetched $event) {
+            return $event->source === 'onejav'
+                && $event->currentPage === 16569;
         });
     }
 }

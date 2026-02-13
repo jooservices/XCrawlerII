@@ -11,6 +11,7 @@ use Symfony\Component\DomCrawler\Crawler;
 class ItemsAdapter implements IItems
 {
     private Crawler $dom;
+    private Items $items;
 
     public function __construct(private readonly ?ResponseWrapper $response)
     {
@@ -38,11 +39,15 @@ class ItemsAdapter implements IItems
 
     public function items(): Items
     {
+        if (isset($this->items)) {
+            return $this->items;
+        }
+
         $items = $this->dom->filter('.card.mb-3 .columns')->each(function (Crawler $node) {
             return (new ItemAdapter($node))->getItem();
         });
 
-        return new Items(
+        return $this->items = new Items(
             items: collect($items),
             hasNextPage: $this->hasNextPage(),
             nextPage: $this->nextPage()

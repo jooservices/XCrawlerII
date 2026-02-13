@@ -2,10 +2,13 @@
 
 namespace Modules\JAV\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
+    use RefreshDatabase;
+
     protected function loadFixture(string $path): string
     {
         return file_get_contents(__DIR__ . '/Fixtures/' . $path);

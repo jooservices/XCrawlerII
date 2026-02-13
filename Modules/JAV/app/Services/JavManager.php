@@ -41,15 +41,18 @@ class JavManager
 
             // Sync actors
             $actorIds = $item->actresses->map(
-                fn (string $name) => Actor::firstOrCreate(['name' => $name])->id
+                fn(string $name) => Actor::firstOrCreate(['name' => $name])->id
             )->toArray();
             $jav->actors()->sync($actorIds);
 
             // Sync tags
             $tagIds = $item->tags->map(
-                fn (string $name) => Tag::firstOrCreate(['name' => $name])->id
+                fn(string $name) => Tag::firstOrCreate(['name' => $name])->id
             )->toArray();
             $jav->tags()->sync($tagIds);
+
+            // Force re-index to include actors and tags
+            $jav->searchable();
 
             Log::info('JAV item stored successfully', [
                 'code' => $item->code,
