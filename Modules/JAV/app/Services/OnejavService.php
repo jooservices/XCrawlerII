@@ -2,8 +2,8 @@
 
 namespace Modules\JAV\Services;
 
-use Modules\JAV\Dtos\Item;
 use Modules\Core\Facades\Config;
+use Modules\JAV\Dtos\Item;
 use Modules\JAV\Services\Clients\OnejavClient;
 use Modules\JAV\Services\Onejav\ItemAdapter;
 use Modules\JAV\Services\Onejav\ItemsAdapter;
@@ -13,15 +13,14 @@ class OnejavService
 {
     public function __construct(
         protected OnejavClient $client
-    ) {
-    }
+    ) {}
 
     public function new(?int $page = null): ItemsAdapter
     {
         $isAuto = $page === null;
         $page = $page ?? Config::get('onejav', 'new_page', 1);
 
-        $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/new?page=' . $page)]);
+        $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/new?page='.$page)]);
 
         \Modules\JAV\Events\ItemsFetched::dispatch(
             $items->items(),
@@ -41,7 +40,7 @@ class OnejavService
         $isAuto = $page === null;
         $page = $page ?? Config::get('onejav', 'popular_page', 1);
 
-        $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/popular/?page=' . $page)]);
+        $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/popular/?page='.$page)]);
 
         \Modules\JAV\Events\ItemsFetched::dispatch(
             $items->items(),

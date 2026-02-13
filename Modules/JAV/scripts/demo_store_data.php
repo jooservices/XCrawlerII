@@ -5,9 +5,9 @@
  * Run this with: php Modules/JAV/scripts/demo_store_data.php
  */
 
-require __DIR__ . '/../../../vendor/autoload.php';
+require __DIR__.'/../../../vendor/autoload.php';
 
-$app = require_once __DIR__ . '/../../../bootstrap/app.php';
+$app = require_once __DIR__.'/../../../bootstrap/app.php';
 $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
 use Carbon\Carbon;
@@ -20,7 +20,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "  JAV Storage Demonstration - REAL Database\n";
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
 
-$manager = new JavManager();
+$manager = new JavManager;
 
 // Create a demo item
 $item = new Item(
@@ -46,8 +46,8 @@ echo "  Code: {$jav->code}\n";
 echo "  Title: {$jav->title}\n";
 echo "  Source: {$jav->source}\n";
 echo "  Size: {$jav->size} GB\n";
-echo "  Tags: " . json_encode($jav->tags) . "\n";
-echo "  Actresses: " . json_encode($jav->actresses) . "\n";
+echo '  Tags: '.json_encode($jav->tags)."\n";
+echo '  Actresses: '.json_encode($jav->actresses)."\n";
 echo "  Created: {$jav->created_at}\n";
 echo "  Updated: {$jav->updated_at}\n\n";
 

@@ -17,8 +17,7 @@ class JavSubscriber implements ShouldQueue
      */
     public function __construct(
         protected JavManager $javManager
-    ) {
-    }
+    ) {}
 
     /**
      * Handle the event.

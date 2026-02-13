@@ -34,7 +34,6 @@ class OnejavCommandTest extends TestCase
     public function test_command_stores_data_via_event()
     {
 
-
         // 0. Mock Config to ensure page is 1
         \Modules\Core\Facades\Config::shouldReceive('get')
             ->with('onejav', 'new_page', 1)
@@ -101,7 +100,7 @@ class OnejavCommandTest extends TestCase
         // Debug assertions
         if (\Illuminate\Support\Facades\Event::hasDispatched(\Modules\JAV\Events\OnejavJobFailed::class)) {
             $failedEvents = \Illuminate\Support\Facades\Event::dispatched(\Modules\JAV\Events\OnejavJobFailed::class);
-            dump("OnejavJobFailed Dispatched:");
+            dump('OnejavJobFailed Dispatched:');
             foreach ($failedEvents as $event) {
                 dump($event[0]->exception->getMessage());
             }

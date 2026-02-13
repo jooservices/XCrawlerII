@@ -9,9 +9,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ItemAdapter
 {
-    public function __construct(protected Crawler $node)
-    {
-    }
+    public function __construct(protected Crawler $node) {}
 
     public function getItem(): Item
     {
@@ -125,7 +123,7 @@ class ItemAdapter
 
     private function convertSize(?string $size): ?float
     {
-        if (!$size) {
+        if (! $size) {
             return null;
         }
 

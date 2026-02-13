@@ -2,16 +2,13 @@
 
 namespace Modules\JAV\Services\Clients;
 
-use JOOservices\Client\Client\ClientBuilder;
 use JOOservices\Client\Contracts\HttpClientInterface as Client;
-use Illuminate\Support\Facades\Cache;
 
 class OnejavClient
 {
     public function __construct(
         private Client $client
-    ) {
-    }
+    ) {}
 
     public function getFactory(): Client
     {

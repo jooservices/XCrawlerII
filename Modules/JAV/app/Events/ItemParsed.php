@@ -14,8 +14,7 @@ class ItemParsed implements IItemParsed
     public function __construct(
         public readonly Item $item,
         public readonly string $source
-    ) {
-    }
+    ) {}
 
     public function getItem(): Item
     {

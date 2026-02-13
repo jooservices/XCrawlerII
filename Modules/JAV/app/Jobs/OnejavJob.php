@@ -13,14 +13,13 @@ use Modules\JAV\Events\OnejavJobFailed;
 use Modules\JAV\Services\OnejavService;
 use Throwable;
 
-class OnejavJob implements ShouldQueue, ShouldBeUnique
+class OnejavJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
         public string $type
-    ) {
-    }
+    ) {}
 
     /**
      * Get the unique ID for the job.

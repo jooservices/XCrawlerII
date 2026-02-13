@@ -2,13 +2,11 @@
 
 namespace Modules\JAV\Tests\Unit\Services;
 
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
-use Modules\Core\Facades\Config;
-use JOOservices\Client\Response\Response;
 use JOOservices\Client\Response\ResponseWrapper;
 use Mockery;
+use Modules\Core\Facades\Config;
 use Modules\JAV\Dtos\Item;
 use Modules\JAV\Events\ItemParsed;
 use Modules\JAV\Services\Clients\OnejavClient;
@@ -368,7 +366,7 @@ class OnejavServiceTest extends TestCase
     }
 
     #[DataProvider('itemDataProvider')]
-    public function testItem(string $itemId, array $expected): void
+    public function test_item(string $itemId, array $expected): void
     {
         Event::fake([ItemParsed::class]);
 

@@ -1,0 +1,147 @@
+PHP Deprecated:  Non-canonical cast (integer) is deprecated, use the (int) cast instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/RuleSetFactory.php on line 388
+
+Deprecated: Non-canonical cast (integer) is deprecated, use the (int) cast instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/RuleSetFactory.php on line 388
+PHP Deprecated:  Non-canonical cast (integer) is deprecated, use the (int) cast instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/RuleSetFactory.php on line 437
+
+Deprecated: Non-canonical cast (integer) is deprecated, use the (int) cast instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/RuleSetFactory.php on line 437
+PHP Deprecated:  PHPMD\Rule\CleanCode\BooleanArgumentFlag::isBooleanValue(): Implicitly marking parameter $value as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/Rule/CleanCode/BooleanArgumentFlag.php on line 77
+
+Deprecated: PHPMD\Rule\CleanCode\BooleanArgumentFlag::isBooleanValue(): Implicitly marking parameter $value as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/Rule/CleanCode/BooleanArgumentFlag.php on line 77
+PHP Deprecated:  PHPMD\Rule\UnusedPrivateField::isValidPropertyNode(): Implicitly marking parameter $node as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/Rule/UnusedPrivateField.php on line 150
+
+Deprecated: PHPMD\Rule\UnusedPrivateField::isValidPropertyNode(): Implicitly marking parameter $node as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/Rule/UnusedPrivateField.php on line 150
+PHP Deprecated:  PHPMD\Report::__construct(): Implicitly marking parameter $baselineValidator as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/Report.php on line 61
+
+Deprecated: PHPMD\Report::__construct(): Implicitly marking parameter $baselineValidator as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/phpmd/phpmd/src/main/php/PHPMD/Report.php on line 61
+PHP Deprecated:  PDepend\Source\Language\PHP\PHPBuilder::buildEnum(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/PHPBuilder.php on line 2592
+
+Deprecated: PDepend\Source\Language\PHP\PHPBuilder::buildEnum(): Implicitly marking parameter $type as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/PHPBuilder.php on line 2592
+PHP Deprecated:  PDepend\Source\Language\PHP\PHPBuilder::buildEnumCase(): Implicitly marking parameter $value as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/PHPBuilder.php on line 2612
+
+Deprecated: PDepend\Source\Language\PHP\PHPBuilder::buildEnumCase(): Implicitly marking parameter $value as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/PHPBuilder.php on line 2612
+PHP Deprecated:  Non-canonical cast (double) is deprecated, use the (float) cast instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/AbstractPHPParser.php on line 7541
+
+Deprecated: Non-canonical cast (double) is deprecated, use the (float) cast instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/AbstractPHPParser.php on line 7541
+PHP Deprecated:  PDepend\Source\Language\PHP\AbstractPHPParser::setNodePositionsAndReturn(): Implicitly marking parameter $tokens as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/AbstractPHPParser.php on line 2388
+
+Deprecated: PDepend\Source\Language\PHP\AbstractPHPParser::setNodePositionsAndReturn(): Implicitly marking parameter $tokens as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/AbstractPHPParser.php on line 2388
+PHP Deprecated:  PDepend\Source\Language\PHP\AbstractPHPParser::throwUnexpectedTokenException(): Implicitly marking parameter $token as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/AbstractPHPParser.php on line 8073
+
+Deprecated: PDepend\Source\Language\PHP\AbstractPHPParser::throwUnexpectedTokenException(): Implicitly marking parameter $token as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/Language/PHP/AbstractPHPParser.php on line 8073
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 99
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 99
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 98
+PHP Deprecated:  Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+
+Deprecated: Using null as an array offset is deprecated, use an empty string instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Util/Cache/CacheFactory.php on line 101
+PHP Deprecated:  PDepend\Source\AST\ASTArtifactList\CollectionArtifactFilter::setFilter(): Implicitly marking parameter $filter as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/AST/ASTArtifactList/CollectionArtifactFilter.php on line 103
+
+Deprecated: PDepend\Source\AST\ASTArtifactList\CollectionArtifactFilter::setFilter(): Implicitly marking parameter $filter as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Source/AST/ASTArtifactList/CollectionArtifactFilter.php on line 103
+PHP Deprecated:  PDepend\Metrics\Analyzer\CouplingAnalyzer::calculateCoupling(): Implicitly marking parameter $coupledType as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Metrics/Analyzer/CouplingAnalyzer.php on line 380
+
+Deprecated: PDepend\Metrics\Analyzer\CouplingAnalyzer::calculateCoupling(): Implicitly marking parameter $coupledType as nullable is deprecated, the explicit nullable type must be used instead in /Users/vietvu/Sites/JOOservices/XCrawlerII/vendor/pdepend/pdepend/src/main/php/PDepend/Metrics/Analyzer/CouplingAnalyzer.php on line 380

@@ -25,7 +25,7 @@ class JavManagerTest extends TestCase
     {
         parent::setUp();
 
-        $this->manager = new JavManager();
+        $this->manager = new JavManager;
     }
 
     public function test_manager_stores_real_data(): void

@@ -23,8 +23,9 @@ class OneFourOneJavCommand extends Command
     {
         $type = $this->argument('type');
 
-        if (!in_array($type, ['new', 'popular'])) {
+        if (! in_array($type, ['new', 'popular'])) {
             $this->error('Invalid type. Supported types: new, popular');
+
             return;
         }
 

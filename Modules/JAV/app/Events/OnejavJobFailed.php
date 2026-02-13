@@ -13,6 +13,5 @@ class OnejavJobFailed
     public function __construct(
         public string $type,
         public Throwable $exception
-    ) {
-    }
+    ) {}
 }

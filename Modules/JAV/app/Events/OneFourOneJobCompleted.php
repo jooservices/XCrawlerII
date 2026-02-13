@@ -12,6 +12,5 @@ class OneFourOneJobCompleted
     public function __construct(
         public string $type,
         public int $itemsCount
-    ) {
-    }
+    ) {}
 }

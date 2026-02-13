@@ -14,6 +14,5 @@ class ItemsFetched
         public Items $items,
         public string $source,
         public int $currentPage
-    ) {
-    }
+    ) {}
 }

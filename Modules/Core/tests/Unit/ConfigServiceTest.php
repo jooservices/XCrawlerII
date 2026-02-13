@@ -13,7 +13,7 @@ class ConfigServiceTest extends TestCase
 
     public function test_can_set_and_get_config_value()
     {
-        $service = new ConfigService();
+        $service = new ConfigService;
 
         $service->set('app', 'name', 'XCrawlerII');
 
@@ -22,14 +22,14 @@ class ConfigServiceTest extends TestCase
 
     public function test_returns_default_value_if_config_not_found()
     {
-        $service = new ConfigService();
+        $service = new ConfigService;
 
         $this->assertEquals('default', $service->get('app', 'non_existent', 'default'));
     }
 
     public function test_can_update_existing_config_value()
     {
-        $service = new ConfigService();
+        $service = new ConfigService;
 
         $service->set('app', 'debug', 'true');
         $this->assertEquals('true', $service->get('app', 'debug'));
@@ -40,7 +40,7 @@ class ConfigServiceTest extends TestCase
 
     public function test_can_set_description()
     {
-        $service = new ConfigService();
+        $service = new ConfigService;
 
         $service->set('app', 'env', 'production', 'Application Environment');
 
@@ -51,7 +51,7 @@ class ConfigServiceTest extends TestCase
 
     public function test_update_value_preserves_description_if_not_provided()
     {
-        $service = new ConfigService();
+        $service = new ConfigService;
 
         $service->set('app', 'env', 'production', 'Initial Description');
         $service->set('app', 'env', 'staging');
@@ -64,7 +64,7 @@ class ConfigServiceTest extends TestCase
 
     public function test_can_update_description()
     {
-        $service = new ConfigService();
+        $service = new ConfigService;
 
         $service->set('app', 'env', 'production', 'Initial Description');
         $service->set('app', 'env', 'production', 'Updated Description');

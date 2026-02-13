@@ -12,6 +12,5 @@ class OnejavJobCompleted
     public function __construct(
         public string $type,
         public int $itemsCount
-    ) {
-    }
+    ) {}
 }

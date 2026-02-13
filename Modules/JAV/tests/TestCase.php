@@ -11,7 +11,7 @@ class TestCase extends BaseTestCase
 
     protected function loadFixture(string $path): string
     {
-        return file_get_contents(__DIR__ . '/Fixtures/' . $path);
+        return file_get_contents(__DIR__.'/Fixtures/'.$path);
     }
 
     protected function getMockResponse(string $path): \JOOservices\Client\Response\ResponseWrapper

@@ -5,18 +5,19 @@ namespace Modules\JAV\Services\OneFourOneJav;
 use JOOservices\Client\Response\ResponseWrapper;
 use Modules\JAV\Contracts\IItems;
 use Modules\JAV\Dtos\Items;
-use Modules\JAV\Services\OneFourOneJav\ItemAdapter;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ItemsAdapter implements IItems
 {
     private Crawler $dom;
+
     private Items $items;
 
     public function __construct(private readonly ?ResponseWrapper $response)
     {
         $this->dom = new Crawler($this->response->toPsrResponse()->getBody()->getContents());
     }
+
     public function hasNextPage(): bool
     {
         $lastPageNode = $this->dom->filter('.pagination-list li')->last();
@@ -53,6 +54,4 @@ class ItemsAdapter implements IItems
             nextPage: $this->nextPage()
         );
     }
-
-
 }
