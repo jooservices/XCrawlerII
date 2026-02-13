@@ -12,7 +12,16 @@ class Tag extends Model
 
     protected $table = 'tags';
 
+    public function searchable()
+    {
+        \Modules\JAV\Events\ContentSyncing::dispatch($this);
+        parent::searchable();
+        \Modules\JAV\Events\ContentSynced::dispatch($this);
+    }
+
     protected $fillable = ['name'];
+
+    protected $touches = ['javs'];
 
     public function javs(): BelongsToMany
     {
@@ -31,5 +40,9 @@ class Tag extends Model
     public function searchableAs(): string
     {
         return 'tags';
+    }
+    public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Favorite::class, 'favoritable');
     }
 }

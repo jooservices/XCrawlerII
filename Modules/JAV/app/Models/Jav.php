@@ -4,6 +4,7 @@ namespace Modules\JAV\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
 class Jav extends Model
@@ -12,7 +13,37 @@ class Jav extends Model
 
     protected $table = 'jav';
 
+    public function searchable()
+    {
+        \Modules\JAV\Events\ContentSyncing::dispatch($this);
+        parent::searchable();
+        \Modules\JAV\Events\ContentSynced::dispatch($this);
+    }
+
+    /**
+     * Boot the model and auto-generate UUID for new records.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = (string) Str::uuid();
+            }
+        });
+    }
+
+    /**
+     * Get the route key name for Laravel route model binding.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
     protected $fillable = [
+        'uuid',
         'item_id',
         'code',
         'title',
@@ -23,11 +54,16 @@ class Jav extends Model
         'description',
         'download',
         'source',
+        'views',
+        'downloads',
     ];
 
     protected $casts = [
+        'uuid' => 'string',
         'date' => 'datetime',
         'size' => 'float',
+        'views' => 'integer',
+        'downloads' => 'integer',
     ];
 
     public function actors(): BelongsToMany
@@ -44,6 +80,7 @@ class Jav extends Model
     {
         return [
             'id' => (string) $this->id,
+            'uuid' => $this->uuid,
             'code' => $this->code,
             'title' => $this->title,
             'url' => $this->url,
@@ -53,6 +90,8 @@ class Jav extends Model
             'description' => $this->description,
             'download' => $this->download,
             'source' => $this->source,
+            'views' => (int) $this->views,
+            'downloads' => (int) $this->downloads,
             'actors' => $this->actors->pluck('name')->values()->toArray(),
             'tags' => $this->tags->pluck('name')->values()->toArray(),
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
@@ -62,5 +101,38 @@ class Jav extends Model
     public function searchableAs(): string
     {
         return 'jav';
+    }
+
+    /**
+     * Get the formatted code with hyphen between letters and numbers.
+     * Example: MUDR360 -> MUDR-360
+     */
+    public function getFormattedCodeAttribute(): string
+    {
+        if (empty($this->code)) {
+            return '';
+        }
+
+        // Insert hyphen between alphabetic and numeric characters
+        return preg_replace('/([A-Za-z]+)(\d+)/', '$1-$2', $this->code);
+    }
+
+    /**
+     * Get the cover image URL.
+     * Returns placeholder if show_cover is disabled or image is empty.
+     */
+    public function getCoverAttribute(): string
+    {
+        $showCover = config('jav.show_cover', false);
+
+        if (!$showCover || empty($this->image)) {
+            return 'https://placehold.co/300x400?text=Cover+Hidden';
+        }
+
+        return $this->image;
+    }
+    public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Favorite::class, 'favoritable');
     }
 }
