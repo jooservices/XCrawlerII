@@ -46,6 +46,15 @@ class JAVServiceProvider extends ServiceProvider
                     ->build()
             );
         });
+
+        $this->app->bind(\Modules\JAV\Services\Clients\FfjavClient::class, function () {
+            return new \Modules\JAV\Services\Clients\FfjavClient(
+                \JOOservices\Client\Client\ClientBuilder::create()
+                    ->withBaseUri('https://ffjav.com')
+                    ->withDefaultLogging('ffjav-client')
+                    ->build()
+            );
+        });
     }
 
     /**
@@ -65,6 +74,7 @@ class JAVServiceProvider extends ServiceProvider
         $this->commands([
             \Modules\JAV\Console\OnejavCommand::class,
             \Modules\JAV\Console\OneFourOneJavCommand::class,
+            \Modules\JAV\Console\FfjavCommand::class,
             \Modules\JAV\Console\SyncElasticsearchCommand::class,
         ]);
     }
@@ -80,6 +90,8 @@ class JAVServiceProvider extends ServiceProvider
             $schedule->command('jav:onejav popular')->everyMinute()->runInBackground();
             $schedule->command('jav:141 new')->everyMinute()->runInBackground();
             $schedule->command('jav:141 popular')->everyMinute()->runInBackground();
+            $schedule->command('jav:ffjav new')->everyMinute()->runInBackground();
+            $schedule->command('jav:ffjav popular')->everyMinute()->runInBackground();
         });
     }
 

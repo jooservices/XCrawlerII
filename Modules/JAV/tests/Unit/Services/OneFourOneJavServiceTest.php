@@ -126,7 +126,7 @@ class OneFourOneJavServiceTest extends TestCase
                 'itemId' => 'ALOG026',
                 'expected' => [
                     'id' => 'ALOG026',
-                    'code' => 'ALOG026',
+                    'code' => 'ALOG-026',
                     'title' => 'ALOG026',
                     'url' => '/torrent/ALOG026',
                 ],
@@ -135,7 +135,7 @@ class OneFourOneJavServiceTest extends TestCase
                 'itemId' => 'TENN040',
                 'expected' => [
                     'id' => 'TENN040',
-                    'code' => 'TENN040',
+                    'code' => 'TENN-040',
                     'title' => 'TENN040',
                     'url' => '/torrent/TENN040',
                 ],
@@ -144,7 +144,7 @@ class OneFourOneJavServiceTest extends TestCase
                 'itemId' => 'TOTK016',
                 'expected' => [
                     'id' => 'TOTK016',
-                    'code' => 'TOTK016',
+                    'code' => 'TOTK-016',
                     'title' => 'TOTK016',
                     'url' => '/torrent/TOTK016',
                 ],
@@ -153,7 +153,7 @@ class OneFourOneJavServiceTest extends TestCase
                 'itemId' => 'KTKC052',
                 'expected' => [
                     'id' => 'KTKC052',
-                    'code' => 'KTKC052',
+                    'code' => 'KTKC-052',
                     'title' => 'KTKC052',
                     'url' => '/torrent/KTKC052',
                 ],
@@ -162,7 +162,7 @@ class OneFourOneJavServiceTest extends TestCase
                 'itemId' => 'FONE039',
                 'expected' => [
                     'id' => 'FONE039',
-                    'code' => 'FONE039',
+                    'code' => 'FONE-039',
                     'title' => 'FONE039',
                     'url' => '/torrent/FONE039',
                 ],
@@ -171,7 +171,7 @@ class OneFourOneJavServiceTest extends TestCase
                 'itemId' => 'FTAV016',
                 'expected' => [
                     'id' => 'FTAV016',
-                    'code' => 'FTAV016',
+                    'code' => 'FTAV-016',
                     'title' => 'FTAV016',
                     'url' => '/torrent/FTAV016',
                 ],
@@ -180,7 +180,7 @@ class OneFourOneJavServiceTest extends TestCase
                 'itemId' => 'START491',
                 'expected' => [
                     'id' => 'START491',
-                    'code' => 'START491',
+                    'code' => 'START-491',
                     'title' => 'START491',
                     'url' => '/torrent/START491',
                 ],
@@ -189,7 +189,7 @@ class OneFourOneJavServiceTest extends TestCase
                 'itemId' => 'SNOS100',
                 'expected' => [
                     'id' => 'SNOS100',
-                    'code' => 'SNOS100',
+                    'code' => 'SNOS-100',
                     'title' => 'SNOS100',
                     'url' => '/torrent/SNOS100',
                 ],

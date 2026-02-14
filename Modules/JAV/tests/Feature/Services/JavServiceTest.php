@@ -37,7 +37,7 @@ class JavServiceTest extends TestCase
         $this->assertEquals(6, $storedCount);
 
         // Verify data integrity for ABP462
-        $jav = Jav::where('code', 'ABP462')->where('source', 'onejav')->first();
+        $jav = Jav::where('code', 'ABP-462')->where('source', 'onejav')->first();
         $this->assertNotNull($jav);
         $this->assertEquals('ABP462', $jav->title);
         $this->assertEquals('/torrent/abp462', $jav->url);
@@ -48,21 +48,21 @@ class JavServiceTest extends TestCase
         $this->assertEquals('/torrent/abp462/download/91625328/onejav.com_abp462.torrent', $jav->download);
 
         // Verify IPZ725
-        $jav = Jav::where('code', 'IPZ725')->where('source', 'onejav')->first();
+        $jav = Jav::where('code', 'IPZ-725')->where('source', 'onejav')->first();
         $this->assertNotNull($jav);
         $this->assertEquals(1.1, $jav->size);
         $this->assertEquals(['Arisa Shindo'], $jav->actors->pluck('name')->sort()->values()->toArray());
 
         // Verify TEK074
-        $jav = Jav::where('code', 'TEK074')->where('source', 'onejav')->first();
+        $jav = Jav::where('code', 'TEK-074')->where('source', 'onejav')->first();
         $this->assertNotNull($jav);
         $this->assertEquals(1.4, $jav->size);
         $this->assertEquals(['Miharu Usa'], $jav->actors->pluck('name')->sort()->values()->toArray());
 
         // Verify remaining items exist
-        $this->assertDatabaseHas('jav', ['code' => 'ABP459', 'source' => 'onejav']);
-        $this->assertDatabaseHas('jav', ['code' => 'TEK075', 'source' => 'onejav']);
-        $this->assertDatabaseHas('jav', ['code' => 'SGA049', 'source' => 'onejav']);
+        $this->assertDatabaseHas('jav', ['code' => 'ABP-459', 'source' => 'onejav']);
+        $this->assertDatabaseHas('jav', ['code' => 'TEK-075', 'source' => 'onejav']);
+        $this->assertDatabaseHas('jav', ['code' => 'SGA-049', 'source' => 'onejav']);
     }
 
     public function test_onejav_popular_stores_items_in_database(): void
@@ -141,7 +141,7 @@ class JavServiceTest extends TestCase
         // First parse
         $service->new(15670)->items();
         $firstCount = Jav::where('source', 'onejav')->count();
-        $firstRecord = Jav::where('code', 'ABP462')->where('source', 'onejav')->first();
+        $firstRecord = Jav::where('code', 'ABP-462')->where('source', 'onejav')->first();
         $firstId = $firstRecord->id;
 
         // Second parse (same fixture)
@@ -152,8 +152,8 @@ class JavServiceTest extends TestCase
         $this->assertEquals($firstCount, $secondCount);
 
         // ABP462 should still be 1 record with same ID
-        $this->assertEquals(1, Jav::where('code', 'ABP462')->where('source', 'onejav')->count());
-        $secondRecord = Jav::where('code', 'ABP462')->where('source', 'onejav')->first();
+        $this->assertEquals(1, Jav::where('code', 'ABP-462')->where('source', 'onejav')->count());
+        $secondRecord = Jav::where('code', 'ABP-462')->where('source', 'onejav')->first();
         $this->assertEquals($firstId, $secondRecord->id);
     }
 

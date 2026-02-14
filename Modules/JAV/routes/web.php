@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use Modules\JAV\Http\Controllers\DashboardController;
 use Modules\JAV\Http\Controllers\JAVController;
+use Modules\JAV\Http\Controllers\RatingController;
+use Modules\JAV\Http\Controllers\WatchlistController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('javs', JAVController::class)->names('jav');
@@ -23,6 +25,28 @@ Route::controller(DashboardController::class)->prefix('jav')->name('jav.')->grou
         Route::get('/history', 'history')->name('history');
         Route::get('/favorites', 'favorites')->name('favorites');
         Route::get('/recommendations', 'recommendations')->name('recommendations');
+    });
+});
+
+// Watchlist Routes
+Route::middleware('auth')->prefix('watchlist')->name('watchlist.')->controller(WatchlistController::class)->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::post('/', 'store')->name('store');
+    Route::put('/{watchlist}', 'update')->name('update');
+    Route::delete('/{watchlist}', 'destroy')->name('destroy');
+    Route::get('/check/{javId}', 'check')->name('check');
+});
+
+// Rating Routes
+Route::prefix('ratings')->name('ratings.')->controller(RatingController::class)->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::get('/{rating}', 'show')->name('show');
+    Route::get('/check/{javId}', 'check')->name('check');
+
+    Route::middleware('auth')->group(function () {
+        Route::post('/', 'store')->name('store');
+        Route::put('/{rating}', 'update')->name('update');
+        Route::delete('/{rating}', 'destroy')->name('destroy');
     });
 });
 

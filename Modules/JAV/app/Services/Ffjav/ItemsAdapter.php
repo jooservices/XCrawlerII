@@ -1,0 +1,57 @@
+<?php
+
+namespace Modules\JAV\Services\Ffjav;
+
+use JOOservices\Client\Response\ResponseWrapper;
+use Modules\JAV\Contracts\IItems;
+use Modules\JAV\Dtos\Items;
+use Symfony\Component\DomCrawler\Crawler;
+
+class ItemsAdapter implements IItems
+{
+    private Crawler $dom;
+
+    private Items $items;
+
+    public function __construct(private readonly ?ResponseWrapper $response)
+    {
+        $this->dom = new Crawler($this->response->toPsrResponse()->getBody()->getContents());
+    }
+
+    public function hasNextPage(): bool
+    {
+        $lastPageNode = $this->dom->filter('.pagination-list li')->last();
+        $lastPage = $lastPageNode->count() ? (int) trim($lastPageNode->text()) : 1;
+
+        return $this->currentPage() < $lastPage;
+    }
+
+    public function nextPage(): int
+    {
+        return $this->hasNextPage() ? $this->currentPage() + 1 : 1;
+    }
+
+    public function currentPage(): int
+    {
+        $currentPageNode = $this->dom->filter('.pagination-list li a.pagination-link.button.is-primary:not(.is-inverted)');
+
+        return $currentPageNode->count() ? (int) trim($currentPageNode->text()) : 1;
+    }
+
+    public function items(): Items
+    {
+        if (isset($this->items)) {
+            return $this->items;
+        }
+
+        $items = $this->dom->filter('.card.mb-3 .columns')->each(function (Crawler $node) {
+            return (new ItemAdapter($node))->getItem();
+        });
+
+        return $this->items = new Items(
+            items: collect($items),
+            hasNextPage: $this->hasNextPage(),
+            nextPage: $this->nextPage()
+        );
+    }
+}

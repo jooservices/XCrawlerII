@@ -5,6 +5,7 @@ namespace Modules\JAV\Services\OneFourOneJav;
 use Carbon\Carbon;
 use Modules\JAV\Dtos\Item;
 use Modules\JAV\Events\ItemParsed;
+use Modules\JAV\Support\CodeNormalizer;
 use Symfony\Component\DomCrawler\Crawler;
 
 class ItemAdapter
@@ -79,7 +80,7 @@ class ItemAdapter
         if ($link) {
             $parts = explode('/', trim($link, '/'));
             $id = end($parts);
-            $code = strtoupper($id);
+            $code = CodeNormalizer::normalize($id);
         }
 
         // 9. Download

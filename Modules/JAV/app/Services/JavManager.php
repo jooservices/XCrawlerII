@@ -7,6 +7,7 @@ use Modules\JAV\Dtos\Item;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
+use Modules\JAV\Support\CodeNormalizer;
 
 class JavManager
 {
@@ -18,9 +19,12 @@ class JavManager
     public function store(Item $item, string $source): Jav
     {
         try {
+            $normalizedCode = CodeNormalizer::normalize($item->code);
+            $normalizedItemId = $item->id ?? CodeNormalizer::compactIdFromCode($normalizedCode);
+
             $data = [
-                'item_id' => $item->id,
-                'code' => $item->code,
+                'item_id' => $normalizedItemId,
+                'code' => $normalizedCode,
                 'title' => $item->title,
                 'url' => $item->url,
                 'image' => $item->image,
@@ -33,7 +37,7 @@ class JavManager
 
             $jav = Jav::updateOrCreate(
                 [
-                    'code' => $item->code,
+                    'code' => $normalizedCode,
                     'source' => $source,
                 ],
                 $data

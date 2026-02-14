@@ -48,7 +48,7 @@ class JavManagerTest extends TestCase
 
         $this->assertInstanceOf(Jav::class, $jav);
         $this->assertNotNull($jav->id);
-        $this->assertEquals('ABP462', $jav->code);
+        $this->assertEquals('ABP-462', $jav->code);
         $this->assertEquals('feature-test', $jav->source);
         $this->assertEquals(1.2, $jav->size);
         $this->assertEquals(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy'], $jav->tags->pluck('name')->sort()->values()->toArray());
@@ -74,10 +74,10 @@ class JavManagerTest extends TestCase
         $subscriber = app(JavSubscriber::class);
         $subscriber->handle(new ItemParsed($item, 'feature-test'));
 
-        $jav = Jav::where('code', 'IPZ725')->where('source', 'feature-test')->first();
+        $jav = Jav::where('code', 'IPZ-725')->where('source', 'feature-test')->first();
 
         $this->assertNotNull($jav);
-        $this->assertEquals('IPZ725', $jav->code);
+        $this->assertEquals('IPZ-725', $jav->code);
         $this->assertEquals('feature-test', $jav->source);
         $this->assertEquals(1.1, $jav->size);
         $this->assertEquals(['Beautiful Girl', 'Digital Mosaic', 'Kiss', 'Solowork', 'Subjectivity'], $jav->tags->pluck('name')->sort()->values()->toArray());
@@ -127,7 +127,7 @@ class JavManagerTest extends TestCase
         $this->assertEquals(['Updated'], $jav2->tags->pluck('name')->values()->toArray());
         $this->assertEquals(['Another', 'Miharu Usa'], $jav2->actors->pluck('name')->sort()->values()->toArray());
 
-        $this->assertEquals(1, Jav::where('code', 'TEK074')->where('source', 'feature-test')->count());
+        $this->assertEquals(1, Jav::where('code', 'TEK-074')->where('source', 'feature-test')->count());
     }
 
     public function test_store_creates_separate_records_for_same_code_different_source(): void
@@ -153,8 +153,8 @@ class JavManagerTest extends TestCase
         $this->assertEquals('manager-test', $jav1->source);
         $this->assertEquals('manager-test-2', $jav2->source);
 
-        $this->assertEquals(1, Jav::where('code', 'ABP462')->where('source', 'manager-test')->count());
-        $this->assertEquals(1, Jav::where('code', 'ABP462')->where('source', 'manager-test-2')->count());
+        $this->assertEquals(1, Jav::where('code', 'ABP-462')->where('source', 'manager-test')->count());
+        $this->assertEquals(1, Jav::where('code', 'ABP-462')->where('source', 'manager-test-2')->count());
     }
 
     public function test_store_handles_null_fields_gracefully(): void

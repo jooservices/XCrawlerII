@@ -20,9 +20,9 @@
                     <form action="{{ route('login') }}" method="POST">
                         @csrf
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" name="username" class="form-control" id="username"
-                                value="{{ old('username') }}" required autofocus>
+                            <label for="login" class="form-label">Username or Email</label>
+                            <input type="text" name="login" class="form-control" id="login"
+                                value="{{ old('login') }}" required autofocus>
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>

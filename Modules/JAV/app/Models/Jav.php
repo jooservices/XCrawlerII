@@ -2,6 +2,7 @@
 
 namespace Modules\JAV\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
@@ -9,9 +10,17 @@ use Laravel\Scout\Searchable;
 
 class Jav extends Model
 {
-    use Searchable;
+    use HasFactory, Searchable;
 
     protected $table = 'jav';
+
+    /**
+     * Get the factory instance for the model.
+     */
+    protected static function newFactory()
+    {
+        return \Database\Factories\JavFactory::new();
+    }
 
     public function searchable()
     {
@@ -134,5 +143,27 @@ class Jav extends Model
     public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
         return $this->morphMany(Favorite::class, 'favoritable');
+    }
+
+    public function ratings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    /**
+     * Get the average rating for this movie.
+     */
+    public function getAverageRatingAttribute(): ?float
+    {
+        $average = $this->ratings()->avg('rating');
+        return $average ? round($average, 1) : null;
+    }
+
+    /**
+     * Get the total number of ratings for this movie.
+     */
+    public function getRatingsCountAttribute(): int
+    {
+        return $this->ratings()->count();
     }
 }

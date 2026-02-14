@@ -60,7 +60,7 @@ class OnejavCommandTest extends TestCase
         // 5. Assert data is stored
         $this->assertDatabaseHas('jav', [
             'source' => 'onejav',
-            'code' => 'ABP462',
+            'code' => 'ABP-462',
         ]);
 
         $this->assertEquals(6, \Modules\JAV\Models\Jav::where('source', 'onejav')->count());

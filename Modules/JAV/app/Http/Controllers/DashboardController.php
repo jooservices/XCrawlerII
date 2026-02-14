@@ -3,7 +3,18 @@
 namespace Modules\JAV\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
+use Modules\JAV\Http\Requests\GetActorsRequest;
+use Modules\JAV\Http\Requests\GetFavoritesRequest;
+use Modules\JAV\Http\Requests\GetHistoryRequest;
+use Modules\JAV\Http\Requests\GetJavRequest;
+use Modules\JAV\Http\Requests\GetRecommendationsRequest;
+use Modules\JAV\Http\Requests\GetTagsRequest;
+use Modules\JAV\Http\Requests\RequestSyncRequest;
+use Modules\JAV\Http\Requests\ToggleLikeRequest;
 use Modules\JAV\Services\SearchService;
 
 class DashboardController extends Controller
@@ -17,7 +28,7 @@ class DashboardController extends Controller
         $this->recommendationService = $recommendationService;
     }
 
-    public function index(Request $request)
+    public function index(GetJavRequest $request): View|JsonResponse
     {
         $query = $request->input('q', '');
         $filters = [
@@ -49,7 +60,7 @@ class DashboardController extends Controller
         return view('jav::dashboard.index', compact('items', 'query', 'filters', 'sort', 'direction'));
     }
 
-    public function actors(Request $request)
+    public function actors(GetActorsRequest $request): View|JsonResponse
     {
         $query = $request->input('q', '');
         $actors = $this->searchService->searchActors($query);
@@ -69,7 +80,7 @@ class DashboardController extends Controller
         return view('jav::dashboard.actors', compact('actors', 'query'));
     }
 
-    public function tags(Request $request)
+    public function tags(GetTagsRequest $request): View|JsonResponse
     {
         $query = $request->input('q', '');
         $tags = $this->searchService->searchTags($query);
@@ -89,7 +100,7 @@ class DashboardController extends Controller
         return view('jav::dashboard.tags', compact('tags', 'query'));
     }
 
-    public function show(\Modules\JAV\Models\Jav $jav)
+    public function show(\Modules\JAV\Models\Jav $jav): View
     {
         // Increment view count
         $jav->increment('views');
@@ -121,14 +132,14 @@ class DashboardController extends Controller
         return view('jav::dashboard.show', compact('jav', 'relatedByActors', 'relatedByTags', 'isLiked'));
     }
 
-    public function view(\Modules\JAV\Models\Jav $jav)
+    public function view(\Modules\JAV\Models\Jav $jav): JsonResponse
     {
         $jav->increment('views');
 
         return response()->json(['views' => $jav->views]);
     }
 
-    public function download(\Modules\JAV\Models\Jav $jav)
+    public function download(\Modules\JAV\Models\Jav $jav): Response|RedirectResponse
     {
         $jav->increment('downloads');
 
@@ -141,11 +152,7 @@ class DashboardController extends Controller
         }
 
         try {
-            if ($jav->source === 'onejav') {
-                $service = app(\Modules\JAV\Services\OnejavService::class);
-            } else {
-                $service = app(\Modules\JAV\Services\OneFourOneJavService::class);
-            }
+            $service = $this->resolveServiceBySource($jav->source);
 
             $item = $service->item($jav->url);
             \Illuminate\Support\Facades\Log::info('Download requested', ['url' => $jav->url, 'download_link' => $item->download]);
@@ -156,7 +163,7 @@ class DashboardController extends Controller
 
             $downloadLink = $item->download;
             if (str_starts_with($downloadLink, '/')) {
-                $baseUrl = $jav->source === 'onejav' ? 'https://onejav.com' : 'https://www.141jav.com';
+                $baseUrl = $this->baseUrlBySource($jav->source);
                 $downloadLink = $baseUrl . $downloadLink;
             }
 
@@ -179,20 +186,19 @@ class DashboardController extends Controller
         }
     }
 
-    public function request(Request $request)
+    public function request(RequestSyncRequest $request): JsonResponse
     {
-        $request->validate([
-            'source' => 'required|in:onejav,141jav',
-            'type' => 'required|in:new,popular',
-        ]);
-
-        $command = $request->source === 'onejav' ? 'jav:onejav' : 'jav:141';
+        $command = match ($request->source) {
+            'onejav' => 'jav:onejav',
+            '141jav' => 'jav:141',
+            'ffjav' => 'jav:ffjav',
+        };
         \Illuminate\Support\Facades\Artisan::call($command, ['type' => $request->type]);
 
         return response()->json(['message' => 'Sync request queued successfully.']);
     }
 
-    public function status()
+    public function status(): JsonResponse
     {
         return response()->json([
             'onejav' => [
@@ -203,15 +209,34 @@ class DashboardController extends Controller
                 'new' => \Modules\Core\Facades\Config::get('onefourone', 'new_page', 1),
                 'popular' => \Modules\Core\Facades\Config::get('onefourone', 'popular_page', 1),
             ],
+            'ffjav' => [
+                'new' => \Modules\Core\Facades\Config::get('ffjav', 'new_page', 1),
+                'popular' => \Modules\Core\Facades\Config::get('ffjav', 'popular_page', 1),
+            ],
         ]);
     }
-    public function toggleLike(Request $request)
-    {
-        $request->validate([
-            'id' => 'required|integer',
-            'type' => 'required|string|in:jav,actor,tag',
-        ]);
 
+    private function resolveServiceBySource(string $source): object
+    {
+        return match ($source) {
+            'onejav' => app(\Modules\JAV\Services\OnejavService::class),
+            '141jav' => app(\Modules\JAV\Services\OneFourOneJavService::class),
+            'ffjav' => app(\Modules\JAV\Services\FfjavService::class),
+            default => throw new \InvalidArgumentException("Unsupported source: {$source}"),
+        };
+    }
+
+    private function baseUrlBySource(string $source): string
+    {
+        return match ($source) {
+            'onejav' => 'https://onejav.com',
+            '141jav' => 'https://www.141jav.com',
+            'ffjav' => 'https://ffjav.com',
+            default => '',
+        };
+    }
+    public function toggleLike(ToggleLikeRequest $request): JsonResponse
+    {
         $user = auth()->user();
         $id = $request->input('id');
         $type = $request->input('type');
@@ -236,7 +261,7 @@ class DashboardController extends Controller
         return response()->json(['success' => true, 'liked' => $liked]);
     }
 
-    public function history(Request $request)
+    public function history(GetHistoryRequest $request): View
     {
         $user = auth()->user();
         $history = \Modules\JAV\Models\UserJavHistory::with('jav')
@@ -247,7 +272,7 @@ class DashboardController extends Controller
         return view('jav::dashboard.history', compact('history'));
     }
 
-    public function favorites(Request $request)
+    public function favorites(GetFavoritesRequest $request): View
     {
         $user = auth()->user();
         $favorites = \Modules\JAV\Models\Favorite::with(['favoritable'])
@@ -257,7 +282,7 @@ class DashboardController extends Controller
 
         return view('jav::dashboard.favorites', compact('favorites'));
     }
-    public function recommendations(Request $request)
+    public function recommendations(GetRecommendationsRequest $request): View
     {
         $user = auth()->user();
         $recommendations = $this->recommendationService->getRecommendations($user, 30);

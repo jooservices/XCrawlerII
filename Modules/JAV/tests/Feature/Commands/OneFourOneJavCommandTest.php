@@ -57,7 +57,7 @@ class OneFourOneJavCommandTest extends TestCase
         // 4. Assert data is stored
         $this->assertDatabaseHas('jav', [
             'source' => '141jav',
-            'code' => 'ALOG026',
+            'code' => 'ALOG-026',
         ]);
 
         $this->assertEquals(10, \Modules\JAV\Models\Jav::where('source', '141jav')->count());

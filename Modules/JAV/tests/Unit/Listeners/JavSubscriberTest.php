@@ -41,10 +41,10 @@ class JavSubscriberTest extends TestCase
         $subscriber = app(JavSubscriber::class);
         $subscriber->handle($event);
 
-        $jav = Jav::where('code', 'ABP462')->where('source', 'unit-test')->first();
+        $jav = Jav::where('code', 'ABP-462')->where('source', 'unit-test')->first();
 
         $this->assertNotNull($jav);
-        $this->assertEquals('ABP462', $jav->code);
+        $this->assertEquals('ABP-462', $jav->code);
         $this->assertEquals('unit-test', $jav->source);
         $this->assertEquals('ABP462', $jav->title);
         $this->assertEquals('/torrent/abp462', $jav->url);
@@ -78,7 +78,7 @@ class JavSubscriberTest extends TestCase
         // Store from onejav source
         $subscriber->handle(new ItemParsed($item, 'unit-test'));
 
-        $jav = Jav::where('code', 'IPZ725')->where('source', 'unit-test')->first();
+        $jav = Jav::where('code', 'IPZ-725')->where('source', 'unit-test')->first();
         $this->assertNotNull($jav);
         $this->assertEquals('unit-test', $jav->source);
     }
@@ -103,7 +103,7 @@ class JavSubscriberTest extends TestCase
 
         // First dispatch
         $subscriber->handle(new ItemParsed($item, 'unit-test'));
-        $first = Jav::where('code', 'TEK074')->where('source', 'unit-test')->first();
+        $first = Jav::where('code', 'TEK-074')->where('source', 'unit-test')->first();
         $firstId = $first->id;
 
         // Second dispatch with updated title
@@ -124,10 +124,10 @@ class JavSubscriberTest extends TestCase
         $subscriber->handle(new ItemParsed($updatedItem, 'unit-test'));
 
         // Should be 1 record, same ID, updated values
-        $count = Jav::where('code', 'TEK074')->where('source', 'unit-test')->count();
+        $count = Jav::where('code', 'TEK-074')->where('source', 'unit-test')->count();
         $this->assertEquals(1, $count);
 
-        $updated = Jav::where('code', 'TEK074')->where('source', 'unit-test')->first();
+        $updated = Jav::where('code', 'TEK-074')->where('source', 'unit-test')->first();
         $this->assertEquals($firstId, $updated->id);
         $this->assertEquals('TEK074 - Updated', $updated->title);
         $this->assertEquals(1.5, $updated->size);

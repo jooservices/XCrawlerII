@@ -16,12 +16,9 @@
         </div>
     </div>
 
-    <!-- Search and Sort Bar -->
-    <div class="row mb-4 align-items-end">
-        <div class="col-md-6">
-            <!-- Search moved to navbar -->
-        </div>
-        <div class="col-md-6 text-md-end mt-2 mt-md-0">
+    <!-- Sort Bar -->
+    <div class="row mb-4 justify-content-end">
+        <div class="col-auto">
             <div class="btn-group" role="group">
                 <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false">

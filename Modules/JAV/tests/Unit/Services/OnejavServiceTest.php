@@ -293,7 +293,7 @@ class OnejavServiceTest extends TestCase
             'cherd102' => [
                 'itemId' => 'cherd102',
                 'expected' => [
-                    'code' => 'CHERD102',
+                    'code' => 'CHERD-102',
                     'id' => 'cherd102',
                     'title' => 'CHERD102',
                     'url' => '/torrent/cherd102',
@@ -302,7 +302,7 @@ class OnejavServiceTest extends TestCase
             'jrze286' => [
                 'itemId' => 'jrze286',
                 'expected' => [
-                    'code' => 'JRZE286',
+                    'code' => 'JRZE-286',
                     'id' => 'jrze286',
                     'title' => 'JRZE286',
                     'url' => '/torrent/jrze286',
@@ -311,7 +311,7 @@ class OnejavServiceTest extends TestCase
             'fc2ppv4846863' => [
                 'itemId' => 'fc2ppv4846863',
                 'expected' => [
-                    'code' => 'FC2PPV4846863',
+                    'code' => 'FC2-PPV4846863',
                     'id' => 'fc2ppv4846863',
                     'title' => 'FC2PPV4846863',
                     'url' => '/torrent/fc2ppv4846863',
@@ -320,7 +320,7 @@ class OnejavServiceTest extends TestCase
             'fc2ppv4846667' => [
                 'itemId' => 'fc2ppv4846667',
                 'expected' => [
-                    'code' => 'FC2PPV4846667',
+                    'code' => 'FC2-PPV4846667',
                     'id' => 'fc2ppv4846667',
                     'title' => 'FC2PPV4846667',
                     'url' => '/torrent/fc2ppv4846667',
@@ -329,7 +329,7 @@ class OnejavServiceTest extends TestCase
             'fc2ppv4846656' => [
                 'itemId' => 'fc2ppv4846656',
                 'expected' => [
-                    'code' => 'FC2PPV4846656',
+                    'code' => 'FC2-PPV4846656',
                     'id' => 'fc2ppv4846656',
                     'title' => 'FC2PPV4846656',
                     'url' => '/torrent/fc2ppv4846656',
@@ -338,7 +338,7 @@ class OnejavServiceTest extends TestCase
             'fc2ppv4846700' => [
                 'itemId' => 'fc2ppv4846700',
                 'expected' => [
-                    'code' => 'FC2PPV4846700',
+                    'code' => 'FC2-PPV4846700',
                     'id' => 'fc2ppv4846700',
                     'title' => 'FC2PPV4846700',
                     'url' => '/torrent/fc2ppv4846700',
@@ -347,7 +347,7 @@ class OnejavServiceTest extends TestCase
             'mogi151' => [
                 'itemId' => 'mogi151',
                 'expected' => [
-                    'code' => 'MOGI151',
+                    'code' => 'MOGI-151',
                     'id' => 'mogi151',
                     'title' => 'MOGI151',
                     'url' => '/torrent/mogi151',
@@ -356,7 +356,7 @@ class OnejavServiceTest extends TestCase
             'jur061' => [
                 'itemId' => 'jur061',
                 'expected' => [
-                    'code' => 'JUR061',
+                    'code' => 'JUR-061',
                     'id' => 'jur061',
                     'title' => 'JUR061',
                     'url' => '/torrent/jur061',
