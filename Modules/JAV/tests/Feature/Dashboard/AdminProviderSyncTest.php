@@ -4,7 +4,8 @@ namespace Modules\JAV\Tests\Feature\Dashboard;
 
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Queue;
+use Modules\JAV\Jobs\DailySyncJob;
 use Modules\JAV\Tests\TestCase;
 
 class AdminProviderSyncTest extends TestCase
@@ -14,7 +15,7 @@ class AdminProviderSyncTest extends TestCase
         $admin = $this->makeUserWithRole('admin');
 
         $this->actingAs($admin)
-            ->get(route('jav.admin.provider-sync.index'))
+            ->get(route('jav.blade.admin.provider-sync.index'))
             ->assertOk();
     }
 
@@ -23,22 +24,14 @@ class AdminProviderSyncTest extends TestCase
         $moderator = $this->makeUserWithRole('moderator');
 
         $this->actingAs($moderator)
-            ->get(route('jav.admin.provider-sync.index'))
+            ->get(route('jav.blade.admin.provider-sync.index'))
             ->assertForbidden();
     }
 
     public function test_admin_can_dispatch_provider_sync_via_ajax(): void
     {
         $admin = $this->makeUserWithRole('admin');
-
-        Artisan::shouldReceive('call')
-            ->once()
-            ->with('jav:sync', \Mockery::on(function (array $payload): bool {
-                return $payload['provider'] === 'onejav'
-                    && $payload['--type'] === 'daily'
-                    && $payload['--date'] === '2026-02-14';
-            }))
-            ->andReturn(0);
+        Queue::fake();
 
         $this->actingAs($admin)
             ->postJson(route('jav.admin.provider-sync.dispatch'), [
@@ -50,6 +43,12 @@ class AdminProviderSyncTest extends TestCase
             ->assertJsonPath('source', 'onejav')
             ->assertJsonPath('type', 'daily')
             ->assertJsonPath('date', '2026-02-14');
+
+        Queue::assertPushedOn('jav', DailySyncJob::class, function (DailySyncJob $job): bool {
+            return $job->source === 'onejav'
+                && $job->date === '2026-02-14'
+                && $job->page === 1;
+        });
     }
 
     private function makeUserWithRole(string $roleSlug): User

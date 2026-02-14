@@ -22,7 +22,7 @@ class RatingControllerTest extends TestCase
 
     public function test_anyone_can_view_ratings(): void
     {
-        $response = $this->getJson(route('ratings.index'));
+        $response = $this->getJson(route('jav.blade.ratings.index'));
 
         $response->assertOk();
         $response->assertJson(['success' => true]);
@@ -36,7 +36,7 @@ class RatingControllerTest extends TestCase
         Rating::factory()->create(['jav_id' => $jav1->id]);
         Rating::factory()->create(['jav_id' => $jav2->id]);
 
-        $response = $this->getJson(route('ratings.index', ['jav_id' => $jav1->id]));
+        $response = $this->getJson(route('jav.blade.ratings.index', ['jav_id' => $jav1->id]));
 
         $response->assertOk();
         $response->assertJson(['success' => true]);
@@ -249,7 +249,7 @@ class RatingControllerTest extends TestCase
             'created_at' => now(),
         ]);
 
-        $response = $this->getJson(route('ratings.index', ['jav_id' => $jav->id, 'sort' => 'recent']));
+        $response = $this->getJson(route('jav.blade.ratings.index', ['jav_id' => $jav->id, 'sort' => 'recent']));
 
         $response->assertOk();
         $data = $response->json('data.data');
@@ -262,7 +262,7 @@ class RatingControllerTest extends TestCase
         Rating::factory()->create(['jav_id' => $jav->id, 'rating' => 3]);
         $highest = Rating::factory()->create(['jav_id' => $jav->id, 'rating' => 5]);
 
-        $response = $this->getJson(route('ratings.index', ['jav_id' => $jav->id, 'sort' => 'highest']));
+        $response = $this->getJson(route('jav.blade.ratings.index', ['jav_id' => $jav->id, 'sort' => 'highest']));
 
         $response->assertOk();
         $data = $response->json('data.data');

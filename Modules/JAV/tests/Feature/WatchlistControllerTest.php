@@ -22,7 +22,7 @@ class WatchlistControllerTest extends TestCase
 
     public function test_user_can_view_watchlist(): void
     {
-        $response = $this->actingAs($this->user)->get(route('watchlist.index'));
+        $response = $this->actingAs($this->user)->get(route('jav.blade.watchlist'));
 
         $response->assertOk();
         $response->assertViewIs('jav::watchlist.index');
@@ -30,7 +30,7 @@ class WatchlistControllerTest extends TestCase
 
     public function test_guest_cannot_view_watchlist(): void
     {
-        $response = $this->get(route('watchlist.index'));
+        $response = $this->get(route('jav.blade.watchlist'));
 
         $response->assertStatus(302);
     }
@@ -144,7 +144,7 @@ class WatchlistControllerTest extends TestCase
             'status' => 'watched',
         ]);
 
-        $response = $this->actingAs($this->user)->get(route('watchlist.index', ['status' => 'to_watch']));
+        $response = $this->actingAs($this->user)->get(route('jav.blade.watchlist', ['status' => 'to_watch']));
 
         $response->assertOk();
         $this->assertEquals(1, $response->viewData('watchlist')->count());

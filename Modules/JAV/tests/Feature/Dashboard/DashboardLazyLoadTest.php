@@ -19,7 +19,7 @@ class DashboardLazyLoadTest extends TestCase
         Jav::factory()->count(31)->create();
 
         $firstPageAjax = $this->withHeader('X-Requested-With', 'XMLHttpRequest')
-            ->get(route('jav.dashboard'));
+            ->get(route('jav.blade.dashboard'));
 
         $firstPageAjax
             ->assertOk()
@@ -32,7 +32,7 @@ class DashboardLazyLoadTest extends TestCase
         $this->assertStringContainsString('page=2', $nextPageUrl);
 
         $secondPageAjax = $this->withHeader('X-Requested-With', 'XMLHttpRequest')
-            ->get('/jav/dashboard?page=2');
+            ->get('/jav/blade/dashboard?page=2');
 
         $secondPageAjax
             ->assertOk()
