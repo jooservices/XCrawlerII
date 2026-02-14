@@ -24,7 +24,7 @@ class CodeNormalizer
         }
 
         if (str_starts_with($normalized, 'FC2-PPV')) {
-            $suffix = preg_replace('/[^0-9A-Z]/', '', substr($normalized, 8)) ?? '';
+            $suffix = preg_replace('/[^0-9A-Z]/', '', substr($normalized, 7)) ?? '';
 
             return $suffix !== '' ? 'FC2-PPV'.$suffix : 'FC2-PPV';
         }

@@ -4,7 +4,6 @@ namespace Modules\JAV\Tests\Unit\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
-use JOOservices\Client\Response\ResponseWrapper;
 use Mockery;
 use Modules\Core\Facades\Config;
 use Modules\JAV\Dtos\Item;
@@ -284,7 +283,7 @@ class OnejavServiceTest extends TestCase
         $client = app(OnejavClient::class);
 
         $service = new OnejavService($client);
-        $this->assertInstanceOf(ResponseWrapper::class, $service->tags());
+        $this->assertInstanceOf(Collection::class, $service->tags());
     }
 
     public static function itemDataProvider(): array

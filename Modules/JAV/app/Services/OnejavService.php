@@ -21,6 +21,7 @@ class OnejavService
 
     public function new(?int $page = null): ItemsAdapter
     {
+        $isAutoMode = $page === null;
         $page = $page ?? Config::get('onejav', 'new_page', 1);
 
         $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/new?page=' . $page)]);
@@ -31,13 +32,16 @@ class OnejavService
             $items->currentPage()
         );
 
-        Config::set('onejav', 'new_page', $items->nextPage());
+        if ($isAutoMode) {
+            Config::set('onejav', 'new_page', $items->nextPage());
+        }
 
         return $items;
     }
 
     public function popular(?int $page = null): ItemsAdapter
     {
+        $isAutoMode = $page === null;
         $page = $page ?? Config::get('onejav', 'popular_page', 1);
 
         $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/popular/?page=' . $page)]);
@@ -48,7 +52,9 @@ class OnejavService
             $items->currentPage()
         );
 
-        Config::set('onejav', 'popular_page', $items->nextPage());
+        if ($isAutoMode) {
+            Config::set('onejav', 'popular_page', $items->nextPage());
+        }
 
         return $items;
     }

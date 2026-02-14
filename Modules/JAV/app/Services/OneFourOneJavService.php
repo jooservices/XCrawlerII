@@ -20,6 +20,7 @@ class OneFourOneJavService
 
     public function new(?int $page = null): ItemsAdapter
     {
+        $isAutoMode = $page === null;
         $page = $page ?? Config::get('onefourone', 'new_page', 1);
 
         $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/new?page='.$page)]);
@@ -30,13 +31,16 @@ class OneFourOneJavService
             $items->currentPage()
         );
 
-        Config::set('onefourone', 'new_page', $items->nextPage());
+        if ($isAutoMode) {
+            Config::set('onefourone', 'new_page', $items->nextPage());
+        }
 
         return $items;
     }
 
     public function popular(?int $page = null): ItemsAdapter
     {
+        $isAutoMode = $page === null;
         $page = $page ?? Config::get('onefourone', 'popular_page', 1);
 
         $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get('/popular/?page='.$page)]);
@@ -47,7 +51,9 @@ class OneFourOneJavService
             $items->currentPage()
         );
 
-        Config::set('onefourone', 'popular_page', $items->nextPage());
+        if ($isAutoMode) {
+            Config::set('onefourone', 'popular_page', $items->nextPage());
+        }
 
         return $items;
     }

@@ -4,7 +4,6 @@ namespace Modules\JAV\Tests\Unit\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
-use JOOservices\Client\Response\ResponseWrapper;
 use Mockery;
 use Modules\Core\Facades\Config;
 use Modules\JAV\Dtos\Item;
@@ -116,7 +115,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = app(OneFourOneJavClient::class);
 
         $service = new OneFourOneJavService($client);
-        $this->assertInstanceOf(ResponseWrapper::class, $service->tags());
+        $this->assertInstanceOf(Collection::class, $service->tags());
     }
 
     public static function itemDataProvider(): array
