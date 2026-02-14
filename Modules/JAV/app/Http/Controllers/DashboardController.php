@@ -3,9 +3,14 @@
 namespace Modules\JAV\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Modules\JAV\Http\Requests\GetActorsRequest;
 use Modules\JAV\Http\Requests\GetFavoritesRequest;
@@ -15,6 +20,7 @@ use Modules\JAV\Http\Requests\GetRecommendationsRequest;
 use Modules\JAV\Http\Requests\GetTagsRequest;
 use Modules\JAV\Http\Requests\RequestSyncRequest;
 use Modules\JAV\Http\Requests\ToggleLikeRequest;
+use Modules\JAV\Models\UserLikeNotification;
 use Modules\JAV\Services\SearchService;
 
 class DashboardController extends Controller
@@ -41,11 +47,6 @@ class DashboardController extends Controller
         $items = $this->searchService->searchJav($query, $filters, 30, $sort, $direction);
 
         if ($request->ajax()) {
-            $view = view('jav::dashboard.partials.movie_card', compact('items'))->render();
-            // Since $items is a Paginator, we need to iterate over it OR pass the items to the view properly.
-            // The partial expects a single $item. We need to loop.
-
-            // Wait, the partial is for a SINGLE card. I should loop here and concatenate.
             $html = '';
             foreach ($items as $item) {
                 $html .= view('jav::dashboard.partials.movie_card', compact('item'))->render();
@@ -53,7 +54,7 @@ class DashboardController extends Controller
 
             return response()->json([
                 'html' => $html,
-                'next_page_url' => $items->nextPageUrl(),
+                'next_page_url' => $this->toRelativeUrl($items->nextPageUrl()),
             ]);
         }
 
@@ -73,7 +74,7 @@ class DashboardController extends Controller
 
             return response()->json([
                 'html' => $html,
-                'next_page_url' => $actors->nextPageUrl(),
+                'next_page_url' => $this->toRelativeUrl($actors->nextPageUrl()),
             ]);
         }
 
@@ -93,11 +94,32 @@ class DashboardController extends Controller
 
             return response()->json([
                 'html' => $html,
-                'next_page_url' => $tags->nextPageUrl(),
+                'next_page_url' => $this->toRelativeUrl($tags->nextPageUrl()),
             ]);
         }
 
         return view('jav::dashboard.tags', compact('tags', 'query'));
+    }
+
+    public function actorBio(\Modules\JAV\Models\Actor $actor): View
+    {
+        $actor->loadCount('javs')->load(['profileAttributes', 'profileSources']);
+
+        $movies = $actor->javs()
+            ->with(['actors', 'tags'])
+            ->orderByDesc('date')
+            ->paginate(30);
+
+        $resolver = app(\Modules\JAV\Services\ActorProfileResolver::class);
+        $bioProfile = $resolver->toDisplayMap($actor);
+        $resolved = $resolver->resolve($actor);
+        $primarySource = $resolved['primary_source'];
+
+        $primarySyncedAt = $actor->profileSources
+            ->firstWhere('source', $primarySource)?->synced_at
+            ?? $actor->xcity_synced_at;
+
+        return view('jav::dashboard.actor_bio', compact('actor', 'movies', 'bioProfile', 'primarySource', 'primarySyncedAt'));
     }
 
     public function show(\Modules\JAV\Models\Jav $jav): View
@@ -188,18 +210,27 @@ class DashboardController extends Controller
 
     public function request(RequestSyncRequest $request): JsonResponse
     {
-        $command = match ($request->source) {
-            'onejav' => 'jav:onejav',
-            '141jav' => 'jav:141',
-            'ffjav' => 'jav:ffjav',
-        };
-        \Illuminate\Support\Facades\Artisan::call($command, ['type' => $request->type]);
+        Cache::put('jav:sync:active', [
+            'provider' => $request->source,
+            'type' => $request->type,
+            'started_at' => now()->toIso8601String(),
+        ], now()->addHours(6));
 
-        return response()->json(['message' => 'Sync request queued successfully.']);
+        \Illuminate\Support\Facades\Artisan::call('jav:sync', [
+            'provider' => $request->source,
+            '--type' => $request->type,
+        ]);
+
+        return response()->json([
+            'message' => 'Sync request queued successfully.',
+            'progress' => $this->buildSyncProgressSnapshot(),
+        ]);
     }
 
     public function status(): JsonResponse
     {
+        $progress = $this->buildSyncProgressSnapshot();
+
         return response()->json([
             'onejav' => [
                 'new' => \Modules\Core\Facades\Config::get('onejav', 'new_page', 1),
@@ -213,7 +244,18 @@ class DashboardController extends Controller
                 'new' => \Modules\Core\Facades\Config::get('ffjav', 'new_page', 1),
                 'popular' => \Modules\Core\Facades\Config::get('ffjav', 'popular_page', 1),
             ],
+            'progress' => $progress,
         ]);
+    }
+
+    public function syncProgress(): View
+    {
+        return view('jav::dashboard.sync_progress');
+    }
+
+    public function syncProgressData(): JsonResponse
+    {
+        return response()->json($this->buildSyncProgressSnapshot());
     }
 
     private function resolveServiceBySource(string $source): object
@@ -288,5 +330,162 @@ class DashboardController extends Controller
         $recommendations = $this->recommendationService->getRecommendations($user, 30);
 
         return view('jav::dashboard.recommendations', compact('recommendations'));
+    }
+
+    public function notifications(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $notifications = $user->javNotifications()
+            ->with('jav:id,uuid,code,title')
+            ->unread()
+            ->latest('id')
+            ->limit(20)
+            ->get();
+
+        return response()->json([
+            'count' => $notifications->count(),
+            'items' => $notifications,
+        ]);
+    }
+
+    public function markNotificationRead(Request $request, UserLikeNotification $notification): RedirectResponse|JsonResponse
+    {
+        abort_unless($notification->user_id === (int) $request->user()->id, 403);
+
+        $notification->markAsRead();
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back();
+    }
+
+    public function markAllNotificationsRead(Request $request): RedirectResponse|JsonResponse
+    {
+        $request->user()->javNotifications()
+            ->unread()
+            ->update(['read_at' => now()]);
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back();
+    }
+
+    /**
+     * Build a lightweight realtime sync snapshot from queue + cache state.
+     *
+     * @return array<string, mixed>
+     */
+    private function buildSyncProgressSnapshot(): array
+    {
+        $jobsTableExists = Schema::hasTable('jobs');
+        $failedJobsTableExists = Schema::hasTable('failed_jobs');
+
+        $pendingJobs = $jobsTableExists
+            ? DB::table('jobs')->where('queue', 'jav')->count()
+            : 0;
+
+        $failedJobs = $failedJobsTableExists
+            ? DB::table('failed_jobs')
+                ->where('queue', 'jav')
+                ->where('failed_at', '>=', now()->subDay())
+                ->count()
+            : 0;
+
+        $activeSync = Cache::get('jav:sync:active');
+
+        $phase = 'idle';
+        if ($pendingJobs > 0) {
+            $phase = 'processing';
+        } elseif (is_array($activeSync)) {
+            $phase = 'completed';
+        }
+
+        $metrics = Cache::get('jav:sync:metrics', []);
+        $now = now();
+        $currentTs = $now->timestamp;
+        $ratePerMinute = null;
+        $etaSeconds = null;
+
+        if (($metrics['last_ts'] ?? null) && array_key_exists('last_pending', $metrics)) {
+            $elapsed = max(1, $currentTs - (int) $metrics['last_ts']);
+            $delta = (int) $metrics['last_pending'] - $pendingJobs;
+
+            if ($delta > 0) {
+                $instantRate = ($delta / $elapsed) * 60;
+                $previousRate = isset($metrics['rate_per_min']) ? (float) $metrics['rate_per_min'] : $instantRate;
+                $ratePerMinute = round(($previousRate * 0.6) + ($instantRate * 0.4), 2);
+            } elseif (isset($metrics['rate_per_min'])) {
+                $ratePerMinute = (float) $metrics['rate_per_min'];
+            }
+        }
+
+        if ($ratePerMinute && $ratePerMinute > 0 && $pendingJobs > 0) {
+            $etaSeconds = (int) round(($pendingJobs / $ratePerMinute) * 60);
+        }
+
+        Cache::put('jav:sync:metrics', [
+            'last_pending' => $pendingJobs,
+            'last_ts' => $currentTs,
+            'rate_per_min' => $ratePerMinute,
+        ], now()->addHours(6));
+
+        $recentFailures = $failedJobsTableExists
+            ? DB::table('failed_jobs')
+                ->where('queue', 'jav')
+                ->orderByDesc('failed_at')
+                ->limit(5)
+                ->get(['id', 'failed_at', 'exception'])
+                ->map(static function (object $failure): array {
+                    $message = 'Unknown error';
+                    if (is_string($failure->exception) && $failure->exception !== '') {
+                        $firstLine = explode("\n", $failure->exception)[0] ?? '';
+                        $message = mb_strimwidth(trim($firstLine), 0, 180, '...');
+                    }
+
+                    return [
+                        'id' => $failure->id,
+                        'failed_at' => Carbon::parse($failure->failed_at)->toDateTimeString(),
+                        'message' => $message,
+                    ];
+                })
+                ->values()
+                ->all()
+            : [];
+
+        return [
+            'phase' => $phase,
+            'pending_jobs' => $pendingJobs,
+            'failed_jobs_24h' => $failedJobs,
+            'throughput_per_min' => $ratePerMinute,
+            'eta_seconds' => $etaSeconds,
+            'eta_human' => $etaSeconds ? gmdate('H:i:s', $etaSeconds) : null,
+            'active_sync' => $activeSync,
+            'recent_failures' => $recentFailures,
+            'updated_at' => $now->toDateTimeString(),
+        ];
+    }
+
+    private function toRelativeUrl(?string $url): ?string
+    {
+        if (empty($url)) {
+            return null;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH) ?: '/';
+        $query = parse_url($url, PHP_URL_QUERY);
+        $fragment = parse_url($url, PHP_URL_FRAGMENT);
+
+        if (!empty($query)) {
+            $path .= '?' . $query;
+        }
+        if (!empty($fragment)) {
+            $path .= '#' . $fragment;
+        }
+
+        return $path;
     }
 }

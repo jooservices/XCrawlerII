@@ -2,7 +2,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const sentinel = document.getElementById('sentinel');
     if (!sentinel) return;
 
-    let nextUrl = sentinel.getAttribute('data-next-url');
+    const normalizeNextUrl = (url) => {
+        if (!url) return null;
+
+        try {
+            const parsed = new URL(url, window.location.href);
+            return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+        } catch (error) {
+            return url;
+        }
+    };
+
+    let nextUrl = normalizeNextUrl(sentinel.getAttribute('data-next-url'));
     let isLoading = false;
 
     const observer = new IntersectionObserver((entries) => {
@@ -28,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const container = document.getElementById('lazy-container');
                 container.insertAdjacentHTML('beforeend', data.html);
 
-                nextUrl = data.next_page_url;
+                nextUrl = normalizeNextUrl(data.next_page_url);
                 if (!nextUrl) {
                     observer.unobserve(sentinel);
                     sentinel.remove();

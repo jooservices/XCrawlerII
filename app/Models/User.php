@@ -53,6 +53,11 @@ class User extends Authenticatable
         return $this->hasMany(\Modules\JAV\Models\Favorite::class);
     }
 
+    public function javNotifications(): HasMany
+    {
+        return $this->hasMany(\Modules\JAV\Models\UserLikeNotification::class);
+    }
+
     public function javHistory(): HasMany
     {
         return $this->hasMany(\Modules\JAV\Models\UserJavHistory::class);

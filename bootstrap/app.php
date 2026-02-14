@@ -11,6 +11,12 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        if (class_exists(\Inertia\Middleware::class)) {
+            $middleware->web(append: [
+                \App\Http\Middleware\HandleInertiaRequests::class,
+            ]);
+        }
+
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'permission' => \App\Http\Middleware\PermissionMiddleware::class,

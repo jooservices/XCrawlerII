@@ -7,6 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 use Modules\JAV\Events\ItemParsed;
 use Modules\JAV\Services\JavManager;
+use Modules\JAV\Services\UserLikeNotificationService;
 
 class JavSubscriber implements ShouldQueue
 {
@@ -16,7 +17,8 @@ class JavSubscriber implements ShouldQueue
      * Create the event listener.
      */
     public function __construct(
-        protected JavManager $javManager
+        protected JavManager $javManager,
+        protected UserLikeNotificationService $userLikeNotificationService
     ) {}
 
     /**
@@ -33,11 +35,18 @@ class JavSubscriber implements ShouldQueue
                 'source' => $source,
             ]);
 
-            $this->javManager->store($item, $source);
+            $jav = $this->javManager->store($item, $source);
+
+            $notifiedUsers = 0;
+            if ($jav->wasRecentlyCreated) {
+                $notifiedUsers = $this->userLikeNotificationService->notifyForJav($jav);
+            }
 
             Log::info('JavSubscriber: Successfully processed ItemParsed event', [
                 'code' => $item->code,
                 'source' => $source,
+                'created' => $jav->wasRecentlyCreated,
+                'notified_users' => $notifiedUsers,
             ]);
         } catch (\Exception $e) {
             Log::error('JavSubscriber: Failed to process ItemParsed event', [

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import vue from '@vitejs/plugin-vue';
 import { readdirSync, statSync } from 'fs';
 import { join,relative,dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -15,10 +16,18 @@ export default defineConfig({
             publicDirectory: '../../public',
             buildDirectory: 'build-jav',
             input: [
-                __dirname + '/resources/assets/sass/app.scss',
-                __dirname + '/resources/assets/js/app.js'
+                __dirname + '/resources/js/app.js',
+                __dirname + '/resources/assets/sass/app.scss'
             ],
             refresh: true,
+        }),
+        vue({
+            template: {
+                transformAssetUrls: {
+                    base: null,
+                    includeAbsolute: false,
+                },
+            },
         }),
     ],
 });

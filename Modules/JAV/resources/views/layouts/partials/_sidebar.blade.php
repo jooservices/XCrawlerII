@@ -43,6 +43,20 @@
                     <i class="fas fa-shield-alt me-2"></i> Roles
                 </a>
             @endif
+            @if(auth()->user()->hasRole('admin'))
+                <a href="{{ route('jav.admin.sync-progress') }}"
+                    class="{{ request()->routeIs('jav.admin.sync-progress*') ? 'active' : '' }}">
+                    <i class="fas fa-chart-line me-2"></i> Sync Progress
+                </a>
+                <a href="{{ route('jav.admin.search-quality.index') }}"
+                    class="{{ request()->routeIs('jav.admin.search-quality.*') ? 'active' : '' }}">
+                    <i class="fas fa-search me-2"></i> Search Quality
+                </a>
+                <a href="{{ route('jav.admin.provider-sync.index') }}"
+                    class="{{ request()->routeIs('jav.admin.provider-sync.*') ? 'active' : '' }}">
+                    <i class="fas fa-sync-alt me-2"></i> Provider Sync
+                </a>
+            @endif
         @endif
     @endauth
 </div>

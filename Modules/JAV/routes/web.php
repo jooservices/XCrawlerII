@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\JAV\Http\Controllers\Admin\ProviderSyncController;
+use Modules\JAV\Http\Controllers\Admin\SearchQualityController;
 use Modules\JAV\Http\Controllers\DashboardController;
 use Modules\JAV\Http\Controllers\JAVController;
 use Modules\JAV\Http\Controllers\RatingController;
@@ -15,9 +17,8 @@ Route::controller(DashboardController::class)->prefix('jav')->name('jav.')->grou
     Route::get('/movies/{jav}', 'show')->name('movies.show');
     Route::get('/movies/{jav}/download', 'download')->name('movies.download');
     Route::post('/movies/{jav}/view', 'view')->name('movies.view');
-    Route::post('/request', 'request')->name('request');
-    Route::get('/status', 'status')->name('status');
     Route::get('/actors', 'actors')->name('actors');
+    Route::get('/actors/{actor}/bio', 'actorBio')->name('actors.bio');
     Route::get('/tags', 'tags')->name('tags');
 
     Route::middleware('auth')->group(function () {
@@ -25,6 +26,27 @@ Route::controller(DashboardController::class)->prefix('jav')->name('jav.')->grou
         Route::get('/history', 'history')->name('history');
         Route::get('/favorites', 'favorites')->name('favorites');
         Route::get('/recommendations', 'recommendations')->name('recommendations');
+        Route::get('/notifications', 'notifications')->name('notifications');
+        Route::post('/notifications/{notification}/read', 'markNotificationRead')->name('notifications.read');
+        Route::post('/notifications/read-all', 'markAllNotificationsRead')->name('notifications.read-all');
+    });
+
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::post('/request', 'request')->name('request');
+        Route::get('/status', 'status')->name('status');
+        Route::get('/admin/sync-progress', 'syncProgress')->name('admin.sync-progress');
+        Route::get('/admin/sync-progress/data', 'syncProgressData')->name('admin.sync-progress.data');
+
+        Route::controller(SearchQualityController::class)->prefix('/admin/search-quality')->name('admin.search-quality.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/preview', 'preview')->name('preview');
+            Route::post('/publish', 'publish')->name('publish');
+        });
+
+        Route::controller(ProviderSyncController::class)->prefix('/admin/provider-sync')->name('admin.provider-sync.')->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/dispatch', 'dispatch')->name('dispatch');
+        });
     });
 });
 

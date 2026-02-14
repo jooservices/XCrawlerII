@@ -9,6 +9,7 @@ use Modules\JAV\Events\ItemParsed;
 use Modules\JAV\Listeners\JavSubscriber;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Services\JavManager;
+use Modules\JAV\Services\UserLikeNotificationService;
 use Modules\JAV\Tests\TestCase;
 
 class JavSubscriberTest extends TestCase
@@ -188,7 +189,11 @@ class JavSubscriberTest extends TestCase
             ->method('store')
             ->willThrowException(new \Exception('Database error'));
 
-        $subscriber = new JavSubscriber($manager);
+        $notificationService = $this->createMock(UserLikeNotificationService::class);
+        $notificationService->expects($this->never())
+            ->method('notifyForJav');
+
+        $subscriber = new JavSubscriber($manager, $notificationService);
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('Database error');

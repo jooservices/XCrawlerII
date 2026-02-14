@@ -32,7 +32,7 @@ class SearchService
 
     public function searchActors(string $query = '', int $perPage = 60): LengthAwarePaginator
     {
-        return Actor::search($query)->paginate($perPage);
+        return Actor::search($query)->query(fn($q) => $q->withCount('javs'))->paginate($perPage);
     }
 
     public function searchTags(string $query = '', int $perPage = 60): LengthAwarePaginator

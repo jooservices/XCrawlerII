@@ -56,7 +56,15 @@
     </div>
 
     <!-- Lazy Loading Sentinel -->
-    <div id="sentinel" data-next-url="{{ $items->nextPageUrl() }}"></div>
+    @php
+        $nextPageUrl = $items->nextPageUrl();
+        if ($nextPageUrl) {
+            $nextPagePath = parse_url($nextPageUrl, PHP_URL_PATH) ?? '/';
+            $nextPageQuery = parse_url($nextPageUrl, PHP_URL_QUERY);
+            $nextPageUrl = $nextPageQuery ? ($nextPagePath . '?' . $nextPageQuery) : $nextPagePath;
+        }
+    @endphp
+    <div id="sentinel" data-next-url="{{ $nextPageUrl }}"></div>
     <div id="loading-spinner" class="text-center my-4" style="display: none;">
         <div class="spinner-border text-primary" role="status">
             <span class="visually-hidden">Loading...</span>

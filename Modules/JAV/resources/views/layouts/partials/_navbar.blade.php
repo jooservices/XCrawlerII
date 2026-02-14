@@ -49,6 +49,70 @@
                         <a class="nav-link" href="{{ route('register') }}">Register</a>
                     </li>
                 @else
+                    @php
+                        $unreadNotifications = Auth::user()->javNotifications()
+                            ->with('jav:id,uuid,code,title')
+                            ->unread()
+                            ->latest('id')
+                            ->limit(8)
+                            ->get();
+                        $unreadCount = Auth::user()->javNotifications()->unread()->count();
+                    @endphp
+                    <li class="nav-item dropdown me-2">
+                        <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                            <i class="fas fa-bell"></i>
+                            @if($unreadCount > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                                </span>
+                            @endif
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown"
+                            style="min-width: 340px;">
+                            <li class="dropdown-header d-flex justify-content-between align-items-center">
+                                <span>Notifications</span>
+                                @if($unreadCount > 0)
+                                    <form action="{{ route('jav.notifications.read-all') }}" method="POST" class="m-0">
+                                        @csrf
+                                        <button type="submit" class="btn btn-link btn-sm p-0">Mark all read</button>
+                                    </form>
+                                @endif
+                            </li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            @forelse($unreadNotifications as $notification)
+                                <li class="px-3 py-2 border-bottom">
+                                    <div class="fw-semibold">{{ $notification->title }}</div>
+                                    @if($notification->jav)
+                                        <div class="small text-muted mb-1">
+                                            <a href="{{ route('jav.movies.show', $notification->jav) }}" class="text-decoration-none">
+                                                {{ $notification->jav->code }} {{ $notification->jav->title }}
+                                            </a>
+                                        </div>
+                                    @endif
+                                    @php
+                                        $payload = $notification->payload ?? [];
+                                        $matchedActors = $payload['matched_actors'] ?? [];
+                                        $matchedTags = $payload['matched_tags'] ?? [];
+                                    @endphp
+                                    @if(!empty($matchedActors))
+                                        <div class="small">Actor: {{ implode(', ', $matchedActors) }}</div>
+                                    @endif
+                                    @if(!empty($matchedTags))
+                                        <div class="small">Tag: {{ implode(', ', $matchedTags) }}</div>
+                                    @endif
+                                    <form action="{{ route('jav.notifications.read', $notification) }}" method="POST" class="mt-1">
+                                        @csrf
+                                        <button type="submit" class="btn btn-link btn-sm p-0">Mark as read</button>
+                                    </form>
+                                </li>
+                            @empty
+                                <li class="px-3 py-2 text-muted small">No unread notifications</li>
+                            @endforelse
+                        </ul>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false">
