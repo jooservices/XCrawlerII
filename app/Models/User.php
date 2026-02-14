@@ -24,6 +24,7 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'preferences',
     ];
 
     /**
@@ -46,6 +47,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'preferences' => 'array',
         ];
     }
     public function favorites(): HasMany
@@ -69,6 +71,22 @@ class User extends Authenticatable
     public function watchlist(): HasMany
     {
         return $this->hasMany(\Modules\JAV\Models\Watchlist::class);
+    }
+
+    /**
+     * Get the user's watchlist items.
+     */
+    public function watchlists(): HasMany
+    {
+        return $this->hasMany(\Modules\JAV\Models\Watchlist::class);
+    }
+
+    /**
+     * Get the ratings created by the user.
+     */
+    public function ratings(): HasMany
+    {
+        return $this->hasMany(\Modules\JAV\Models\Rating::class);
     }
 
     /**
@@ -139,5 +157,13 @@ class User extends Authenticatable
     public function removeRole(Role $role): void
     {
         $this->roles()->detach($role->id);
+    }
+
+    /**
+     * Get all permissions for the user.
+     */
+    public function getAllPermissions(): \Illuminate\Support\Collection
+    {
+        return $this->roles->flatMap->permissions->unique('id');
     }
 }

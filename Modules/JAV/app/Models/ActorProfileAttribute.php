@@ -2,12 +2,20 @@
 
 namespace Modules\JAV\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ActorProfileAttribute extends Model
 {
+    use HasFactory;
+
     protected $table = 'actor_profile_attributes';
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ActorProfileAttributeFactory::new();
+    }
 
     protected $fillable = [
         'actor_id',

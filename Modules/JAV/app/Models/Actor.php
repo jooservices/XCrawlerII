@@ -2,6 +2,7 @@
 
 namespace Modules\JAV\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,11 +12,16 @@ use Modules\JAV\Services\ActorProfileResolver;
 
 class Actor extends Model
 {
-    use Searchable;
+    use HasFactory, Searchable;
 
     protected $table = 'actors';
 
     protected $touches = ['javs'];
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\ActorFactory::new();
+    }
 
     public function searchable()
     {

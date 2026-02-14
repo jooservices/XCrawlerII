@@ -2,15 +2,21 @@
 
 namespace Modules\JAV\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Scout\Searchable;
 
 class Tag extends Model
 {
-    use Searchable;
+    use HasFactory, Searchable;
 
     protected $table = 'tags';
+
+    protected static function newFactory()
+    {
+        return \Database\Factories\TagFactory::new();
+    }
 
     public function searchable()
     {

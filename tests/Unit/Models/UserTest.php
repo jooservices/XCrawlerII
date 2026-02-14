@@ -6,6 +6,9 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\JAV\Models\Jav;
+use Modules\JAV\Models\Rating;
+use Modules\JAV\Models\Watchlist;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -112,5 +115,29 @@ class UserTest extends TestCase
         $user->assignRole($role); // Try to add again
 
         $this->assertEquals(1, $user->fresh()->roles->count());
+    }
+
+    public function test_user_has_ratings_relationship(): void
+    {
+        $user = User::factory()->create();
+        $jav = Jav::factory()->create();
+        $rating = Rating::factory()->create([
+            'user_id' => $user->id,
+            'jav_id' => $jav->id,
+        ]);
+
+        $this->assertTrue($user->ratings->contains($rating));
+    }
+
+    public function test_user_has_watchlists_relationship_aliases(): void
+    {
+        $user = User::factory()->create();
+        $watchlist = Watchlist::factory()->create([
+            'user_id' => $user->id,
+            'jav_id' => Jav::factory(),
+        ]);
+
+        $this->assertTrue($user->watchlist->contains($watchlist));
+        $this->assertTrue($user->watchlists->contains($watchlist));
     }
 }

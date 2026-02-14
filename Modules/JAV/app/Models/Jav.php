@@ -150,6 +150,21 @@ class Jav extends Model
         return $this->hasMany(Rating::class);
     }
 
+    public function watchlists(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Watchlist::class);
+    }
+
+    public function userHistories(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserJavHistory::class);
+    }
+
+    public function likeNotifications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(UserLikeNotification::class, 'jav_id');
+    }
+
     /**
      * Get the average rating for this movie.
      */
