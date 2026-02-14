@@ -12,9 +12,9 @@ class DailySyncCommandTest extends TestCase
     {
         Queue::fake();
 
-        $this->artisan('jav:sync', [
+        $this->artisan('jav:sync:content', [
             'provider' => 'onejav',
-            '--type' => 'daily',
+            '--type' => ['daily'],
             '--date' => '2026-02-14',
         ])->assertExitCode(0);
 
@@ -29,9 +29,9 @@ class DailySyncCommandTest extends TestCase
     {
         Queue::fake();
 
-        $this->artisan('jav:sync', [
+        $this->artisan('jav:sync:content', [
             'provider' => 'invalid',
-            '--type' => 'daily',
+            '--type' => ['daily'],
         ])->assertExitCode(2);
 
         Queue::assertNothingPushed();

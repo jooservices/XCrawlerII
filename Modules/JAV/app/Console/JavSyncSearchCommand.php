@@ -4,17 +4,20 @@ namespace Modules\JAV\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Elastic\Elasticsearch\Client;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
 
-class SyncElasticsearchCommand extends Command
+class JavSyncSearchCommand extends Command
 {
+    use \Modules\JAV\Traits\ElasticsearchHelpers;
+
     /**
      * The name and signature of the console command.
      */
-    protected $signature = 'jav:elastichsearch
-                            {--type=sync : sync|reset}';
+    protected $signature = 'jav:sync:search
+                            {--mode=sync : sync|reset}';
 
     /**
      * The console command description.
@@ -24,16 +27,22 @@ class SyncElasticsearchCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(): int
+    public function handle(Client $client): int
     {
-        $type = (string) $this->option('type');
-        if (!in_array($type, ['sync', 'reset'], true)) {
-            $this->error('Invalid type. Supported: sync, reset');
+        if (!$this->isElasticsearchAvailable()) {
+            $this->warn('Elasticsearch is not reachable. Skipping sync.');
+
+            return self::SUCCESS;
+        }
+
+        $mode = (string) $this->option('mode');
+        if (!in_array($mode, ['sync', 'reset'], true)) {
+            $this->error('Invalid mode. Supported: sync, reset');
 
             return self::INVALID;
         }
 
-        if ($type === 'reset') {
+        if ($mode === 'reset') {
             $this->info('Starting Elasticsearch reset...');
 
             $this->flushModel(Jav::class, 'JAV Movies');

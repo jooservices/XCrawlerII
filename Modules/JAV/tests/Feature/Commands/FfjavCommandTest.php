@@ -22,7 +22,7 @@ class FfjavCommandTest extends TestCase
     {
         Queue::fake();
 
-        $this->artisan('jav:sync', ['provider' => 'ffjav', '--type' => 'new'])
+        $this->artisan('jav:sync:content', ['provider' => 'ffjav', '--type' => ['new']])
             ->assertExitCode(0);
 
         Queue::assertPushedOn('jav', FfjavJob::class, function ($job) {

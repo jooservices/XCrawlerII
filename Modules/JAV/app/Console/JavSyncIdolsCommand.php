@@ -6,9 +6,10 @@ use Illuminate\Console\Command;
 use Modules\JAV\Jobs\XcityKanaSyncJob;
 use Modules\JAV\Services\XcityIdolService;
 
-class XcityIdolSyncCommand extends Command
+class JavSyncIdolsCommand extends Command
 {
-    protected $signature = 'jav:idols:sync-xcity
+    protected $signature = 'jav:sync:idols
+                            {--source=xcity : Idol source provider}
                             {--concurrency=3 : Number of kana pages to process in parallel}
                             {--queue=jav : Queue name}';
 
@@ -16,6 +17,12 @@ class XcityIdolSyncCommand extends Command
 
     public function handle(XcityIdolService $service): int
     {
+        if ((string) $this->option('source') !== 'xcity') {
+            $this->error('Invalid source. Supported: xcity');
+
+            return self::INVALID;
+        }
+
         $concurrency = max(1, (int) $this->option('concurrency'));
         $queue = (string) $this->option('queue');
 

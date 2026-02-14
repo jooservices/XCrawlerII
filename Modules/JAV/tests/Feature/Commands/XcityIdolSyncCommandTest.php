@@ -35,7 +35,7 @@ class XcityIdolSyncCommandTest extends TestCase
             ]));
         $this->app->instance(XcityIdolService::class, $service);
 
-        $this->artisan('jav:idols:sync-xcity', ['--concurrency' => 2])
+        $this->artisan('jav:sync:idols', ['--concurrency' => 2])
             ->assertExitCode(0);
 
         Queue::assertPushed(XcityKanaSyncJob::class, 2);

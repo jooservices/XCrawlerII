@@ -2,101 +2,113 @@
 
 namespace Modules\JAV\Console;
 
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Modules\JAV\Jobs\DailySyncJob;
-use Modules\JAV\Jobs\FfjavJob;
-use Modules\JAV\Jobs\OneFourOneJavJob;
-use Modules\JAV\Jobs\OnejavJob;
-use Modules\JAV\Services\FfjavService;
-use Modules\JAV\Services\OneFourOneJavService;
-use Modules\JAV\Services\OnejavService;
+use Illuminate\Support\Facades\Artisan;
 
 class JavCommand extends Command
 {
     protected $signature = 'jav:sync
-                            {provider : onejav|141jav|ffjav}
-                            {--type= : new|popular|daily|tags}
-                            {--date= : YYYY-MM-DD for daily type}';
+                            {--only=* : content|idols|search|analytics|recommendations}
+                            {--provider=* : onejav|141jav|ffjav (content only)}
+                            {--type=* : new|popular|daily|tags (content only)}
+                            {--date= : YYYY-MM-DD for daily type (content only)}
+                            {--queue=jav : Queue name for queued jobs}
+                            {--concurrency=3 : Idol sync concurrency}
+                            {--search-mode=sync : sync|reset}
+                            {--confirm-reset : Required when search mode is reset}
+                            {--days=* : Analytics windows (7,14,30,90)}
+                            {--user-id=* : Recommendation user IDs}
+                            {--limit=30 : Recommendation limit per user}';
 
-    protected $description = 'Sync JAV provider content by type; defaults to daily, popular, and tags';
-
-    /**
-     * @var array<int, string>
-     */
-    private array $defaultTypes = ['new', 'daily', 'popular', 'tags'];
+    protected $description = 'Run all JAV sync flows (AIO) or selected components';
 
     public function handle(): int
     {
-        $provider = $this->argument('provider');
+        $componentsOption = (array) $this->option('only');
+        $components = $componentsOption === []
+            ? ['content', 'idols', 'search', 'analytics', 'recommendations']
+            : array_values(array_unique($componentsOption));
 
-        if (!in_array($provider, ['onejav', '141jav', 'ffjav'], true)) {
-            $this->error('Invalid provider. Supported: onejav, 141jav, ffjav');
+        foreach ($components as $component) {
+            if (!in_array($component, ['content', 'idols', 'search', 'analytics', 'recommendations'], true)) {
+                $this->error('Invalid component in --only. Supported: content, idols, search, analytics, recommendations');
 
-            return self::INVALID;
+                return self::INVALID;
+            }
         }
 
-        $type = $this->option('type');
-        $types = $type === null ? $this->defaultTypes : [$type];
+        $hasFailure = false;
+        $queue = (string) $this->option('queue');
+        $types = (array) $this->option('type');
+        $providersOption = (array) $this->option('provider');
+        $providers = $providersOption === [] ? ['onejav', '141jav', 'ffjav'] : array_values(array_unique($providersOption));
+        $date = $this->option('date');
 
-        foreach ($types as $syncType) {
-            if (!in_array($syncType, ['new', 'popular', 'daily', 'tags'], true)) {
-                $this->error('Invalid type. Supported: new, popular, daily, tags');
+        if (in_array('content', $components, true)) {
+            foreach ($providers as $provider) {
+                $payload = [
+                    'provider' => $provider,
+                    '--queue' => $queue,
+                ];
+
+                if ($types !== []) {
+                    $payload['--type'] = $types;
+                }
+                if (is_string($date) && $date !== '') {
+                    $payload['--date'] = $date;
+                }
+
+                $exitCode = Artisan::call('jav:sync:content', $payload, $this->output);
+                $hasFailure = $hasFailure || $exitCode !== self::SUCCESS;
+            }
+        }
+
+        if (in_array('idols', $components, true)) {
+            $exitCode = Artisan::call('jav:sync:idols', [
+                '--concurrency' => (int) $this->option('concurrency'),
+                '--queue' => $queue,
+            ], $this->output);
+            $hasFailure = $hasFailure || $exitCode !== self::SUCCESS;
+        }
+
+        if (in_array('search', $components, true)) {
+            $searchMode = (string) $this->option('search-mode');
+            if ($searchMode === 'reset' && !$this->option('confirm-reset')) {
+                $this->error('Refusing search reset without --confirm-reset');
 
                 return self::INVALID;
             }
 
-            $this->dispatchByType($provider, $syncType);
+            $exitCode = Artisan::call('jav:sync:search', [
+                '--mode' => $searchMode,
+            ], $this->output);
+            $hasFailure = $hasFailure || $exitCode !== self::SUCCESS;
         }
 
-        return self::SUCCESS;
-    }
+        if (in_array('analytics', $components, true)) {
+            $payload = [];
+            $days = (array) $this->option('days');
+            if ($days !== []) {
+                $payload['--days'] = $days;
+            }
 
-    private function dispatchByType(string $provider, string $type): void
-    {
-        match ($type) {
-            'new' => $this->dispatchFeedJob($provider, 'new'),
-            'popular' => $this->dispatchFeedJob($provider, 'popular'),
-            'daily' => $this->dispatchDailyJob($provider),
-            'tags' => $this->syncTags($provider),
-        };
-    }
+            $exitCode = Artisan::call('jav:sync:analytics', $payload, $this->output);
+            $hasFailure = $hasFailure || $exitCode !== self::SUCCESS;
+        }
 
-    private function dispatchFeedJob(string $provider, string $type): void
-    {
-        $this->info("Starting {$provider} {$type} sync.");
+        if (in_array('recommendations', $components, true)) {
+            $payload = [
+                '--limit' => (int) $this->option('limit'),
+            ];
+            $userIds = (array) $this->option('user-id');
+            if ($userIds !== []) {
+                $payload['--user-id'] = $userIds;
+            }
 
-        match ($provider) {
-            'onejav' => OnejavJob::dispatch($type)->onQueue('jav'),
-            '141jav' => OneFourOneJavJob::dispatch($type)->onQueue('jav'),
-            'ffjav' => FfjavJob::dispatch($type)->onQueue('jav'),
-        };
+            $exitCode = Artisan::call('jav:sync:recommendations', $payload, $this->output);
+            $hasFailure = $hasFailure || $exitCode !== self::SUCCESS;
+        }
 
-        $this->info("Dispatched {$provider} {$type} job to queue 'jav'.");
-    }
-
-    private function dispatchDailyJob(string $provider): void
-    {
-        $dateOption = $this->option('date');
-        $resolvedDate = $dateOption
-            ? Carbon::parse($dateOption)->toDateString()
-            : Carbon::now()->toDateString();
-
-        DailySyncJob::dispatch($provider, $resolvedDate, 1)->onQueue('jav');
-
-        $this->info("Dispatched {$provider} daily sync ({$resolvedDate}) page 1.");
-    }
-
-    private function syncTags(string $provider): void
-    {
-        $service = match ($provider) {
-            'onejav' => app(OnejavService::class),
-            '141jav' => app(OneFourOneJavService::class),
-            'ffjav' => app(FfjavService::class),
-        };
-
-        $tags = $service->tags();
-
-        $this->info("Synced {$tags->count()} tags for {$provider}.");
+        return $hasFailure ? self::FAILURE : self::SUCCESS;
     }
 }

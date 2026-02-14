@@ -23,7 +23,10 @@ class JavCommandTest extends TestCase
             ->andReturn(collect(['4K', '16HR+']));
         $this->app->instance(OnejavService::class, $service);
 
-        $this->artisan('jav:sync', ['provider' => 'onejav'])
+        $this->artisan('jav:sync', [
+            '--only' => ['content'],
+            '--provider' => ['onejav'],
+        ])
             ->assertExitCode(0);
 
         Queue::assertPushedOn('jav', DailySyncJob::class, function ($job) {
