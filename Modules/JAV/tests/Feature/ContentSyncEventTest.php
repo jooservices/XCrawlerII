@@ -22,6 +22,9 @@ class ContentSyncEventTest extends TestCase
         putenv('SCOUT_DRIVER=collection');
         parent::setUp();
         config(['scout.driver' => 'collection']);
+        Jav::enableSearchSyncing();
+        Tag::enableSearchSyncing();
+        Actor::enableSearchSyncing();
     }
 
     public function test_creating_jav_dispatches_sync_events()

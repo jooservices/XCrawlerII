@@ -69,9 +69,8 @@ class XcityIdolServiceTest extends TestCase
         ]);
         $this->assertDatabaseHas('actor_profile_attributes', [
             'source' => 'xcity',
-            'kind' => 'raw.name',
-            'value_label' => 'Name',
-            'value_string' => 'Iori Kogawa',
+            'kind' => 'special_skill',
+            'value_string' => 'Getting lost',
         ]);
     }
 
