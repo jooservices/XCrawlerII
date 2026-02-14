@@ -7,7 +7,8 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 use InvalidArgumentException;
 use JOOservices\Client\Client\ClientBuilder;
 use Modules\JAV\Models\Jav;
@@ -26,7 +27,7 @@ class MovieController extends Controller
     ) {
     }
 
-    public function show(Jav $jav): View
+    public function show(Jav $jav): InertiaResponse
     {
         $jav->increment('views');
 
@@ -50,7 +51,12 @@ class MovieController extends Controller
         $relatedByActors = $this->searchService->getRelatedByActors($jav, 10);
         $relatedByTags = $this->searchService->getRelatedByTags($jav, 10);
 
-        return view('jav::dashboard.show', compact('jav', 'relatedByActors', 'relatedByTags', 'isLiked'));
+        return Inertia::render('Movies/Show', [
+            'jav' => $jav,
+            'relatedByActors' => $relatedByActors,
+            'relatedByTags' => $relatedByTags,
+            'isLiked' => $isLiked,
+        ]);
     }
 
     public function download(Jav $jav): Response|RedirectResponse

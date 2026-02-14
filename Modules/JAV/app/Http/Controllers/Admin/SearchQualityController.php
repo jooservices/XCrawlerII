@@ -3,15 +3,14 @@
 namespace Modules\JAV\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
 class SearchQualityController extends Controller
 {
-    public function index(): View
+    public function index(): InertiaResponse
     {
-        return view('jav::dashboard.admin.search_quality');
+        return $this->indexVue();
     }
 
     public function indexVue(): InertiaResponse

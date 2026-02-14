@@ -3,7 +3,6 @@
 namespace Modules\JAV\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Modules\JAV\Http\Requests\AnalyticsRequest;
@@ -15,9 +14,9 @@ class AnalyticsController extends Controller
     {
     }
 
-    public function index(AnalyticsRequest $request): View
+    public function index(AnalyticsRequest $request): InertiaResponse
     {
-        return view('jav::dashboard.admin.analytics', $this->buildPayload($request));
+        return $this->indexVue($request);
     }
 
     public function indexVue(AnalyticsRequest $request): InertiaResponse

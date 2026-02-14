@@ -3,15 +3,14 @@
 namespace Modules\JAV\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
 class SyncController extends Controller
 {
-    public function index(): View
+    public function index(): InertiaResponse
     {
-        return view('jav::dashboard.admin.provider_sync');
+        return $this->indexVue();
     }
 
     public function indexVue(): InertiaResponse
@@ -19,9 +18,9 @@ class SyncController extends Controller
         return Inertia::render('Admin/ProviderSync');
     }
 
-    public function syncProgress(): View
+    public function syncProgress(): InertiaResponse
     {
-        return view('jav::dashboard.sync_progress');
+        return $this->syncProgressVue();
     }
 
     public function syncProgressVue(): InertiaResponse

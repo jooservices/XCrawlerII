@@ -4,7 +4,8 @@ namespace Modules\JAV\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 use Modules\JAV\Http\Requests\DeletePresetRequest;
 use Modules\JAV\Http\Requests\SavePreferencesRequest;
 use Modules\JAV\Http\Requests\SavePresetRequest;
@@ -16,11 +17,13 @@ class PreferenceController extends Controller
     {
     }
 
-    public function index(): View
+    public function index(): InertiaResponse
     {
         $preferences = $this->dashboardPreferencesService->resolve(auth()->user());
 
-        return view('jav::dashboard.preferences', compact('preferences'));
+        return Inertia::render('User/Preferences', [
+            'preferences' => $preferences,
+        ]);
     }
 
     public function save(SavePreferencesRequest $request): RedirectResponse

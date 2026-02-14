@@ -5,7 +5,6 @@ namespace Modules\JAV\Http\Controllers\Users;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controller;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Modules\JAV\Http\Controllers\Users\Api\RatingController as ApiRatingController;
@@ -20,7 +19,7 @@ class RatingController extends Controller
     /**
      * Display a listing of ratings.
      */
-    public function index(GetRatingsRequest $request): View|JsonResponse
+    public function index(GetRatingsRequest $request): InertiaResponse|JsonResponse
     {
         $query = Rating::with(['user', 'jav']);
 
@@ -57,7 +56,9 @@ class RatingController extends Controller
             ]);
         }
 
-        return view('jav::ratings.index', compact('ratings'));
+        return Inertia::render('Ratings/Index', [
+            'ratings' => $ratings,
+        ]);
     }
 
     public function indexVue(GetRatingsRequest $request): InertiaResponse
@@ -131,7 +132,7 @@ class RatingController extends Controller
     /**
      * Display the specified rating.
      */
-    public function show(Rating $rating): View|JsonResponse
+    public function show(Rating $rating): InertiaResponse|JsonResponse
     {
         $rating->load(['user', 'jav']);
 
@@ -142,7 +143,9 @@ class RatingController extends Controller
             ]);
         }
 
-        return view('jav::ratings.show', compact('rating'));
+        return Inertia::render('Ratings/Show', [
+            'rating' => $rating,
+        ]);
     }
 
     public function showVue(Rating $rating): InertiaResponse

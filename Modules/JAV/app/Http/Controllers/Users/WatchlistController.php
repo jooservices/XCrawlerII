@@ -5,7 +5,6 @@ namespace Modules\JAV\Http\Controllers\Users;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Modules\JAV\Http\Controllers\Users\Api\WatchlistController as ApiWatchlistController;
@@ -19,20 +18,9 @@ class WatchlistController extends Controller
     /**
      * Display the user's watchlist.
      */
-    public function index(GetWatchlistRequest $request): View
+    public function index(GetWatchlistRequest $request): InertiaResponse
     {
-        $query = Watchlist::with('jav')
-            ->forUser(auth()->id())
-            ->latest();
-
-        $status = $request->input('status', 'all');
-        if ($status !== 'all') {
-            $query->status($status);
-        }
-
-        $watchlist = $query->paginate(30);
-
-        return view('jav::watchlist.index', compact('watchlist', 'status'));
+        return $this->indexVue($request);
     }
 
     public function indexVue(GetWatchlistRequest $request): InertiaResponse

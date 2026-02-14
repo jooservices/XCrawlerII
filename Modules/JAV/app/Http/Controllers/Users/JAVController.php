@@ -15,9 +15,9 @@ class JAVController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): InertiaResponse
     {
-        return view('jav::index');
+        return $this->indexResourceVue();
     }
 
     public function indexResourceVue(): InertiaResponse
@@ -34,9 +34,9 @@ class JAVController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): InertiaResponse
     {
-        return view('jav::create');
+        return $this->createResourceVue();
     }
 
     public function createResourceVue(): InertiaResponse
@@ -54,9 +54,11 @@ class JAVController extends Controller
     /**
      * Show the specified resource.
      */
-    public function show($id)
+    public function show(int|string $id): InertiaResponse
     {
-        return view('jav::show');
+        $jav = Jav::query()->whereKey($id)->firstOrFail();
+
+        return $this->showResourceVue($jav);
     }
 
     public function showResourceVue(Jav $jav): InertiaResponse
@@ -109,9 +111,11 @@ class JAVController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit(int|string $id): InertiaResponse
     {
-        return view('jav::edit');
+        $jav = Jav::query()->whereKey($id)->firstOrFail();
+
+        return $this->editResourceVue($jav);
     }
 
     public function editResourceVue(Jav $jav): InertiaResponse
