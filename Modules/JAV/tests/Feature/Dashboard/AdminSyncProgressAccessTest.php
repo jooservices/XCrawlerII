@@ -19,7 +19,7 @@ class AdminSyncProgressAccessTest extends TestCase
         $admin->assignRole($adminRole);
 
         $this->actingAs($admin)
-            ->get(route('jav.blade.admin.sync-progress'))
+            ->get(route('jav.vue.admin.sync-progress'))
             ->assertOk();
 
         $this->actingAs($admin)
@@ -49,7 +49,7 @@ class AdminSyncProgressAccessTest extends TestCase
         $moderator->assignRole($moderatorRole);
 
         $this->actingAs($moderator)
-            ->get(route('jav.blade.admin.sync-progress'))
+            ->get(route('jav.vue.admin.sync-progress'))
             ->assertForbidden();
 
         $this->actingAs($moderator)

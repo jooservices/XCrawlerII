@@ -10,11 +10,6 @@ use Inertia\Response as InertiaResponse;
 
 class LoginController extends Controller
 {
-    public function showLoginForm()
-    {
-        return view('jav::auth.login');
-    }
-
     public function showLoginFormVue(): InertiaResponse
     {
         return Inertia::render('Auth/Login');
@@ -41,7 +36,7 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('jav.blade.dashboard'));
+            return redirect()->intended(route('jav.vue.dashboard'));
         }
 
         return back()->withErrors([
@@ -57,6 +52,6 @@ class LoginController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->route('jav.blade.dashboard');
+        return redirect()->route('jav.vue.dashboard');
     }
 }

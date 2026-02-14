@@ -15,7 +15,7 @@ class AdminProviderSyncTest extends TestCase
         $admin = $this->makeUserWithRole('admin');
 
         $this->actingAs($admin)
-            ->get(route('jav.blade.admin.provider-sync.index'))
+            ->get(route('jav.vue.admin.provider-sync'))
             ->assertOk();
     }
 
@@ -24,7 +24,7 @@ class AdminProviderSyncTest extends TestCase
         $moderator = $this->makeUserWithRole('moderator');
 
         $this->actingAs($moderator)
-            ->get(route('jav.blade.admin.provider-sync.index'))
+            ->get(route('jav.vue.admin.provider-sync'))
             ->assertForbidden();
     }
 

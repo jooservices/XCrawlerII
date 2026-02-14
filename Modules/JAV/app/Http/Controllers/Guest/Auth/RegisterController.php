@@ -13,11 +13,6 @@ use Inertia\Response as InertiaResponse;
 
 class RegisterController extends Controller
 {
-    public function showRegistrationForm()
-    {
-        return view('jav::auth.register');
-    }
-
     public function showRegistrationFormVue(): InertiaResponse
     {
         return Inertia::render('Auth/Register');
@@ -41,6 +36,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('jav.blade.dashboard'));
+        return redirect(route('jav.vue.dashboard'));
     }
 }

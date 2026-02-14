@@ -29,7 +29,7 @@ class AuthTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('jav.blade.dashboard'));
+        $response->assertRedirect(route('jav.vue.dashboard'));
         $this->assertDatabaseHas('users', [
             'username' => 'testuser',
             'email' => 'test@example.com',
@@ -56,7 +56,7 @@ class AuthTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('jav.blade.dashboard'));
+        $response->assertRedirect(route('jav.vue.dashboard'));
     }
 
     public function test_users_can_not_authenticate_with_invalid_password()
@@ -86,6 +86,6 @@ class AuthTest extends TestCase
         $response = $this->post('/logout');
 
         $this->assertGuest();
-        $response->assertRedirect(route('jav.blade.dashboard'));
+        $response->assertRedirect(route('jav.vue.dashboard'));
     }
 }

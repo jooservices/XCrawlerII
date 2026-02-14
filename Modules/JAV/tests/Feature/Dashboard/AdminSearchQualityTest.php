@@ -72,7 +72,7 @@ class AdminSearchQualityTest extends TestCase
         $moderator = $this->makeUserWithRole('moderator');
 
         $this->actingAs($moderator)
-            ->get(route('jav.blade.admin.search-quality.index'))
+            ->get(route('jav.vue.admin.search-quality'))
             ->assertForbidden();
     }
 

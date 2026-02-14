@@ -2,6 +2,8 @@
 
 namespace Modules\JAV\Tests\Feature\Dashboard;
 
+use Inertia\Testing\AssertableInertia as Assert;
+use App\Models\User;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Tests\TestCase;
 
@@ -14,31 +16,27 @@ class DashboardLazyLoadTest extends TestCase
         config(['scout.driver' => 'collection']);
     }
 
-    public function test_dashboard_lazy_load_uses_relative_next_page_url_and_returns_more_items(): void
+    public function test_dashboard_route_renders_inertia_and_supports_pagination_query(): void
     {
         Jav::factory()->count(31)->create();
+        $this->actingAs(User::factory()->create());
 
-        $firstPageAjax = $this->withHeader('X-Requested-With', 'XMLHttpRequest')
-            ->get(route('jav.blade.dashboard'));
-
-        $firstPageAjax
+        $firstPage = $this->get(route('jav.vue.dashboard'));
+        $firstPage
             ->assertOk()
-            ->assertJsonStructure(['html', 'next_page_url']);
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->component('Dashboard/Index', false)
+                    ->has('items.data')
+            );
 
-        $nextPageUrl = $firstPageAjax->json('next_page_url');
-
-        $this->assertNotNull($nextPageUrl);
-        $this->assertStringStartsWith('/', $nextPageUrl);
-        $this->assertStringContainsString('page=2', $nextPageUrl);
-
-        $secondPageAjax = $this->withHeader('X-Requested-With', 'XMLHttpRequest')
-            ->get('/jav/blade/dashboard?page=2');
-
-        $secondPageAjax
+        $secondPage = $this->get('/jav/dashboard?page=2');
+        $secondPage
             ->assertOk()
-            ->assertJsonStructure(['html', 'next_page_url'])
-            ->assertJsonPath('next_page_url', null);
-
-        $this->assertStringContainsString('movie-card', $secondPageAjax->json('html'));
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->component('Dashboard/Index', false)
+                    ->has('items.data')
+            );
     }
 }

@@ -3,10 +3,11 @@
 namespace Modules\JAV\Tests\Feature;
 
 use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Watchlist;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class WatchlistControllerTest extends TestCase
 {
@@ -22,15 +23,21 @@ class WatchlistControllerTest extends TestCase
 
     public function test_user_can_view_watchlist(): void
     {
-        $response = $this->actingAs($this->user)->get(route('jav.blade.watchlist'));
+        $response = $this->actingAs($this->user)->get(route('jav.vue.watchlist'));
 
-        $response->assertOk();
-        $response->assertViewIs('jav::watchlist.index');
+        $response
+            ->assertOk()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->component('User/Watchlist', false)
+                    ->has('watchlist.data')
+                    ->where('status', 'all')
+            );
     }
 
     public function test_guest_cannot_view_watchlist(): void
     {
-        $response = $this->get(route('jav.blade.watchlist'));
+        $response = $this->get(route('jav.vue.watchlist'));
 
         $response->assertStatus(302);
     }
@@ -144,10 +151,15 @@ class WatchlistControllerTest extends TestCase
             'status' => 'watched',
         ]);
 
-        $response = $this->actingAs($this->user)->get(route('jav.blade.watchlist', ['status' => 'to_watch']));
+        $response = $this->actingAs($this->user)->get(route('jav.vue.watchlist', ['status' => 'to_watch']));
 
         $response->assertOk();
-        $this->assertEquals(1, $response->viewData('watchlist')->count());
+        $response->assertInertia(
+            fn (Assert $page): Assert => $page
+                ->component('User/Watchlist', false)
+                ->has('watchlist.data', 1)
+                ->where('status', 'to_watch')
+        );
     }
 
     public function test_check_endpoint_returns_watchlist_status(): void

@@ -3,10 +3,11 @@
 namespace Modules\JAV\Tests\Feature;
 
 use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Rating;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RatingControllerTest extends TestCase
 {
@@ -22,10 +23,16 @@ class RatingControllerTest extends TestCase
 
     public function test_anyone_can_view_ratings(): void
     {
-        $response = $this->getJson(route('jav.blade.ratings.index'));
+        $this->actingAs($this->user);
+        $response = $this->get(route('jav.vue.ratings'));
 
-        $response->assertOk();
-        $response->assertJson(['success' => true]);
+        $response
+            ->assertOk()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->component('Ratings/Index', false)
+                    ->has('ratings.data')
+            );
     }
 
     public function test_ratings_can_be_filtered_by_jav_id(): void
@@ -36,11 +43,15 @@ class RatingControllerTest extends TestCase
         Rating::factory()->create(['jav_id' => $jav1->id]);
         Rating::factory()->create(['jav_id' => $jav2->id]);
 
-        $response = $this->getJson(route('jav.blade.ratings.index', ['jav_id' => $jav1->id]));
-
-        $response->assertOk();
-        $response->assertJson(['success' => true]);
-        $this->assertEquals(1, count($response->json('data.data')));
+        $this->actingAs($this->user);
+        $response = $this->get(route('jav.vue.ratings', ['jav_id' => $jav1->id]));
+        $response
+            ->assertOk()
+            ->assertInertia(
+                fn (Assert $page): Assert => $page
+                    ->component('Ratings/Index', false)
+                    ->has('ratings.data', 1)
+            );
     }
 
     public function test_authenticated_user_can_submit_rating(): void
@@ -249,11 +260,14 @@ class RatingControllerTest extends TestCase
             'created_at' => now(),
         ]);
 
-        $response = $this->getJson(route('jav.blade.ratings.index', ['jav_id' => $jav->id, 'sort' => 'recent']));
-
+        $this->actingAs($this->user);
+        $response = $this->get(route('jav.vue.ratings', ['jav_id' => $jav->id, 'sort' => 'recent']));
         $response->assertOk();
-        $data = $response->json('data.data');
-        $this->assertEquals($new->id, $data[0]['id']);
+        $response->assertInertia(
+            fn (Assert $page): Assert => $page
+                ->component('Ratings/Index', false)
+                ->has('ratings.data', 2)
+        );
     }
 
     public function test_ratings_can_be_sorted_by_highest(): void
@@ -262,11 +276,14 @@ class RatingControllerTest extends TestCase
         Rating::factory()->create(['jav_id' => $jav->id, 'rating' => 3]);
         $highest = Rating::factory()->create(['jav_id' => $jav->id, 'rating' => 5]);
 
-        $response = $this->getJson(route('jav.blade.ratings.index', ['jav_id' => $jav->id, 'sort' => 'highest']));
-
+        $this->actingAs($this->user);
+        $response = $this->get(route('jav.vue.ratings', ['jav_id' => $jav->id, 'sort' => 'highest']));
         $response->assertOk();
-        $data = $response->json('data.data');
-        $this->assertEquals($highest->id, $data[0]['id']);
+        $response->assertInertia(
+            fn (Assert $page): Assert => $page
+                ->component('Ratings/Index', false)
+                ->has('ratings.data', 2)
+        );
     }
 
     public function test_review_is_optional(): void
