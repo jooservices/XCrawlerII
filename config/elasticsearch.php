@@ -30,6 +30,16 @@ return [
                             ],
                         ],
                     ],
+                    'profile_primary_source' => [
+                        'type' => 'keyword',
+                    ],
+                    'profile_attributes' => [
+                        'type' => 'object',
+                        'enabled' => true,
+                    ],
+                    'bio' => [
+                        'type' => 'text',
+                    ],
                 ],
             ],
             'tags' => [
