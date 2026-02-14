@@ -23,7 +23,7 @@ class OnejavCommandTest extends TestCase
     {
         Queue::fake();
 
-        $this->artisan('jav:onejav', ['type' => 'new'])
+        $this->artisan('jav:sync', ['provider' => 'onejav', '--type' => 'new'])
             ->assertExitCode(0);
 
         Queue::assertPushedOn('jav', OnejavJob::class, function ($job) {
@@ -54,7 +54,7 @@ class OnejavCommandTest extends TestCase
         \Modules\JAV\Models\Jav::where('source', 'onejav')->delete();
 
         // 4. Run the command. Queue is 'sync' so job runs immediately.
-        $this->artisan('jav:onejav', ['type' => 'new'])
+        $this->artisan('jav:sync', ['provider' => 'onejav', '--type' => 'new'])
             ->assertExitCode(0);
 
         // 5. Assert data is stored
@@ -70,8 +70,8 @@ class OnejavCommandTest extends TestCase
     {
         Queue::fake();
 
-        $this->artisan('jav:onejav', ['type' => 'invalid'])
-            ->assertExitCode(0);
+        $this->artisan('jav:sync', ['provider' => 'onejav', '--type' => 'invalid'])
+            ->assertExitCode(2);
 
         Queue::assertNothingPushed();
     }
@@ -94,7 +94,7 @@ class OnejavCommandTest extends TestCase
 
         $this->app->instance(\Modules\JAV\Services\Clients\OnejavClient::class, $client);
 
-        $this->artisan('jav:onejav', ['type' => 'new'])
+        $this->artisan('jav:sync', ['provider' => 'onejav', '--type' => 'new'])
             ->assertExitCode(0);
 
         // Debug assertions

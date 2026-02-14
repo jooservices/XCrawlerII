@@ -55,6 +55,15 @@ class JAVServiceProvider extends ServiceProvider
                     ->build()
             );
         });
+
+        $this->app->bind(\Modules\JAV\Services\Clients\XcityClient::class, function () {
+            return new \Modules\JAV\Services\Clients\XcityClient(
+                \JOOservices\Client\Client\ClientBuilder::create()
+                    ->withBaseUri('https://xxx.xcity.jp')
+                    ->withDefaultLogging('xcity-client')
+                    ->build()
+            );
+        });
     }
 
     /**
@@ -72,10 +81,9 @@ class JAVServiceProvider extends ServiceProvider
         });
 
         $this->commands([
-            \Modules\JAV\Console\OnejavCommand::class,
-            \Modules\JAV\Console\OneFourOneJavCommand::class,
-            \Modules\JAV\Console\FfjavCommand::class,
+            \Modules\JAV\Console\JavCommand::class,
             \Modules\JAV\Console\SyncElasticsearchCommand::class,
+            \Modules\JAV\Console\XcityIdolSyncCommand::class,
         ]);
     }
 
@@ -86,12 +94,23 @@ class JAVServiceProvider extends ServiceProvider
     {
         $this->app->booted(function () {
             $schedule = $this->app->make(Schedule::class);
-            $schedule->command('jav:onejav new')->everyMinute()->runInBackground();
-            $schedule->command('jav:onejav popular')->everyMinute()->runInBackground();
-            $schedule->command('jav:141 new')->everyMinute()->runInBackground();
-            $schedule->command('jav:141 popular')->everyMinute()->runInBackground();
-            $schedule->command('jav:ffjav new')->everyMinute()->runInBackground();
-            $schedule->command('jav:ffjav popular')->everyMinute()->runInBackground();
+            $schedule->command('jav:sync onejav --type=new')->everyMinute()->runInBackground();
+            $schedule->command('jav:sync 141jav --type=new')->everyMinute()->runInBackground();
+            $schedule->command('jav:sync ffjav --type=new')->everyMinute()->runInBackground();
+
+            $schedule->command('jav:sync onejav --type=daily')->dailyAt('00:00')->runInBackground();
+            $schedule->command('jav:sync 141jav --type=daily')->dailyAt('00:00')->runInBackground();
+            $schedule->command('jav:sync ffjav --type=daily')->dailyAt('00:00')->runInBackground();
+
+            $schedule->command('jav:sync onejav --type=popular')->dailyAt('00:00')->runInBackground();
+            $schedule->command('jav:sync 141jav --type=popular')->dailyAt('00:00')->runInBackground();
+            $schedule->command('jav:sync ffjav --type=popular')->dailyAt('00:00')->runInBackground();
+
+            $schedule->command('jav:sync onejav --type=tags')->weeklyOn(0, '00:00')->runInBackground();
+            $schedule->command('jav:sync 141jav --type=tags')->weeklyOn(0, '00:00')->runInBackground();
+            $schedule->command('jav:sync ffjav --type=tags')->weeklyOn(0, '00:00')->runInBackground();
+
+            $schedule->command('jav:idols:sync-xcity --concurrency=3')->everyMinute()->runInBackground();
         });
     }
 

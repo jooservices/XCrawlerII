@@ -22,7 +22,7 @@ class OneFourOneJavCommandTest extends TestCase
     {
         Queue::fake();
 
-        $this->artisan('jav:141', ['type' => 'new'])
+        $this->artisan('jav:sync', ['provider' => '141jav', '--type' => 'new'])
             ->assertExitCode(0);
 
         Queue::assertPushedOn('jav', OneFourOneJavJob::class, function ($job) {
@@ -51,7 +51,7 @@ class OneFourOneJavCommandTest extends TestCase
         \Modules\JAV\Models\Jav::where('source', '141jav')->delete();
 
         // 3. Run command synchronously
-        $this->artisan('jav:141', ['type' => 'new'])
+        $this->artisan('jav:sync', ['provider' => '141jav', '--type' => 'new'])
             ->assertExitCode(0);
 
         // 4. Assert data is stored
@@ -67,8 +67,8 @@ class OneFourOneJavCommandTest extends TestCase
     {
         Queue::fake();
 
-        $this->artisan('jav:141', ['type' => 'invalid'])
-            ->assertExitCode(0);
+        $this->artisan('jav:sync', ['provider' => '141jav', '--type' => 'invalid'])
+            ->assertExitCode(2);
 
         Queue::assertNothingPushed();
     }
@@ -89,7 +89,7 @@ class OneFourOneJavCommandTest extends TestCase
 
         $this->app->instance(\Modules\JAV\Services\Clients\OneFourOneJavClient::class, $client);
 
-        $this->artisan('jav:141', ['type' => 'new'])
+        $this->artisan('jav:sync', ['provider' => '141jav', '--type' => 'new'])
             ->assertExitCode(0);
 
         \Illuminate\Support\Facades\Event::assertDispatched(\Modules\JAV\Events\ItemsFetched::class);

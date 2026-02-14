@@ -11,8 +11,8 @@ class RequestSyncRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // Only admin or moderator can request sync
-        return auth()->check() && auth()->user()->hasAnyRole(['admin', 'moderator']);
+        // Only admin can request sync
+        return auth()->check() && auth()->user()->hasRole('admin');
     }
 
     /**
@@ -24,7 +24,7 @@ class RequestSyncRequest extends FormRequest
     {
         return [
             'source' => ['required', 'in:onejav,141jav,ffjav'],
-            'type' => ['required', 'in:new,popular'],
+            'type' => ['required', 'in:new,popular,daily,tags'],
         ];
     }
 
@@ -37,7 +37,7 @@ class RequestSyncRequest extends FormRequest
     {
         return [
             'source.in' => 'Invalid source. Allowed values: onejav, 141jav, ffjav',
-            'type.in' => 'Invalid type. Allowed values: new, popular',
+            'type.in' => 'Invalid type. Allowed values: new, popular, daily, tags',
         ];
     }
 }
