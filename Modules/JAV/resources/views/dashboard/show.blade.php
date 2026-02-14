@@ -26,7 +26,7 @@
                 <div class="mb-3">
                     <strong><i class="fas fa-users"></i> Actors:</strong><br>
                     @forelse($jav->actors as $actor)
-                        <a href="{{ route('jav.dashboard', ['actor' => $actor->name]) }}"
+                        <a href="{{ route('jav.blade.dashboard', ['actor' => $actor->name]) }}"
                             class="badge bg-success text-decoration-none me-1 mb-1">{{ $actor->name }}</a>
                     @empty
                         <span class="text-muted">No actors listed</span>
@@ -37,7 +37,7 @@
                 <div class="mb-3">
                     <strong><i class="fas fa-tags"></i> Tags:</strong><br>
                     @forelse($jav->tags as $tag)
-                        <a href="{{ route('jav.dashboard', ['tag' => $tag->name]) }}"
+                        <a href="{{ route('jav.blade.dashboard', ['tag' => $tag->name]) }}"
                             class="badge bg-info text-dark text-decoration-none me-1 mb-1">{{ $tag->name }}</a>
                     @empty
                         <span class="text-muted">No tags listed</span>
@@ -60,7 +60,7 @@
                     <a href="{{ route('jav.movies.download', $jav) }}" class="btn btn-primary btn-lg">
                         <i class="fas fa-download"></i> Download Torrent
                     </a>
-                    <a href="{{ route('jav.dashboard') }}" class="btn btn-secondary btn-lg">
+                    <a href="{{ route('jav.blade.dashboard') }}" class="btn btn-secondary btn-lg">
                         <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </a>
                 </div>
@@ -80,7 +80,7 @@
                 @foreach($relatedByActors as $item)
                     <div class="col">
                         <div class="card h-100 shadow-sm" style="cursor: pointer;"
-                            onclick="window.location='{{ route('jav.movies.show', $item) }}'">
+                            onclick="window.location='{{ route('jav.blade.movies.show', $item) }}'">
                             <div class="position-relative">
                                 <img src="{{ $item->cover }}" class="card-img-top" alt="{{ $item->formatted_code }}"
                                     onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'">
@@ -109,7 +109,7 @@
                 @foreach($relatedByTags as $item)
                     <div class="col">
                         <div class="card h-100 shadow-sm" style="cursor: pointer;"
-                            onclick="window.location='{{ route('jav.movies.show', $item) }}'">
+                            onclick="window.location='{{ route('jav.blade.movies.show', $item) }}'">
                             <div class="position-relative">
                                 <img src="{{ $item->cover }}" class="card-img-top" alt="{{ $item->formatted_code }}"
                                     onerror="this.src='https://via.placeholder.com/300x400?text=No+Image'">

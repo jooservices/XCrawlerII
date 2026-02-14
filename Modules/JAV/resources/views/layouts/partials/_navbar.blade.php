@@ -3,19 +3,19 @@
         <button class="btn btn-dark me-2" id="sidebarToggle" type="button">
             <i class="fas fa-bars"></i>
         </button>
-        <a class="navbar-brand" href="{{ route('jav.dashboard') }}">JAV Dashboard</a>
+        <a class="navbar-brand" href="{{ route('jav.blade.dashboard') }}">JAV Dashboard</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             @php
-                $searchAction = route('jav.dashboard');
+                $searchAction = route('jav.blade.dashboard');
                 $placeholder = 'Search movies...';
                 if (request()->routeIs('jav.actors')) {
-                    $searchAction = route('jav.actors');
+                    $searchAction = route('jav.blade.actors');
                     $placeholder = 'Search actors...';
                 } elseif (request()->routeIs('jav.tags')) {
-                    $searchAction = route('jav.tags');
+                    $searchAction = route('jav.blade.tags');
                     $placeholder = 'Search tags...';
                 }
             @endphp
@@ -25,21 +25,69 @@
                     aria-label="Search" value="{{ request('q') }}">
 
                 @if(request()->routeIs('jav.dashboard'))
-                    @if(request('actor'))
-                        <input type="hidden" name="actor" value="{{ request('actor') }}">
+                    @php
+                        $persistActor = $filters['actor'] ?? request('actor');
+                        $persistTags = $filters['tags'] ?? (array) request('tags', []);
+                        $persistTagsMode = $filters['tags_mode'] ?? request('tags_mode');
+                        $persistAge = $filters['age'] ?? request('age');
+                        $persistAgeMin = $filters['age_min'] ?? request('age_min');
+                        $persistAgeMax = $filters['age_max'] ?? request('age_max');
+                        $persistBioKey = $filters['bio_key'] ?? request('bio_key');
+                        $persistBioValue = $filters['bio_value'] ?? request('bio_value');
+                        $persistBioFilters = $filters['bio_filters'] ?? (array) request('bio_filters', []);
+                    @endphp
+                    @if($persistActor)
+                        <input type="hidden" name="actor" value="{{ $persistActor }}">
                     @endif
                     @if(request('tag'))
                         <input type="hidden" name="tag" value="{{ request('tag') }}">
                     @endif
+                    @foreach((array) $persistTags as $selectedTag)
+                        @if(is_string($selectedTag) && trim($selectedTag) !== '')
+                            <input type="hidden" name="tags[]" value="{{ $selectedTag }}">
+                        @endif
+                    @endforeach
+                    @if($persistTagsMode)
+                        <input type="hidden" name="tags_mode" value="{{ $persistTagsMode }}">
+                    @endif
+                    @if($persistAge)
+                        <input type="hidden" name="age" value="{{ $persistAge }}">
+                    @endif
+                    @if($persistAgeMin)
+                        <input type="hidden" name="age_min" value="{{ $persistAgeMin }}">
+                    @endif
+                    @if($persistAgeMax)
+                        <input type="hidden" name="age_max" value="{{ $persistAgeMax }}">
+                    @endif
+                    @if($persistBioKey)
+                        <input type="hidden" name="bio_key" value="{{ $persistBioKey }}">
+                    @endif
+                    @if($persistBioValue)
+                        <input type="hidden" name="bio_value" value="{{ $persistBioValue }}">
+                    @endif
+                    @foreach((array) $persistBioFilters as $bioIndex => $bioFilter)
+                        @php
+                            $filterKey = is_array($bioFilter) ? trim((string) ($bioFilter['key'] ?? '')) : '';
+                            $filterValue = is_array($bioFilter) ? trim((string) ($bioFilter['value'] ?? '')) : '';
+                        @endphp
+                        @if($filterKey !== '' || $filterValue !== '')
+                            <input type="hidden" name="bio_filters[{{ $bioIndex }}][key]" value="{{ $filterKey }}">
+                            <input type="hidden" name="bio_filters[{{ $bioIndex }}][value]" value="{{ $filterValue }}">
+                        @endif
+                    @endforeach
                     <input type="hidden" name="sort" value="{{ request('sort') }}" id="sortInput">
                     <input type="hidden" name="direction" value="{{ request('direction', 'desc') }}" id="directionInput">
+                    <input type="hidden" name="preset" value="{{ request('preset', 'default') }}" id="presetInput">
+                    @if(request()->filled('saved_preset'))
+                        <input type="hidden" name="saved_preset" value="{{ request('saved_preset') }}">
+                    @endif
                 @endif
 
                 <button class="btn btn-outline-light btn-sm" type="submit"><i class="fas fa-search"></i></button>
             </form>
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('jav.dashboard') }}">Home</a>
+                    <a class="nav-link" href="{{ route('jav.blade.dashboard') }}">Home</a>
                 </li>
                 @guest
                     <li class="nav-item">
@@ -87,7 +135,7 @@
                                     <div class="fw-semibold">{{ $notification->title }}</div>
                                     @if($notification->jav)
                                         <div class="small text-muted mb-1">
-                                            <a href="{{ route('jav.movies.show', $notification->jav) }}" class="text-decoration-none">
+                                            <a href="{{ route('jav.blade.movies.show', $notification->jav) }}" class="text-decoration-none">
                                                 {{ $notification->jav->code }} {{ $notification->jav->title }}
                                             </a>
                                         </div>

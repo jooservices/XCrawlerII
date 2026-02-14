@@ -26,7 +26,7 @@
                     </thead>
                     <tbody>
                         @foreach($history as $record)
-                            <tr onclick="window.location='{{ route('jav.movies.show', $record->jav) }}'" style="cursor: pointer;">
+                            <tr onclick="window.location='{{ route('jav.blade.movies.show', $record->jav) }}'" style="cursor: pointer;">
                                 <td>
                                     <img src="{{ $record->jav->cover }}" alt="{{ $record->jav->formatted_code }}"
                                         class="img-thumbnail me-2" style="width: 60px;"

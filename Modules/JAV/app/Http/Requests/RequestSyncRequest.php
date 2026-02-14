@@ -25,6 +25,7 @@ class RequestSyncRequest extends FormRequest
         return [
             'source' => ['required', 'in:onejav,141jav,ffjav'],
             'type' => ['required', 'in:new,popular,daily,tags'],
+            'date' => ['nullable', 'date_format:Y-m-d'],
         ];
     }
 

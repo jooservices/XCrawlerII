@@ -20,10 +20,10 @@
                 </div>
 
                 <div class="mb-3">
-                    <a href="{{ route('jav.dashboard', ['actor' => $actor->name]) }}" class="btn btn-success btn-sm">
+                    <a href="{{ route('jav.blade.dashboard', ['actor' => $actor->name]) }}" class="btn btn-success btn-sm">
                         <i class="fas fa-film me-1"></i> Show All JAVs
                     </a>
-                    <a href="{{ route('jav.actors') }}" class="btn btn-secondary btn-sm">
+                    <a href="{{ route('jav.blade.actors') }}" class="btn btn-secondary btn-sm">
                         <i class="fas fa-arrow-left me-1"></i> Back to Actors
                     </a>
                 </div>

@@ -19,7 +19,7 @@
                     @if($favorite->favoritable_type === 'Modules\\JAV\\Models\\Jav')
                         <div class="col">
                             <div class="card h-100 shadow-sm" style="cursor: pointer;"
-                                onclick="window.location='{{ route('jav.movies.show', $favorite->favoritable) }}'">
+                                onclick="window.location='{{ route('jav.blade.movies.show', $favorite->favoritable) }}'">
                                 <div class="position-relative">
                                     <img src="{{ $favorite->favoritable->cover }}" class="card-img-top"
                                         alt="{{ $favorite->favoritable->formatted_code }}"
@@ -39,7 +39,7 @@
                     @elseif($favorite->favoritable_type === 'Modules\\JAV\\Models\\Actor')
                         <div class="col">
                             <div class="card h-100 shadow-sm bg-success bg-opacity-10" style="cursor: pointer;"
-                                onclick="window.location='{{ route('jav.dashboard', ['actor' => $favorite->favoritable->name]) }}'">
+                                onclick="window.location='{{ route('jav.blade.dashboard', ['actor' => $favorite->favoritable->name]) }}'">
                                 <div class="card-body text-center">
                                     <i class="fas fa-user fa-4x text-success mb-3"></i>
                                     <h5 class="card-title">{{ $favorite->favoritable->name }}</h5>
@@ -51,7 +51,7 @@
                     @elseif($favorite->favoritable_type === 'Modules\\JAV\\Models\\Tag')
                         <div class="col">
                             <div class="card h-100 shadow-sm bg-info bg-opacity-10" style="cursor: pointer;"
-                                onclick="window.location='{{ route('jav.dashboard', ['tag' => $favorite->favoritable->name]) }}'">
+                                onclick="window.location='{{ route('jav.blade.dashboard', ['tag' => $favorite->favoritable->name]) }}'">
                                 <div class="card-body text-center">
                                     <i class="fas fa-tag fa-4x text-info mb-3"></i>
                                     <h5 class="card-title">{{ $favorite->favoritable->name }}</h5>

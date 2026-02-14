@@ -1,11 +1,14 @@
 <?php
 
-namespace Modules\JAV\Http\Controllers;
+namespace Modules\JAV\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
+use Modules\JAV\Http\Controllers\Users\Api\WatchlistController as ApiWatchlistController;
 use Modules\JAV\Http\Requests\AddToWatchlistRequest;
 use Modules\JAV\Http\Requests\GetWatchlistRequest;
 use Modules\JAV\Http\Requests\UpdateWatchlistRequest;
@@ -32,26 +35,37 @@ class WatchlistController extends Controller
         return view('jav::watchlist.index', compact('watchlist', 'status'));
     }
 
+    public function indexVue(GetWatchlistRequest $request): InertiaResponse
+    {
+        $query = Watchlist::with('jav')
+            ->forUser(auth()->id())
+            ->latest();
+
+        $status = $request->input('status', 'all');
+        if ($status !== 'all') {
+            $query->status($status);
+        }
+
+        $watchlist = $query->paginate(30);
+        $watchlist->setCollection(
+            $watchlist->getCollection()->map(function (Watchlist $item) {
+                $item->created_at_human = $item->created_at?->diffForHumans();
+                return $item;
+            })
+        );
+
+        return Inertia::render('User/Watchlist', [
+            'watchlist' => $watchlist,
+            'status' => $status,
+        ]);
+    }
+
     /**
      * Add a movie to the watchlist.
      */
     public function store(AddToWatchlistRequest $request): JsonResponse
     {
-        $watchlist = Watchlist::updateOrCreate(
-            [
-                'user_id' => auth()->id(),
-                'jav_id' => $request->input('jav_id'),
-            ],
-            [
-                'status' => $request->input('status', 'to_watch'),
-            ]
-        );
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Added to watchlist',
-            'watchlist' => $watchlist,
-        ]);
+        return app(ApiWatchlistController::class)->store($request);
     }
 
     /**
@@ -59,17 +73,13 @@ class WatchlistController extends Controller
      */
     public function update(UpdateWatchlistRequest $request, Watchlist $watchlist): JsonResponse|RedirectResponse
     {
+        if ($request->expectsJson()) {
+            return app(ApiWatchlistController::class)->update($request, $watchlist);
+        }
+
         $watchlist->update([
             'status' => $request->input('status'),
         ]);
-
-        if ($request->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Status updated successfully',
-                'watchlist' => $watchlist,
-            ]);
-        }
 
         return redirect()
             ->back()
@@ -81,18 +91,15 @@ class WatchlistController extends Controller
      */
     public function destroy(Watchlist $watchlist): JsonResponse|RedirectResponse
     {
+        if (request()->expectsJson()) {
+            return app(ApiWatchlistController::class)->destroy($watchlist);
+        }
+
         if ($watchlist->user_id !== auth()->id()) {
             abort(403, 'Unauthorized');
         }
 
         $watchlist->delete();
-
-        if (request()->expectsJson()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Removed from watchlist',
-            ]);
-        }
 
         return redirect()
             ->back()
@@ -104,14 +111,6 @@ class WatchlistController extends Controller
      */
     public function check(int $javId): JsonResponse
     {
-        $watchlist = Watchlist::where('user_id', auth()->id())
-            ->where('jav_id', $javId)
-            ->first();
-
-        return response()->json([
-            'in_watchlist' => $watchlist !== null,
-            'status' => $watchlist?->status,
-            'watchlist_id' => $watchlist?->id,
-        ]);
+        return app(ApiWatchlistController::class)->check($javId);
     }
 }

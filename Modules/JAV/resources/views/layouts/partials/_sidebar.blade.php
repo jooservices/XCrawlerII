@@ -1,29 +1,32 @@
 <div class="sidebar" id="sidebar">
-    <a href="{{ route('jav.dashboard') }}"
-        class="{{ request()->routeIs('jav.dashboard') && !request()->routeIs('jav.actors') && !request()->routeIs('jav.tags') ? 'active' : '' }}">
+    <a href="{{ route('jav.blade.dashboard') }}"
+        class="{{ request()->routeIs('jav.blade.dashboard') && !request()->routeIs('jav.blade.actors') && !request()->routeIs('jav.blade.tags') ? 'active' : '' }}">
         <i class="fas fa-film me-2"></i> Movies
     </a>
-    <a href="{{ route('jav.actors') }}" class="{{ request()->routeIs('jav.actors') ? 'active' : '' }}">
+    <a href="{{ route('jav.blade.actors') }}" class="{{ request()->routeIs('jav.blade.actors') ? 'active' : '' }}">
         <i class="fas fa-users me-2"></i> Actors
     </a>
-    <a href="{{ route('jav.tags') }}" class="{{ request()->routeIs('jav.tags') ? 'active' : '' }}">
+    <a href="{{ route('jav.blade.tags') }}" class="{{ request()->routeIs('jav.blade.tags') ? 'active' : '' }}">
         <i class="fas fa-tags me-2"></i> Tags
     </a>
 
     @auth
         <hr class="border-secondary my-2">
-        <a href="{{ route('jav.recommendations') }}"
-            class="{{ request()->routeIs('jav.recommendations') ? 'active' : '' }}">
+        <a href="{{ route('jav.blade.recommendations') }}"
+            class="{{ request()->routeIs('jav.blade.recommendations') ? 'active' : '' }}">
             <i class="fas fa-star me-2"></i> Recommendations
         </a>
-        <a href="{{ route('jav.history') }}" class="{{ request()->routeIs('jav.history') ? 'active' : '' }}">
+        <a href="{{ route('jav.blade.history') }}" class="{{ request()->routeIs('jav.blade.history') ? 'active' : '' }}">
             <i class="fas fa-history me-2"></i> History
         </a>
-        <a href="{{ route('jav.favorites') }}" class="{{ request()->routeIs('jav.favorites') ? 'active' : '' }}">
+        <a href="{{ route('jav.blade.favorites') }}" class="{{ request()->routeIs('jav.blade.favorites') ? 'active' : '' }}">
             <i class="fas fa-heart me-2"></i> Favorites
         </a>
-        <a href="{{ route('watchlist.index') }}" class="{{ request()->routeIs('watchlist.*') ? 'active' : '' }}">
+        <a href="{{ route('jav.blade.watchlist') }}" class="{{ request()->routeIs('jav.blade.watchlist') ? 'active' : '' }}">
             <i class="fas fa-bookmark me-2"></i> Watchlist
+        </a>
+        <a href="{{ route('jav.blade.preferences') }}" class="{{ request()->routeIs('jav.blade.preferences') ? 'active' : '' }}">
+            <i class="fas fa-sliders-h me-2"></i> Preferences
         </a>
 
         @if(auth()->user()->hasAnyRole(['admin', 'moderator']))
@@ -44,16 +47,20 @@
                 </a>
             @endif
             @if(auth()->user()->hasRole('admin'))
-                <a href="{{ route('jav.admin.sync-progress') }}"
-                    class="{{ request()->routeIs('jav.admin.sync-progress*') ? 'active' : '' }}">
+                <a href="{{ route('jav.blade.admin.analytics') }}"
+                    class="{{ request()->routeIs('jav.blade.admin.analytics') ? 'active' : '' }}">
+                    <i class="fas fa-chart-pie me-2"></i> Analytics
+                </a>
+                <a href="{{ route('jav.blade.admin.sync-progress') }}"
+                    class="{{ request()->routeIs('jav.blade.admin.sync-progress') ? 'active' : '' }}">
                     <i class="fas fa-chart-line me-2"></i> Sync Progress
                 </a>
-                <a href="{{ route('jav.admin.search-quality.index') }}"
-                    class="{{ request()->routeIs('jav.admin.search-quality.*') ? 'active' : '' }}">
+                <a href="{{ route('jav.blade.admin.search-quality.index') }}"
+                    class="{{ request()->routeIs('jav.blade.admin.search-quality.*') ? 'active' : '' }}">
                     <i class="fas fa-search me-2"></i> Search Quality
                 </a>
-                <a href="{{ route('jav.admin.provider-sync.index') }}"
-                    class="{{ request()->routeIs('jav.admin.provider-sync.*') ? 'active' : '' }}">
+                <a href="{{ route('jav.blade.admin.provider-sync.index') }}"
+                    class="{{ request()->routeIs('jav.blade.admin.provider-sync.*') ? 'active' : '' }}">
                     <i class="fas fa-sync-alt me-2"></i> Provider Sync
                 </a>
             @endif

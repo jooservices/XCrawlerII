@@ -19,19 +19,19 @@
     <div class="card mb-4">
         <div class="card-body">
             <div class="btn-group" role="group">
-                <a href="{{ route('watchlist.index', ['status' => 'all']) }}"
+                <a href="{{ route('jav.blade.watchlist', ['status' => 'all']) }}"
                    class="btn btn-{{ $status === 'all' ? 'primary' : 'outline-primary' }}">
                     <i class="fas fa-list me-1"></i>All ({{ $watchlist->total() }})
                 </a>
-                <a href="{{ route('watchlist.index', ['status' => 'to_watch']) }}"
+                <a href="{{ route('jav.blade.watchlist', ['status' => 'to_watch']) }}"
                    class="btn btn-{{ $status === 'to_watch' ? 'primary' : 'outline-primary' }}">
                     <i class="fas fa-clock me-1"></i>To Watch
                 </a>
-                <a href="{{ route('watchlist.index', ['status' => 'watching']) }}"
+                <a href="{{ route('jav.blade.watchlist', ['status' => 'watching']) }}"
                    class="btn btn-{{ $status === 'watching' ? 'primary' : 'outline-primary' }}">
                     <i class="fas fa-play me-1"></i>Watching
                 </a>
-                <a href="{{ route('watchlist.index', ['status' => 'watched']) }}"
+                <a href="{{ route('jav.blade.watchlist', ['status' => 'watched']) }}"
                    class="btn btn-{{ $status === 'watched' ? 'primary' : 'outline-primary' }}">
                     <i class="fas fa-check me-1"></i>Watched
                 </a>
@@ -48,7 +48,7 @@
                         <img src="{{ $item->jav->cover }}" class="card-img-top" alt="{{ $item->jav->title }}" loading="lazy">
                         <div class="card-body">
                             <h6 class="card-title">
-                                <a href="{{ route('jav.movies.show', $item->jav) }}" class="text-decoration-none">
+                                <a href="{{ route('jav.blade.movies.show', $item->jav) }}" class="text-decoration-none">
                                     {{ Str::limit($item->jav->title, 50) }}
                                 </a>
                             </h6>
@@ -109,7 +109,7 @@
                 <i class="fas fa-bookmark fa-4x text-muted mb-3"></i>
                 <h5 class="text-muted">Your watchlist is empty</h5>
                 <p class="text-muted">Start adding movies to your watchlist to keep track of what you want to watch!</p>
-                <a href="{{ route('jav.dashboard') }}" class="btn btn-primary">
+                <a href="{{ route('jav.blade.dashboard') }}" class="btn btn-primary">
                     <i class="fas fa-film me-1"></i>Browse Movies
                 </a>
             </div>

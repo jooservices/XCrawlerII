@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\JAV\Http\Controllers\Auth;
+namespace Modules\JAV\Http\Controllers\Guest\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -8,12 +8,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
 
 class RegisterController extends Controller
 {
     public function showRegistrationForm()
     {
         return view('jav::auth.register');
+    }
+
+    public function showRegistrationFormVue(): InertiaResponse
+    {
+        return Inertia::render('Auth/Register');
     }
 
     public function register(Request $request)
@@ -34,6 +41,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('jav.dashboard'));
+        return redirect(route('jav.blade.dashboard'));
     }
 }

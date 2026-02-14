@@ -14,7 +14,7 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <h5>Movie</h5>
-                        <a href="{{ route('jav.movies.show', $rating->jav) }}">
+                        <a href="{{ route('jav.blade.movies.show', $rating->jav) }}">
                             {{ $rating->jav->title }}
                         </a>
                     </div>

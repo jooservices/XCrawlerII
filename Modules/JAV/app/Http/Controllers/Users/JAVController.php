@@ -1,0 +1,139 @@
+<?php
+
+namespace Modules\JAV\Http\Controllers\Users;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response as InertiaResponse;
+use Modules\JAV\Models\Jav;
+use Modules\JAV\Models\UserJavHistory;
+use Modules\JAV\Services\SearchService;
+
+class JAVController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return view('jav::index');
+    }
+
+    public function indexResourceVue(): InertiaResponse
+    {
+        $items = Jav::query()
+            ->latest()
+            ->paginate(20);
+
+        return Inertia::render('Javs/Index', [
+            'items' => $items,
+        ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('jav::create');
+    }
+
+    public function createResourceVue(): InertiaResponse
+    {
+        return Inertia::render('Javs/Create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+    }
+
+    /**
+     * Show the specified resource.
+     */
+    public function show($id)
+    {
+        return view('jav::show');
+    }
+
+    public function showResourceVue(Jav $jav): InertiaResponse
+    {
+        $jav->load(['actors', 'tags']);
+
+        return Inertia::render('Javs/Show', [
+            'item' => $jav,
+        ]);
+    }
+
+    public function showVue(Jav $jav): InertiaResponse
+    {
+        // Increment view count
+        $jav->increment('views');
+
+        // Track history if user is authenticated
+        if (auth()->check()) {
+            UserJavHistory::firstOrCreate([
+                'user_id' => auth()->id(),
+                'jav_id' => $jav->id,
+                'action' => 'view',
+            ], [
+                'updated_at' => now(), // Touch timestamp if exists
+            ]);
+        }
+
+        // Load relationships
+        $jav->load(['actors', 'tags']);
+
+        // Check if liked
+        $isLiked = false;
+        if (auth()->check()) {
+            $isLiked = $jav->favorites()->where('user_id', auth()->id())->exists();
+        }
+
+        // Get related movies
+        $searchService = app(SearchService::class);
+        $relatedByActors = $searchService->getRelatedByActors($jav, 10);
+        $relatedByTags = $searchService->getRelatedByTags($jav, 10);
+
+        return Inertia::render('Movies/Show', [
+            'jav' => $jav,
+            'relatedByActors' => $relatedByActors,
+            'relatedByTags' => $relatedByTags,
+            'isLiked' => $isLiked,
+        ]);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        return view('jav::edit');
+    }
+
+    public function editResourceVue(Jav $jav): InertiaResponse
+    {
+        $jav->load(['actors', 'tags']);
+
+        return Inertia::render('Javs/Edit', [
+            'item' => $jav,
+        ]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id)
+    {
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id)
+    {
+    }
+}

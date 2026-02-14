@@ -8,10 +8,10 @@
             <h5 class="card-title text-truncate" title="{{ $actor->name }}">{{ $actor->name }}</h5>
             <span class="badge bg-secondary">{{ $actor->javs_count ?? 0 }} JAVs</span>
             <div class="mt-3 d-grid gap-2">
-                <a href="{{ route('jav.actors.bio', $actor) }}" class="btn btn-outline-primary btn-sm">
+                <a href="{{ route('jav.blade.actors.bio', $actor) }}" class="btn btn-outline-primary btn-sm">
                     <i class="fas fa-id-card me-1"></i> Bio
                 </a>
-                <a href="{{ route('jav.dashboard', ['actor' => $actor->name]) }}" class="btn btn-outline-success btn-sm">
+                <a href="{{ route('jav.blade.dashboard', ['actor' => $actor->name]) }}" class="btn btn-outline-success btn-sm">
                     <i class="fas fa-film me-1"></i> JAVs
                 </a>
             </div>

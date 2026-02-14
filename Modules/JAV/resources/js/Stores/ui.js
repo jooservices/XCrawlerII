@@ -2,24 +2,50 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useUIStore = defineStore('ui', () => {
-    const sidebarOpen = ref(false);
+    // Desktop sidebar state (default: expanded)
+    const sidebarExpanded = ref(true);
+
+    // Mobile sidebar state (default: closed/hidden)
+    const mobileSidebarOpen = ref(false);
 
     const toggleSidebar = () => {
-        sidebarOpen.value = !sidebarOpen.value;
+        sidebarExpanded.value = !sidebarExpanded.value;
     };
 
-    const closeSidebar = () => {
-        sidebarOpen.value = false;
+    const toggleMobileSidebar = () => {
+        mobileSidebarOpen.value = !mobileSidebarOpen.value;
     };
 
-    const openSidebar = () => {
-        sidebarOpen.value = true;
+    const closeMobileSidebar = () => {
+        mobileSidebarOpen.value = false;
+    };
+
+    // Toast Notification State
+    const toast = ref({
+        show: false,
+        message: '',
+        type: 'success', // 'success' or 'error'
+    });
+
+    const showToast = (message, type = 'success') => {
+        toast.value = {
+            show: true,
+            message,
+            type,
+        };
+
+        setTimeout(() => {
+            toast.value.show = false;
+        }, 3000);
     };
 
     return {
-        sidebarOpen,
+        sidebarExpanded,
+        mobileSidebarOpen,
         toggleSidebar,
-        closeSidebar,
-        openSidebar,
+        toggleMobileSidebar,
+        closeMobileSidebar,
+        toast,
+        showToast,
     };
 });

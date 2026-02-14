@@ -1,6 +1,8 @@
 import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { createPinia } from 'pinia';
+import { ZiggyVue } from 'ziggy-js';
+import '../css/dashboard-shared.css';
 
 createInertiaApp({
     resolve: name => {
@@ -11,6 +13,7 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(createPinia())
+            .use(ZiggyVue)
             .mount(el);
     },
     progress: {

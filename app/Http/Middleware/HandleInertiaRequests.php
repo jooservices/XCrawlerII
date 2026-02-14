@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Modules\JAV\Models\UserLikeNotification;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -42,9 +43,38 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'username' => $request->user()->username,
                     'email' => $request->user()->email,
-                    'roles' => $request->user()->roles->pluck('name'),
-                    'permissions' => $request->user()->getAllPermissions()->pluck('name'),
+                    'preferences' => $request->user()->preferences,
+                    // Frontend checks role/permission slugs (e.g. "admin", "view-users").
+                    'roles' => $request->user()->roles->pluck('slug')->values(),
+                    'permissions' => $request->user()->getAllPermissions()->pluck('slug')->values(),
                 ] : null,
+            ],
+            'notifications' => [
+                'count' => fn (): int => $request->user()
+                    ? (int) $request->user()->javNotifications()->unread()->count()
+                    : 0,
+                'items' => fn (): array => $request->user()
+                    ? $request->user()
+                        ->javNotifications()
+                        ->with('jav:id,uuid,code,title')
+                        ->unread()
+                        ->latest('id')
+                        ->limit(8)
+                        ->get()
+                        ->map(static function (UserLikeNotification $notification): array {
+                            return [
+                                'id' => (int) $notification->id,
+                                'title' => (string) $notification->title,
+                                'payload' => $notification->payload ?? [],
+                                'jav' => $notification->jav ? [
+                                    'uuid' => $notification->jav->uuid,
+                                    'code' => $notification->jav->code,
+                                    'title' => $notification->jav->title,
+                                ] : null,
+                            ];
+                        })
+                        ->all()
+                    : [],
             ],
             'flash' => [
                 'message' => fn () => $request->session()->get('message'),
