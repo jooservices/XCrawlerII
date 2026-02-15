@@ -21,8 +21,8 @@ class TagRepository
             ->orderBy('name')
             ->limit($limit)
             ->pluck('name')
-            ->map(static fn(string $name): string => trim($name))
-            ->filter(static fn(string $name): bool => $name !== '')
+            ->map(static fn (string $name): string => trim($name))
+            ->filter(static fn (string $name): bool => $name !== '')
             ->values()
             ->all();
     }

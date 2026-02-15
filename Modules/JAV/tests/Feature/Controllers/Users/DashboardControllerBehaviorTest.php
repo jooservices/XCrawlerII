@@ -11,6 +11,12 @@ use Modules\JAV\Tests\TestCase;
 
 class DashboardControllerBehaviorTest extends TestCase
 {
+    public function test_guest_cannot_access_dashboard_page(): void
+    {
+        $this->get(route('jav.vue.dashboard'))
+            ->assertRedirect(route('login'));
+    }
+
     public function test_dashboard_ignores_out_of_range_saved_preset_and_keeps_query_from_request(): void
     {
         config(['scout.driver' => 'collection']);
@@ -183,5 +189,29 @@ class DashboardControllerBehaviorTest extends TestCase
                 ->where('actor.uuid', $actor->uuid)
                 ->where('actor.cover', 'https://example.com/actor-visible.jpg')
             );
+    }
+
+    public function test_dashboard_rejects_invalid_sort_field_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('jav.vue.dashboard', [
+                'sort' => 'downloads;drop table javs',
+            ]))
+            ->assertStatus(302)
+            ->assertSessionHasErrors(['sort']);
+    }
+
+    public function test_dashboard_rejects_overlong_query_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('jav.vue.dashboard', [
+                'q' => str_repeat('x', 256),
+            ]))
+            ->assertStatus(302)
+            ->assertSessionHasErrors(['q']);
     }
 }

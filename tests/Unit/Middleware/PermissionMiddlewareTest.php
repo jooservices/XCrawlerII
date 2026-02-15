@@ -20,7 +20,7 @@ class PermissionMiddlewareTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->middleware = new PermissionMiddleware();
+        $this->middleware = new PermissionMiddleware;
     }
 
     public function test_middleware_allows_user_with_required_permission(): void

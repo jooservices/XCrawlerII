@@ -42,7 +42,7 @@ return new class extends Migration
                     ];
 
                     foreach ($raw as $label => $value) {
-                        if (!is_string($label) || !is_string($value)) {
+                        if (! is_string($label) || ! is_string($value)) {
                             continue;
                         }
 
@@ -52,7 +52,7 @@ return new class extends Migration
                             continue;
                         }
 
-                        $key = 'raw.' . (preg_replace('/[^a-z0-9_]+/', '_', strtolower($normalizedLabel)) ?? '');
+                        $key = 'raw.'.(preg_replace('/[^a-z0-9_]+/', '_', strtolower($normalizedLabel)) ?? '');
                         $key = rtrim($key, '_');
                         if ($key === 'raw.') {
                             continue;

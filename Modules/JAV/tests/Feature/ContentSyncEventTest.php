@@ -91,7 +91,7 @@ class ContentSyncEventTest extends TestCase
         // Clear events from creation
         // Note: Event::fake captures everything, we can't easily clear.
         // So we will just assert that events were dispatched *at least* once for creation
-        // and check if they are dispatched *again* or simply rely on count if possible, 
+        // and check if they are dispatched *again* or simply rely on count if possible,
         // but 'assertDispatched' just checks if it happened.
         // A better approach is to check if the Jav model is passed to the event.
 
@@ -100,8 +100,8 @@ class ContentSyncEventTest extends TestCase
 
         $jav->tags()->attach($tag);
 
-        // We expect Jav sync events. 
-        // Note: 'attach' might not fire events immediately if usage of 'touch' relies on observer or framework logic 
+        // We expect Jav sync events.
+        // Note: 'attach' might not fire events immediately if usage of 'touch' relies on observer or framework logic
         // that runs within the same request.
         // The 'touches' property works by updating the 'updated_at' timestamp of the parent.
         // Updating 'updated_at' triggers 'saved' event on parent.

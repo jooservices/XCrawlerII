@@ -38,6 +38,7 @@ class WatchlistController extends Controller
         $watchlist->setCollection(
             $watchlist->getCollection()->map(function (Watchlist $item) {
                 $item->created_at_human = $item->created_at?->diffForHumans();
+
                 return $item;
             })
         );

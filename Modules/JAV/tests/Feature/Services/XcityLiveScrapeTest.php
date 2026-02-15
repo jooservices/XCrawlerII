@@ -19,7 +19,7 @@ class XcityLiveScrapeTest extends TestCase
 
         mt_srand(20260214);
 
-        $rootHtml = $this->curl(self::BASE_URL . '/idol/');
+        $rootHtml = $this->curl(self::BASE_URL.'/idol/');
         $seedUrls = $this->extractKanaIniSeeds($rootHtml);
 
         $this->assertNotEmpty($seedUrls, 'No kana+ini seeds found from XCITY root page.');
@@ -139,7 +139,7 @@ class XcityLiveScrapeTest extends TestCase
         }
 
         $keys = array_rand($items, $max);
-        if (!is_array($keys)) {
+        if (! is_array($keys)) {
             return [$items[$keys]];
         }
 
@@ -157,7 +157,7 @@ class XcityLiveScrapeTest extends TestCase
     private function queryParams(string $url): array
     {
         $query = parse_url($url, PHP_URL_QUERY);
-        if (!is_string($query) || $query === '') {
+        if (! is_string($query) || $query === '') {
             return [];
         }
 
@@ -173,14 +173,14 @@ class XcityLiveScrapeTest extends TestCase
         }
 
         if (str_starts_with($url, '//')) {
-            return 'https:' . $url;
+            return 'https:'.$url;
         }
 
         if (str_starts_with($url, '/')) {
-            return self::BASE_URL . $url;
+            return self::BASE_URL.$url;
         }
 
-        return self::BASE_URL . '/' . ltrim($url, '/');
+        return self::BASE_URL.'/'.ltrim($url, '/');
     }
 
     private function curl(string $url): string

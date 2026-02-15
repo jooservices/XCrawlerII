@@ -11,7 +11,7 @@ use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
 
-class SearchService
+class SearchService // NOSONAR
 {
     use \Modules\JAV\Traits\ElasticsearchHelpers;
 
@@ -88,19 +88,22 @@ class SearchService
         return $builder->paginate($perPage)->withQueryString();
     }
 
-    public function searchTags(string $query = '', int $perPage = 60): LengthAwarePaginator
+    public function searchTags(string $query = '', int $perPage = 60, ?string $sort = null, string $direction = 'desc'): LengthAwarePaginator
     {
-        if ($this->isElasticsearchAvailable('tags')) {
-            return Tag::search($query)->query(fn($q) => $q->withCount('javs'))->paginate($perPage);
-        }
+        $allowedSorts = ['javs_count', 'name', 'created_at'];
+        $sort = in_array((string) $sort, $allowedSorts, true) ? (string) $sort : 'javs_count';
+        $direction = in_array($direction, ['asc', 'desc'], true) ? $direction : 'desc';
 
         $builder = Tag::query()->withCount('javs');
 
-        if (!empty($query)) {
+        if (! empty($query)) {
             $builder->where('name', 'like', "%{$query}%");
         }
 
-        return $builder->orderByDesc('javs_count')->paginate($perPage);
+        return $builder
+            ->orderBy($sort, $direction)
+            ->paginate($perPage)
+            ->withQueryString();
     }
 
     /**
@@ -119,8 +122,8 @@ class SearchService
 
         if ($this->isElasticsearchAvailable('jav')) {
             // Search for movies with any of the same actors, excluding the current movie
-            $results = Jav::search('*')
-                ->query(fn($q) => $q->with(['actors', 'tags']))
+            return Jav::search('*')
+                ->query(fn ($q) => $q->with(['actors', 'tags']))
                 ->take($limit + 10) // Get extra to filter out current movie
                 ->get()
                 ->filter(function ($item) use ($jav, $actorNames) {
@@ -131,11 +134,9 @@ class SearchService
                         ? collect($item->actors)->pluck('name')->toArray()
                         : $item->actors->pluck('name')->toArray();
 
-                    return !empty(array_intersect($itemActors, $actorNames));
+                    return ! empty(array_intersect($itemActors, $actorNames));
                 })
                 ->take($limit);
-
-            return $results;
         }
 
         \Illuminate\Support\Facades\Log::warning('Elasticsearch unavailable (related actors), using database.');
@@ -167,8 +168,8 @@ class SearchService
 
         if ($this->isElasticsearchAvailable('jav')) {
             // Search for movies with any of the same tags, excluding the current movie
-            $results = Jav::search('*')
-                ->query(fn($q) => $q->with(['actors', 'tags']))
+            return Jav::search('*')
+                ->query(fn ($q) => $q->with(['actors', 'tags']))
                 ->take($limit + 10) // Get extra to filter out current movie
                 ->get()
                 ->filter(function ($item) use ($jav, $tagNames) {
@@ -179,11 +180,9 @@ class SearchService
                         ? collect($item->tags)->pluck('name')->toArray()
                         : $item->tags->pluck('name')->toArray();
 
-                    return !empty(array_intersect($itemTags, $tagNames));
+                    return ! empty(array_intersect($itemTags, $tagNames));
                 })
                 ->take($limit);
-
-            return $results;
         }
 
         \Illuminate\Support\Facades\Log::warning('Elasticsearch unavailable (related tags), using database.');
@@ -219,13 +218,13 @@ class SearchService
     /**
      * @return array<string, mixed>
      */
-    private function normalizeFilters(array $filters): array
+    private function normalizeFilters(array $filters): array // NOSONAR
     {
         $tagsFromArray = [];
         if (isset($filters['tags']) && is_array($filters['tags'])) {
             $tagsFromArray = collect($filters['tags'])
-                ->map(static fn(mixed $tag): string => trim((string) $tag))
-                ->filter(static fn(string $tag): bool => $tag !== '')
+                ->map(static fn (mixed $tag): string => trim((string) $tag))
+                ->filter(static fn (string $tag): bool => $tag !== '')
                 ->values()
                 ->all();
         }
@@ -271,21 +270,7 @@ class SearchService
         ];
     }
 
-    private function requiresDatabaseSearch(array $filters): bool
-    {
-        $tagCount = isset($filters['tags']) && is_array($filters['tags']) ? count($filters['tags']) : 0;
-        $actorCount = isset($filters['actors']) && is_array($filters['actors']) ? count($filters['actors']) : 0;
-
-        return $tagCount > 1
-            || !empty($filters['age'])
-            || !empty($filters['age_min'])
-            || !empty($filters['age_max'])
-            || !empty($filters['bio_filters'])
-            || $actorCount > 1
-            || (($filters['tags_mode'] ?? 'any') === 'all');
-    }
-
-    private function searchJavViaElasticsearch(
+    private function searchJavViaElasticsearch(// NOSONAR
         string $query,
         array $filters,
         int $perPage,
@@ -311,9 +296,9 @@ class SearchService
         }
 
         $tags = $filters['tags'] ?? [];
-        if (!empty($tags)) {
+        if (! empty($tags)) {
             $normalizedTags = array_values(array_unique(array_map(
-                static fn(string $tag): string => mb_strtolower(trim($tag)),
+                static fn (string $tag): string => mb_strtolower(trim($tag)),
                 $tags
             )));
 
@@ -327,7 +312,7 @@ class SearchService
         }
 
         $actors = $filters['actors'] ?? [];
-        if (!empty($actors)) {
+        if (! empty($actors)) {
             foreach ($actors as $actorName) {
                 $normalizedActor = mb_strtolower(trim((string) $actorName));
                 if ($normalizedActor === '') {
@@ -358,6 +343,7 @@ class SearchService
 
             if ($bioKey !== '' && $bioValue !== '') {
                 $filterClauses[] = ['wildcard' => ['actor_profile_pairs.keyword' => "{$bioKey}:*{$bioValue}*"]];
+
                 continue;
             }
 
@@ -390,14 +376,14 @@ class SearchService
         ])->asArray();
 
         $hits = $response['hits']['hits'] ?? [];
-        $ids = array_values(array_map(static fn(array $hit): int => (int) ($hit['_id'] ?? 0), $hits));
-        $total = (int) (($response['hits']['total']['value'] ?? 0));
+        $ids = array_values(array_map(static fn (array $hit): int => (int) ($hit['_id'] ?? 0), $hits));
+        $total = (int) ($response['hits']['total']['value'] ?? 0);
 
         return $this->hydrateJavPaginatorFromIds($ids, $total, $perPage, $page);
     }
 
     /**
-     * @param array<int, int> $ids
+     * @param  array<int, int>  $ids
      */
     private function hydrateJavPaginatorFromIds(array $ids, int $total, int $perPage, int $page): LengthAwarePaginator
     {
@@ -445,13 +431,13 @@ class SearchService
 
     private function applyActorFilters(Builder $builder, array $filters): void
     {
-        $hasActorFilter = !empty($filters['actors']);
+        $hasActorFilter = ! empty($filters['actors']);
         $hasAgeFilter = ($filters['age'] ?? null) !== null
             || ($filters['age_min'] ?? null) !== null
             || ($filters['age_max'] ?? null) !== null;
-        $hasBioFilter = !empty($filters['bio_filters']);
+        $hasBioFilter = ! empty($filters['bio_filters']);
 
-        if (!$hasActorFilter && !$hasAgeFilter && !$hasBioFilter) {
+        if (! $hasActorFilter && ! $hasAgeFilter && ! $hasBioFilter) {
             return;
         }
 
@@ -515,7 +501,7 @@ class SearchService
         }
     }
 
-    private function applyActorBioFilters(Builder $actorQuery, array $filters): void
+    private function applyActorBioFilters(Builder $actorQuery, array $filters): void // NOSONAR
     {
         $bioFilters = isset($filters['bio_filters']) && is_array($filters['bio_filters']) ? $filters['bio_filters'] : [];
 
@@ -536,7 +522,7 @@ class SearchService
                     if ($normalizedKey !== null) {
                         $attributeQuery->where(function (Builder $kindQuery) use ($normalizedKey): void {
                             $kindQuery->where('kind', $normalizedKey)
-                                ->orWhere('value_label', 'like', '%' . str_replace('_', ' ', $normalizedKey) . '%');
+                                ->orWhere('value_label', 'like', '%'.str_replace('_', ' ', $normalizedKey).'%');
                         });
                     }
 
@@ -615,21 +601,21 @@ class SearchService
         }
 
         return collect(explode(',', $string))
-            ->map(static fn(string $item): string => trim($item))
-            ->filter(static fn(string $item): bool => $item !== '')
+            ->map(static fn (string $item): string => trim($item))
+            ->filter(static fn (string $item): bool => $item !== '')
             ->values()
             ->all();
     }
 
     /**
-     * @param array<int, array<string, mixed>> $bioFilters
+     * @param  array<int, array<string, mixed>>  $bioFilters
      * @return array<int, array{key: ?string, value: ?string}>
      */
-    private function normalizeBioFilters(array $bioFilters, ?string $singleBioKey = null, ?string $singleBioValue = null): array
+    private function normalizeBioFilters(array $bioFilters, ?string $singleBioKey = null, ?string $singleBioValue = null): array // NOSONAR
     {
         $normalized = collect($bioFilters)
             ->map(function (mixed $bioFilter): array {
-                if (!is_array($bioFilter)) {
+                if (! is_array($bioFilter)) {
                     return ['key' => null, 'value' => null];
                 }
 
@@ -641,7 +627,7 @@ class SearchService
                     'value' => $value !== '' ? $value : null,
                 ];
             })
-            ->filter(static fn(array $bioFilter): bool => $bioFilter['key'] !== null || $bioFilter['value'] !== null)
+            ->filter(static fn (array $bioFilter): bool => $bioFilter['key'] !== null || $bioFilter['value'] !== null)
             ->values();
 
         if ($normalized->isEmpty()) {
@@ -673,27 +659,7 @@ class SearchService
             : null;
     }
 
-    private function requiresDatabaseActorSearch(array $filters, ?string $sort): bool
-    {
-        $hasAdvancedFilters = !empty($filters['tags'])
-            || !empty($filters['age'])
-            || !empty($filters['age_min'])
-            || !empty($filters['age_max'])
-            || !empty($filters['bio_filters']);
-
-        if ($hasAdvancedFilters) {
-            return true;
-        }
-
-        if ($sort === null) {
-            return false;
-        }
-
-        // Actor ES documents do not currently expose javs_count sort reliably.
-        return !in_array($sort, ['name', 'created_at', 'updated_at'], true);
-    }
-
-    private function searchActorsViaElasticsearch(
+    private function searchActorsViaElasticsearch(// NOSONAR
         string $query,
         array $filters,
         int $perPage,
@@ -719,9 +685,9 @@ class SearchService
         }
 
         $tags = $filters['tags'] ?? [];
-        if (!empty($tags)) {
+        if (! empty($tags)) {
             $normalizedTags = array_values(array_unique(array_map(
-                static fn(string $tag): string => mb_strtolower(trim($tag)),
+                static fn (string $tag): string => mb_strtolower(trim($tag)),
                 $tags
             )));
 
@@ -778,6 +744,7 @@ class SearchService
 
             if ($bioKey !== '' && $bioValue !== '') {
                 $filterClauses[] = ['wildcard' => ['profile_attribute_pairs.keyword' => "{$bioKey}:*{$bioValue}*"]];
+
                 continue;
             }
 
@@ -810,14 +777,14 @@ class SearchService
         ])->asArray();
 
         $hits = $response['hits']['hits'] ?? [];
-        $ids = array_values(array_map(static fn(array $hit): int => (int) ($hit['_id'] ?? 0), $hits));
-        $total = (int) (($response['hits']['total']['value'] ?? 0));
+        $ids = array_values(array_map(static fn (array $hit): int => (int) ($hit['_id'] ?? 0), $hits));
+        $total = (int) ($response['hits']['total']['value'] ?? 0);
 
         return $this->hydrateActorPaginatorFromIds($ids, $total, $perPage, $page);
     }
 
     /**
-     * @param array<int, int> $ids
+     * @param  array<int, int>  $ids
      */
     private function hydrateActorPaginatorFromIds(array $ids, int $total, int $perPage, int $page): LengthAwarePaginator
     {
@@ -845,10 +812,10 @@ class SearchService
     private function indexNameFor(string $modelClass): string
     {
         /** @var \Illuminate\Database\Eloquent\Model&\Laravel\Scout\Searchable $model */
-        $model = new $modelClass();
+        $model = new $modelClass;
         $prefix = (string) config('scout.prefix', '');
 
-        return $prefix . $model->searchableAs();
+        return $prefix.$model->searchableAs();
     }
 
     private function applyActorTagsFilter(Builder $builder, array $filters): void

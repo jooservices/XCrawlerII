@@ -98,4 +98,16 @@ class DashboardPresetBehaviorTest extends TestCase
                 ->has('items.data', 0)
             );
     }
+
+    public function test_dashboard_rejects_unknown_preset_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('jav.vue.dashboard', [
+                'preset' => 'preferred_tags;rm -rf /',
+            ]))
+            ->assertStatus(302)
+            ->assertSessionHasErrors(['preset']);
+    }
 }

@@ -30,4 +30,21 @@ class MovieShowControllerTest extends TestCase
 
         $this->assertNotNull($history);
     }
+
+    public function test_guest_cannot_access_movie_page(): void
+    {
+        $jav = Jav::factory()->create();
+
+        $this->get(route('jav.vue.movies.show', $jav))
+            ->assertRedirect(route('login'));
+    }
+
+    public function test_show_movie_page_returns_not_found_for_unknown_uuid(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('jav.vue.movies.show', ['jav' => '00000000-0000-0000-0000-000000000000']))
+            ->assertNotFound();
+    }
 }

@@ -19,7 +19,7 @@ class RoleMiddlewareTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->middleware = new RoleMiddleware();
+        $this->middleware = new RoleMiddleware;
     }
 
     public function test_middleware_allows_user_with_required_role(): void

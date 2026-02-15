@@ -25,7 +25,7 @@ class DashboardPreferencesService
         }
 
         $saved = $currentUser->preferences;
-        if (!is_array($saved)) {
+        if (! is_array($saved)) {
             return $defaults;
         }
 
@@ -44,7 +44,7 @@ class DashboardPreferencesService
     public function normalizeTagFilters(Request $request): array
     {
         $tagValues = $request->input('tags', []);
-        if (!is_array($tagValues)) {
+        if (! is_array($tagValues)) {
             $tagValues = [];
         }
 
@@ -57,18 +57,17 @@ class DashboardPreferencesService
     }
 
     /**
-     * @param mixed $values
      * @return array<int, string>
      */
     public function normalizeTagValues(mixed $values): array
     {
-        if (!is_array($values)) {
+        if (! is_array($values)) {
             return $this->explodeCsv((string) $values);
         }
 
         return collect($values)
-            ->map(static fn(mixed $value): string => trim((string) $value))
-            ->filter(static fn(string $value): bool => $value !== '')
+            ->map(static fn (mixed $value): string => trim((string) $value))
+            ->filter(static fn (string $value): bool => $value !== '')
             ->unique()
             ->values()
             ->all();
@@ -86,8 +85,8 @@ class DashboardPreferencesService
         }
 
         return collect(explode(',', $value))
-            ->map(static fn(string $part): string => trim($part))
-            ->filter(static fn(string $part): bool => $part !== '')
+            ->map(static fn (string $part): string => trim($part))
+            ->filter(static fn (string $part): bool => $part !== '')
             ->unique()
             ->values()
             ->all();
@@ -111,7 +110,6 @@ class DashboardPreferencesService
     }
 
     /**
-     * @param mixed $bioFilters
      * @return array<int, array{key: ?string, value: ?string}>
      */
     public function normalizeBioFilters(mixed $bioFilters, mixed $singleBioKey = null, mixed $singleBioValue = null): array
@@ -120,7 +118,7 @@ class DashboardPreferencesService
 
         $normalized = collect($filters)
             ->map(function (mixed $row): array {
-                if (!is_array($row)) {
+                if (! is_array($row)) {
                     return ['key' => null, 'value' => null];
                 }
 
@@ -132,7 +130,7 @@ class DashboardPreferencesService
                     'value' => $value !== '' ? $value : null,
                 ];
             })
-            ->filter(static fn(array $row): bool => $row['key'] !== null || $row['value'] !== null)
+            ->filter(static fn (array $row): bool => $row['key'] !== null || $row['value'] !== null)
             ->values();
 
         if ($normalized->isEmpty()) {

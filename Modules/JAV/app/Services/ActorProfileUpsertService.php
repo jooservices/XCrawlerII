@@ -112,7 +112,7 @@ class ActorProfileUpsertService
         if (str_starts_with($kind, 'raw.')) {
             $suffix = preg_replace('/[^a-z0-9_]+/', '_', substr($kind, 4)) ?? '';
 
-            return 'raw.' . trim($suffix, '_');
+            return 'raw.'.trim($suffix, '_');
         }
 
         $normalized = preg_replace('/[^a-z0-9_]+/', '_', $kind) ?? '';
@@ -122,7 +122,7 @@ class ActorProfileUpsertService
 
     private function stringOrNull(mixed $value): ?string
     {
-        if (!is_scalar($value)) {
+        if (! is_scalar($value)) {
             return null;
         }
 
@@ -137,7 +137,7 @@ class ActorProfileUpsertService
             return $value;
         }
 
-        if (!is_scalar($value)) {
+        if (! is_scalar($value)) {
             return null;
         }
 

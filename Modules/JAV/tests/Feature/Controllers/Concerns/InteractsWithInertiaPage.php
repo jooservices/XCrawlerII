@@ -7,7 +7,7 @@ use Illuminate\Testing\TestResponse;
 trait InteractsWithInertiaPage
 {
     /**
-     * @param array<int, string> $requiredProps
+     * @param  array<int, string>  $requiredProps
      */
     protected function assertInertiaPage(TestResponse $response, string $component, array $requiredProps = []): void
     {

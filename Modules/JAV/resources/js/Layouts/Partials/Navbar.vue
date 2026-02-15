@@ -10,9 +10,17 @@ const navbarOpen = ref(false);
 const notificationsOpen = ref(false);
 const userMenuOpen = ref(false);
 const adminMenuOpen = ref(false);
+const searchMenuOpen = ref(false);
+const isSearching = ref(false);
+const suggestions = ref([]);
+const searchQuery = ref('');
+const activeSuggestionIndex = ref(-1);
 const adminMenuRef = ref(null);
 const notificationsMenuRef = ref(null);
 const userMenuRef = ref(null);
+const searchRef = ref(null);
+let searchTimerId = null;
+let searchRequestId = 0;
 
 const user = computed(() => page.props.auth?.user ?? null);
 const roles = computed(() => user.value?.roles || []);
@@ -23,16 +31,59 @@ const isAdmin = computed(() => roles.value.includes('admin'));
 const isAdminOrModerator = computed(() => roles.value.includes('admin') || roles.value.includes('moderator'));
 const notifications = computed(() => page.props.notifications?.items ?? []);
 const unreadCount = computed(() => Number(page.props.notifications?.count ?? 0));
+const hasSuggestions = computed(() => suggestions.value.length > 0);
 const currentUrl = computed(() => String(page.url || ''));
+const currentRouteName = computed(() => {
+    const currentUrlValue = currentUrl.value;
+    const routeName = route().current();
+    return routeName ? String(routeName) : currentUrlValue;
+});
+
+const routePatternMatches = (routePattern) => {
+    const current = currentRouteName.value;
+    const pattern = String(routePattern);
+
+    if (!pattern.includes('*')) {
+        return current === pattern;
+    }
+
+    const segments = pattern.split('*');
+    const startsWithSegment = segments.shift() || '';
+    const endsWithSegment = segments.pop() || '';
+
+    if (startsWithSegment !== '' && !current.startsWith(startsWithSegment)) {
+        return false;
+    }
+
+    if (endsWithSegment !== '' && !current.endsWith(endsWithSegment)) {
+        return false;
+    }
+
+    let cursor = startsWithSegment.length;
+
+    for (const segment of segments) {
+        if (segment === '') {
+            continue;
+        }
+
+        const foundIndex = current.indexOf(segment, cursor);
+        if (foundIndex === -1) {
+            return false;
+        }
+
+        cursor = foundIndex + segment.length;
+    }
+
+    return true;
+};
 
 const isActive = (routePattern) => {
-    currentUrl.value;
-    return route().current(routePattern);
+    return routePatternMatches(routePattern);
 };
 const isActiveAny = (routePatterns = []) => routePatterns.some((pattern) => isActive(pattern));
 
 const toggleSidebar = () => {
-    if (window.matchMedia('(max-width: 991.98px)').matches) {
+    if (globalThis.matchMedia('(max-width: 991.98px)').matches) {
         uiStore.mobileSidebarOpen = !uiStore.mobileSidebarOpen;
         return;
     }
@@ -45,7 +96,7 @@ const markNotificationRead = async (notificationId) => {
         await axios.post(route('jav.api.notifications.read', notificationId));
         notificationsOpen.value = false;
         router.reload({ preserveScroll: true });
-    } catch (error) {
+    } catch {
         uiStore.showToast('Failed to mark notification as read', 'error');
     }
 };
@@ -55,13 +106,133 @@ const markAllNotificationsRead = async () => {
         await axios.post(route('jav.api.notifications.read-all'));
         notificationsOpen.value = false;
         router.reload({ preserveScroll: true });
-    } catch (error) {
+    } catch {
         uiStore.showToast('Failed to mark all notifications as read', 'error');
     }
 };
 
 const toggleNavbar = () => {
     navbarOpen.value = !navbarOpen.value;
+};
+
+const hideSearchMenu = () => {
+    searchMenuOpen.value = false;
+    activeSuggestionIndex.value = -1;
+};
+
+const submitGlobalSearch = () => {
+    const query = searchQuery.value.trim();
+    hideSearchMenu();
+
+    router.get(route('jav.vue.dashboard'), query === '' ? {} : { q: query }, {
+        preserveScroll: true,
+    });
+};
+
+const selectSuggestion = (suggestion) => {
+    if (!suggestion?.href) {
+        return;
+    }
+
+    searchQuery.value = suggestion.label || searchQuery.value;
+    hideSearchMenu();
+    router.visit(suggestion.href, { preserveScroll: true });
+};
+
+const fetchSuggestions = async () => {
+    const query = searchQuery.value.trim();
+    if (query.length < 2) {
+        suggestions.value = [];
+        hideSearchMenu();
+        return;
+    }
+
+    const requestId = ++searchRequestId;
+    isSearching.value = true;
+
+    try {
+        const response = await axios.get(route('jav.api.search.suggest'), {
+            params: { q: query, limit: 8 },
+            headers: {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        if (requestId !== searchRequestId) {
+            return;
+        }
+
+        suggestions.value = Array.isArray(response.data?.suggestions) ? response.data.suggestions : [];
+        searchMenuOpen.value = true;
+        activeSuggestionIndex.value = suggestions.value.length > 0 ? 0 : -1;
+    } catch {
+        if (requestId === searchRequestId) {
+            suggestions.value = [];
+            hideSearchMenu();
+        }
+    } finally {
+        if (requestId === searchRequestId) {
+            isSearching.value = false;
+        }
+    }
+};
+
+const scheduleSuggestionsFetch = () => {
+    if (searchTimerId !== null) {
+        globalThis.clearTimeout(searchTimerId);
+    }
+
+    searchTimerId = globalThis.setTimeout(() => {
+        fetchSuggestions();
+    }, 250);
+};
+
+const onSearchInput = () => {
+    scheduleSuggestionsFetch();
+};
+
+const onSearchFocus = () => {
+    if (searchQuery.value.trim().length >= 2) {
+        scheduleSuggestionsFetch();
+    }
+};
+
+const onSearchKeydown = (event) => {
+    if (!searchMenuOpen.value && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+        event.preventDefault();
+        if (hasSuggestions.value) {
+            searchMenuOpen.value = true;
+            activeSuggestionIndex.value = 0;
+        }
+        return;
+    }
+
+    if (event.key === 'ArrowDown' && hasSuggestions.value) {
+        event.preventDefault();
+        activeSuggestionIndex.value = (activeSuggestionIndex.value + 1) % suggestions.value.length;
+        return;
+    }
+
+    if (event.key === 'ArrowUp' && hasSuggestions.value) {
+        event.preventDefault();
+        activeSuggestionIndex.value = (activeSuggestionIndex.value - 1 + suggestions.value.length) % suggestions.value.length;
+        return;
+    }
+
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        if (searchMenuOpen.value && activeSuggestionIndex.value >= 0 && suggestions.value[activeSuggestionIndex.value]) {
+            selectSuggestion(suggestions.value[activeSuggestionIndex.value]);
+            return;
+        }
+        submitGlobalSearch();
+        return;
+    }
+
+    if (event.key === 'Escape') {
+        hideSearchMenu();
+    }
 };
 
 const toggleNotifications = () => {
@@ -94,6 +265,10 @@ const handleOutsideClick = (event) => {
     if (userMenuRef.value && !userMenuRef.value.contains(event.target)) {
         userMenuOpen.value = false;
     }
+
+    if (searchRef.value && !searchRef.value.contains(event.target)) {
+        hideSearchMenu();
+    }
 };
 
 onMounted(() => {
@@ -101,6 +276,11 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+    if (searchTimerId !== null) {
+        globalThis.clearTimeout(searchTimerId);
+        searchTimerId = null;
+    }
+
     document.removeEventListener('click', handleOutsideClick);
 });
 </script>
@@ -129,17 +309,17 @@ onBeforeUnmount(() => {
                     </li>
 
                     <li v-if="isAdminOrModerator" ref="adminMenuRef" class="ui-nav-item ui-dropdown">
-                        <a
+                        <button
+                            type="button"
                             class="ui-nav-link ui-dropdown-toggle"
-                            :class="{ active: isActiveAny(['admin.users.*', 'admin.roles.*', 'jav.vue.admin.*']) }"
-                            href="#"
+                            :class="{ active: isActiveAny(['admin.users.*', 'admin.roles.*', 'jav.vue.admin.*', 'admin.job-*']) }"
                             id="adminDropdown"
-                            role="button"
                             :aria-expanded="adminMenuOpen ? 'true' : 'false'"
-                            @click.prevent.stop="toggleAdminMenu"
+                            aria-haspopup="true"
+                            @click.stop="toggleAdminMenu"
                         >
                             Admin
-                        </a>
+                        </button>
                         <ul class="ui-dropdown-menu" :class="{ show: adminMenuOpen }" aria-labelledby="adminDropdown">
                             <li v-if="canViewUsers">
                                 <Link :href="route('admin.users.index')" class="ui-dropdown-item" :class="{ active: isActive('admin.users.*') }">Users</Link>
@@ -153,6 +333,9 @@ onBeforeUnmount(() => {
                                     <Link :href="route('jav.vue.admin.analytics')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.analytics') }">Analytics</Link>
                                 </li>
                                 <li>
+                                    <Link :href="route('admin.job-telemetry')" class="ui-dropdown-item" :class="{ active: isActive('admin.job-*') }">Job Telemetry</Link>
+                                </li>
+                                <li>
                                     <Link :href="route('jav.vue.admin.search-quality')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.search-quality') }">Search Quality</Link>
                                 </li>
                                 <li>
@@ -162,6 +345,47 @@ onBeforeUnmount(() => {
                         </ul>
                     </li>
                 </ul>
+
+                <form ref="searchRef" class="u-relative mx-lg-3 u-flex u-items-center" style="min-width: 260px; max-width: 420px; width: 100%;" @submit.prevent="submitGlobalSearch">
+                    <input
+                        v-model="searchQuery"
+                        class="ui-form-control"
+                        type="search"
+                        placeholder="Search movies, actors, tags..."
+                        aria-label="Global search"
+                        autocomplete="off"
+                        @input="onSearchInput"
+                        @focus="onSearchFocus"
+                        @keydown="onSearchKeydown"
+                    >
+                    <button class="ui-btn ui-btn-outline-light ml-2" type="submit" title="Search" aria-label="Search">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                    <ul
+                        v-if="searchMenuOpen"
+                        class="ui-dropdown-menu show w-100 mt-1"
+                        style="display: block; max-height: 320px; overflow: auto;"
+                    >
+                        <li v-if="isSearching" class="ui-dropdown-item u-text-muted small">Searching...</li>
+                        <li
+                            v-for="(item, index) in suggestions"
+                            v-else-if="hasSuggestions"
+                            :key="`${item.type}-${item.label}-${index}`"
+                        >
+                            <button
+                                type="button"
+                                class="ui-dropdown-item u-flex u-justify-between u-items-center"
+                                :class="{ active: activeSuggestionIndex === index }"
+                                @mousedown.prevent="selectSuggestion(item)"
+                            >
+                                <span class="u-truncate">{{ item.label }}</span>
+                                <small class="u-text-muted ml-2 u-uppercase">{{ item.type }}</small>
+                            </button>
+                        </li>
+                        <li v-else class="ui-dropdown-item u-text-muted small">No suggestions</li>
+                    </ul>
+                </form>
 
                 <ul class="ui-navbar-nav ml-auto">
                     <template v-if="!user">
@@ -175,12 +399,12 @@ onBeforeUnmount(() => {
 
                     <template v-else>
                         <li ref="notificationsMenuRef" class="ui-nav-item ui-dropdown mr-2">
-                            <a class="ui-nav-link u-relative" href="#" id="notificationsDropdown" role="button" :aria-expanded="notificationsOpen ? 'true' : 'false'" title="Notifications" @click.prevent.stop="toggleNotifications">
+                            <button type="button" class="ui-nav-link u-relative" id="notificationsDropdown" :aria-expanded="notificationsOpen ? 'true' : 'false'" aria-haspopup="true" title="Notifications" @click.stop="toggleNotifications">
                                 <i class="fas fa-bell"></i>
                                 <span v-if="unreadCount > 0" class="u-absolute u-top-0 u-left-100 u-translate-middle ui-badge u-rounded-pill u-bg-danger">
                                     {{ unreadCount > 99 ? '99+' : unreadCount }}
                                 </span>
-                            </a>
+                            </button>
                             <ul class="ui-dropdown-menu ui-dropdown-menu-end" :class="{ show: notificationsOpen }" aria-labelledby="notificationsDropdown" style="min-width: 340px;">
                                 <li class="ui-dropdown-header u-flex u-justify-between u-items-center">
                                     <span>Notifications</span>
@@ -211,9 +435,18 @@ onBeforeUnmount(() => {
                         </li>
 
                         <li ref="userMenuRef" class="ui-nav-item ui-dropdown">
-                            <a class="ui-nav-link ui-dropdown-toggle" href="#" id="navbarDropdown" role="button" :aria-expanded="userMenuOpen ? 'true' : 'false'" @click.prevent.stop="toggleUserMenu">
+                            <button type="button" class="ui-nav-link ui-dropdown-toggle" id="navbarDropdown" :aria-expanded="userMenuOpen ? 'true' : 'false'" aria-haspopup="true" @click.stop="toggleUserMenu">
+                                <img
+                                    v-if="user?.avatar_url"
+                                    :src="user.avatar_url"
+                                    alt="avatar"
+                                    width="28"
+                                    height="28"
+                                    class="rounded-circle mr-2"
+                                >
+                                <i v-else class="fas fa-user-circle mr-2"></i>
                                 {{ user.name }}
-                            </a>
+                            </button>
                             <ul class="ui-dropdown-menu ui-dropdown-menu-end" :class="{ show: userMenuOpen }" aria-labelledby="navbarDropdown">
                                 <li>
                                     <Link :href="route('jav.vue.preferences')" class="ui-dropdown-item">Preferences</Link>
@@ -230,3 +463,16 @@ onBeforeUnmount(() => {
         </div>
     </nav>
 </template>
+
+<style scoped>
+.ui-navbar button.ui-nav-link {
+    border: 0;
+    background: transparent;
+    appearance: none;
+}
+
+.ui-navbar button.ui-nav-link:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.4);
+    outline-offset: 2px;
+}
+</style>

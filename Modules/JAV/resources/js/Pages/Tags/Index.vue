@@ -1,22 +1,38 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
 
 const props = defineProps({
     tags: Object,
+    query: String,
+    sort: String,
+    direction: String,
 });
 
 const visibleTags = ref([...(props.tags?.data || [])]);
 const nextPageUrl = ref(props.tags?.next_page_url || null);
 const loadingMore = ref(false);
 const sentinelRef = ref(null);
+const filterForm = ref({
+    q: props.query || '',
+});
+
+const sortOptions = [
+    { label: 'Most JAVs', sort: 'javs_count', direction: 'desc' },
+    { label: 'Fewest JAVs', sort: 'javs_count', direction: 'asc' },
+    { label: 'Name (A-Z)', sort: 'name', direction: 'asc' },
+    { label: 'Name (Z-A)', sort: 'name', direction: 'desc' },
+    { label: 'Newest', sort: 'created_at', direction: 'desc' },
+    { label: 'Oldest', sort: 'created_at', direction: 'asc' },
+];
 let observer = null;
 
 const parseUrlParams = (url) => {
     try {
-        const parsed = new URL(url, window.location.origin);
+        const parsed = new URL(url, globalThis.location.origin);
         return Object.fromEntries(parsed.searchParams.entries());
-    } catch (error) {
+    } catch {
         return {};
     }
 };
@@ -45,6 +61,30 @@ const loadMore = () => {
         onFinish: () => {
             loadingMore.value = false;
         },
+    });
+};
+
+const paramsForSearch = () => {
+    return {
+        q: filterForm.value.q || '',
+        sort: props.sort || 'javs_count',
+        direction: props.direction || 'desc',
+    };
+};
+
+const submitSearch = () => {
+    router.get(route('jav.vue.tags'), paramsForSearch(), {
+        preserveScroll: true,
+    });
+};
+
+const handleSortSelected = (option) => {
+    router.get(route('jav.vue.tags'), {
+        q: filterForm.value.q || '',
+        sort: option.sort,
+        direction: option.direction,
+    }, {
+        preserveScroll: true,
     });
 };
 
@@ -85,16 +125,60 @@ watch(
     },
     { deep: true }
 );
+
+watch(
+    () => props.query,
+    (value) => {
+        filterForm.value.q = value || '';
+    }
+);
 </script>
 
 <template>
-    <Head title="Tags" />
+    <Head>
+        <title>Tags</title>
+    </Head>
 
     
         <div class="ui-container-fluid">
             <div class="ui-row mb-4">
                 <div class="ui-col-md-12">
                     <h2>Tags</h2>
+                </div>
+            </div>
+
+            <OrderingBar
+                :has-auth-user="false"
+                :query="filterForm.q"
+                :sort="props.sort || 'javs_count'"
+                :direction="props.direction || 'desc'"
+                :total-matches="Number(props.tags?.total || 0)"
+                :loaded-matches="visibleTags.length"
+                :show-save-button="false"
+                :show-save-form="false"
+                :show-preset-section="false"
+                :show-sort-section="true"
+                :options="sortOptions"
+                @sort-selected="handleSortSelected"
+            />
+
+            <div class="ui-card mb-3">
+                <div class="ui-card-body">
+                    <form class="u-flex u-items-end" @submit.prevent="submitSearch">
+                        <div class="u-flex-grow-1 mr-2">
+                            <input
+                                id="tags_search_q"
+                                v-model="filterForm.q"
+                                type="text"
+                                name="q"
+                                class="ui-form-control"
+                                placeholder="Search ..."
+                            >
+                        </div>
+                        <button type="submit" class="ui-btn ui-btn-primary" title="Search" aria-label="Search">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -119,9 +203,9 @@ watch(
 
             <div ref="sentinelRef" id="sentinel"></div>
             <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
-                <div class="ui-spinner u-text-primary" role="status">
+                <output class="ui-spinner u-text-primary" aria-live="polite">
                     <span class="visually-hidden">Loading...</span>
-                </div>
+                </output>
             </div>
         </div>
     

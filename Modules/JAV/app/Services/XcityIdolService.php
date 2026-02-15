@@ -2,15 +2,14 @@
 
 namespace Modules\JAV\Services;
 
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Str;
 use Modules\Core\Facades\Config;
 use Modules\JAV\Jobs\XcityPersistIdolProfileJob;
 use Modules\JAV\Jobs\XcitySyncActorSearchIndexJob;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Services\ActorProfileUpsertService;
 use Modules\JAV\Services\Clients\XcityClient;
 use Modules\JAV\Services\Xcity\XcityDetailAdapter;
 use Modules\JAV\Services\Xcity\XcityListAdapter;
@@ -53,7 +52,7 @@ class XcityIdolService
             $url = $this->toAbsoluteUrl($href);
             $query = $this->queryParams($url);
 
-            if (!isset($query['kana']) || trim((string) $query['kana']) === '') {
+            if (! isset($query['kana']) || trim((string) $query['kana']) === '') {
                 return;
             }
 
@@ -90,7 +89,7 @@ class XcityIdolService
 
         if ($urls === []) {
             // Fallback to a basic seed to keep sync alive when top-page selector changes.
-            $fallback = self::BASE_URL . self::BASE_PATH;
+            $fallback = self::BASE_URL.self::BASE_PATH;
             $urls[$this->seedKeyFromUrl($fallback)] = $fallback;
         }
 
@@ -100,8 +99,12 @@ class XcityIdolService
         return $urls;
     }
 
-    public function syncKanaPage(string $seedKey, string $seedUrl, string $queue = 'jav'): int
+    public function syncKanaPage(string $seedKey, string $seedUrl, ?string $queue = null): int
     {
+        $resolvedQueue = (is_string($queue) && $queue !== '')
+            ? $queue
+            : (string) config('jav.idol_queue', 'jav-idol');
+
         Config::set('xcity', $this->runningKey($seedKey), '1');
 
         try {
@@ -122,7 +125,7 @@ class XcityIdolService
             }
 
             if ($jobs !== []) {
-                Bus::batch($jobs)->name("xcity:kana:{$seedKey}")->onQueue($queue)->dispatch();
+                Bus::batch($jobs)->name("xcity:kana:{$seedKey}")->onQueue($resolvedQueue)->dispatch();
             }
 
             if ($page->nextUrl !== null) {
@@ -315,14 +318,14 @@ class XcityIdolService
         }
 
         if (str_starts_with($url, '//')) {
-            return 'https:' . $url;
+            return 'https:'.$url;
         }
 
         if (str_starts_with($url, '/')) {
-            return self::BASE_URL . $url;
+            return self::BASE_URL.$url;
         }
 
-        return self::BASE_URL . '/' . ltrim($url, '/');
+        return self::BASE_URL.'/'.ltrim($url, '/');
     }
 
     private function seedKeyFromUrl(string $url): string
@@ -355,7 +358,7 @@ class XcityIdolService
             $url = $this->toAbsoluteUrl($href);
             $query = $this->queryParams($url);
 
-            if (!isset($query['kana'], $query['ini'])) {
+            if (! isset($query['kana'], $query['ini'])) {
                 return;
             }
 
@@ -380,7 +383,7 @@ class XcityIdolService
     private function queryParams(string $url): array
     {
         $query = parse_url($url, PHP_URL_QUERY);
-        if (!is_string($query) || $query === '') {
+        if (! is_string($query) || $query === '') {
             return [];
         }
 
@@ -407,12 +410,12 @@ class XcityIdolService
             $fresh = false;
         }
 
-        if (!$fresh) {
+        if (! $fresh) {
             return [];
         }
 
         $decoded = json_decode($cachedJson, true);
-        if (!is_array($decoded)) {
+        if (! is_array($decoded)) {
             return [];
         }
 
@@ -457,12 +460,12 @@ class XcityIdolService
 
     private function normalizeBloodType(mixed $value): ?string
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 
         $normalized = trim((string) preg_replace('/\s+/u', ' ', $value));
-        if (!preg_match('/^(A|B|O|AB)\s+Type$/i', $normalized, $matches)) {
+        if (! preg_match('/^(A|B|O|AB)\s+Type$/i', $normalized, $matches)) {
             return null;
         }
 
@@ -478,7 +481,7 @@ class XcityIdolService
     {
         $attributes = [];
         foreach ($mappedFields as $kind => $value) {
-            if (!is_string($value) || trim($value) === '') {
+            if (! is_string($value) || trim($value) === '') {
                 continue;
             }
 
@@ -499,7 +502,7 @@ class XcityIdolService
         ];
 
         foreach ($rawFields as $label => $value) {
-            if (!is_string($label) || !is_string($value)) {
+            if (! is_string($label) || ! is_string($value)) {
                 continue;
             }
 
@@ -513,7 +516,7 @@ class XcityIdolService
                 continue;
             }
 
-            $kind = 'raw.' . (preg_replace('/[^a-z0-9_]+/', '_', Str::lower($normalizedLabel)) ?? '');
+            $kind = 'raw.'.(preg_replace('/[^a-z0-9_]+/', '_', Str::lower($normalizedLabel)) ?? '');
             $kind = rtrim($kind, '_');
 
             if ($kind === 'raw.') {
@@ -532,7 +535,7 @@ class XcityIdolService
 
     private function normalizeBirthDate(mixed $value): ?string
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

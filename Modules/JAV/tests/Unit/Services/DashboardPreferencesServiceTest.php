@@ -11,7 +11,7 @@ class DashboardPreferencesServiceTest extends TestCase
 {
     public function test_resolve_returns_defaults_for_null_user_and_non_array_preferences(): void
     {
-        $service = new DashboardPreferencesService();
+        $service = new DashboardPreferencesService;
 
         $defaults = $service->resolve(null);
         $this->assertSame(false, $defaults['show_cover']);
@@ -29,7 +29,7 @@ class DashboardPreferencesServiceTest extends TestCase
     public function test_resolve_filters_unknown_keys_from_saved_preferences(): void
     {
         config(['jav.show_cover' => true]);
-        $service = new DashboardPreferencesService();
+        $service = new DashboardPreferencesService;
 
         $user = User::factory()->make();
         $user->preferences = [
@@ -47,7 +47,7 @@ class DashboardPreferencesServiceTest extends TestCase
 
     public function test_normalize_tag_filters_merges_tags_array_with_csv_tag(): void
     {
-        $service = new DashboardPreferencesService();
+        $service = new DashboardPreferencesService;
 
         $request = Request::create('/jav/dashboard', 'GET', [
             'tags' => ['Drama', ' Idol ', '', 'Drama'],
@@ -59,7 +59,7 @@ class DashboardPreferencesServiceTest extends TestCase
 
     public function test_normalize_bio_filters_uses_array_and_falls_back_to_single_inputs(): void
     {
-        $service = new DashboardPreferencesService();
+        $service = new DashboardPreferencesService;
 
         $fromArray = $service->normalizeBioFilters([
             ['key' => 'Blood Type', 'value' => ' O '],

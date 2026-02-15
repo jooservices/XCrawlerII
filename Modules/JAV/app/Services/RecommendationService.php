@@ -52,7 +52,7 @@ class RecommendationService
         // Simple implementation: Use database queries
 
         // This can be heavy, so limit candidates or use specific strategy.
-        // Strategy: Get candidates that have at least one of the actors OR tags. 
+        // Strategy: Get candidates that have at least one of the actors OR tags.
         // Order by match count (desc), then by popularity (views).
 
         // Construct query
@@ -78,7 +78,7 @@ class RecommendationService
 
         $query->whereNotIn('id', $excludeIds);
 
-        // Sorting: Ideally by relevance. 
+        // Sorting: Ideally by relevance.
         // Implementing "Sort by relevance" in pure Eloquent cleanly is hard without raw queries.
         // For now, let's sort by popularity (views) as a proxy for quality among relevant items.
         $query->orderBy('views', 'desc')->orderBy('downloads', 'desc');
@@ -131,7 +131,7 @@ class RecommendationService
             }
         });
 
-        $userIds = $query->pluck('user_id')->map(static fn($id): int => (int) $id)->all();
+        $userIds = $query->pluck('user_id')->map(static fn ($id): int => (int) $id)->all();
         $synced = 0;
         foreach ($userIds as $userId) {
             if ($this->syncSnapshotForUserId($userId, $limit)) {
@@ -200,7 +200,7 @@ class RecommendationService
             }
 
             $items = collect($snapshot->payload['items'] ?? [])
-                ->filter(static fn($row): bool => is_array($row) && isset($row['jav_id']))
+                ->filter(static fn ($row): bool => is_array($row) && isset($row['jav_id']))
                 ->take($limit)
                 ->values();
 
@@ -208,7 +208,7 @@ class RecommendationService
                 return collect();
             }
 
-            $javIds = $items->pluck('jav_id')->map(static fn($id): int => (int) $id)->all();
+            $javIds = $items->pluck('jav_id')->map(static fn ($id): int => (int) $id)->all();
             $movies = Jav::query()
                 ->with(['actors', 'tags'])
                 ->whereIn('id', $javIds)

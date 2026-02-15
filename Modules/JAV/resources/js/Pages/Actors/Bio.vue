@@ -1,11 +1,13 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import MovieCard from '@jav/Components/MovieCard.vue';
+import ActorInsightsPanel from '@jav/Components/ActorInsightsPanel.vue';
 
 const props = defineProps({
     actor: Object,
     movies: Object,
     bioProfile: Object,
+    actorInsights: Object,
     primarySource: String,
     primarySyncedAt: String,
     primarySyncedAtFormatted: String,
@@ -56,6 +58,10 @@ const props = defineProps({
                     </div>
                     <div v-else class="ui-alert ui-alert-warning mb-0">
                         No profile data synced yet.
+                    </div>
+
+                    <div class="mt-4">
+                        <ActorInsightsPanel :actor-insights="actorInsights" title="Actor Analytics" :show-title="true" :show-actor-genres="true" />
                     </div>
                 </div>
             </div>

@@ -67,20 +67,38 @@
             "@php artisan test --testsuite=Unit",
             "@php artisan test --testsuite=Feature"
         ],
-        "lint": [
+        "format": [
+            "@php vendor/bin/pint",
+            "@php vendor/bin/phpcbf --standard=phpcs.xml"
+        ],
+        "format:check": [
             "@php vendor/bin/pint --test",
-            "@php vendor/bin/phpcs"
+            "@php vendor/bin/phpcs --standard=phpcs.xml"
+        ],
+        "lint": [
+            "@composer format:check"
         ],
         "analyse": [
             "@php vendor/bin/phpstan analyse --memory-limit=1G"
         ],
+        "analyse:baseline": [
+            "@php vendor/bin/phpstan analyse --memory-limit=1G --generate-baseline=phpstan-baseline.neon"
+        ],
         "mess": [
-            "@php vendor/bin/phpmd app,routes,config text phpmd.xml"
+            "@php -d error_reporting=8191 vendor/bin/phpmd app,routes,config text phpmd.xml"
         ],
         "quality": [
             "@composer lint",
             "@composer analyse",
             "@composer mess"
+        ],
+        "quality:full": [
+            "@composer quality",
+            "@composer test"
+        ],
+        "quality:fix": [
+            "@composer format",
+            "@composer quality:full"
         ],
         "hooks:install": [
             "bash scripts/setup-git-hooks.sh"

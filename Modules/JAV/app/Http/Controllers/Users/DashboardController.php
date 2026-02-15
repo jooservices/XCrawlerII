@@ -3,6 +3,7 @@
 namespace Modules\JAV\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Modules\JAV\Http\Requests\GetActorsRequest;
@@ -14,21 +15,20 @@ use Modules\JAV\Http\Requests\GetTagsRequest;
 use Modules\JAV\Http\Requests\NotificationsRequest;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Repositories\DashboardReadRepository;
+use Modules\JAV\Services\ActorAnalyticsService;
 use Modules\JAV\Services\ActorProfileResolver;
 use Modules\JAV\Services\DashboardPreferencesService;
 use Modules\JAV\Services\RecommendationService;
-use Modules\JAV\Services\SearchService;
 
 class DashboardController extends Controller
 {
     public function __construct(
-        private readonly SearchService $searchService,
         private readonly RecommendationService $recommendationService,
         private readonly DashboardReadRepository $dashboardReadRepository,
         private readonly DashboardPreferencesService $dashboardPreferencesService,
         private readonly ActorProfileResolver $actorProfileResolver,
-    ) {
-    }
+        private readonly ActorAnalyticsService $actorAnalyticsService,
+    ) {}
 
     public function index(GetJavRequest $request): InertiaResponse
     {
@@ -37,7 +37,7 @@ class DashboardController extends Controller
 
     public function indexVue(GetJavRequest $request): InertiaResponse
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $preferences = $this->dashboardPreferencesService->resolve($user);
         $query = (string) ($request->input('q', '') ?? '');
         $tags = $this->dashboardPreferencesService->normalizeTagFilters($request);
@@ -115,7 +115,7 @@ class DashboardController extends Controller
             'default' => 'Default',
             'weekly_downloads' => 'Most Downloaded This Week',
         ];
-        if (auth()->check()) {
+        if (Auth::check()) {
             $builtInPresets['preferred_tags'] = 'My Preferred Tags';
         }
         $filters['tags'] = $this->dashboardPreferencesService->normalizeTagValues(array_merge(
@@ -166,12 +166,16 @@ class DashboardController extends Controller
 
     public function tagsVue(GetTagsRequest $request): InertiaResponse
     {
-        $query = (string) $request->input('q', '');
-        $tags = $this->dashboardReadRepository->searchTags($query);
+        $query = (string) $request->input('q', $request->input('query', ''));
+        $sort = (string) $request->input('sort', 'javs_count');
+        $direction = (string) $request->input('direction', 'desc');
+        $tags = $this->dashboardReadRepository->searchTags($query, $sort, $direction);
 
         return Inertia::render('Tags/Index', [
             'tags' => $tags,
             'query' => $query,
+            'sort' => $sort,
+            'direction' => $direction,
         ]);
     }
 
@@ -189,11 +193,13 @@ class DashboardController extends Controller
             ->firstWhere('source', $primarySource)?->synced_at
             ?? $actor->xcity_synced_at;
         $primarySyncedAtFormatted = $primarySyncedAt?->format('Y-m-d H:i');
+        $actorInsights = $this->actorAnalyticsService->actorInsights((string) $actor->uuid, 5);
 
         return Inertia::render('Actors/Bio', [
             'actor' => $actor,
             'movies' => $movies,
             'bioProfile' => $bioProfile,
+            'actorInsights' => $actorInsights,
             'primarySource' => $primarySource,
             'primarySyncedAt' => $primarySyncedAt,
             'primarySyncedAtFormatted' => $primarySyncedAtFormatted,
@@ -202,14 +208,11 @@ class DashboardController extends Controller
 
     public function historyVue(GetHistoryRequest $request): InertiaResponse
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $history = $this->dashboardReadRepository->historyForUser((int) $user->id, 30);
-        $history->setCollection(
-            $history->getCollection()->map(function ($record) {
-                $record->updated_at_human = $record->updated_at?->diffForHumans();
-                return $record;
-            })
-        );
+        foreach ($history->items() as $record) {
+            $record->updated_at_human = $record->updated_at?->diffForHumans();
+        }
 
         return Inertia::render('User/History', [
             'history' => $history,
@@ -218,14 +221,11 @@ class DashboardController extends Controller
 
     public function favoritesVue(GetFavoritesRequest $request): InertiaResponse
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $favorites = $this->dashboardReadRepository->favoritesForUser((int) $user->id, 30);
-        $favorites->setCollection(
-            $favorites->getCollection()->map(function ($favorite) {
-                $favorite->created_at_human = $favorite->created_at?->diffForHumans();
-                return $favorite;
-            })
-        );
+        foreach ($favorites->items() as $favorite) {
+            $favorite->created_at_human = $favorite->created_at?->diffForHumans();
+        }
 
         return Inertia::render('User/Favorites', [
             'favorites' => $favorites,
@@ -234,7 +234,7 @@ class DashboardController extends Controller
 
     public function recommendationsVue(GetRecommendationsRequest $request): InertiaResponse
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $recommendations = $this->recommendationService->getRecommendationsWithReasons($user, 30);
 
         return Inertia::render('User/Recommendations', [
@@ -244,7 +244,7 @@ class DashboardController extends Controller
 
     public function preferencesVue(): InertiaResponse
     {
-        $preferences = $this->dashboardPreferencesService->resolve(auth()->user());
+        $preferences = $this->dashboardPreferencesService->resolve(Auth::user());
 
         return Inertia::render('User/Preferences', [
             'preferences' => $preferences,
@@ -260,5 +260,4 @@ class DashboardController extends Controller
             'notifications' => $notifications,
         ]);
     }
-
 }

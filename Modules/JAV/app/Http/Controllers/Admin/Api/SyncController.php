@@ -27,7 +27,7 @@ class SyncController extends Controller
         $date = $request->validated('date');
 
         $lockKey = sprintf('jav:sync:dispatch:%s:%s', $source, $type);
-        if (!Cache::add($lockKey, 1, now()->addSeconds(20))) {
+        if (! Cache::add($lockKey, 1, now()->addSeconds(20))) {
             return response()->json([
                 'message' => 'A sync request for this provider/type is already being dispatched. Please wait a moment.',
             ], 429);
@@ -193,6 +193,8 @@ class SyncController extends Controller
 
     private function dispatchXcityIdolJobs(XcityIdolService $xcityIdolService): int
     {
+        $idolQueue = (string) config('jav.idol_queue', 'jav-idol');
+
         $seeds = $xcityIdolService->seedKanaUrls();
         if ($seeds === []) {
             return 0;
@@ -200,7 +202,7 @@ class SyncController extends Controller
 
         $selected = $xcityIdolService->pickSeedsForDispatch($seeds, 3);
         foreach ($selected as $seed) {
-            XcityKanaSyncJob::dispatch($seed['seed_key'], $seed['seed_url'])->onQueue('jav');
+            XcityKanaSyncJob::dispatch($seed['seed_key'], $seed['seed_url'])->onQueue($idolQueue);
         }
 
         return $selected->count();

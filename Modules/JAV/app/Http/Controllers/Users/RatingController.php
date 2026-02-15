@@ -89,6 +89,7 @@ class RatingController extends Controller
         $ratings->setCollection(
             $ratings->getCollection()->map(function (Rating $rating) {
                 $rating->created_at_human = $rating->created_at?->diffForHumans();
+
                 return $rating;
             })
         );

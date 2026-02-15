@@ -12,7 +12,7 @@ class JavCommand extends Command
                             {--provider=* : onejav|141jav|ffjav (content only)}
                             {--type=* : new|popular|daily|tags (content only)}
                             {--date= : YYYY-MM-DD for daily type (content only)}
-                            {--queue=jav : Queue name for queued jobs}
+                            {--queue= : Queue name override for queued jobs}
                             {--concurrency=3 : Idol sync concurrency}
                             {--search-mode=sync : sync|reset}
                             {--confirm-reset : Required when search mode is reset}
@@ -30,7 +30,7 @@ class JavCommand extends Command
             : array_values(array_unique($componentsOption));
 
         foreach ($components as $component) {
-            if (!in_array($component, ['content', 'idols', 'search', 'analytics', 'recommendations'], true)) {
+            if (! in_array($component, ['content', 'idols', 'search', 'analytics', 'recommendations'], true)) {
                 $this->error('Invalid component in --only. Supported: content, idols, search, analytics, recommendations');
 
                 return self::INVALID;
@@ -38,7 +38,9 @@ class JavCommand extends Command
         }
 
         $hasFailure = false;
-        $queue = (string) $this->option('queue');
+        $queueOption = trim((string) $this->option('queue'));
+        $contentQueue = $queueOption !== '' ? $queueOption : 'jav';
+        $idolQueue = $queueOption !== '' ? $queueOption : (string) config('jav.idol_queue', 'jav-idol');
         $types = (array) $this->option('type');
         $providersOption = (array) $this->option('provider');
         $providers = $providersOption === [] ? ['onejav', '141jav', 'ffjav'] : array_values(array_unique($providersOption));
@@ -48,7 +50,7 @@ class JavCommand extends Command
             foreach ($providers as $provider) {
                 $payload = [
                     'provider' => $provider,
-                    '--queue' => $queue,
+                    '--queue' => $contentQueue,
                 ];
 
                 if ($types !== []) {
@@ -66,14 +68,14 @@ class JavCommand extends Command
         if (in_array('idols', $components, true)) {
             $exitCode = Artisan::call('jav:sync:idols', [
                 '--concurrency' => (int) $this->option('concurrency'),
-                '--queue' => $queue,
+                '--queue' => $idolQueue,
             ], $this->output);
             $hasFailure = $hasFailure || $exitCode !== self::SUCCESS;
         }
 
         if (in_array('search', $components, true)) {
             $searchMode = (string) $this->option('search-mode');
-            if ($searchMode === 'reset' && !$this->option('confirm-reset')) {
+            if ($searchMode === 'reset' && ! $this->option('confirm-reset')) {
                 $this->error('Refusing search reset without --confirm-reset');
 
                 return self::INVALID;

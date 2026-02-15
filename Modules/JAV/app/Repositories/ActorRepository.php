@@ -22,8 +22,8 @@ class ActorRepository
             ->orderBy('name')
             ->limit($limit)
             ->pluck('name')
-            ->map(static fn(string $name): string => trim($name))
-            ->filter(static fn(string $name): bool => $name !== '')
+            ->map(static fn (string $name): string => trim($name))
+            ->filter(static fn (string $name): bool => $name !== '')
             ->values()
             ->all();
     }
@@ -47,8 +47,8 @@ class ActorRepository
             ->distinct()
             ->limit($limit)
             ->pluck($column)
-            ->map(static fn(mixed $value): string => trim((string) $value))
-            ->filter(static fn(string $value): bool => $value !== '')
+            ->map(static fn (mixed $value): string => trim((string) $value))
+            ->filter(static fn (string $value): bool => $value !== '')
             ->values()
             ->all();
     }

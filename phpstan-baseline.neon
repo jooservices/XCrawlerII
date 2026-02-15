@@ -1,0 +1,979 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to an undefined property App\\Models\\Permission\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Http/Controllers/Admin/RoleController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Role\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Admin/RoleController.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\Role\:\:create\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Controllers/Admin/RoleController.php
+
+		-
+			message: '#^Parameter \#1 \$ids of method Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<Illuminate\\Database\\Eloquent\\Model,Illuminate\\Database\\Eloquent\\Model,Illuminate\\Database\\Eloquent\\Relations\\Pivot,string\>\:\:sync\(\) expects array\|Illuminate\\Database\\Eloquent\\Model\|Illuminate\\Support\\Collection\|int\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Admin/RoleController.php
+
+		-
+			message: '#^Part \$search \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 3
+			path: app/Http/Controllers/Admin/RoleController.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\User\:\:create\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Parameter \#1 \$column of method Illuminate\\Database\\Query\\Builder\:\:orderBy\(\) expects Closure\|Illuminate\\Contracts\\Database\\Query\\Expression\|Illuminate\\Database\\Eloquent\\Builder\<\*\>\|Illuminate\\Database\\Query\\Builder\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Parameter \#1 \$ids of method Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany\<Illuminate\\Database\\Eloquent\\Model,Illuminate\\Database\\Eloquent\\Model,Illuminate\\Database\\Eloquent\\Relations\\Pivot,string\>\:\:sync\(\) expects array\|Illuminate\\Database\\Eloquent\\Model\|Illuminate\\Support\\Collection\|int\|string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Parameter \#1 \$value of static method Illuminate\\Support\\Facades\\Hash\:\:make\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Parameter \#2 \$direction of method Illuminate\\Database\\Query\\Builder\:\:orderBy\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Part \$search \(mixed\) of encapsed string cannot be cast to string\.$#'
+			identifier: encapsedStringPart.nonString
+			count: 3
+			path: app/Http/Controllers/Admin/UserController.php
+
+		-
+			message: '#^Access to an undefined property Modules\\JAV\\Models\\UserLikeNotification\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Access to an undefined property Modules\\JAV\\Models\\UserLikeNotification\:\:\$jav\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Access to an undefined property Modules\\JAV\\Models\\UserLikeNotification\:\:\$title\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot access property \$avatar_path on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot access property \$avatar_url on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot access property \$email on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot access property \$id on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot access property \$name on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot access property \$preferences on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot access property \$roles on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot access property \$username on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot call method getAllPermissions\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot call method getBag\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot call method javNotifications\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: app/Http/Middleware/HandleInertiaRequests.php
+
+		-
+			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Middleware/PermissionMiddleware.php
+
+		-
+			message: '#^Cannot call method hasAnyRole\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Middleware/RoleMiddleware.php
+
+		-
+			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Requests/Admin/AssignRoleRequest.php
+
+		-
+			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Requests/Admin/GetRolesRequest.php
+
+		-
+			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Requests/Admin/GetUsersRequest.php
+
+		-
+			message: '#^Access to an undefined property App\\Http\\Requests\\Admin\\StoreRoleRequest\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Http/Requests/Admin/StoreRoleRequest.php
+
+		-
+			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Requests/Admin/StoreRoleRequest.php
+
+		-
+			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Requests/Admin/StoreUserRequest.php
+
+		-
+			message: '#^Cannot access property \$id on object\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Requests/Admin/UpdateRoleRequest.php
+
+		-
+			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Requests/Admin/UpdateRoleRequest.php
+
+		-
+			message: '#^Cannot access property \$id on object\|string\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: app/Http/Requests/Admin/UpdateUserRequest.php
+
+		-
+			message: '#^Cannot call method hasPermission\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: app/Http/Requests/Admin/UpdateUserRequest.php
+
+		-
+			message: '#^Class App\\Models\\Permission uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^Method App\\Models\\Permission\:\:roles\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Permission.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Permission\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/Role.php
+
+		-
+			message: '#^Class App\\Models\\Role uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types\: TFactory$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^Method App\\Models\\Role\:\:permissions\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^Method App\\Models\\Role\:\:users\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/Role.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Role\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$avatar_path\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$roles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:favorites\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:getAllPermissions\(\) return type with generic class Illuminate\\Support\\Collection does not specify its types\: TKey, TValue$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:javHistory\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:javNotifications\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:ratings\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:roles\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\BelongsToMany does not specify its types\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \(2\-4 required\)$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:watchlist\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Method App\\Models\\User\:\:watchlists\(\) return type with generic class Illuminate\\Database\\Eloquent\\Relations\\HasMany does not specify its types\: TRelatedModel, TDeclaringModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: app/Models/User.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Support\\Optional\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Providers/HorizonServiceProvider.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: config/app.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: config/cache.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: config/database.php
+
+		-
+			message: '#^Parameter \#1 \$string of function rtrim expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: config/filesystems.php
+
+		-
+			message: '#^Parameter \#1 \$title of static method Illuminate\\Support\\Str\:\:slug\(\) expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: config/horizon.php
+
+		-
+			message: '#^Binary operation "\." between ''tls\://'' and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: config/logging.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: config/logging.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: config/logging.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: config/mail.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 3
+			path: config/queue.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: config/session.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 1
+			path: config/session.php
+
+		-
+			message: '#^Class Database\\Factories\\WatchlistFactory extends generic class Illuminate\\Database\\Eloquent\\Factories\\Factory but does not specify its types\: TModel$#'
+			identifier: missingType.generics
+			count: 1
+			path: database/factories/WatchlistFactory.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\Permission\:\:firstOrCreate\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: database/seeders/RolesAndPermissionsSeeder.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\Permission\:\:whereIn\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: database/seeders/RolesAndPermissionsSeeder.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\Role\:\:firstOrCreate\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 3
+			path: database/seeders/RolesAndPermissionsSeeder.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\User\:\:firstOrCreate\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: database/seeders/RolesAndPermissionsSeeder.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: tests/Feature/Auth/RoleBasedAccessTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:hasPermission\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Feature/Auth/RoleBasedAccessTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:roles\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: tests/Feature/Auth/RoleBasedAccessTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:permissions\(\)\.$#'
+			identifier: method.notFound
+			count: 6
+			path: tests/Feature/Auth/RoleBasedAccessTest.php
+
+		-
+			message: '#^Parameter \#1 \$user of method Illuminate\\Foundation\\Testing\\TestCase\:\:actingAs\(\) expects Illuminate\\Contracts\\Auth\\Authenticatable, App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\> given\.$#'
+			identifier: argument.type
+			count: 6
+			path: tests/Feature/Auth/RoleBasedAccessTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\Role\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 9
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:permissions\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Cannot access offset ''component'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Cannot access property \$permissions on Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Instanceof between App\\Models\\User and Illuminate\\Contracts\\Auth\\Authenticatable will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Controllers\\Admin\\RoleControllerTest\:\:assertInertiaComponent\(\) has parameter \$response with generic class Illuminate\\Testing\\TestResponse but does not specify its types\: TResponse$#'
+			identifier: missingType.generics
+			count: 1
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Property Tests\\Feature\\Controllers\\Admin\\RoleControllerTest\:\:\$adminRole \(App\\Models\\Role\) does not accept Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Property Tests\\Feature\\Controllers\\Admin\\RoleControllerTest\:\:\$adminUser \(App\\Models\\User\) does not accept App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Feature/Controllers/Admin/RoleControllerTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$email\.$#'
+			identifier: property.notFound
+			count: 3
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 3
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$username\.$#'
+			identifier: property.notFound
+			count: 3
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 9
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:roles\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:permissions\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Cannot access offset ''component'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Cannot access property \$name on App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Cannot access property \$password on App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Cannot access property \$roles on App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\|null\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Instanceof between App\\Models\\User and Illuminate\\Contracts\\Auth\\Authenticatable will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Method Tests\\Feature\\Controllers\\Admin\\UserControllerTest\:\:assertInertiaComponent\(\) has parameter \$response with generic class Illuminate\\Testing\\TestResponse but does not specify its types\: TResponse$#'
+			identifier: missingType.generics
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Property Tests\\Feature\\Controllers\\Admin\\UserControllerTest\:\:\$adminRole \(App\\Models\\Role\) does not accept Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Property Tests\\Feature\\Controllers\\Admin\\UserControllerTest\:\:\$adminUser \(App\\Models\\User\) does not accept App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: tests/Feature/Controllers/Admin/UserControllerTest.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\Role\:\:where\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 4
+			path: tests/Feature/Seeders/RolesAndPermissionsSeederTest.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\Role\:\:whereIn\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 1
+			path: tests/Feature/Seeders/RolesAndPermissionsSeederTest.php
+
+		-
+			message: '#^Call to an undefined static method App\\Models\\User\:\:where\(\)\.$#'
+			identifier: staticMethod.notFound
+			count: 2
+			path: tests/Feature/Seeders/RolesAndPermissionsSeederTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 3
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:roles\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:permissions\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Cannot access offset ''count'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Cannot access offset ''id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Cannot access offset ''items'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Cannot access offset ''permissions'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Cannot access offset ''roles'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Cannot access offset ''user'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Cannot call method all\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Trying to invoke mixed but it''s not a callable\.$#'
+			identifier: callable.nonCallable
+			count: 4
+			path: tests/Unit/Middleware/HandleInertiaRequestsTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Unit/Middleware/PermissionMiddlewareTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:roles\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Unit/Middleware/PermissionMiddlewareTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:permissions\(\)\.$#'
+			identifier: method.notFound
+			count: 4
+			path: tests/Unit/Middleware/PermissionMiddlewareTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:roles\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Unit/Middleware/RoleMiddlewareTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/ConfigTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$description\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/PermissionTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$name\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/PermissionTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$roles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/PermissionTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$slug\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/PermissionTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:roles\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Unit/Models/PermissionTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$permissions\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Unit/Models/RoleTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$users\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/RoleTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:givePermission\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Unit/Models/RoleTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:hasPermission\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Unit/Models/RoleTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:permissions\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Unit/Models/RoleTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:revokePermission\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Unit/Models/RoleTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:users\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Unit/Models/RoleTest.php
+
+		-
+			message: '#^Cannot access property \$permissions on Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: tests/Unit/Models/RoleTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$avatar_url\.$#'
+			identifier: property.notFound
+			count: 2
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$favorites\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 5
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$javHistory\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$javNotifications\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$ratings\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$roles\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$watchlist\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Access to an undefined property App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:\$watchlists\.$#'
+			identifier: property.notFound
+			count: 1
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Access to an undefined property Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:\$id\.$#'
+			identifier: property.notFound
+			count: 9
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:assignRole\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:hasAnyRole\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:hasPermission\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:hasRole\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:isAdmin\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:isModerator\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:removeRole\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Call to an undefined method App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\:\:roles\(\)\.$#'
+			identifier: method.notFound
+			count: 9
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Collection\<int, Illuminate\\Database\\Eloquent\\Model\>\|Illuminate\\Database\\Eloquent\\Model\:\:permissions\(\)\.$#'
+			identifier: method.notFound
+			count: 3
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Cannot access property \$roles on App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\|null\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: tests/Unit/Models/UserTest.php
+
+		-
+			message: '#^Cannot call method getAllPermissions\(\) on App\\Models\\User\|Illuminate\\Database\\Eloquent\\Collection\<int, App\\Models\\User\>\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: tests/Unit/Models/UserTest.php

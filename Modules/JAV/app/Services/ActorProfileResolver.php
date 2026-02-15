@@ -59,7 +59,7 @@ class ActorProfileResolver
 
         $display = [];
         foreach ($this->displayLabels() as $kind => $label) {
-            if (!isset($fields[$kind])) {
+            if (! isset($fields[$kind])) {
                 continue;
             }
 
@@ -82,7 +82,7 @@ class ActorProfileResolver
         }
 
         foreach ($fields as $kind => $field) {
-            if (!str_starts_with($kind, 'raw.')) {
+            if (! str_starts_with($kind, 'raw.')) {
                 continue;
             }
 
@@ -177,7 +177,7 @@ class ActorProfileResolver
 
     private function sourceRank(string $source, bool $isPrimary, ?Carbon $syncedAt): int
     {
-        $priority = (int) config('jav.profile_source_priority.' . strtolower($source), 0);
+        $priority = (int) config('jav.profile_source_priority.'.strtolower($source), 0);
         $primaryScore = $isPrimary ? 1_000_000_000 : 0;
         $timeScore = $syncedAt?->timestamp ?? 0;
 

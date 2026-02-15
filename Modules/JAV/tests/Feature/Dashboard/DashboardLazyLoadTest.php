@@ -2,8 +2,8 @@
 
 namespace Modules\JAV\Tests\Feature\Dashboard;
 
-use Inertia\Testing\AssertableInertia as Assert;
 use App\Models\User;
+use Inertia\Testing\AssertableInertia as Assert;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Tests\TestCase;
 

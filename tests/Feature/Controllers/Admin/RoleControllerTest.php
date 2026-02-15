@@ -5,6 +5,7 @@ namespace Tests\Feature\Controllers\Admin;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -16,6 +17,13 @@ class RoleControllerTest extends TestCase
     protected User $adminUser;
 
     protected Role $adminRole;
+
+    private function asAuthenticatable(User $user): Authenticatable
+    {
+        assert($user instanceof Authenticatable);
+
+        return $user;
+    }
 
     protected function setUp(): void
     {
@@ -41,16 +49,17 @@ class RoleControllerTest extends TestCase
 
     public function test_admin_can_view_roles_index(): void
     {
-        $response = $this->actingAs($this->adminUser)->get(route('admin.roles.index'));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.roles.index'));
 
         $this->assertInertiaComponent($response, 'Admin/Roles/Index');
     }
 
     public function test_non_admin_cannot_view_roles_index(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('admin.roles.index'));
+        $response = $this->actingAs($this->asAuthenticatable($user))->get(route('admin.roles.index'));
 
         $response->assertForbidden();
     }
@@ -60,7 +69,7 @@ class RoleControllerTest extends TestCase
         Role::factory()->create(['name' => 'Editor']);
         Role::factory()->create(['name' => 'Viewer']);
 
-        $response = $this->actingAs($this->adminUser)->get(route('admin.roles.index', ['search' => 'Editor']));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.roles.index', ['search' => 'Editor']));
 
         $response->assertOk();
         $response->assertSee('Editor');
@@ -71,7 +80,7 @@ class RoleControllerTest extends TestCase
     {
         $permission = Permission::factory()->create();
 
-        $response = $this->actingAs($this->adminUser)->post(route('admin.roles.store'), [
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->post(route('admin.roles.store'), [
             'name' => 'New Role',
             'slug' => 'new-role',
             'description' => 'A new role for testing',
@@ -88,7 +97,7 @@ class RoleControllerTest extends TestCase
     {
         $role = Role::factory()->create();
 
-        $response = $this->actingAs($this->adminUser)->put(route('admin.roles.update', $role), [
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->put(route('admin.roles.update', $role), [
             'name' => 'Updated Role',
             'slug' => $role->slug,
         ]);
@@ -104,7 +113,7 @@ class RoleControllerTest extends TestCase
     {
         $role = Role::factory()->create(['slug' => 'custom-role']);
 
-        $response = $this->actingAs($this->adminUser)->delete(route('admin.roles.destroy', $role));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->delete(route('admin.roles.destroy', $role));
 
         $response->assertRedirect(route('admin.roles.index'));
         $this->assertDatabaseMissing('roles', ['id' => $role->id]);
@@ -113,7 +122,7 @@ class RoleControllerTest extends TestCase
     public function test_admin_cannot_delete_core_roles(): void
     {
         // Use the existing admin role from setUp
-        $response = $this->actingAs($this->adminUser)->delete(route('admin.roles.destroy', $this->adminRole));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->delete(route('admin.roles.destroy', $this->adminRole));
 
         $response->assertRedirect(route('admin.roles.index'));
         $response->assertSessionHas('error');
@@ -126,24 +135,46 @@ class RoleControllerTest extends TestCase
         $permission = Permission::factory()->create();
         $role->permissions()->attach($permission);
 
-        $response = $this->actingAs($this->adminUser)->get(route('admin.roles.show', $role));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.roles.show', $role));
 
         $this->assertInertiaComponent($response, 'Admin/Roles/Show');
         $response->assertSee($role->name);
     }
 
+    public function test_admin_can_view_create_role_form(): void
+    {
+        Permission::factory()->create(['slug' => 'manage-users']);
+
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.roles.create'));
+
+        $this->assertInertiaComponent($response, 'Admin/Roles/Create');
+        $response->assertSee('manage-users');
+    }
+
+    public function test_admin_can_view_edit_role_form(): void
+    {
+        $role = Role::factory()->create(['slug' => 'editor']);
+        $permission = Permission::factory()->create(['slug' => 'edit-posts']);
+        $role->permissions()->attach($permission);
+
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.roles.edit', $role));
+
+        $this->assertInertiaComponent($response, 'Admin/Roles/Edit');
+        $response->assertSee('editor');
+    }
+
     public function test_create_role_validates_required_fields(): void
     {
-        $response = $this->actingAs($this->adminUser)->post(route('admin.roles.store'), []);
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->post(route('admin.roles.store'), []);
 
         $response->assertSessionHasErrors(['name', 'slug']);
     }
 
     public function test_create_role_validates_unique_slug(): void
     {
-        $existingRole = Role::factory()->create(['slug' => 'existing-role']);
+        Role::factory()->create(['slug' => 'existing-role']);
 
-        $response = $this->actingAs($this->adminUser)->post(route('admin.roles.store'), [
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->post(route('admin.roles.store'), [
             'name' => 'New Role',
             'slug' => 'existing-role',
         ]);
@@ -153,7 +184,7 @@ class RoleControllerTest extends TestCase
 
     public function test_role_slug_is_auto_generated_from_name(): void
     {
-        $response = $this->actingAs($this->adminUser)->post(route('admin.roles.store'), [
+        $this->actingAs($this->asAuthenticatable($this->adminUser))->post(route('admin.roles.store'), [
             'name' => 'Test Role Name',
         ]);
 
@@ -168,7 +199,7 @@ class RoleControllerTest extends TestCase
         $permission1 = Permission::factory()->create();
         $permission2 = Permission::factory()->create();
 
-        $response = $this->actingAs($this->adminUser)->put(route('admin.roles.update', $role), [
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->put(route('admin.roles.update', $role), [
             'name' => $role->name,
             'slug' => $role->slug,
             'permissions' => [$permission1->id, $permission2->id],

@@ -17,7 +17,7 @@ class RefreshAnalyticsSnapshotsJobTest extends TestCase
         $service->shouldReceive('getSnapshot')->once()->with(30, true, false)->andReturn([]);
         $service->shouldReceive('getSnapshot')->once()->with(90, true, false)->andReturn([]);
 
-        $job = new RefreshAnalyticsSnapshotsJob();
+        $job = new RefreshAnalyticsSnapshotsJob;
         $job->handle($service);
 
         $this->assertTrue(true);

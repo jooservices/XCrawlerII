@@ -38,11 +38,10 @@ class SearchServiceTest extends TestCase
 
         $results = $this->searchService->searchTags('Time Stop');
 
-        $this->assertCount(1, $results);
+        $this->assertCount(1, $results->items());
         // Fix for potential lint/property access
         $first = $results->items()[0] ?? null;
         $this->assertNotNull($first);
         $this->assertEquals(1, $first->javs_count);
     }
-
 }

@@ -86,4 +86,34 @@ class RatingControllerContractTest extends TestCase
             ->assertJsonPath('success', true)
             ->assertJsonPath('has_rated', false);
     }
+
+    public function test_ratings_weird_case_accepts_minimum_rating_boundary(): void
+    {
+        $jav = Jav::factory()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson(route('jav.api.ratings.store'), [
+                'jav_id' => $jav->id,
+                'rating' => 1,
+                'review' => '',
+            ])
+            ->assertCreated()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('data.rating', 1);
+    }
+
+    public function test_ratings_exploit_case_rejects_out_of_range_rating_payload(): void
+    {
+        $jav = Jav::factory()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson(route('jav.api.ratings.store'), [
+                'jav_id' => $jav->id,
+                'rating' => 999,
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['rating']);
+    }
 }

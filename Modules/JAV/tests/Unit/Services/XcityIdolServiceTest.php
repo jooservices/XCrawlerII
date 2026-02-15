@@ -3,9 +3,9 @@
 namespace Modules\JAV\Tests\Unit\Services;
 
 use Illuminate\Support\Facades\Bus;
-use Modules\JAV\Models\Actor;
 use Modules\JAV\Jobs\XcityPersistIdolProfileJob;
 use Modules\JAV\Jobs\XcitySyncActorSearchIndexJob;
+use Modules\JAV\Models\Actor;
 use Modules\JAV\Services\Clients\XcityClient;
 use Modules\JAV\Services\XcityIdolService;
 use Modules\JAV\Tests\TestCase;
@@ -27,7 +27,7 @@ class XcityIdolServiceTest extends TestCase
             ->andReturnSelf();
         $pendingBatch->shouldReceive('onQueue')
             ->once()
-            ->with('jav')
+            ->with('jav-idol')
             ->andReturnSelf();
         $pendingBatch->shouldReceive('dispatch')
             ->once();
@@ -40,15 +40,15 @@ class XcityIdolServiceTest extends TestCase
                 }
 
                 foreach ($jobs as $job) {
-                    if (!is_array($job) || count($job) !== 2) {
+                    if (! is_array($job) || count($job) !== 2) {
                         return false;
                     }
 
-                    if (!$job[0] instanceof XcityPersistIdolProfileJob) {
+                    if (! $job[0] instanceof XcityPersistIdolProfileJob) {
                         return false;
                     }
 
-                    if (!$job[1] instanceof XcitySyncActorSearchIndexJob) {
+                    if (! $job[1] instanceof XcitySyncActorSearchIndexJob) {
                         return false;
                     }
                 }

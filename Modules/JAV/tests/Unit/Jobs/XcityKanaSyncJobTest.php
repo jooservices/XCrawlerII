@@ -21,7 +21,7 @@ class XcityKanaSyncJobTest extends TestCase
         $service = Mockery::mock(XcityIdolService::class);
         $service->shouldReceive('syncKanaPage')
             ->once()
-            ->with('kana-a', 'https://xxx.xcity.jp/idol/?kana=a', 'jav');
+            ->with('kana-a', 'https://xxx.xcity.jp/idol/?kana=a', null);
 
         $job = new XcityKanaSyncJob('kana-a', 'https://xxx.xcity.jp/idol/?kana=a');
         $job->handle($service);

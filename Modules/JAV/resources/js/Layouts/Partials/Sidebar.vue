@@ -1,8 +1,7 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import { useUIStore } from '@jav/Stores/ui';
 import { computed } from 'vue';
-import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     mobile: Boolean
@@ -11,11 +10,52 @@ const props = defineProps({
 const uiStore = useUIStore();
 const page = usePage();
 const currentUrl = computed(() => String(page.url || ''));
+const currentRouteName = computed(() => {
+    const currentUrlValue = currentUrl.value;
+    const routeName = route().current();
+    return routeName ? String(routeName) : currentUrlValue;
+});
+
+const routePatternMatches = (routePattern) => {
+    const current = currentRouteName.value;
+    const pattern = String(routePattern);
+
+    if (!pattern.includes('*')) {
+        return current === pattern;
+    }
+
+    const segments = pattern.split('*');
+    const startsWithSegment = segments.shift() || '';
+    const endsWithSegment = segments.pop() || '';
+
+    if (startsWithSegment !== '' && !current.startsWith(startsWithSegment)) {
+        return false;
+    }
+
+    if (endsWithSegment !== '' && !current.endsWith(endsWithSegment)) {
+        return false;
+    }
+
+    let cursor = startsWithSegment.length;
+
+    for (const segment of segments) {
+        if (segment === '') {
+            continue;
+        }
+
+        const foundIndex = current.indexOf(segment, cursor);
+        if (foundIndex === -1) {
+            return false;
+        }
+
+        cursor = foundIndex + segment.length;
+    }
+
+    return true;
+};
 
 const isActive = (routePattern) => {
-    // Make active state react immediately to Inertia URL changes.
-    currentUrl.value;
-    return route().current(routePattern);
+    return routePatternMatches(routePattern);
 };
 const isActiveAny = (routePatterns = []) => routePatterns.some((pattern) => isActive(pattern));
 // If collapsed (desktop) and not mobile, we might want to show icons only or condensed view.

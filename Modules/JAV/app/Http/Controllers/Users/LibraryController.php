@@ -16,8 +16,7 @@ class LibraryController extends Controller
     public function __construct(
         private readonly DashboardReadRepository $dashboardReadRepository,
         private readonly RecommendationService $recommendationService,
-    ) {
-    }
+    ) {}
 
     public function history(GetHistoryRequest $request): InertiaResponse
     {

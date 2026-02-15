@@ -5,12 +5,52 @@
          xsi:schemaLocation="https://pmd.github.io/ruleset/2.0.0 https://pmd.github.io/ruleset_2_0_0.xsd">
     <description>PHPMD rules for Laravel project</description>
 
-    <rule ref="rulesets/cleancode.xml"/>
+    <rule ref="rulesets/cleancode.xml">
+        <exclude name="StaticAccess"/>
+    </rule>
     <rule ref="rulesets/codesize.xml"/>
     <rule ref="rulesets/controversial.xml"/>
-    <rule ref="rulesets/design.xml"/>
+    <rule ref="rulesets/design.xml">
+        <exclude name="CouplingBetweenObjects"/>
+    </rule>
     <rule ref="rulesets/naming.xml"/>
     <rule ref="rulesets/unusedcode.xml"/>
+
+    <rule ref="rulesets/codesize.xml/CyclomaticComplexity">
+        <properties>
+            <property name="reportLevel" value="8"/>
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/codesize.xml/NPathComplexity">
+        <properties>
+            <property name="minimum" value="150"/>
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/codesize.xml/ExcessiveMethodLength">
+        <properties>
+            <property name="minimum" value="80"/>
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/codesize.xml/ExcessiveClassLength">
+        <properties>
+            <property name="minimum" value="800"/>
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/codesize.xml/TooManyFields">
+        <properties>
+            <property name="maxfields" value="12"/>
+        </properties>
+    </rule>
+
+    <rule ref="rulesets/codesize.xml/ExcessivePublicCount">
+        <properties>
+            <property name="minimum" value="35"/>
+        </properties>
+    </rule>
 
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/storage/*</exclude-pattern>

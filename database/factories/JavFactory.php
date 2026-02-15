@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Modules\JAV\Models\Jav;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Modules\JAV\Models\Jav;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Modules\JAV\Models\Jav>

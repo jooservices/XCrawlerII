@@ -61,4 +61,33 @@ class LibraryControllerContractTest extends TestCase
             ->assertOk()
             ->assertJsonPath('success', true);
     }
+
+    public function test_toggle_like_weird_case_accepts_numeric_id_passed_as_string(): void
+    {
+        $jav = Jav::factory()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson(route('jav.toggle-like'), [
+                'id' => (string) $jav->id,
+                'type' => 'jav',
+            ])
+            ->assertOk()
+            ->assertJsonPath('success', true)
+            ->assertJsonPath('liked', true);
+    }
+
+    public function test_toggle_like_exploit_case_rejects_type_injection_attempt(): void
+    {
+        $jav = Jav::factory()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson(route('jav.toggle-like'), [
+                'id' => $jav->id,
+                'type' => 'jav OR 1=1',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['type']);
+    }
 }

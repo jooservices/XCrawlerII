@@ -14,8 +14,7 @@ class LibraryController extends ApiController
 {
     public function __construct(
         private readonly RecommendationService $recommendationService,
-    ) {
-    }
+    ) {}
 
     public function toggleLike(ToggleLikeRequest $request): JsonResponse
     {

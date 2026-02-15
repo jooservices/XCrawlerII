@@ -19,6 +19,12 @@ class JavManagerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const SHARED_DATE = '2016-10-16';
+
+    private const ACTRESS_NAO_WAKANA = 'Nao Wakana';
+
+    private const ACTRESS_MIHARU_USA = 'Miharu Usa';
+
     private JavManager $manager;
 
     protected function setUp(): void
@@ -35,12 +41,12 @@ class JavManagerTest extends TestCase
             title: 'ABP462',
             url: '/torrent/abp462',
             image: 'https://example.com/abp462.jpg',
-            date: Carbon::parse('2016-10-16'),
+            date: Carbon::parse(self::SHARED_DATE),
             code: 'ABP462',
             tags: collect(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy']),
             size: 1.2,
             description: 'Cum Lingerie Na 14 Nao Wakana',
-            actresses: collect(['Nao Wakana']),
+            actresses: collect([self::ACTRESS_NAO_WAKANA]),
             download: '/torrent/abp462/download/91625328/onejav.com_abp462.torrent'
         );
 
@@ -52,7 +58,7 @@ class JavManagerTest extends TestCase
         $this->assertEquals('feature-test', $jav->source);
         $this->assertEquals(1.2, $jav->size);
         $this->assertEquals(['Lingerie', 'Masturbation', 'Pantyhose', 'Solowork', 'Toy'], $jav->tags->pluck('name')->sort()->values()->toArray());
-        $this->assertEquals(['Nao Wakana'], $jav->actors->pluck('name')->sort()->values()->toArray());
+        $this->assertEquals([self::ACTRESS_NAO_WAKANA], $jav->actors->pluck('name')->sort()->values()->toArray());
     }
 
     public function test_subscriber_stores_real_data(): void
@@ -62,7 +68,7 @@ class JavManagerTest extends TestCase
             title: 'IPZ725',
             url: '/torrent/ipz725',
             image: 'https://example.com/ipz725.jpg',
-            date: Carbon::parse('2016-10-16'),
+            date: Carbon::parse(self::SHARED_DATE),
             code: 'IPZ725',
             tags: collect(['Beautiful Girl', 'Digital Mosaic', 'Kiss', 'Solowork', 'Subjectivity']),
             size: 1.1,
@@ -91,12 +97,12 @@ class JavManagerTest extends TestCase
             title: 'TEK074 - Original',
             url: '/torrent/tek074',
             image: 'https://example.com/tek074.jpg',
-            date: Carbon::parse('2016-10-16'),
+            date: Carbon::parse(self::SHARED_DATE),
             code: 'TEK074',
             tags: collect([]),
             size: 1.4,
             description: null,
-            actresses: collect(['Miharu Usa']),
+            actresses: collect([self::ACTRESS_MIHARU_USA]),
             download: '/torrent/tek074/download/22345950/onejav.com_tek074.torrent'
         );
 
@@ -109,12 +115,12 @@ class JavManagerTest extends TestCase
             title: 'TEK074 - Updated',
             url: '/torrent/tek074',
             image: 'https://example.com/tek074-v2.jpg',
-            date: Carbon::parse('2016-10-16'),
+            date: Carbon::parse(self::SHARED_DATE),
             code: 'TEK074',
             tags: collect(['Updated']),
             size: 2.0,
             description: 'Updated',
-            actresses: collect(['Miharu Usa', 'Another']),
+            actresses: collect([self::ACTRESS_MIHARU_USA, 'Another']),
             download: '/torrent/tek074/download/22345950/onejav.com_tek074.torrent'
         );
 
@@ -125,7 +131,7 @@ class JavManagerTest extends TestCase
         $this->assertEquals('Updated', $jav2->description);
         $this->assertEquals(2.0, $jav2->size);
         $this->assertEquals(['Updated'], $jav2->tags->pluck('name')->values()->toArray());
-        $this->assertEquals(['Another', 'Miharu Usa'], $jav2->actors->pluck('name')->sort()->values()->toArray());
+        $this->assertEquals(['Another', self::ACTRESS_MIHARU_USA], $jav2->actors->pluck('name')->sort()->values()->toArray());
 
         $this->assertEquals(1, Jav::where('code', 'TEK-074')->where('source', 'feature-test')->count());
     }
@@ -137,12 +143,12 @@ class JavManagerTest extends TestCase
             title: 'ABP462',
             url: '/torrent/abp462',
             image: 'https://example.com/image.jpg',
-            date: Carbon::parse('2016-10-16'),
+            date: Carbon::parse(self::SHARED_DATE),
             code: 'ABP462',
             tags: collect(['Lingerie']),
             size: 1.2,
             description: 'Test description',
-            actresses: collect(['Nao Wakana']),
+            actresses: collect([self::ACTRESS_NAO_WAKANA]),
             download: '/torrent/abp462/download/91625328/onejav.com_abp462.torrent'
         );
 

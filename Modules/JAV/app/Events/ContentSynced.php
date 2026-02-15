@@ -10,7 +10,5 @@ class ContentSynced
 {
     use Dispatchable, SerializesModels;
 
-    public function __construct(public Model $model)
-    {
-    }
+    public function __construct(public Model $model) {}
 }

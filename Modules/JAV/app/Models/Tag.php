@@ -47,6 +47,7 @@ class Tag extends Model
     {
         return 'tags';
     }
+
     public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
         return $this->morphMany(Favorite::class, 'favoritable');

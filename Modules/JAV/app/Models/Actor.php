@@ -4,8 +4,9 @@ namespace Modules\JAV\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use Modules\JAV\Services\ActorProfileResolver;
@@ -14,8 +15,11 @@ class Actor extends Model
 {
     use HasFactory, Searchable;
 
+    private const SEARCH_DATETIME_FORMAT = 'Y-m-d H:i:s';
+
     protected $table = 'actors';
-    protected $appends = ['age'];
+
+    protected $appends = ['age', 'cover'];
 
     protected $touches = ['javs'];
 
@@ -114,14 +118,14 @@ class Actor extends Model
 
                 return "{$normalizedKey}:{$normalizedValue}";
             })
-            ->filter(static fn(string $value): bool => $value !== ':' && $value !== '')
+            ->filter(static fn (string $value): bool => $value !== ':' && $value !== '')
             ->values()
             ->all();
         $movieTags = $this->javs()
             ->with('tags:id,name')
             ->get()
-            ->flatMap(static fn($jav) => $jav->tags->pluck('name'))
-            ->filter(static fn($name): bool => trim((string) $name) !== '')
+            ->flatMap(static fn ($jav) => $jav->tags->pluck('name'))
+            ->filter(static fn ($name): bool => trim((string) $name) !== '')
             ->unique()
             ->values()
             ->all();
@@ -135,7 +139,7 @@ class Actor extends Model
             'javs_count' => (int) $this->javs()->count(),
             'movie_tags' => $movieTags,
             'movie_tags_keyword' => array_map(
-                static fn(string $tag): string => mb_strtolower(trim($tag)),
+                static fn (string $tag): string => mb_strtolower(trim($tag)),
                 $movieTags
             ),
             'profile_primary_source' => $resolved['primary_source'],
@@ -154,13 +158,13 @@ class Actor extends Model
             'xcity_special_skill' => $this->xcity_special_skill,
             'xcity_other' => $this->xcity_other,
             'xcity_profile' => $this->xcity_profile,
-            'xcity_synced_at' => $this->xcity_synced_at?->format('Y-m-d H:i:s'),
+            'xcity_synced_at' => $this->xcity_synced_at?->format(self::SEARCH_DATETIME_FORMAT),
             'bio' => implode(' ', $profileParts),
             'bio_lower' => mb_strtolower(implode(' ', $profileParts)),
             'age' => $this->age,
             'birth_date' => $birthDate?->format('Y-m-d'),
-            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at?->format(self::SEARCH_DATETIME_FORMAT),
+            'updated_at' => $this->updated_at?->format(self::SEARCH_DATETIME_FORMAT),
         ];
     }
 
@@ -177,13 +181,13 @@ class Actor extends Model
     public function getCoverAttribute(): string
     {
         $showCover = (bool) config('jav.show_cover', false);
-        $userPreferences = auth()->user()?->preferences;
+        $userPreferences = Auth::user()?->preferences;
         if (is_array($userPreferences) && array_key_exists('show_cover', $userPreferences)) {
             $showCover = (bool) $userPreferences['show_cover'];
         }
         $resolvedCover = app(ActorProfileResolver::class)->resolveCover($this);
 
-        if (!$showCover || empty($resolvedCover)) {
+        if (! $showCover || empty($resolvedCover)) {
             return 'https://placehold.co/300x400?text=Cover+Hidden';
         }
 

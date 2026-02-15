@@ -24,8 +24,7 @@ class MovieController extends Controller
     public function __construct(
         private readonly DashboardReadRepository $dashboardReadRepository,
         private readonly SearchService $searchService,
-    ) {
-    }
+    ) {}
 
     public function show(Jav $jav): InertiaResponse
     {
@@ -84,7 +83,7 @@ class MovieController extends Controller
             $downloadLink = $item->download;
             if (str_starts_with($downloadLink, '/')) {
                 $baseUrl = $this->baseUrlBySource($jav->source);
-                $downloadLink = $baseUrl . $downloadLink;
+                $downloadLink = $baseUrl.$downloadLink;
             }
 
             $client = ClientBuilder::create()->build();
@@ -94,12 +93,12 @@ class MovieController extends Controller
 
             $responseHeaders = [
                 'Content-Type' => $headers['Content-Type'][0] ?? 'application/x-bittorrent',
-                'Content-Disposition' => $headers['Content-Disposition'][0] ?? 'attachment; filename="' . $jav->code . '.torrent"',
+                'Content-Disposition' => $headers['Content-Disposition'][0] ?? 'attachment; filename="'.$jav->code.'.torrent"',
             ];
 
             return response($content, 200, $responseHeaders);
         } catch (Exception $e) {
-            return back()->with('error', 'Failed to fetch download link: ' . $e->getMessage());
+            return back()->with('error', 'Failed to fetch download link: '.$e->getMessage());
         }
     }
 

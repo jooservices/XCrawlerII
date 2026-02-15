@@ -25,7 +25,7 @@ class UpdateRoleRequest extends FormRequest
 
         return [
             'name' => ['sometimes', 'required', 'string', 'max:255'],
-            'slug' => ['sometimes', 'required', 'string', 'max:255', 'unique:roles,slug,' . $roleId],
+            'slug' => ['sometimes', 'required', 'string', 'max:255', 'unique:roles,slug,'.$roleId],
             'description' => ['nullable', 'string', 'max:1000'],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['exists:permissions,id'],

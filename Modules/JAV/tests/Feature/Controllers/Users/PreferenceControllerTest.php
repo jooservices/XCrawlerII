@@ -3,12 +3,20 @@
 namespace Modules\JAV\Tests\Feature\Controllers\Users;
 
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Inertia\Testing\AssertableInertia as Assert;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Tests\TestCase;
 
 class PreferenceControllerTest extends TestCase
 {
+    private function asAuthenticatable(User $user): Authenticatable
+    {
+        assert($user instanceof Authenticatable);
+
+        return $user;
+    }
+
     public function test_user_can_save_preferences(): void
     {
         $user = User::factory()->create([
@@ -20,7 +28,7 @@ class PreferenceControllerTest extends TestCase
             ],
         ]);
 
-        $this->actingAs($user)
+        $this->actingAs($this->asAuthenticatable($user))
             ->post(route('jav.preferences.save'), [
                 'show_cover' => true,
                 'compact_mode' => true,
@@ -39,7 +47,7 @@ class PreferenceControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)
+        $this->actingAs($this->asAuthenticatable($user))
             ->post(route('jav.preferences.save'), [
                 'text_preference' => 'invalid',
             ])
@@ -50,13 +58,34 @@ class PreferenceControllerTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->actingAs($user)
+        $this->actingAs($this->asAuthenticatable($user))
             ->post(route('jav.preferences.save'), [
                 'show_cover' => 'not-a-boolean',
                 'compact_mode' => true,
                 'text_preference' => 'detailed',
             ])
             ->assertSessionHasErrors(['show_cover']);
+    }
+
+    public function test_guest_cannot_save_preferences(): void
+    {
+        $this->post(route('jav.preferences.save'), [
+            'show_cover' => true,
+            'compact_mode' => true,
+            'text_preference' => 'concise',
+        ])->assertRedirect(route('login'));
+    }
+
+    public function test_save_preset_rejects_overlong_name_payload(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($this->asAuthenticatable($user))
+            ->post(route('jav.presets.save'), [
+                'name' => str_repeat('A', 61),
+                'q' => 'query',
+            ])
+            ->assertSessionHasErrors(['name']);
     }
 
     public function test_save_preferences_does_not_remove_saved_presets(): void
@@ -86,7 +115,7 @@ class PreferenceControllerTest extends TestCase
             ],
         ]);
 
-        $this->actingAs($user)
+        $this->actingAs($this->asAuthenticatable($user))
             ->post(route('jav.preferences.save'), [
                 'show_cover' => true,
                 'compact_mode' => true,
@@ -96,7 +125,18 @@ class PreferenceControllerTest extends TestCase
             ->assertSessionHas('success', 'Preferences updated.');
 
         $updated = $user->fresh();
-        $this->assertSame($existingPresets, $updated->preferences['saved_presets'] ?? []);
+        $actualPresets = $updated->preferences['saved_presets'] ?? [];
+
+        $normalize = static function (array $preset): array {
+            ksort($preset);
+
+            return $preset;
+        };
+
+        $this->assertEquals(
+            array_map($normalize, $existingPresets),
+            array_map($normalize, $actualPresets)
+        );
     }
 
     public function test_user_can_save_preset_and_presets_are_trimmed_to_latest_ten(): void
@@ -128,7 +168,7 @@ class PreferenceControllerTest extends TestCase
             ],
         ]);
 
-        $this->actingAs($user)
+        $this->actingAs($this->asAuthenticatable($user))
             ->post(route('jav.presets.save'), [
                 'name' => 'Newest Preset',
                 'q' => 'new query',
@@ -174,14 +214,14 @@ class PreferenceControllerTest extends TestCase
             ],
         ]);
 
-        $this->actingAs($user)
+        $this->actingAs($this->asAuthenticatable($user))
             ->delete(route('jav.presets.delete', ['presetKey' => 1]))
             ->assertRedirect()
             ->assertSessionHas('success', 'Preset deleted.');
 
         $this->assertSame(['A', 'C'], array_map(static fn (array $preset): string => $preset['name'], $user->fresh()->preferences['saved_presets']));
 
-        $this->actingAs($user)
+        $this->actingAs($this->asAuthenticatable($user))
             ->delete(route('jav.presets.delete', ['presetKey' => 99]))
             ->assertRedirect()
             ->assertSessionHas('success', 'Preset deleted.');
@@ -220,7 +260,7 @@ class PreferenceControllerTest extends TestCase
             ],
         ]);
 
-        $this->actingAs($user)
+        $this->actingAs($this->asAuthenticatable($user))
             ->get(route('jav.vue.dashboard', ['saved_preset' => 0]))
             ->assertOk()
             ->assertInertia(fn (Assert $page): Assert => $page

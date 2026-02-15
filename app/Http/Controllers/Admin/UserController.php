@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -148,7 +149,7 @@ class UserController extends Controller
      */
     public function destroy(User $user): RedirectResponse
     {
-        if ($user->id === auth()->id()) {
+        if ($user->id === Auth::id()) {
             return redirect()
                 ->route('admin.users.index')
                 ->with('error', 'You cannot delete yourself.');

@@ -3,10 +3,10 @@
 namespace Modules\JAV\Tests\Unit\Models;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Watchlist;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class WatchlistTest extends TestCase
 {

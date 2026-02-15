@@ -39,6 +39,6 @@ class XcityIdolSyncCommandTest extends TestCase
             ->assertExitCode(0);
 
         Queue::assertPushed(XcityKanaSyncJob::class, 2);
-        Queue::assertPushedOn('jav', XcityKanaSyncJob::class);
+        Queue::assertPushedOn('jav-idol', XcityKanaSyncJob::class);
     }
 }

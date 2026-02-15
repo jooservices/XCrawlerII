@@ -93,7 +93,7 @@ class XcityDetailAdapter
             'hobby', '趣味' => 'hobby',
             'specialskill', 'specialskills', '特技' => 'special_skill',
             'other', 'その他' => 'other',
-            default => 'extra_' . substr(sha1($label), 0, 12),
+            default => 'extra_'.substr(sha1($label), 0, 12),
         };
     }
 
@@ -108,13 +108,13 @@ class XcityDetailAdapter
         }
 
         if (str_starts_with($url, '//')) {
-            return 'https:' . $url;
+            return 'https:'.$url;
         }
 
         if (str_starts_with($url, '/')) {
-            return self::BASE_URL . $url;
+            return self::BASE_URL.$url;
         }
 
-        return self::BASE_URL . '/' . ltrim($url, '/');
+        return self::BASE_URL.'/'.ltrim($url, '/');
     }
 }

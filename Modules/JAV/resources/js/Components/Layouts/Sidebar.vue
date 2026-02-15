@@ -8,13 +8,13 @@
                 <h6 class="sidebar-heading px-3 mt-4 mb-1 u-text-muted">
                     Browse
                 </h6>
-                <Link href="/jav/dashboard-vue" class="ui-nav-link" :class="{ active: isRoute('jav.dashboard.vue') }">
+                <Link :href="route('jav.vue.dashboard')" class="ui-nav-link" :class="{ active: isRoute('jav.vue.dashboard') }">
                     <i class="fas fa-film mr-2"></i> Movies
                 </Link>
-                <Link href="/jav/actors-vue" class="ui-nav-link" :class="{ active: isRoute('jav.actors.vue') }">
+                <Link :href="route('jav.vue.actors')" class="ui-nav-link" :class="{ active: isRoute('jav.vue.actors') }">
                     <i class="fas fa-users mr-2"></i> Actors
                 </Link>
-                <Link href="/jav/tags-vue" class="ui-nav-link" :class="{ active: isRoute('jav.tags.vue') }">
+                <Link :href="route('jav.vue.tags')" class="ui-nav-link" :class="{ active: isRoute('jav.vue.tags') }">
                     <i class="fas fa-tags mr-2"></i> Tags
                 </Link>
 
@@ -22,19 +22,19 @@
                     <h6 class="sidebar-heading px-3 mt-4 mb-1 u-text-muted">
                         Personal
                     </h6>
-                    <Link href="/jav/recommendations-vue" class="ui-nav-link" :class="{ active: isRoute('jav.recommendations.vue') }">
+                    <Link :href="route('jav.vue.recommendations')" class="ui-nav-link" :class="{ active: isRoute('jav.vue.recommendations') }">
                         <i class="fas fa-star mr-2"></i> Recommendations
                     </Link>
-                    <Link href="/jav/history-vue" class="ui-nav-link" :class="{ active: isRoute('jav.history.vue') }">
+                    <Link :href="route('jav.vue.history')" class="ui-nav-link" :class="{ active: isRoute('jav.vue.history') }">
                         <i class="fas fa-history mr-2"></i> History
                     </Link>
-                    <Link href="/jav/favorites-vue" class="ui-nav-link" :class="{ active: isRoute('jav.favorites.vue') }">
+                    <Link :href="route('jav.vue.favorites')" class="ui-nav-link" :class="{ active: isRoute('jav.vue.favorites') }">
                         <i class="fas fa-heart mr-2"></i> Favorites
                     </Link>
-                    <Link href="/watchlist-vue" class="ui-nav-link" :class="{ active: isRoute('watchlist.index.vue') }">
+                    <Link :href="route('jav.vue.watchlist')" class="ui-nav-link" :class="{ active: isRoute('jav.vue.watchlist') }">
                         <i class="fas fa-bookmark mr-2"></i> Watchlist
                     </Link>
-                    <Link href="/ratings-vue" class="ui-nav-link" :class="{ active: isRoute('ratings.index.vue') }">
+                    <Link :href="route('jav.vue.ratings')" class="ui-nav-link" :class="{ active: isRoute('jav.vue.ratings') }">
                         <i class="fas fa-star-half-alt mr-2"></i> Ratings
                     </Link>
                 </template>
@@ -43,12 +43,12 @@
                     <h6 class="sidebar-heading px-3 mt-4 mb-1 u-text-muted">
                         Admin
                     </h6>
-                    <a href="#" class="ui-nav-link">
+                    <Link :href="route('admin.users.index')" class="ui-nav-link" :class="{ active: isRoute('admin.users.*') }">
                         <i class="fas fa-users-cog mr-2"></i> Users
-                    </a>
-                    <a href="#" class="ui-nav-link">
+                    </Link>
+                    <Link :href="route('admin.roles.index')" class="ui-nav-link" :class="{ active: isRoute('admin.roles.*') }">
                         <i class="fas fa-shield-alt mr-2"></i> Roles
-                    </a>
+                    </Link>
                 </template>
             </nav>
         </div>
@@ -72,9 +72,53 @@ const uiStore = useUIStore();
 
 const user = computed(() => page.props.auth?.user);
 const isAdmin = computed(() => user.value?.roles?.includes('admin'));
+const currentUrl = computed(() => String(page.url || ''));
+const currentRouteName = computed(() => {
+    const currentUrlValue = currentUrl.value;
+    const routeName = route().current();
+    return routeName ? String(routeName) : currentUrlValue;
+});
+
+const routePatternMatches = (routePattern) => {
+    const current = currentRouteName.value;
+    const pattern = String(routePattern);
+
+    if (!pattern.includes('*')) {
+        return current === pattern;
+    }
+
+    const segments = pattern.split('*');
+    const startsWithSegment = segments.shift() || '';
+    const endsWithSegment = segments.pop() || '';
+
+    if (startsWithSegment !== '' && !current.startsWith(startsWithSegment)) {
+        return false;
+    }
+
+    if (endsWithSegment !== '' && !current.endsWith(endsWithSegment)) {
+        return false;
+    }
+
+    let cursor = startsWithSegment.length;
+
+    for (const segment of segments) {
+        if (segment === '') {
+            continue;
+        }
+
+        const foundIndex = current.indexOf(segment, cursor);
+        if (foundIndex === -1) {
+            return false;
+        }
+
+        cursor = foundIndex + segment.length;
+    }
+
+    return true;
+};
 
 const isRoute = (routeName) => {
-    return route().current(routeName);
+    return routePatternMatches(routeName);
 };
 </script>
 
@@ -106,12 +150,12 @@ const isRoute = (routeName) => {
 
 .ui-nav-link:hover {
     color: #fff;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
 .ui-nav-link.active {
     color: #fff;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(0, 0, 0, 0.35);
 }
 
 .sidebar-overlay {

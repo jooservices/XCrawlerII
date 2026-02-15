@@ -3,10 +3,10 @@
 namespace Modules\JAV\Tests\Unit\Models;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Rating;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RatingTest extends TestCase
 {

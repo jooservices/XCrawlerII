@@ -32,7 +32,7 @@ return new class extends Migration
 
     private function normalizeBloodType(mixed $value): ?string
     {
-        if (!is_string($value)) {
+        if (! is_string($value)) {
             return null;
         }
 

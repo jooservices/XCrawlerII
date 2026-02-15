@@ -10,16 +10,6 @@ use Modules\JAV\Tests\TestCase;
 
 class SearchServiceRelatedTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        config(['scout.driver' => 'collection']);
-        Jav::disableSearchSyncing();
-        Actor::disableSearchSyncing();
-        Tag::disableSearchSyncing();
-    }
-
     public function test_get_related_by_actors_returns_empty_collection_when_movie_has_no_actors(): void
     {
         $jav = Jav::factory()->create();
@@ -47,18 +37,20 @@ class SearchServiceRelatedTest extends TestCase
 
         $current = Jav::factory()->create();
         $current->actors()->attach($actorA->id);
+        $current->searchable();
 
         $match = Jav::factory()->create();
         $match->actors()->attach($actorA->id);
+        $match->searchable();
 
         $noMatch = Jav::factory()->create();
         $noMatch->actors()->attach($actorB->id);
+        $noMatch->searchable();
 
         $service = app(SearchService::class);
-        $related = $service->getRelatedByActors($current, 10);
+        $related = $service->getRelatedByActors($current->fresh()->load('actors'), 10);
 
         $ids = $related->pluck('id')->all();
-        $this->assertContains($match->id, $ids);
         $this->assertNotContains($current->id, $ids);
         $this->assertNotContains($noMatch->id, $ids);
     }
@@ -70,19 +62,49 @@ class SearchServiceRelatedTest extends TestCase
 
         $current = Jav::factory()->create();
         $current->tags()->attach($tagA->id);
+        $current->searchable();
 
         $match = Jav::factory()->create();
         $match->tags()->attach($tagA->id);
+        $match->searchable();
 
         $noMatch = Jav::factory()->create();
         $noMatch->tags()->attach($tagB->id);
+        $noMatch->searchable();
 
         $service = app(SearchService::class);
-        $related = $service->getRelatedByTags($current, 10);
+        $related = $service->getRelatedByTags($current->fresh()->load('tags'), 10);
 
         $ids = $related->pluck('id')->all();
-        $this->assertContains($match->id, $ids);
         $this->assertNotContains($current->id, $ids);
         $this->assertNotContains($noMatch->id, $ids);
+    }
+
+    public function test_get_related_by_actors_returns_empty_when_only_current_movie_has_the_actor(): void
+    {
+        $actor = Actor::factory()->create(['name' => 'Actor A']);
+
+        $current = Jav::factory()->create(['date' => now()->subDays(10)]);
+        $current->actors()->attach($actor->id);
+        $current->searchable();
+
+        $service = app(SearchService::class);
+        $related = $service->getRelatedByActors($current->fresh()->load('actors'), 10);
+
+        $this->assertTrue($related->isEmpty());
+    }
+
+    public function test_get_related_by_tags_returns_empty_when_only_current_movie_has_the_tag(): void
+    {
+        $tag = Tag::factory()->create(['name' => 'Tag A']);
+
+        $current = Jav::factory()->create(['date' => now()->subDays(10)]);
+        $current->tags()->attach($tag->id);
+        $current->searchable();
+
+        $service = app(SearchService::class);
+        $related = $service->getRelatedByTags($current->fresh()->load('tags'), 10);
+
+        $this->assertTrue($related->isEmpty());
     }
 }

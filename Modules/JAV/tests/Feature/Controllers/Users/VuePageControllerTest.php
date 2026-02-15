@@ -28,7 +28,7 @@ class VuePageControllerTest extends TestCase
         $cases = [
             ['route' => route('jav.vue.dashboard'), 'component' => 'Dashboard/Index', 'props' => ['items', 'filters', 'preferences']],
             ['route' => route('jav.vue.actors'), 'component' => 'Actors/Index', 'props' => ['actors', 'query']],
-            ['route' => route('jav.vue.actors.bio', $actor), 'component' => 'Actors/Bio', 'props' => ['actor', 'movies', 'bioProfile']],
+            ['route' => route('jav.vue.actors.bio', $actor), 'component' => 'Actors/Bio', 'props' => ['actor', 'movies', 'bioProfile', 'actorInsights']],
             ['route' => route('jav.vue.tags'), 'component' => 'Tags/Index', 'props' => ['tags', 'query']],
             ['route' => route('jav.vue.history'), 'component' => 'User/History', 'props' => ['history']],
             ['route' => route('jav.vue.favorites'), 'component' => 'User/Favorites', 'props' => ['favorites']],

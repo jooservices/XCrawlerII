@@ -8,6 +8,7 @@ use Inertia\Response as InertiaResponse;
 use Modules\JAV\Http\Requests\GetActorsRequest;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Repositories\DashboardReadRepository;
+use Modules\JAV\Services\ActorAnalyticsService;
 use Modules\JAV\Services\ActorProfileResolver;
 use Modules\JAV\Services\DashboardPreferencesService;
 
@@ -17,8 +18,8 @@ class ActorController extends Controller
         private readonly DashboardReadRepository $dashboardReadRepository,
         private readonly ActorProfileResolver $actorProfileResolver,
         private readonly DashboardPreferencesService $dashboardPreferencesService,
-    ) {
-    }
+        private readonly ActorAnalyticsService $actorAnalyticsService,
+    ) {}
 
     public function index(GetActorsRequest $request): InertiaResponse
     {
@@ -80,11 +81,13 @@ class ActorController extends Controller
             ->firstWhere('source', $primarySource)?->synced_at
             ?? $actor->xcity_synced_at;
         $primarySyncedAtFormatted = $primarySyncedAt?->format('Y-m-d H:i');
+        $actorInsights = $this->actorAnalyticsService->actorInsights((string) $actor->uuid, 5);
 
         return Inertia::render('Actors/Bio', [
             'actor' => $actor,
             'movies' => $movies,
             'bioProfile' => $bioProfile,
+            'actorInsights' => $actorInsights,
             'primarySource' => $primarySource,
             'primarySyncedAt' => $primarySyncedAt,
             'primarySyncedAtFormatted' => $primarySyncedAtFormatted,

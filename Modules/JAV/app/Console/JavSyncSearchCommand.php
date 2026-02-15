@@ -2,9 +2,9 @@
 
 namespace Modules\JAV\Console;
 
+use Elastic\Elasticsearch\Client;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
-use Elastic\Elasticsearch\Client;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
@@ -29,14 +29,14 @@ class JavSyncSearchCommand extends Command
      */
     public function handle(Client $client): int
     {
-        if (!$this->isElasticsearchAvailable()) {
+        if (! $this->isElasticsearchAvailable()) {
             $this->warn('Elasticsearch is not reachable. Skipping sync.');
 
             return self::SUCCESS;
         }
 
         $mode = (string) $this->option('mode');
-        if (!in_array($mode, ['sync', 'reset'], true)) {
+        if (! in_array($mode, ['sync', 'reset'], true)) {
             $this->error('Invalid mode. Supported: sync, reset');
 
             return self::INVALID;

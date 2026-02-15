@@ -13,8 +13,7 @@ class DashboardController extends Controller
     public function __construct(
         private readonly DashboardReadRepository $dashboardReadRepository,
         private readonly DashboardPreferencesService $dashboardPreferencesService,
-    ) {
-    }
+    ) {}
 
     public function items(GetJavRequest $request): JsonResponse
     {

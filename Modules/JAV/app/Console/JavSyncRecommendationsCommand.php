@@ -18,8 +18,8 @@ class JavSyncRecommendationsCommand extends Command
     {
         $limit = max(1, (int) $this->option('limit'));
         $userIds = collect((array) $this->option('user-id'))
-            ->map(static fn($id): int => (int) $id)
-            ->filter(static fn(int $id): bool => $id > 0)
+            ->map(static fn ($id): int => (int) $id)
+            ->filter(static fn (int $id): bool => $id > 0)
             ->unique()
             ->values();
 

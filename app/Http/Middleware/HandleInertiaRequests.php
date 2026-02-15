@@ -18,16 +18,6 @@ class HandleInertiaRequests extends Middleware
     protected $rootView = 'app';
 
     /**
-     * Determines the current asset version.
-     *
-     * @see https://inertiajs.com/asset-versioning
-     */
-    public function version(Request $request): ?string
-    {
-        return parent::version($request);
-    }
-
-    /**
      * Define the props that are shared by default.
      *
      * @see https://inertiajs.com/shared-data
@@ -43,6 +33,8 @@ class HandleInertiaRequests extends Middleware
                     'name' => $request->user()->name,
                     'username' => $request->user()->username,
                     'email' => $request->user()->email,
+                    'avatar_path' => $request->user()->avatar_path,
+                    'avatar_url' => $request->user()->avatar_url,
                     'preferences' => $request->user()->preferences,
                     // Frontend checks role/permission slugs (e.g. "admin", "view-users").
                     'roles' => $request->user()->roles->pluck('slug')->values(),

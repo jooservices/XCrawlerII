@@ -41,6 +41,6 @@ class XcitySyncActorSearchIndexJob implements ShouldQueue
 
     private function indexFlagKey(): string
     {
-        return 'xcity:index_actor:' . $this->xcityId;
+        return 'xcity:index_actor:'.$this->xcityId;
     }
 }

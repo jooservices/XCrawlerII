@@ -14,9 +14,7 @@ use Modules\JAV\Repositories\DashboardReadRepository;
 
 class NotificationController extends Controller
 {
-    public function __construct(private readonly DashboardReadRepository $dashboardReadRepository)
-    {
-    }
+    public function __construct(private readonly DashboardReadRepository $dashboardReadRepository) {}
 
     public function index(NotificationsRequest $request): JsonResponse
     {

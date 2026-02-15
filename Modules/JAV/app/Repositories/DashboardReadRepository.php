@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Tag;
 use Modules\JAV\Services\SearchService;
 
 class DashboardReadRepository
@@ -24,8 +23,7 @@ class DashboardReadRepository
         private readonly WatchlistRepository $watchlistRepository,
         private readonly RatingRepository $ratingRepository,
         private readonly UserLikeNotificationRepository $notificationRepository,
-    ) {
-    }
+    ) {}
 
     public function searchWithPreset(
         string $query,
@@ -78,11 +76,10 @@ class DashboardReadRepository
             return;
         }
 
-        /** @var Collection<int, mixed> $itemCollection */
-        $itemCollection = $items->getCollection();
-        $ids = $itemCollection
-            ->map(static fn($item) => $item->id ?? null)
-            ->filter(static fn($id) => $id !== null)
+        $pageItems = $items->items();
+        $ids = collect($pageItems)
+            ->map(static fn ($item) => $item->id ?? null)
+            ->filter(static fn ($id) => $id !== null)
             ->values();
 
         if ($ids->isEmpty()) {
@@ -94,18 +91,14 @@ class DashboardReadRepository
         $watchlist = $this->watchlistRepository->keyedByJavIdForUserAndJavIds($userId, $ids);
         $ratings = $this->ratingRepository->keyedByJavIdForUserAndJavIds($userId, $ids);
 
-        $itemCollection->transform(function ($item) use ($likedIds, $watchlist, $ratings) {
+        foreach ($pageItems as $item) {
             $itemId = $item->id ?? null;
             $item->is_liked = $itemId !== null && $likedIds->has($itemId);
             $item->watchlist_id = $itemId !== null ? optional($watchlist->get($itemId))->id : null;
             $item->in_watchlist = $item->watchlist_id !== null;
             $item->user_rating = $itemId !== null ? optional($ratings->get($itemId))->rating : null;
             $item->user_rating_id = $itemId !== null ? optional($ratings->get($itemId))->id : null;
-
-            return $item;
-        });
-
-        $items->setCollection($itemCollection);
+        }
     }
 
     /**
@@ -127,14 +120,13 @@ class DashboardReadRepository
         int $perPage = 60,
         ?string $sort = null,
         string $direction = 'desc'
-    ): LengthAwarePaginator
-    {
+    ): LengthAwarePaginator {
         return $this->searchService->searchActors($query, $filters, $perPage, $sort, $direction);
     }
 
-    public function searchTags(string $query): LengthAwarePaginator
+    public function searchTags(string $query, ?string $sort = null, string $direction = 'desc'): LengthAwarePaginator
     {
-        return $this->searchService->searchTags($query);
+        return $this->searchService->searchTags($query, 60, $sort, $direction);
     }
 
     public function loadJavRelations(Jav $jav): Jav
@@ -191,7 +183,7 @@ class DashboardReadRepository
     }
 
     /**
-     * @param array<string, string> $bioKeys
+     * @param  array<string, string>  $bioKeys
      * @return array<string, array<int, string>>
      */
     public function bioValueSuggestions(array $bioKeys): array
@@ -199,7 +191,7 @@ class DashboardReadRepository
         $cacheKey = 'jav:search:bio-value-suggestions:v2';
 
         /** @var array<string, array<int, string>> $suggestions */
-        $suggestions = Cache::remember($cacheKey, now()->addMinutes(10), function () use ($bioKeys): array {
+        return Cache::remember($cacheKey, now()->addMinutes(10), function () use ($bioKeys): array {
             $results = [];
             foreach (array_keys($bioKeys) as $bioKey) {
                 $results[$bioKey] = $this->bioValuesByKey($bioKey);
@@ -207,8 +199,6 @@ class DashboardReadRepository
 
             return $results;
         });
-
-        return $suggestions;
     }
 
     /**
@@ -223,8 +213,8 @@ class DashboardReadRepository
             ->distinct()
             ->limit(200)
             ->pluck('value')
-            ->map(static fn(mixed $value): string => trim((string) $value))
-            ->filter(static fn(string $value): bool => $value !== '')
+            ->map(static fn (mixed $value): string => trim((string) $value))
+            ->filter(static fn (string $value): bool => $value !== '')
             ->values()
             ->all();
 

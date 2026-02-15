@@ -10,9 +10,7 @@ use Modules\JAV\Services\AnalyticsSnapshotService;
 
 class AnalyticsController extends Controller
 {
-    public function __construct(private readonly AnalyticsSnapshotService $analyticsSnapshotService)
-    {
-    }
+    public function __construct(private readonly AnalyticsSnapshotService $analyticsSnapshotService) {}
 
     public function index(AnalyticsRequest $request): InertiaResponse
     {

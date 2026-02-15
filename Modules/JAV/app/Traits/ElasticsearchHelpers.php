@@ -12,7 +12,7 @@ trait ElasticsearchHelpers
             /** @var Client $client */
             $client = app(Client::class);
 
-            if (!$client->ping()) {
+            if (! $client->ping()) {
                 return false;
             }
 

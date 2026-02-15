@@ -77,4 +77,31 @@ class WatchlistControllerContractTest extends TestCase
             ->assertOk()
             ->assertJsonPath('in_watchlist', false);
     }
+
+    public function test_watchlist_weird_case_defaults_status_when_not_provided(): void
+    {
+        $jav = Jav::factory()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson(route('jav.api.watchlist.store'), [
+                'jav_id' => $jav->id,
+            ])
+            ->assertOk()
+            ->assertJsonPath('watchlist.status', 'to_watch');
+    }
+
+    public function test_watchlist_exploit_case_rejects_status_injection_attempt(): void
+    {
+        $jav = Jav::factory()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson(route('jav.api.watchlist.store'), [
+                'jav_id' => $jav->id,
+                'status' => 'to_watch; DROP TABLE watchlists',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['status']);
+    }
 }

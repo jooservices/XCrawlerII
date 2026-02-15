@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'username',
         'email',
+        'avatar_path',
         'password',
         'preferences',
     ];
@@ -50,6 +51,18 @@ class User extends Authenticatable
             'preferences' => 'array',
         ];
     }
+
+    public function getAvatarUrlAttribute(): string
+    {
+        if (is_string($this->avatar_path) && $this->avatar_path !== '') {
+            return Storage::url($this->avatar_path);
+        }
+
+        $normalizedEmail = strtolower(trim((string) $this->email));
+
+        return 'https://www.gravatar.com/avatar/'.md5($normalizedEmail).'?d=mp&s=80';
+    }
+
     public function favorites(): HasMany
     {
         return $this->hasMany(\Modules\JAV\Models\Favorite::class);
@@ -108,7 +121,7 @@ class User extends Authenticatable
     /**
      * Check if user has any of the given roles.
      *
-     * @param array<string> $roles
+     * @param  array<string>  $roles
      */
     public function hasAnyRole(array $roles): bool
     {

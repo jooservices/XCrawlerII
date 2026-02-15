@@ -10,6 +10,7 @@ use Symfony\Component\DomCrawler\Crawler;
 class XcityListAdapter
 {
     private const BASE_URL = 'https://xxx.xcity.jp';
+
     private const IDOL_BASE_PATH = '/idol/';
 
     public function __construct(
@@ -35,7 +36,7 @@ class XcityListAdapter
 
         $this->dom->filter('a[href*="detail/"], a[href*="/idol/detail/"]')->each(function (Crawler $node) use (&$rows) {
             $href = trim((string) $node->attr('href'));
-            if ($href === '' || !preg_match('#(?:/idol/)?detail/(\d+)/?#', $href, $matches)) {
+            if ($href === '' || ! preg_match('#(?:/idol/)?detail/(\d+)/?#', $href, $matches)) {
                 return;
             }
 
@@ -57,7 +58,7 @@ class XcityListAdapter
 
             $detailUrl = $this->toAbsoluteUrl($href);
 
-            if (!isset($rows[$xcityId])) {
+            if (! isset($rows[$xcityId])) {
                 $rows[$xcityId] = new XcityIdol(
                     xcityId: $xcityId,
                     name: $name,
@@ -114,17 +115,17 @@ class XcityListAdapter
         }
 
         if (str_starts_with($url, '//')) {
-            return 'https:' . $url;
+            return 'https:'.$url;
         }
 
         if (str_starts_with($url, '/')) {
-            return self::BASE_URL . $url;
+            return self::BASE_URL.$url;
         }
 
         if (str_starts_with($url, 'detail/')) {
-            return self::BASE_URL . self::IDOL_BASE_PATH . ltrim($url, '/');
+            return self::BASE_URL.self::IDOL_BASE_PATH.ltrim($url, '/');
         }
 
-        return self::BASE_URL . '/' . ltrim($url, '/');
+        return self::BASE_URL.'/'.ltrim($url, '/');
     }
 }

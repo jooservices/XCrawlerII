@@ -5,7 +5,9 @@ namespace Tests\Feature\Controllers\Admin;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
@@ -16,6 +18,13 @@ class UserControllerTest extends TestCase
     protected User $adminUser;
 
     protected Role $adminRole;
+
+    private function asAuthenticatable(User $user): Authenticatable
+    {
+        assert($user instanceof Authenticatable);
+
+        return $user;
+    }
 
     protected function setUp(): void
     {
@@ -43,16 +52,17 @@ class UserControllerTest extends TestCase
 
     public function test_admin_can_view_users_index(): void
     {
-        $response = $this->actingAs($this->adminUser)->get(route('admin.users.index'));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.users.index'));
 
         $this->assertInertiaComponent($response, 'Admin/Users/Index');
     }
 
     public function test_non_admin_cannot_view_users_index(): void
     {
+        /** @var User $user */
         $user = User::factory()->create();
 
-        $response = $this->actingAs($user)->get(route('admin.users.index'));
+        $response = $this->actingAs($this->asAuthenticatable($user))->get(route('admin.users.index'));
 
         $response->assertForbidden();
     }
@@ -62,7 +72,7 @@ class UserControllerTest extends TestCase
         User::factory()->create(['name' => 'John Doe']);
         User::factory()->create(['name' => 'Jane Smith']);
 
-        $response = $this->actingAs($this->adminUser)->get(route('admin.users.index', ['search' => 'John']));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.users.index', ['search' => 'John']));
 
         $response->assertOk();
         $response->assertSee('John Doe');
@@ -77,7 +87,7 @@ class UserControllerTest extends TestCase
 
         $regularUser = User::factory()->create();
 
-        $response = $this->actingAs($this->adminUser)->get(route('admin.users.index', ['role' => 'moderator']));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.users.index', ['role' => 'moderator']));
 
         $response->assertOk();
         $response->assertSee($moderator->name);
@@ -88,7 +98,7 @@ class UserControllerTest extends TestCase
     {
         $roleForNewUser = Role::factory()->create();
 
-        $response = $this->actingAs($this->adminUser)->post(route('admin.users.store'), [
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->post(route('admin.users.store'), [
             'name' => 'New User',
             'username' => 'newuser',
             'email' => 'newuser@example.com',
@@ -103,11 +113,47 @@ class UserControllerTest extends TestCase
         ]);
     }
 
+    public function test_admin_can_view_create_user_form(): void
+    {
+        $role = Role::factory()->create(['name' => 'Moderator']);
+
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.users.create'));
+
+        $this->assertInertiaComponent($response, 'Admin/Users/Create');
+        $response->assertSee($role->name);
+    }
+
+    public function test_admin_can_view_user_details_page(): void
+    {
+        $user = User::factory()->create(['name' => 'Detail User']);
+        $role = Role::factory()->create(['slug' => 'moderator']);
+        $permission = Permission::factory()->create(['slug' => 'view-dashboard']);
+        $role->permissions()->attach($permission);
+        $user->roles()->attach($role);
+
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.users.show', $user));
+
+        $this->assertInertiaComponent($response, 'Admin/Users/Show');
+        $response->assertSee('Detail User');
+    }
+
+    public function test_admin_can_view_edit_user_form(): void
+    {
+        $user = User::factory()->create(['name' => 'Editable User']);
+        $role = Role::factory()->create(['slug' => 'editor']);
+        $user->roles()->attach($role);
+
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->get(route('admin.users.edit', $user));
+
+        $this->assertInertiaComponent($response, 'Admin/Users/Edit');
+        $response->assertSee('Editable User');
+    }
+
     public function test_admin_can_update_user(): void
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($this->adminUser)->put(route('admin.users.update', $user), [
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->put(route('admin.users.update', $user), [
             'name' => 'Updated Name',
             'username' => $user->username,
             'email' => $user->email,
@@ -120,11 +166,51 @@ class UserControllerTest extends TestCase
         ]);
     }
 
+    public function test_admin_can_update_user_password_when_provided(): void
+    {
+        $user = User::factory()->create([
+            'password' => Hash::make('old-password-123'),
+        ]);
+
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->put(route('admin.users.update', $user), [
+            'name' => $user->name,
+            'username' => $user->username,
+            'email' => $user->email,
+            'password' => 'new-password-456',
+            'password_confirmation' => 'new-password-456',
+        ]);
+
+        $response->assertRedirect(route('admin.users.index'));
+        $this->assertTrue(Hash::check('new-password-456', $user->fresh()->password));
+    }
+
+    public function test_admin_can_update_user_and_sync_roles_when_roles_are_provided(): void
+    {
+        $user = User::factory()->create();
+        $roleA = Role::factory()->create(['slug' => 'role-a']);
+        $roleB = Role::factory()->create(['slug' => 'role-b']);
+        $user->roles()->attach($roleA->id);
+
+        $response = $this->actingAs($this->adminUser)->put(route('admin.users.update', $user), [
+            'name' => 'Synced Roles User',
+            'username' => $user->username,
+            'email' => $user->email,
+            'roles' => [$roleB->id],
+        ]);
+
+        $response->assertRedirect(route('admin.users.index'));
+
+        $fresh = $user->fresh('roles');
+        $this->assertSame('Synced Roles User', $fresh->name);
+        $this->assertTrue($fresh->roles->contains($roleB));
+        $this->assertFalse($fresh->roles->contains($roleA));
+    }
+
     public function test_admin_can_delete_user(): void
     {
         $user = User::factory()->create();
 
-        $response = $this->actingAs($this->adminUser)->delete(route('admin.users.destroy', $user));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->delete(route('admin.users.destroy', $user));
 
         $response->assertRedirect(route('admin.users.index'));
         $this->assertDatabaseMissing('users', ['id' => $user->id]);
@@ -132,7 +218,7 @@ class UserControllerTest extends TestCase
 
     public function test_admin_cannot_delete_themselves(): void
     {
-        $response = $this->actingAs($this->adminUser)->delete(route('admin.users.destroy', $this->adminUser));
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->delete(route('admin.users.destroy', $this->adminUser));
 
         $response->assertRedirect(route('admin.users.index'));
         $response->assertSessionHas('error');
@@ -144,7 +230,7 @@ class UserControllerTest extends TestCase
         $user = User::factory()->create();
         $role = Role::factory()->create();
 
-        $response = $this->actingAs($this->adminUser)->post(route('admin.users.assign-roles', $user), [
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->post(route('admin.users.assign-roles', $user), [
             'roles' => [$role->id],
         ]);
 
@@ -154,16 +240,16 @@ class UserControllerTest extends TestCase
 
     public function test_create_user_validates_required_fields(): void
     {
-        $response = $this->actingAs($this->adminUser)->post(route('admin.users.store'), []);
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->post(route('admin.users.store'), []);
 
         $response->assertSessionHasErrors(['name', 'username', 'email', 'password']);
     }
 
     public function test_create_user_validates_unique_email(): void
     {
-        $existingUser = User::factory()->create(['email' => 'existing@example.com']);
+        User::factory()->create(['email' => 'existing@example.com']);
 
-        $response = $this->actingAs($this->adminUser)->post(route('admin.users.store'), [
+        $response = $this->actingAs($this->asAuthenticatable($this->adminUser))->post(route('admin.users.store'), [
             'name' => 'New User',
             'username' => 'newuser',
             'email' => 'existing@example.com',

@@ -84,9 +84,9 @@ class UserLikeNotificationService
     }
 
     /**
-     * @param Collection<int, Favorite> $favorites
-     * @param Collection<int, string> $actorNameById
-     * @param Collection<int, string> $tagNameById
+     * @param  Collection<int, Favorite>  $favorites
+     * @param  Collection<int, string>  $actorNameById
+     * @param  Collection<int, string>  $tagNameById
      * @return array<int, array{matched_actors: array<int, string>, matched_tags: array<int, string>}>
      */
     private function groupReasonsByUser(Collection $favorites, Collection $actorNameById, Collection $tagNameById): array

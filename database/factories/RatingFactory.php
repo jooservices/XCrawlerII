@@ -3,9 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Rating;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\Modules\JAV\Models\Rating>

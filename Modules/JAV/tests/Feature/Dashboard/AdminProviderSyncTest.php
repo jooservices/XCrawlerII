@@ -98,7 +98,7 @@ class AdminProviderSyncTest extends TestCase
             ->assertJsonPath('type', 'idols')
             ->assertJsonPath('jobs', 1);
 
-        Queue::assertPushedOn('jav', XcityKanaSyncJob::class);
+        Queue::assertPushedOn('jav-idol', XcityKanaSyncJob::class);
     }
 
     private function makeUserWithRole(string $roleSlug): User

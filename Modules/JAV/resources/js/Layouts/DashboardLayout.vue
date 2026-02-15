@@ -15,11 +15,11 @@ const toast = useToast();
 const flashSuccess = computed(() => page.props.flash?.success);
 const flashError = computed(() => page.props.flash?.error);
 
-const isMobileViewport = () => window.matchMedia('(max-width: 991.98px)').matches;
+const isMobileViewport = () => globalThis.matchMedia('(max-width: 991.98px)').matches;
 
 const syncBodyClasses = () => {
     const userPreferences = page.props.auth?.user?.preferences ?? {};
-    document.body.classList.add('app-dark');
+    document.body.classList.add('app-dark', 'dark');
 
     if (userPreferences?.compact_mode) {
         document.body.classList.add('compact-mode');
@@ -71,7 +71,7 @@ onMounted(() => {
     }
 
     resetViewportClasses();
-    window.addEventListener('resize', resetViewportClasses);
+    globalThis.addEventListener('resize', resetViewportClasses);
     document.addEventListener('click', handleDocumentClick);
 });
 
@@ -101,7 +101,7 @@ watch(
 );
 
 onBeforeUnmount(() => {
-    window.removeEventListener('resize', resetViewportClasses);
+    globalThis.removeEventListener('resize', resetViewportClasses);
     document.removeEventListener('click', handleDocumentClick);
 });
 </script>

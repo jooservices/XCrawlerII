@@ -25,7 +25,7 @@ class FavoriteRepository
     }
 
     /**
-     * @param Collection<int, int|string> $javIds
+     * @param  Collection<int, int|string>  $javIds
      * @return Collection<int|string, int|string>
      */
     public function likedJavIdsForUserAndJavIds(int $userId, Collection $javIds): Collection
@@ -39,7 +39,7 @@ class FavoriteRepository
     }
 
     /**
-     * @param Collection<int, int|string> $actorIds
+     * @param  Collection<int, int|string>  $actorIds
      * @return Collection<int|string, int|string>
      */
     public function likedActorIdsForUserAndActorIds(int $userId, Collection $actorIds): Collection

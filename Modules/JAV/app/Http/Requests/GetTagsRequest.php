@@ -23,6 +23,9 @@ class GetTagsRequest extends FormRequest
     {
         return [
             'q' => ['nullable', 'string', 'max:255'],
+            'query' => ['nullable', 'string', 'max:255'],
+            'sort' => ['nullable', 'string', 'in:javs_count,name,created_at'],
+            'direction' => ['nullable', 'string', 'in:asc,desc'],
             'page' => ['nullable', 'integer', 'min:1'],
         ];
     }

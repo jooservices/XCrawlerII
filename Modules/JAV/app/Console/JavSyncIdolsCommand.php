@@ -11,7 +11,7 @@ class JavSyncIdolsCommand extends Command
     protected $signature = 'jav:sync:idols
                             {--source=xcity : Idol source provider}
                             {--concurrency=3 : Number of kana pages to process in parallel}
-                            {--queue=jav : Queue name}';
+                            {--queue= : Queue name (defaults to JAV idol queue)}';
 
     protected $description = 'Sync XCITY idol pages with per-kana cursor state and actor linking';
 
@@ -24,7 +24,10 @@ class JavSyncIdolsCommand extends Command
         }
 
         $concurrency = max(1, (int) $this->option('concurrency'));
-        $queue = (string) $this->option('queue');
+        $queue = trim((string) $this->option('queue'));
+        if ($queue === '') {
+            $queue = (string) config('jav.idol_queue', 'jav-idol');
+        }
 
         $seeds = $service->seedKanaUrls();
         if ($seeds === []) {

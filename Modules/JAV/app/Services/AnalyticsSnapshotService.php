@@ -230,7 +230,7 @@ class AnalyticsSnapshotService
             $values[] = 0;
         }
 
-        if (!Schema::hasTable($table)) {
+        if (! Schema::hasTable($table)) {
             return ['labels' => $labels, 'values' => $values];
         }
 
@@ -259,7 +259,7 @@ class AnalyticsSnapshotService
             $labels[] = now()->subDays($i)->toDateString();
         }
 
-        if (!Schema::hasTable('jav')) {
+        if (! Schema::hasTable('jav')) {
             return ['labels' => $labels, 'series' => []];
         }
 

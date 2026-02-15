@@ -54,7 +54,7 @@ class SyncControllerContractTest extends TestCase
         });
     }
 
-    public function test_admin_provider_sync_dispatch_xcity_idols_is_queued_on_jav(): void
+    public function test_admin_provider_sync_dispatch_xcity_idols_is_queued_on_jav_idol(): void
     {
         $admin = $this->makeUserWithRole('admin');
         Queue::fake();
@@ -78,7 +78,7 @@ class SyncControllerContractTest extends TestCase
             ->assertJsonPath('type', 'idols')
             ->assertJsonPath('jobs', 1);
 
-        Queue::assertPushedOn('jav', XcityKanaSyncJob::class);
+        Queue::assertPushedOn('jav-idol', XcityKanaSyncJob::class);
     }
 
     public function test_admin_provider_sync_dispatch_rejects_invalid_payload(): void

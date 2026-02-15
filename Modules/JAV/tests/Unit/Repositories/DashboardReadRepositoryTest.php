@@ -4,7 +4,6 @@ namespace Modules\JAV\Tests\Unit\Repositories;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Mockery;
 use Modules\JAV\Models\Actor;
@@ -32,7 +31,7 @@ class DashboardReadRepositoryTest extends TestCase
             ->with('q', ['a' => 'b'], 30, 'created_at', 'desc')
             ->andReturn($paginator);
 
-        $repository = $this->makeRepository(searchService: $search);
+        $repository = $this->makeRepository(['searchService' => $search]);
         $result = $repository->searchWithPreset('q', ['a' => 'b'], 30, 'created_at', 'desc', 'default');
 
         $this->assertSame($paginator, $result);
@@ -61,11 +60,11 @@ class DashboardReadRepositoryTest extends TestCase
             ->once()
             ->andReturn(collect([1 => (object) ['id' => 201, 'rating' => 5]]));
 
-        $repository = $this->makeRepository(
-            favoriteRepository: $favoriteRepo,
-            watchlistRepository: $watchlistRepo,
-            ratingRepository: $ratingRepo,
-        );
+        $repository = $this->makeRepository([
+            'favoriteRepository' => $favoriteRepo,
+            'watchlistRepository' => $watchlistRepo,
+            'ratingRepository' => $ratingRepo,
+        ]);
 
         $repository->decorateItemsForUser($paginator, $user);
 
@@ -96,7 +95,7 @@ class DashboardReadRepositoryTest extends TestCase
 
         $search = Mockery::mock(SearchService::class);
         $search->shouldReceive('searchActors')->once()->with('amy', [], 60, null, 'desc')->andReturn($paginator);
-        $search->shouldReceive('searchTags')->once()->with('idol')->andReturn($paginator);
+        $search->shouldReceive('searchTags')->once()->with('idol', 60, null, 'desc')->andReturn($paginator);
 
         $history = Mockery::mock(UserJavHistoryRepository::class);
         $history->shouldReceive('continueWatching')->once()->with(1, 8)->andReturn($collection);
@@ -116,14 +115,14 @@ class DashboardReadRepositoryTest extends TestCase
         $notifications->shouldReceive('unreadForUser')->once()->with($user, 20)->andReturn(collect());
         $notifications->shouldReceive('markAllReadForUser')->once()->with($user)->andReturn(2);
 
-        $repository = $this->makeRepository(
-            searchService: $search,
-            javRepository: $javRepo,
-            actorRepository: $actorRepo,
-            favoriteRepository: $favoriteRepo,
-            historyRepository: $history,
-            notificationRepository: $notifications,
-        );
+        $repository = $this->makeRepository([
+            'searchService' => $search,
+            'javRepository' => $javRepo,
+            'actorRepository' => $actorRepo,
+            'favoriteRepository' => $favoriteRepo,
+            'historyRepository' => $history,
+            'notificationRepository' => $notifications,
+        ]);
 
         $this->assertSame($collection, $repository->continueWatching(1, 8));
         $this->assertSame($paginator, $repository->actorMovies($actor, 30));
@@ -147,10 +146,10 @@ class DashboardReadRepositoryTest extends TestCase
         $tagRepo = Mockery::mock(TagRepository::class);
         $tagRepo->shouldReceive('suggestions')->once()->with(700)->andReturn(['T']);
 
-        $repository = $this->makeRepository(
-            actorRepository: $actorRepo,
-            tagRepository: $tagRepo,
-        );
+        $repository = $this->makeRepository([
+            'actorRepository' => $actorRepo,
+            'tagRepository' => $tagRepo,
+        ]);
 
         $this->assertSame(['A'], $repository->actorSuggestions());
         $this->assertSame(['A'], $repository->actorSuggestions());
@@ -158,27 +157,31 @@ class DashboardReadRepositoryTest extends TestCase
         $this->assertSame(['T'], $repository->tagSuggestions());
     }
 
-    private function makeRepository(
-        ?SearchService $searchService = null,
-        ?JavRepository $javRepository = null,
-        ?ActorRepository $actorRepository = null,
-        ?TagRepository $tagRepository = null,
-        ?FavoriteRepository $favoriteRepository = null,
-        ?UserJavHistoryRepository $historyRepository = null,
-        ?WatchlistRepository $watchlistRepository = null,
-        ?RatingRepository $ratingRepository = null,
-        ?UserLikeNotificationRepository $notificationRepository = null,
-    ): DashboardReadRepository {
+    /**
+     * @param array{
+     *   searchService?: SearchService,
+     *   javRepository?: JavRepository,
+     *   actorRepository?: ActorRepository,
+     *   tagRepository?: TagRepository,
+     *   favoriteRepository?: FavoriteRepository,
+     *   historyRepository?: UserJavHistoryRepository,
+     *   watchlistRepository?: WatchlistRepository,
+     *   ratingRepository?: RatingRepository,
+     *   notificationRepository?: UserLikeNotificationRepository
+     * } $deps
+     */
+    private function makeRepository(array $deps = []): DashboardReadRepository
+    {
         return new DashboardReadRepository(
-            $searchService ?? Mockery::mock(SearchService::class),
-            $javRepository ?? Mockery::mock(JavRepository::class),
-            $actorRepository ?? Mockery::mock(ActorRepository::class),
-            $tagRepository ?? Mockery::mock(TagRepository::class),
-            $favoriteRepository ?? Mockery::mock(FavoriteRepository::class),
-            $historyRepository ?? Mockery::mock(UserJavHistoryRepository::class),
-            $watchlistRepository ?? Mockery::mock(WatchlistRepository::class),
-            $ratingRepository ?? Mockery::mock(RatingRepository::class),
-            $notificationRepository ?? Mockery::mock(UserLikeNotificationRepository::class),
+            $deps['searchService'] ?? Mockery::mock(SearchService::class),
+            $deps['javRepository'] ?? Mockery::mock(JavRepository::class),
+            $deps['actorRepository'] ?? Mockery::mock(ActorRepository::class),
+            $deps['tagRepository'] ?? Mockery::mock(TagRepository::class),
+            $deps['favoriteRepository'] ?? Mockery::mock(FavoriteRepository::class),
+            $deps['historyRepository'] ?? Mockery::mock(UserJavHistoryRepository::class),
+            $deps['watchlistRepository'] ?? Mockery::mock(WatchlistRepository::class),
+            $deps['ratingRepository'] ?? Mockery::mock(RatingRepository::class),
+            $deps['notificationRepository'] ?? Mockery::mock(UserLikeNotificationRepository::class),
         );
     }
 }

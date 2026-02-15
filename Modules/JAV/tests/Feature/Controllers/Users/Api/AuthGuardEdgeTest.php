@@ -6,6 +6,11 @@ use Modules\JAV\Tests\TestCase;
 
 class AuthGuardEdgeTest extends TestCase
 {
+    public function test_guest_cannot_access_search_suggest_api_endpoint(): void
+    {
+        $this->getJson(route('jav.api.search.suggest', ['q' => 'alpha']))->assertUnauthorized();
+    }
+
     public function test_guest_cannot_access_dashboard_items_api_endpoint(): void
     {
         $this->getJson(route('jav.api.dashboard.items'))->assertUnauthorized();

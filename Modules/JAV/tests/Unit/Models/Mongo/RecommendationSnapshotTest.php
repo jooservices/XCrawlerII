@@ -9,7 +9,7 @@ class RecommendationSnapshotTest extends TestCase
 {
     public function test_model_uses_expected_connection_and_collection(): void
     {
-        $model = new RecommendationSnapshot();
+        $model = new RecommendationSnapshot;
 
         $this->assertSame('mongodb', $model->getConnectionName());
         $this->assertSame('recommendation_snapshots', $model->getTable());

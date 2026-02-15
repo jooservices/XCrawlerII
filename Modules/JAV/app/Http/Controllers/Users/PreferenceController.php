@@ -3,23 +3,28 @@
 namespace Modules\JAV\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Modules\JAV\Http\Requests\DeletePresetRequest;
 use Modules\JAV\Http\Requests\SavePreferencesRequest;
 use Modules\JAV\Http\Requests\SavePresetRequest;
+use Modules\JAV\Http\Requests\UpdateAvatarRequest;
+use Modules\JAV\Http\Requests\UpdatePasswordRequest;
+use Modules\JAV\Http\Requests\UpdateProfileRequest;
 use Modules\JAV\Services\DashboardPreferencesService;
 
 class PreferenceController extends Controller
 {
-    public function __construct(private readonly DashboardPreferencesService $dashboardPreferencesService)
-    {
-    }
+    public function __construct(private readonly DashboardPreferencesService $dashboardPreferencesService) {}
 
     public function index(): InertiaResponse
     {
-        $preferences = $this->dashboardPreferencesService->resolve(auth()->user());
+        $preferences = $this->dashboardPreferencesService->resolve(Auth::user());
 
         return Inertia::render('User/Preferences', [
             'preferences' => $preferences,
@@ -38,6 +43,66 @@ class PreferenceController extends Controller
         $user->update(['preferences' => $preferences]);
 
         return back()->with('success', 'Preferences updated.');
+    }
+
+    public function updateAvatar(UpdateAvatarRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+
+        if (is_string($user->avatar_path) && $user->avatar_path !== '') {
+            Storage::disk('public')->delete($user->avatar_path);
+        }
+
+        $path = $request->file('avatar')->store('avatars', 'public');
+
+        $user->update([
+            'avatar_path' => $path,
+        ]);
+
+        return back()->with('success', 'Avatar updated.');
+    }
+
+    public function removeAvatar(): RedirectResponse
+    {
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            return back()->with('error', 'Unable to resolve authenticated user.');
+        }
+
+        if (is_string($user->avatar_path) && $user->avatar_path !== '') {
+            Storage::disk('public')->delete($user->avatar_path);
+            $user->update([
+                'avatar_path' => null,
+            ]);
+        }
+
+        return back()->with('success', 'Custom avatar removed. Using Gravatar.');
+    }
+
+    public function updatePassword(UpdatePasswordRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+        $user = $request->user();
+
+        $user->update([
+            'password' => Hash::make((string) $validated['password']),
+        ]);
+
+        return back()->with('success', 'Password updated.');
+    }
+
+    public function updateProfile(UpdateProfileRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+        $user = $request->user();
+
+        $user->update([
+            'name' => (string) $validated['name'],
+            'email' => (string) $validated['email'],
+        ]);
+
+        return back()->with('success', 'Profile updated.');
     }
 
     public function savePreset(SavePresetRequest $request): RedirectResponse

@@ -28,7 +28,7 @@ class JavSyncContentCommand extends Command
     public function handle(): int
     {
         $provider = (string) $this->argument('provider');
-        if (!in_array($provider, ['onejav', '141jav', 'ffjav'], true)) {
+        if (! in_array($provider, ['onejav', '141jav', 'ffjav'], true)) {
             $this->error('Invalid provider. Supported: onejav, 141jav, ffjav');
 
             return self::INVALID;
@@ -38,7 +38,7 @@ class JavSyncContentCommand extends Command
         $types = $typesOption === [] ? $this->defaultTypes : array_values(array_unique($typesOption));
 
         foreach ($types as $syncType) {
-            if (!in_array($syncType, ['new', 'popular', 'daily', 'tags'], true)) {
+            if (! in_array($syncType, ['new', 'popular', 'daily', 'tags'], true)) {
                 $this->error('Invalid type. Supported: new, popular, daily, tags');
 
                 return self::INVALID;

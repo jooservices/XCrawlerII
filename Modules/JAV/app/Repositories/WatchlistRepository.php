@@ -8,7 +8,7 @@ use Modules\JAV\Models\Watchlist;
 class WatchlistRepository
 {
     /**
-     * @param Collection<int, int|string> $javIds
+     * @param  Collection<int, int|string>  $javIds
      * @return Collection<int|string, Watchlist>
      */
     public function keyedByJavIdForUserAndJavIds(int $userId, Collection $javIds): Collection

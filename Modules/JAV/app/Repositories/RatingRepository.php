@@ -8,7 +8,7 @@ use Modules\JAV\Models\Rating;
 class RatingRepository
 {
     /**
-     * @param Collection<int, int|string> $javIds
+     * @param  Collection<int, int|string>  $javIds
      * @return Collection<int|string, Rating>
      */
     public function keyedByJavIdForUserAndJavIds(int $userId, Collection $javIds): Collection

@@ -3,8 +3,8 @@
 namespace Modules\JAV\Tests\Feature;
 
 use App\Models\User;
-use Inertia\Testing\AssertableInertia as Assert;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Inertia\Testing\AssertableInertia as Assert;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Watchlist;
 use Tests\TestCase;

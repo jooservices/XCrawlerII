@@ -5,6 +5,7 @@ namespace Modules\JAV\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
@@ -12,7 +13,11 @@ class Jav extends Model
 {
     use HasFactory, Searchable;
 
+    private const SEARCH_DATE_FORMAT = 'Y-m-d H:i:s';
+
     protected $table = 'jav';
+
+    protected $appends = ['cover'];
 
     /**
      * Get the factory instance for the model.
@@ -92,17 +97,17 @@ class Jav extends Model
             ->get();
         $actorNames = $actors
             ->pluck('name')
-            ->map(static fn($name): string => trim((string) $name))
-            ->filter(static fn(string $name): bool => $name !== '')
+            ->map(static fn ($name): string => trim((string) $name))
+            ->filter(static fn (string $name): bool => $name !== '')
             ->values();
         $tags = $this->tags()
             ->pluck('name')
-            ->map(static fn($name): string => trim((string) $name))
-            ->filter(static fn(string $name): bool => $name !== '')
+            ->map(static fn ($name): string => trim((string) $name))
+            ->filter(static fn (string $name): bool => $name !== '')
             ->values();
         $actorAges = $actors
-            ->map(static fn($actor): ?int => $actor->age)
-            ->filter(static fn($age): bool => is_int($age))
+            ->map(static fn ($actor): ?int => $actor->age)
+            ->filter(static fn ($age): bool => is_int($age))
             ->values()
             ->all();
         $actorProfileKeys = [];
@@ -137,7 +142,7 @@ class Jav extends Model
             'title' => $this->title,
             'url' => $this->url,
             'image' => $this->image,
-            'date' => $this->date?->format('Y-m-d H:i:s'),
+            'date' => $this->date?->format(self::SEARCH_DATE_FORMAT),
             'size' => (float) $this->size,
             'description' => $this->description,
             'download' => $this->download,
@@ -146,20 +151,20 @@ class Jav extends Model
             'downloads' => (int) $this->downloads,
             'actors' => $actorNames->all(),
             'actor_names_keyword' => $actorNames
-                ->map(static fn(string $name): string => mb_strtolower($name))
+                ->map(static fn (string $name): string => mb_strtolower($name))
                 ->values()
                 ->all(),
             'tags' => $tags->all(),
             'tags_keyword' => $tags
-                ->map(static fn(string $name): string => mb_strtolower($name))
+                ->map(static fn (string $name): string => mb_strtolower($name))
                 ->values()
                 ->all(),
             'actor_ages' => $actorAges,
             'actor_profile_keys' => array_values(array_unique($actorProfileKeys)),
             'actor_profile_pairs' => array_values(array_unique($actorProfilePairs)),
             'actor_profile_text' => implode(' ', array_values(array_unique($actorProfileTextParts))),
-            'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
-            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
+            'created_at' => $this->created_at?->format(self::SEARCH_DATE_FORMAT),
+            'updated_at' => $this->updated_at?->format(self::SEARCH_DATE_FORMAT),
         ];
     }
 
@@ -189,17 +194,18 @@ class Jav extends Model
     public function getCoverAttribute(): string
     {
         $showCover = (bool) config('jav.show_cover', false);
-        $userPreferences = auth()->user()?->preferences;
+        $userPreferences = Auth::user()?->preferences;
         if (is_array($userPreferences) && array_key_exists('show_cover', $userPreferences)) {
             $showCover = (bool) $userPreferences['show_cover'];
         }
 
-        if (!$showCover || empty($this->image)) {
+        if (! $showCover || empty($this->image)) {
             return 'https://placehold.co/300x400?text=Cover+Hidden';
         }
 
         return $this->image;
     }
+
     public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
         return $this->morphMany(Favorite::class, 'favoritable');
@@ -231,6 +237,7 @@ class Jav extends Model
     public function getAverageRatingAttribute(): ?float
     {
         $average = $this->ratings()->avg('rating');
+
         return $average ? round($average, 1) : null;
     }
 
