@@ -2,7 +2,10 @@
 
 namespace Modules\JAV\Tests\Unit\Services;
 
+use Illuminate\Support\Facades\Bus;
 use Modules\JAV\Models\Actor;
+use Modules\JAV\Jobs\XcityPersistIdolProfileJob;
+use Modules\JAV\Jobs\XcitySyncActorSearchIndexJob;
 use Modules\JAV\Services\Clients\XcityClient;
 use Modules\JAV\Services\XcityIdolService;
 use Modules\JAV\Tests\TestCase;
@@ -15,20 +18,51 @@ class XcityIdolServiceTest extends TestCase
         Actor::disableSearchSyncing();
     }
 
-    public function test_sync_kana_page_links_existing_actor_and_creates_new_one(): void
+    public function test_sync_kana_page_dispatches_batched_per_idol_chains(): void
     {
-        Actor::create(['name' => 'Airi Kijima']);
+        $pendingBatch = \Mockery::mock(\Illuminate\Bus\PendingBatch::class);
+        $pendingBatch->shouldReceive('name')
+            ->once()
+            ->with('xcity:kana:kana-a')
+            ->andReturnSelf();
+        $pendingBatch->shouldReceive('onQueue')
+            ->once()
+            ->with('jav')
+            ->andReturnSelf();
+        $pendingBatch->shouldReceive('dispatch')
+            ->once();
+
+        Bus::shouldReceive('batch')
+            ->once()
+            ->withArgs(function (array $jobs): bool {
+                if (count($jobs) !== 2) {
+                    return false;
+                }
+
+                foreach ($jobs as $job) {
+                    if (!is_array($job) || count($job) !== 2) {
+                        return false;
+                    }
+
+                    if (!$job[0] instanceof XcityPersistIdolProfileJob) {
+                        return false;
+                    }
+
+                    if (!$job[1] instanceof XcitySyncActorSearchIndexJob) {
+                        return false;
+                    }
+                }
+
+                return true;
+            })
+            ->andReturn($pendingBatch);
 
         $client = \Mockery::mock(XcityClient::class);
         $client->shouldReceive('get')
-            ->times(3)
+            ->once()
             ->andReturnUsing(function (string $url) {
                 if ($url === 'https://xxx.xcity.jp/idol/?ini=%E3%81%82&kana=%E3%81%82') {
                     return $this->getMockResponse('xcity_idol_list_page_1.html');
-                }
-
-                if ($url === 'https://xxx.xcity.jp/idol/detail/1001/' || $url === 'https://xxx.xcity.jp/idol/detail/2002/') {
-                    return $this->getMockResponse('xcity_idol_detail_5750.html');
                 }
 
                 throw new \RuntimeException("Unexpected URL {$url}");
@@ -39,6 +73,38 @@ class XcityIdolServiceTest extends TestCase
         $count = $service->syncKanaPage('kana-a', 'https://xxx.xcity.jp/idol/?ini=%E3%81%82&kana=%E3%81%82');
 
         $this->assertSame(2, $count);
+    }
+
+    public function test_sync_idol_from_list_item_links_existing_actor_and_creates_new_one(): void
+    {
+        Actor::create(['name' => 'Airi Kijima']);
+
+        $client = \Mockery::mock(XcityClient::class);
+        $client->shouldReceive('get')
+            ->times(2)
+            ->andReturnUsing(function (string $url) {
+                if ($url === 'https://xxx.xcity.jp/idol/detail/1001/' || $url === 'https://xxx.xcity.jp/idol/detail/2002/') {
+                    return $this->getMockResponse('xcity_idol_detail_5750.html');
+                }
+
+                throw new \RuntimeException("Unexpected URL {$url}");
+            });
+        $this->app->instance(XcityClient::class, $client);
+
+        $service = $this->app->make(XcityIdolService::class);
+        $service->syncIdolFromListItem(
+            '1001',
+            'Airi Kijima',
+            'https://xxx.xcity.jp/idol/detail/1001/',
+            null
+        );
+        $service->syncIdolFromListItem(
+            '2002',
+            'Mio Tanaka',
+            'https://xxx.xcity.jp/idol/detail/2002/',
+            null
+        );
+
         $this->assertDatabaseHas('actors', [
             'name' => 'Airi Kijima',
             'xcity_id' => '1001',

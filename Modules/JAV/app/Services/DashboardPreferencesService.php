@@ -13,11 +13,9 @@ class DashboardPreferencesService
     public function resolve(?Authenticatable $user = null): array
     {
         $defaults = [
-            'hide_actors' => false,
-            'hide_tags' => false,
+            'show_cover' => (bool) config('jav.show_cover', false),
             'compact_mode' => false,
             'text_preference' => 'detailed',
-            'language' => 'en',
             'saved_presets' => [],
         ];
 
@@ -31,7 +29,13 @@ class DashboardPreferencesService
             return $defaults;
         }
 
-        return array_merge($defaults, $saved);
+        foreach ($defaults as $key => $defaultValue) {
+            if (array_key_exists($key, $saved)) {
+                $defaults[$key] = $saved[$key];
+            }
+        }
+
+        return $defaults;
     }
 
     /**

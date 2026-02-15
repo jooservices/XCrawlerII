@@ -121,9 +121,15 @@ class DashboardReadRepository
         return $this->actorRepository->actorMovies($actor, $perPage);
     }
 
-    public function searchActors(string $query): LengthAwarePaginator
+    public function searchActors(
+        string $query,
+        array $filters = [],
+        int $perPage = 60,
+        ?string $sort = null,
+        string $direction = 'desc'
+    ): LengthAwarePaginator
     {
-        return $this->searchService->searchActors($query);
+        return $this->searchService->searchActors($query, $filters, $perPage, $sort, $direction);
     }
 
     public function searchTags(string $query): LengthAwarePaginator

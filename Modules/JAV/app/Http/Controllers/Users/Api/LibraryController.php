@@ -8,9 +8,15 @@ use Modules\JAV\Http\Requests\ToggleLikeRequest;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
+use Modules\JAV\Services\RecommendationService;
 
 class LibraryController extends ApiController
 {
+    public function __construct(
+        private readonly RecommendationService $recommendationService,
+    ) {
+    }
+
     public function toggleLike(ToggleLikeRequest $request): JsonResponse
     {
         $user = $request->user();
@@ -32,6 +38,12 @@ class LibraryController extends ApiController
         } else {
             $model->favorites()->create(['user_id' => $user->id]);
             $liked = true;
+        }
+
+        try {
+            $this->recommendationService->syncSnapshotForUserId((int) $user->id, 30);
+        } catch (\Throwable) {
+            // Non-blocking: like/unlike should still succeed even if snapshot refresh fails.
         }
 
         return $this->result(['liked' => $liked]);

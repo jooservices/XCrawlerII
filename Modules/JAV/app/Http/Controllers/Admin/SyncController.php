@@ -27,9 +27,4 @@ class SyncController extends Controller
     {
         return Inertia::render('Admin/SyncProgress');
     }
-
-    public function quickSyncVue(): InertiaResponse
-    {
-        return Inertia::render('Admin/Sync');
-    }
 }

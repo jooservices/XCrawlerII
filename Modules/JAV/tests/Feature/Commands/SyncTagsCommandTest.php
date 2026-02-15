@@ -2,21 +2,22 @@
 
 namespace Modules\JAV\Tests\Feature\Commands;
 
-use Modules\JAV\Services\OnejavService;
+use Illuminate\Support\Facades\Queue;
+use Modules\JAV\Jobs\TagsSyncJob;
 use Modules\JAV\Tests\TestCase;
 
 class SyncTagsCommandTest extends TestCase
 {
     public function test_command_syncs_tags_for_source()
     {
-        $service = \Mockery::mock(OnejavService::class);
-        $service->shouldReceive('tags')
-            ->once()
-            ->andReturn(collect(['16HR+', '4K']));
-        $this->app->instance(OnejavService::class, $service);
+        Queue::fake();
 
         $this->artisan('jav:sync:content', ['provider' => 'onejav', '--type' => ['tags']])
             ->assertExitCode(0);
+
+        Queue::assertPushedOn('jav', TagsSyncJob::class, function (TagsSyncJob $job): bool {
+            return $job->source === 'onejav';
+        });
     }
 
     public function test_command_rejects_invalid_source()

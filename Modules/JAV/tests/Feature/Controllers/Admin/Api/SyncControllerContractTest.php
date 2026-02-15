@@ -7,6 +7,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use Modules\JAV\Jobs\DailySyncJob;
+use Modules\JAV\Jobs\TagsSyncJob;
+use Modules\JAV\Jobs\XcityKanaSyncJob;
+use Modules\JAV\Services\XcityIdolService;
 use Modules\JAV\Tests\TestCase;
 
 class SyncControllerContractTest extends TestCase
@@ -31,6 +34,53 @@ class SyncControllerContractTest extends TestCase
         Queue::assertPushedOn('jav', DailySyncJob::class);
     }
 
+    public function test_admin_provider_sync_dispatch_tags_is_queued_on_jav(): void
+    {
+        $admin = $this->makeUserWithRole('admin');
+        Queue::fake();
+
+        $this->actingAs($admin)
+            ->postJson(route('jav.admin.provider-sync.dispatch'), [
+                'source' => '141jav',
+                'type' => 'tags',
+            ])
+            ->assertOk()
+            ->assertJsonPath('source', '141jav')
+            ->assertJsonPath('type', 'tags')
+            ->assertJsonPath('date', null);
+
+        Queue::assertPushedOn('jav', TagsSyncJob::class, function (TagsSyncJob $job): bool {
+            return $job->source === '141jav';
+        });
+    }
+
+    public function test_admin_provider_sync_dispatch_xcity_idols_is_queued_on_jav(): void
+    {
+        $admin = $this->makeUserWithRole('admin');
+        Queue::fake();
+
+        $service = \Mockery::mock(XcityIdolService::class);
+        $service->shouldReceive('seedKanaUrls')->once()->andReturn([
+            'seed-a' => 'https://xxx.xcity.jp/idol/?kana=a',
+        ]);
+        $service->shouldReceive('pickSeedsForDispatch')->once()->andReturn(collect([
+            ['seed_key' => 'seed-a', 'seed_url' => 'https://xxx.xcity.jp/idol/?kana=a'],
+        ]));
+        $this->app->instance(XcityIdolService::class, $service);
+
+        $this->actingAs($admin)
+            ->postJson(route('jav.admin.provider-sync.dispatch'), [
+                'source' => 'xcity',
+                'type' => 'idols',
+            ])
+            ->assertOk()
+            ->assertJsonPath('source', 'xcity')
+            ->assertJsonPath('type', 'idols')
+            ->assertJsonPath('jobs', 1);
+
+        Queue::assertPushedOn('jav', XcityKanaSyncJob::class);
+    }
+
     public function test_admin_provider_sync_dispatch_rejects_invalid_payload(): void
     {
         $admin = $this->makeUserWithRole('admin');
@@ -43,6 +93,20 @@ class SyncControllerContractTest extends TestCase
             ])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['source', 'type', 'date']);
+    }
+
+    public function test_admin_provider_sync_dispatch_rejects_non_idols_type_for_xcity(): void
+    {
+        $admin = $this->makeUserWithRole('admin');
+
+        $this->actingAs($admin)
+            ->postJson(route('jav.admin.provider-sync.dispatch'), [
+                'source' => 'xcity',
+                'type' => 'daily',
+                'date' => '2026-02-14',
+            ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['type']);
     }
 
     public function test_admin_provider_sync_dispatch_returns_429_when_lock_exists(): void
@@ -76,14 +140,7 @@ class SyncControllerContractTest extends TestCase
             ->assertForbidden();
 
         $this->actingAs($moderator)
-            ->postJson(route('jav.request'), [
-                'source' => 'onejav',
-                'type' => 'new',
-            ])
-            ->assertForbidden();
-
-        $this->actingAs($moderator)
-            ->getJson(route('jav.status'))
+            ->getJson(route('jav.admin.provider-sync.status'))
             ->assertForbidden();
 
         $this->actingAs($moderator)
@@ -91,24 +148,12 @@ class SyncControllerContractTest extends TestCase
             ->assertForbidden();
     }
 
-    public function test_admin_request_and_status_and_progress_return_expected_shapes(): void
+    public function test_admin_provider_sync_status_and_progress_return_expected_shapes(): void
     {
         $admin = $this->makeUserWithRole('admin');
-        Queue::fake();
 
         $this->actingAs($admin)
-            ->postJson(route('jav.request'), [
-                'source' => 'onejav',
-                'type' => 'new',
-            ])
-            ->assertOk()
-            ->assertJsonStructure([
-                'message',
-                'progress' => ['phase', 'pending_jobs', 'failed_jobs_24h', 'updated_at'],
-            ]);
-
-        $this->actingAs($admin)
-            ->getJson(route('jav.status'))
+            ->getJson(route('jav.admin.provider-sync.status'))
             ->assertOk()
             ->assertJsonStructure([
                 'onejav' => ['new', 'popular'],
@@ -126,19 +171,6 @@ class SyncControllerContractTest extends TestCase
                 'failed_jobs_24h',
                 'updated_at',
             ]);
-    }
-
-    public function test_admin_request_rejects_invalid_payload(): void
-    {
-        $admin = $this->makeUserWithRole('admin');
-
-        $this->actingAs($admin)
-            ->postJson(route('jav.request'), [
-                'source' => 'bad',
-                'type' => 'bad',
-            ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['source', 'type']);
     }
 
     private function makeUserWithRole(string $roleSlug): User

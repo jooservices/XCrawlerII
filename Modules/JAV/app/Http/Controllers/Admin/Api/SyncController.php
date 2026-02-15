@@ -14,13 +14,13 @@ use Modules\JAV\Jobs\DailySyncJob;
 use Modules\JAV\Jobs\FfjavJob;
 use Modules\JAV\Jobs\OneFourOneJavJob;
 use Modules\JAV\Jobs\OnejavJob;
-use Modules\JAV\Services\FfjavService;
-use Modules\JAV\Services\OneFourOneJavService;
-use Modules\JAV\Services\OnejavService;
+use Modules\JAV\Jobs\TagsSyncJob;
+use Modules\JAV\Jobs\XcityKanaSyncJob;
+use Modules\JAV\Services\XcityIdolService;
 
 class SyncController extends Controller
 {
-    public function dispatch(RequestSyncRequest $request): JsonResponse
+    public function dispatch(RequestSyncRequest $request, XcityIdolService $xcityIdolService): JsonResponse
     {
         $source = $request->source;
         $type = $request->type;
@@ -39,7 +39,7 @@ class SyncController extends Controller
             'started_at' => now()->toIso8601String(),
         ], now()->addHours(6));
 
-        match ($type) {
+        $dispatched = match ($type) {
             'new' => match ($source) {
                 'onejav' => OnejavJob::dispatch('new')->onQueue('jav'),
                 '141jav' => OneFourOneJavJob::dispatch('new')->onQueue('jav'),
@@ -55,55 +55,22 @@ class SyncController extends Controller
                 is_string($date) && $date !== '' ? Carbon::parse($date)->toDateString() : now()->toDateString(),
                 1
             )->onQueue('jav'),
-            'tags' => match ($source) {
-                'onejav' => app(OnejavService::class)->tags(),
-                '141jav' => app(OneFourOneJavService::class)->tags(),
-                'ffjav' => app(FfjavService::class)->tags(),
-            },
+            'tags' => TagsSyncJob::dispatch($source)->onQueue('jav'),
+            'idols' => $this->dispatchXcityIdolJobs($xcityIdolService),
         };
 
         return response()->json([
-            'message' => 'Provider sync request queued successfully.',
+            'message' => $type === 'idols'
+                ? "XCITY idol sync queued ({$dispatched} jobs)."
+                : 'Provider sync request queued successfully.',
             'source' => $source,
             'type' => $type,
             'date' => $type === 'daily' && is_string($date) && $date !== '' ? Carbon::parse($date)->toDateString() : null,
+            'jobs' => $type === 'idols' ? $dispatched : null,
         ]);
     }
 
-    public function request(RequestSyncRequest $request): JsonResponse
-    {
-        Cache::put('jav:sync:active', [
-            'provider' => $request->source,
-            'type' => $request->type,
-            'started_at' => now()->toIso8601String(),
-        ], now()->addHours(6));
-
-        match ($request->type) {
-            'new' => match ($request->source) {
-                'onejav' => OnejavJob::dispatch('new')->onQueue('jav'),
-                '141jav' => OneFourOneJavJob::dispatch('new')->onQueue('jav'),
-                'ffjav' => FfjavJob::dispatch('new')->onQueue('jav'),
-            },
-            'popular' => match ($request->source) {
-                'onejav' => OnejavJob::dispatch('popular')->onQueue('jav'),
-                '141jav' => OneFourOneJavJob::dispatch('popular')->onQueue('jav'),
-                'ffjav' => FfjavJob::dispatch('popular')->onQueue('jav'),
-            },
-            'daily' => DailySyncJob::dispatch($request->source, now()->toDateString(), 1)->onQueue('jav'),
-            'tags' => match ($request->source) {
-                'onejav' => app(OnejavService::class)->tags(),
-                '141jav' => app(OneFourOneJavService::class)->tags(),
-                'ffjav' => app(FfjavService::class)->tags(),
-            },
-        };
-
-        return response()->json([
-            'message' => 'Sync request queued successfully.',
-            'progress' => $this->buildSyncProgressSnapshot(),
-        ]);
-    }
-
-    public function status(): JsonResponse
+    public function providerSyncStatus(): JsonResponse
     {
         $progress = $this->buildSyncProgressSnapshot();
 
@@ -222,5 +189,20 @@ class SyncController extends Controller
             'recent_failures' => $recentFailures,
             'updated_at' => $now->toDateTimeString(),
         ];
+    }
+
+    private function dispatchXcityIdolJobs(XcityIdolService $xcityIdolService): int
+    {
+        $seeds = $xcityIdolService->seedKanaUrls();
+        if ($seeds === []) {
+            return 0;
+        }
+
+        $selected = $xcityIdolService->pickSeedsForDispatch($seeds, 3);
+        foreach ($selected as $seed) {
+            XcityKanaSyncJob::dispatch($seed['seed_key'], $seed['seed_url'])->onQueue('jav');
+        }
+
+        return $selected->count();
     }
 }

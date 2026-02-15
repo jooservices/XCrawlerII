@@ -22,11 +22,9 @@ class SavePreferencesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'hide_actors' => ['nullable', 'boolean'],
-            'hide_tags' => ['nullable', 'boolean'],
+            'show_cover' => ['nullable', 'boolean'],
             'compact_mode' => ['nullable', 'boolean'],
             'text_preference' => ['required', 'in:concise,detailed'],
-            'language' => ['required', 'in:en,jp'],
         ];
     }
 }

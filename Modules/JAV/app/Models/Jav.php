@@ -87,6 +87,49 @@ class Jav extends Model
 
     public function toSearchableArray(): array
     {
+        $actors = $this->actors()
+            ->with(['profileAttributes', 'profileSources'])
+            ->get();
+        $actorNames = $actors
+            ->pluck('name')
+            ->map(static fn($name): string => trim((string) $name))
+            ->filter(static fn(string $name): bool => $name !== '')
+            ->values();
+        $tags = $this->tags()
+            ->pluck('name')
+            ->map(static fn($name): string => trim((string) $name))
+            ->filter(static fn(string $name): bool => $name !== '')
+            ->values();
+        $actorAges = $actors
+            ->map(static fn($actor): ?int => $actor->age)
+            ->filter(static fn($age): bool => is_int($age))
+            ->values()
+            ->all();
+        $actorProfileKeys = [];
+        $actorProfilePairs = [];
+        $actorProfileTextParts = [];
+        foreach ($actors as $actor) {
+            $resolved = $actor->resolvedProfile();
+            $fields = is_array($resolved['fields'] ?? null) ? $resolved['fields'] : [];
+
+            foreach ($fields as $key => $field) {
+                $normalizedKey = strtolower(trim((string) $key));
+                $value = trim((string) ($field['value'] ?? ''));
+                if ($normalizedKey !== '') {
+                    $actorProfileKeys[] = $normalizedKey;
+                }
+                if ($value === '') {
+                    continue;
+                }
+
+                $normalizedValue = mb_strtolower($value);
+                if ($normalizedKey !== '') {
+                    $actorProfilePairs[] = "{$normalizedKey}:{$normalizedValue}";
+                }
+                $actorProfileTextParts[] = $normalizedValue;
+            }
+        }
+
         return [
             'id' => (string) $this->id,
             'uuid' => $this->uuid,
@@ -101,9 +144,22 @@ class Jav extends Model
             'source' => $this->source,
             'views' => (int) $this->views,
             'downloads' => (int) $this->downloads,
-            'actors' => $this->actors->pluck('name')->values()->toArray(),
-            'tags' => $this->tags->pluck('name')->values()->toArray(),
+            'actors' => $actorNames->all(),
+            'actor_names_keyword' => $actorNames
+                ->map(static fn(string $name): string => mb_strtolower($name))
+                ->values()
+                ->all(),
+            'tags' => $tags->all(),
+            'tags_keyword' => $tags
+                ->map(static fn(string $name): string => mb_strtolower($name))
+                ->values()
+                ->all(),
+            'actor_ages' => $actorAges,
+            'actor_profile_keys' => array_values(array_unique($actorProfileKeys)),
+            'actor_profile_pairs' => array_values(array_unique($actorProfilePairs)),
+            'actor_profile_text' => implode(' ', array_values(array_unique($actorProfileTextParts))),
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -132,7 +188,11 @@ class Jav extends Model
      */
     public function getCoverAttribute(): string
     {
-        $showCover = config('jav.show_cover', false);
+        $showCover = (bool) config('jav.show_cover', false);
+        $userPreferences = auth()->user()?->preferences;
+        if (is_array($userPreferences) && array_key_exists('show_cover', $userPreferences)) {
+            $showCover = (bool) $userPreferences['show_cover'];
+        }
 
         if (!$showCover || empty($this->image)) {
             return 'https://placehold.co/300x400?text=Cover+Hidden';

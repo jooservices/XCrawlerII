@@ -32,11 +32,9 @@ class PreferenceController extends Controller
 
         $user = $request->user();
         $preferences = $this->dashboardPreferencesService->resolve($user);
-        $preferences['hide_actors'] = (bool) ($validated['hide_actors'] ?? false);
-        $preferences['hide_tags'] = (bool) ($validated['hide_tags'] ?? false);
+        $preferences['show_cover'] = (bool) ($validated['show_cover'] ?? false);
         $preferences['compact_mode'] = (bool) ($validated['compact_mode'] ?? false);
         $preferences['text_preference'] = (string) $validated['text_preference'];
-        $preferences['language'] = (string) $validated['language'];
         $user->update(['preferences' => $preferences]);
 
         return back()->with('success', 'Preferences updated.');

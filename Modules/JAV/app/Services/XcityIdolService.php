@@ -2,11 +2,13 @@
 
 namespace Modules\JAV\Services;
 
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Modules\Core\Facades\Config;
+use Modules\JAV\Jobs\XcityPersistIdolProfileJob;
+use Modules\JAV\Jobs\XcitySyncActorSearchIndexJob;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Services\ActorProfileUpsertService;
 use Modules\JAV\Services\Clients\XcityClient;
@@ -98,7 +100,7 @@ class XcityIdolService
         return $urls;
     }
 
-    public function syncKanaPage(string $seedKey, string $seedUrl): int
+    public function syncKanaPage(string $seedKey, string $seedUrl, string $queue = 'jav'): int
     {
         Config::set('xcity', $this->runningKey($seedKey), '1');
 
@@ -106,15 +108,21 @@ class XcityIdolService
             $pageUrl = (string) Config::get('xcity', $this->nextUrlKey($seedKey), $seedUrl);
             $page = $this->listPage($pageUrl);
 
+            $jobs = [];
             foreach ($page->idols as $idol) {
-                $detail = $this->idolDetail($idol->detailUrl);
-                $this->linkActor(
-                    xcityId: $idol->xcityId,
-                    name: $idol->name,
-                    detailUrl: $idol->detailUrl,
-                    coverImage: $idol->coverImage,
-                    detail: $detail
-                );
+                $jobs[] = [
+                    new XcityPersistIdolProfileJob(
+                        xcityId: $idol->xcityId,
+                        name: $idol->name,
+                        detailUrl: $idol->detailUrl,
+                        coverImage: $idol->coverImage
+                    ),
+                    new XcitySyncActorSearchIndexJob($idol->xcityId),
+                ];
+            }
+
+            if ($jobs !== []) {
+                Bus::batch($jobs)->name("xcity:kana:{$seedKey}")->onQueue($queue)->dispatch();
             }
 
             if ($page->nextUrl !== null) {
@@ -157,6 +165,19 @@ class XcityIdolService
         $crawler = new Crawler($html);
 
         return (new XcityDetailAdapter($crawler))->profile();
+    }
+
+    public function syncIdolFromListItem(string $xcityId, string $name, string $detailUrl, ?string $coverImage): bool
+    {
+        $detail = $this->idolDetail($detailUrl);
+
+        return $this->linkActor(
+            xcityId: $xcityId,
+            name: $name,
+            detailUrl: $detailUrl,
+            coverImage: $coverImage,
+            detail: $detail
+        );
     }
 
     /**
@@ -208,11 +229,11 @@ class XcityIdolService
      *     raw_fields: array<string, string>
      * }  $detail
      */
-    private function linkActor(string $xcityId, string $name, string $detailUrl, ?string $coverImage, array $detail): void
+    private function linkActor(string $xcityId, string $name, string $detailUrl, ?string $coverImage, array $detail): bool
     {
         $normalizedName = trim(preg_replace('/\s+/u', ' ', $name) ?? $name);
         if ($normalizedName === '') {
-            return;
+            return false;
         }
 
         $actor = Actor::query()->where('xcity_id', $xcityId)->first();
@@ -256,7 +277,10 @@ class XcityIdolService
         }
 
         $actor->xcity_synced_at = Carbon::now();
-        $shouldIndex = $actor->isDirty();
+        $dirtyBeforeSave = array_keys($actor->getDirty());
+        $shouldIndex = collect($dirtyBeforeSave)
+            ->reject(fn (string $column): bool => $column === 'xcity_synced_at' || $column === 'updated_at')
+            ->isNotEmpty();
 
         Actor::withoutSyncingToSearch(function () use ($actor): void {
             $actor->save();
@@ -281,17 +305,7 @@ class XcityIdolService
             isPrimary: true
         );
 
-        if ($shouldIndex) {
-            try {
-                $actor->searchable();
-            } catch (\Throwable $exception) {
-                Log::warning('Failed to sync actor to search index after XCITY update', [
-                    'actor_id' => $actor->id,
-                    'xcity_id' => $xcityId,
-                    'error' => $exception->getMessage(),
-                ]);
-            }
-        }
+        return $shouldIndex;
     }
 
     private function toAbsoluteUrl(string $url): string

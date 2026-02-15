@@ -1,0 +1,52 @@
+<?php
+
+namespace Modules\JAV\Jobs;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Modules\JAV\Services\FfjavService;
+use Modules\JAV\Services\OneFourOneJavService;
+use Modules\JAV\Services\OnejavService;
+use Throwable;
+
+class TagsSyncJob implements ShouldBeUnique, ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function __construct(
+        public string $source
+    ) {}
+
+    public function uniqueId(): string
+    {
+        return $this->source;
+    }
+
+    public function handle(): void
+    {
+        $service = $this->resolveService();
+        $service->tags();
+    }
+
+    public function failed(Throwable $exception): void
+    {
+        \Log::error('TagsSyncJob failed', [
+            'source' => $this->source,
+            'error' => $exception->getMessage(),
+        ]);
+    }
+
+    private function resolveService(): OnejavService|OneFourOneJavService|FfjavService
+    {
+        return match ($this->source) {
+            'onejav' => app(OnejavService::class),
+            '141jav' => app(OneFourOneJavService::class),
+            'ffjav' => app(FfjavService::class),
+            default => throw new \InvalidArgumentException("Unsupported source: {$this->source}"),
+        };
+    }
+}

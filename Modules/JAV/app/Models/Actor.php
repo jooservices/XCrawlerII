@@ -15,6 +15,7 @@ class Actor extends Model
     use HasFactory, Searchable;
 
     protected $table = 'actors';
+    protected $appends = ['age'];
 
     protected $touches = ['javs'];
 
@@ -96,6 +97,9 @@ class Actor extends Model
     {
         $resolved = $this->resolvedProfile();
         $resolvedFields = $resolved['fields'];
+        $profileAttributeMap = collect($resolvedFields)->mapWithKeys(
+            static fn (array $field, string $kind): array => [$kind => $field['value']]
+        );
         $profileParts = array_values(array_filter(
             array_map(
                 static fn (array $field): string => trim((string) ($field['value'] ?? '')),
@@ -103,15 +107,41 @@ class Actor extends Model
             ),
             static fn (string $value): bool => $value !== ''
         ));
+        $profilePairs = $profileAttributeMap
+            ->map(function (mixed $value, string $key): string {
+                $normalizedKey = strtolower(trim((string) $key));
+                $normalizedValue = strtolower(trim((string) $value));
+
+                return "{$normalizedKey}:{$normalizedValue}";
+            })
+            ->filter(static fn(string $value): bool => $value !== ':' && $value !== '')
+            ->values()
+            ->all();
+        $movieTags = $this->javs()
+            ->with('tags:id,name')
+            ->get()
+            ->flatMap(static fn($jav) => $jav->tags->pluck('name'))
+            ->filter(static fn($name): bool => trim((string) $name) !== '')
+            ->unique()
+            ->values()
+            ->all();
+        $birthDate = app(ActorProfileResolver::class)->resolveBirthDate($this);
 
         return [
             'id' => (string) $this->id,
             'uuid' => $this->uuid,
             'name' => $this->name,
+            'name_keyword' => mb_strtolower((string) $this->name),
+            'javs_count' => (int) $this->javs()->count(),
+            'movie_tags' => $movieTags,
+            'movie_tags_keyword' => array_map(
+                static fn(string $tag): string => mb_strtolower(trim($tag)),
+                $movieTags
+            ),
             'profile_primary_source' => $resolved['primary_source'],
-            'profile_attributes' => collect($resolvedFields)->mapWithKeys(
-                static fn (array $field, string $kind): array => [$kind => $field['value']]
-            )->all(),
+            'profile_attributes' => $profileAttributeMap->all(),
+            'profile_attribute_keys' => $profileAttributeMap->keys()->values()->all(),
+            'profile_attribute_pairs' => $profilePairs,
             'xcity_id' => $this->xcity_id,
             'xcity_url' => $this->xcity_url,
             'xcity_cover' => $this->xcity_cover,
@@ -126,7 +156,11 @@ class Actor extends Model
             'xcity_profile' => $this->xcity_profile,
             'xcity_synced_at' => $this->xcity_synced_at?->format('Y-m-d H:i:s'),
             'bio' => implode(' ', $profileParts),
+            'bio_lower' => mb_strtolower(implode(' ', $profileParts)),
+            'age' => $this->age,
+            'birth_date' => $birthDate?->format('Y-m-d'),
             'created_at' => $this->created_at?->format('Y-m-d H:i:s'),
+            'updated_at' => $this->updated_at?->format('Y-m-d H:i:s'),
         ];
     }
 
@@ -142,7 +176,11 @@ class Actor extends Model
 
     public function getCoverAttribute(): string
     {
-        $showCover = config('jav.show_cover', false);
+        $showCover = (bool) config('jav.show_cover', false);
+        $userPreferences = auth()->user()?->preferences;
+        if (is_array($userPreferences) && array_key_exists('show_cover', $userPreferences)) {
+            $showCover = (bool) $userPreferences['show_cover'];
+        }
         $resolvedCover = app(ActorProfileResolver::class)->resolveCover($this);
 
         if (!$showCover || empty($resolvedCover)) {
@@ -159,7 +197,7 @@ class Actor extends Model
             return null;
         }
 
-        $age = now()->year - $birthDate->year;
+        $age = $birthDate->age;
 
         return $age >= 0 ? $age : null;
     }

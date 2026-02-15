@@ -29,7 +29,7 @@ class XcityKanaSyncJob implements ShouldBeUnique, ShouldQueue
 
     public function handle(XcityIdolService $service): void
     {
-        $service->syncKanaPage($this->seedKey, $this->seedUrl);
+        $service->syncKanaPage($this->seedKey, $this->seedUrl, $this->queue ?? 'jav');
     }
 
     public function failed(Throwable $exception): void

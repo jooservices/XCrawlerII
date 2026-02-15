@@ -8,6 +8,7 @@ use Modules\JAV\Http\Controllers\Admin\SearchQualityController;
 use Modules\JAV\Http\Controllers\Admin\SyncController;
 use Modules\JAV\Http\Controllers\Guest\Auth\LoginController as GuestLoginController;
 use Modules\JAV\Http\Controllers\Guest\Auth\RegisterController as GuestRegisterController;
+use Modules\JAV\Http\Controllers\Users\Api\DashboardController as ApiDashboardController;
 use Modules\JAV\Http\Controllers\Users\Api\LibraryController as ApiLibraryController;
 use Modules\JAV\Http\Controllers\Users\Api\MovieController as ApiMovieController;
 use Modules\JAV\Http\Controllers\Users\Api\NotificationController as ApiNotificationController;
@@ -21,6 +22,8 @@ use Modules\JAV\Http\Controllers\Users\NotificationController;
 use Modules\JAV\Http\Controllers\Users\PreferenceController;
 use Modules\JAV\Http\Controllers\Users\RatingController;
 use Modules\JAV\Http\Controllers\Users\WatchlistController;
+
+Route::redirect('/jav', '/jav/dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('javs', [JAVController::class, 'store'])->name('jav.store');
@@ -51,7 +54,6 @@ Route::middleware(['web', 'auth'])->prefix('jav')->name('jav.vue.')->group(funct
     });
 
     Route::middleware(['role:admin'])->group(function () {
-        Route::get('/admin/sync', [SyncController::class, 'quickSyncVue'])->name('admin.sync');
         Route::get('/admin/analytics', [AnalyticsController::class, 'indexVue'])->name('admin.analytics');
         Route::get('/admin/sync-progress', [SyncController::class, 'syncProgressVue'])->name('admin.sync-progress');
         Route::get('/admin/search-quality', [SearchQualityController::class, 'indexVue'])->name('admin.search-quality');
@@ -60,6 +62,7 @@ Route::middleware(['web', 'auth'])->prefix('jav')->name('jav.vue.')->group(funct
 });
 
 Route::middleware(['web', 'auth'])->prefix('jav/api')->name('jav.api.')->group(function () {
+    Route::get('/dashboard/items', [ApiDashboardController::class, 'items'])->name('dashboard.items');
     Route::post('/like', [ApiLibraryController::class, 'toggleLike'])->name('toggle-like');
     Route::post('/watchlist', [ApiWatchlistController::class, 'store'])->name('watchlist.store');
     Route::put('/watchlist/{watchlist}', [ApiWatchlistController::class, 'update'])->name('watchlist.update');
@@ -90,8 +93,7 @@ Route::prefix('jav')->name('jav.')->group(function () {
     });
 
     Route::middleware(['auth', 'role:admin'])->group(function () {
-        Route::post('/request', [AdminApiSyncController::class, 'request'])->name('request');
-        Route::get('/status', [AdminApiSyncController::class, 'status'])->name('status');
+        Route::get('/admin/provider-sync/status', [AdminApiSyncController::class, 'providerSyncStatus'])->name('admin.provider-sync.status');
         Route::get('/admin/sync-progress/data', [AdminApiSyncController::class, 'syncProgressData'])->name('admin.sync-progress.data');
         Route::post('/admin/search-quality/preview', [AdminApiSearchQualityController::class, 'preview'])->name('admin.search-quality.preview');
         Route::post('/admin/search-quality/publish', [AdminApiSearchQualityController::class, 'publish'])->name('admin.search-quality.publish');

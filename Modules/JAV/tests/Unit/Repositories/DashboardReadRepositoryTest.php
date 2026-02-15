@@ -95,7 +95,7 @@ class DashboardReadRepositoryTest extends TestCase
         $collection = collect([1, 2, 3]);
 
         $search = Mockery::mock(SearchService::class);
-        $search->shouldReceive('searchActors')->once()->with('amy')->andReturn($paginator);
+        $search->shouldReceive('searchActors')->once()->with('amy', [], 60, null, 'desc')->andReturn($paginator);
         $search->shouldReceive('searchTags')->once()->with('idol')->andReturn($paginator);
 
         $history = Mockery::mock(UserJavHistoryRepository::class);

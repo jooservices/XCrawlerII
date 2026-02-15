@@ -8,9 +8,7 @@ use Modules\JAV\Jobs\DailySyncJob;
 use Modules\JAV\Jobs\FfjavJob;
 use Modules\JAV\Jobs\OneFourOneJavJob;
 use Modules\JAV\Jobs\OnejavJob;
-use Modules\JAV\Services\FfjavService;
-use Modules\JAV\Services\OneFourOneJavService;
-use Modules\JAV\Services\OnejavService;
+use Modules\JAV\Jobs\TagsSyncJob;
 
 class JavSyncContentCommand extends Command
 {
@@ -92,14 +90,9 @@ class JavSyncContentCommand extends Command
 
     private function syncTags(string $provider): void
     {
-        $service = match ($provider) {
-            'onejav' => app(OnejavService::class),
-            '141jav' => app(OneFourOneJavService::class),
-            'ffjav' => app(FfjavService::class),
-        };
+        $queue = (string) $this->option('queue');
+        TagsSyncJob::dispatch($provider)->onQueue($queue);
 
-        $tags = $service->tags();
-
-        $this->info("Synced {$tags->count()} tags for {$provider}.");
+        $this->info("Dispatched {$provider} tags sync job to queue '{$queue}'.");
     }
 }

@@ -3,8 +3,10 @@
 namespace Modules\JAV\Services;
 
 use Carbon\Carbon;
+use Elastic\Elasticsearch\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
@@ -19,28 +21,16 @@ class SearchService
         $sort = $this->normalizeSort($sort);
         $direction = $this->normalizeDirection($direction);
 
-        if ($this->isElasticsearchAvailable('jav') && !$this->requiresDatabaseSearch($filters)) {
-            // Keep ES for simple search, then fall back to DB for advanced actor-profile filters.
-            $search = Jav::search($query);
-
-            if ($sort !== null) {
-                $search->orderBy($sort, $direction);
+        if ($this->isElasticsearchAvailable('jav')) {
+            try {
+                return $this->searchJavViaElasticsearch($query, $filters, $perPage, $sort, $direction);
+            } catch (\Throwable $exception) {
+                \Illuminate\Support\Facades\Log::warning('Elasticsearch movie search failed, falling back to database search.', [
+                    'error' => $exception->getMessage(),
+                ]);
             }
-
-            $search->query(fn($q) => $q->with(['actors', 'tags']));
-
-            if ($filters['actor'] !== null) {
-                $search->where('actors', $filters['actor']);
-            }
-
-            if ($filters['tag'] !== null) {
-                $search->where('tags', $filters['tag']);
-            }
-
-            return $search->paginate($perPage);
         }
-
-        \Illuminate\Support\Facades\Log::warning('Elasticsearch unavailable or advanced filters requested, using database search.');
+        \Illuminate\Support\Facades\Log::warning('Elasticsearch unavailable, using database search.');
 
         $builder = Jav::query()->with(['actors', 'tags']);
         $this->applyDatabaseFilters($builder, $query, $filters);
@@ -54,19 +44,48 @@ class SearchService
         return $builder->paginate($perPage);
     }
 
-    public function searchActors(string $query = '', int $perPage = 60): LengthAwarePaginator
-    {
+    public function searchActors(
+        string $query = '',
+        array $filters = [],
+        int $perPage = 60,
+        ?string $sort = null,
+        string $direction = 'desc'
+    ): LengthAwarePaginator {
+        $filters = $this->normalizeFilters($filters);
+        $sort = $this->normalizeActorSort($sort);
+        $direction = $this->normalizeDirection($direction);
+
         if ($this->isElasticsearchAvailable('actors')) {
-            return Actor::search($query)->query(fn($q) => $q->withCount('javs'))->paginate($perPage);
+            try {
+                return $this->searchActorsViaElasticsearch($query, $filters, $perPage, $sort, $direction);
+            } catch (\Throwable $exception) {
+                \Illuminate\Support\Facades\Log::warning('Elasticsearch actor search failed, falling back to database.', [
+                    'error' => $exception->getMessage(),
+                ]);
+            }
         }
 
-        $builder = Actor::query()->withCount('javs');
+        $builder = Actor::query()
+            ->withCount(['javs', 'favorites'])
+            ->withSum('javs as jav_views', 'views');
 
-        if (!empty($query)) {
+        if ($query !== '') {
             $builder->where('name', 'like', "%{$query}%");
         }
 
-        return $builder->orderByDesc('javs_count')->paginate($perPage);
+        $this->applyActorTagsFilter($builder, $filters);
+        if (($filters['age'] ?? null) !== null || ($filters['age_min'] ?? null) !== null || ($filters['age_max'] ?? null) !== null) {
+            $this->applyActorAgeFilter($builder, $filters);
+        }
+        $this->applyActorBioFilters($builder, $filters);
+
+        if ($sort !== null) {
+            $builder->orderBy($sort, $direction);
+        } else {
+            $builder->orderByDesc('javs_count');
+        }
+
+        return $builder->paginate($perPage)->withQueryString();
     }
 
     public function searchTags(string $query = '', int $perPage = 60): LengthAwarePaginator
@@ -264,6 +283,142 @@ class SearchService
             || !empty($filters['bio_filters'])
             || $actorCount > 1
             || (($filters['tags_mode'] ?? 'any') === 'all');
+    }
+
+    private function searchJavViaElasticsearch(
+        string $query,
+        array $filters,
+        int $perPage,
+        ?string $sort,
+        string $direction
+    ): LengthAwarePaginator {
+        /** @var Client $client */
+        $client = app(Client::class);
+        $page = Paginator::resolveCurrentPage();
+        $from = max(0, ($page - 1) * $perPage);
+        $must = [];
+        $filterClauses = [];
+
+        if ($query !== '') {
+            $must[] = [
+                'multi_match' => [
+                    'query' => $query,
+                    'fields' => ['title^3', 'code^4', 'uuid', 'description'],
+                ],
+            ];
+        } else {
+            $must[] = ['match_all' => (object) []];
+        }
+
+        $tags = $filters['tags'] ?? [];
+        if (!empty($tags)) {
+            $normalizedTags = array_values(array_unique(array_map(
+                static fn(string $tag): string => mb_strtolower(trim($tag)),
+                $tags
+            )));
+
+            if (($filters['tags_mode'] ?? 'any') === 'all') {
+                foreach ($normalizedTags as $tagName) {
+                    $filterClauses[] = ['term' => ['tags_keyword.keyword' => $tagName]];
+                }
+            } else {
+                $filterClauses[] = ['terms' => ['tags_keyword.keyword' => $normalizedTags]];
+            }
+        }
+
+        $actors = $filters['actors'] ?? [];
+        if (!empty($actors)) {
+            foreach ($actors as $actorName) {
+                $normalizedActor = mb_strtolower(trim((string) $actorName));
+                if ($normalizedActor === '') {
+                    continue;
+                }
+                $filterClauses[] = ['wildcard' => ['actor_names_keyword.keyword' => "*{$normalizedActor}*"]];
+            }
+        }
+
+        $age = $filters['age'] ?? null;
+        $ageMin = $filters['age_min'] ?? null;
+        $ageMax = $filters['age_max'] ?? null;
+        if ($age !== null) {
+            $filterClauses[] = ['term' => ['actor_ages' => (int) $age]];
+        } else {
+            if ($ageMin !== null) {
+                $filterClauses[] = ['range' => ['actor_ages' => ['gte' => (int) $ageMin]]];
+            }
+            if ($ageMax !== null) {
+                $filterClauses[] = ['range' => ['actor_ages' => ['lte' => (int) $ageMax]]];
+            }
+        }
+
+        $bioFilters = $filters['bio_filters'] ?? [];
+        foreach ($bioFilters as $bioFilter) {
+            $bioKey = strtolower(trim((string) ($bioFilter['key'] ?? '')));
+            $bioValue = mb_strtolower(trim((string) ($bioFilter['value'] ?? '')));
+
+            if ($bioKey !== '' && $bioValue !== '') {
+                $filterClauses[] = ['wildcard' => ['actor_profile_pairs.keyword' => "{$bioKey}:*{$bioValue}*"]];
+                continue;
+            }
+
+            if ($bioKey !== '') {
+                $filterClauses[] = ['term' => ['actor_profile_keys.keyword' => $bioKey]];
+            }
+
+            if ($bioValue !== '') {
+                $must[] = ['match_phrase' => ['actor_profile_text' => $bioValue]];
+            }
+        }
+
+        $sortField = $sort ?? 'date';
+        $response = $client->search([
+            'index' => $this->indexNameFor(Jav::class),
+            'body' => [
+                'from' => $from,
+                'size' => $perPage,
+                'query' => [
+                    'bool' => [
+                        'must' => $must,
+                        'filter' => $filterClauses,
+                    ],
+                ],
+                'sort' => [
+                    [$sortField => ['order' => $direction]],
+                    ['id' => ['order' => 'asc']],
+                ],
+            ],
+        ])->asArray();
+
+        $hits = $response['hits']['hits'] ?? [];
+        $ids = array_values(array_map(static fn(array $hit): int => (int) ($hit['_id'] ?? 0), $hits));
+        $total = (int) (($response['hits']['total']['value'] ?? 0));
+
+        return $this->hydrateJavPaginatorFromIds($ids, $total, $perPage, $page);
+    }
+
+    /**
+     * @param array<int, int> $ids
+     */
+    private function hydrateJavPaginatorFromIds(array $ids, int $total, int $perPage, int $page): LengthAwarePaginator
+    {
+        if (empty($ids)) {
+            return new Paginator(collect(), $total, $perPage, $page, [
+                'path' => Paginator::resolveCurrentPath(),
+                'query' => request()->query(),
+            ]);
+        }
+
+        $orderedIds = implode(',', array_map('intval', $ids));
+        $items = Jav::query()
+            ->with(['actors', 'tags'])
+            ->whereIn('id', $ids)
+            ->orderByRaw("FIELD(id, {$orderedIds})")
+            ->get();
+
+        return new Paginator($items, $total, $perPage, $page, [
+            'path' => Paginator::resolveCurrentPath(),
+            'query' => request()->query(),
+        ]);
     }
 
     private function applyTagFilters(Builder $builder, array $filters): void
@@ -509,6 +664,213 @@ class SearchService
         return in_array((string) $sort, ['created_at', 'updated_at', 'views', 'downloads'], true)
             ? (string) $sort
             : null;
+    }
+
+    private function normalizeActorSort(?string $sort): ?string
+    {
+        return in_array((string) $sort, ['javs_count', 'name', 'created_at', 'updated_at'], true)
+            ? (string) $sort
+            : null;
+    }
+
+    private function requiresDatabaseActorSearch(array $filters, ?string $sort): bool
+    {
+        $hasAdvancedFilters = !empty($filters['tags'])
+            || !empty($filters['age'])
+            || !empty($filters['age_min'])
+            || !empty($filters['age_max'])
+            || !empty($filters['bio_filters']);
+
+        if ($hasAdvancedFilters) {
+            return true;
+        }
+
+        if ($sort === null) {
+            return false;
+        }
+
+        // Actor ES documents do not currently expose javs_count sort reliably.
+        return !in_array($sort, ['name', 'created_at', 'updated_at'], true);
+    }
+
+    private function searchActorsViaElasticsearch(
+        string $query,
+        array $filters,
+        int $perPage,
+        ?string $sort,
+        string $direction
+    ): LengthAwarePaginator {
+        /** @var Client $client */
+        $client = app(Client::class);
+        $page = Paginator::resolveCurrentPage();
+        $from = max(0, ($page - 1) * $perPage);
+        $must = [];
+        $filterClauses = [];
+
+        if ($query !== '') {
+            $must[] = [
+                'multi_match' => [
+                    'query' => $query,
+                    'fields' => ['name^3', 'bio', 'bio_lower'],
+                ],
+            ];
+        } else {
+            $must[] = ['match_all' => (object) []];
+        }
+
+        $tags = $filters['tags'] ?? [];
+        if (!empty($tags)) {
+            $normalizedTags = array_values(array_unique(array_map(
+                static fn(string $tag): string => mb_strtolower(trim($tag)),
+                $tags
+            )));
+
+            if (($filters['tags_mode'] ?? 'any') === 'all') {
+                foreach ($normalizedTags as $tagName) {
+                    $filterClauses[] = ['term' => ['movie_tags_keyword.keyword' => $tagName]];
+                }
+            } else {
+                $filterClauses[] = ['terms' => ['movie_tags_keyword.keyword' => $normalizedTags]];
+            }
+        }
+
+        $age = $filters['age'] ?? null;
+        $ageMin = $filters['age_min'] ?? null;
+        $ageMax = $filters['age_max'] ?? null;
+        $today = Carbon::today();
+        if ($age !== null) {
+            $age = (int) $age;
+            $maxBirthDate = $today->copy()->subYears($age)->toDateString();
+            $minBirthDate = $today->copy()->subYears($age + 1)->addDay()->toDateString();
+            $filterClauses[] = [
+                'range' => [
+                    'birth_date' => [
+                        'gte' => $minBirthDate,
+                        'lte' => $maxBirthDate,
+                    ],
+                ],
+            ];
+        } else {
+            if ($ageMin !== null) {
+                $filterClauses[] = [
+                    'range' => [
+                        'birth_date' => [
+                            'lte' => $today->copy()->subYears((int) $ageMin)->toDateString(),
+                        ],
+                    ],
+                ];
+            }
+            if ($ageMax !== null) {
+                $filterClauses[] = [
+                    'range' => [
+                        'birth_date' => [
+                            'gte' => $today->copy()->subYears(((int) $ageMax) + 1)->addDay()->toDateString(),
+                        ],
+                    ],
+                ];
+            }
+        }
+
+        $bioFilters = $filters['bio_filters'] ?? [];
+        foreach ($bioFilters as $bioFilter) {
+            $bioKey = strtolower(trim((string) ($bioFilter['key'] ?? '')));
+            $bioValue = mb_strtolower(trim((string) ($bioFilter['value'] ?? '')));
+
+            if ($bioKey !== '' && $bioValue !== '') {
+                $filterClauses[] = ['wildcard' => ['profile_attribute_pairs.keyword' => "{$bioKey}:*{$bioValue}*"]];
+                continue;
+            }
+
+            if ($bioKey !== '') {
+                $filterClauses[] = ['term' => ['profile_attribute_keys.keyword' => $bioKey]];
+            }
+
+            if ($bioValue !== '') {
+                $must[] = ['match_phrase' => ['bio_lower' => $bioValue]];
+            }
+        }
+
+        $sortField = $sort ?? 'javs_count';
+        $response = $client->search([
+            'index' => $this->indexNameFor(Actor::class),
+            'body' => [
+                'from' => $from,
+                'size' => $perPage,
+                'query' => [
+                    'bool' => [
+                        'must' => $must,
+                        'filter' => $filterClauses,
+                    ],
+                ],
+                'sort' => [
+                    [$sortField => ['order' => $direction]],
+                    ['id' => ['order' => 'asc']],
+                ],
+            ],
+        ])->asArray();
+
+        $hits = $response['hits']['hits'] ?? [];
+        $ids = array_values(array_map(static fn(array $hit): int => (int) ($hit['_id'] ?? 0), $hits));
+        $total = (int) (($response['hits']['total']['value'] ?? 0));
+
+        return $this->hydrateActorPaginatorFromIds($ids, $total, $perPage, $page);
+    }
+
+    /**
+     * @param array<int, int> $ids
+     */
+    private function hydrateActorPaginatorFromIds(array $ids, int $total, int $perPage, int $page): LengthAwarePaginator
+    {
+        if (empty($ids)) {
+            return new Paginator(collect(), $total, $perPage, $page, [
+                'path' => Paginator::resolveCurrentPath(),
+                'query' => request()->query(),
+            ]);
+        }
+
+        $orderedIds = implode(',', array_map('intval', $ids));
+        $items = Actor::query()
+            ->withCount(['javs', 'favorites'])
+            ->withSum('javs as jav_views', 'views')
+            ->whereIn('id', $ids)
+            ->orderByRaw("FIELD(id, {$orderedIds})")
+            ->get();
+
+        return new Paginator($items, $total, $perPage, $page, [
+            'path' => Paginator::resolveCurrentPath(),
+            'query' => request()->query(),
+        ]);
+    }
+
+    private function indexNameFor(string $modelClass): string
+    {
+        /** @var \Illuminate\Database\Eloquent\Model&\Laravel\Scout\Searchable $model */
+        $model = new $modelClass();
+        $prefix = (string) config('scout.prefix', '');
+
+        return $prefix . $model->searchableAs();
+    }
+
+    private function applyActorTagsFilter(Builder $builder, array $filters): void
+    {
+        $tags = $filters['tags'] ?? [];
+        if (empty($tags)) {
+            return;
+        }
+
+        if (($filters['tags_mode'] ?? 'any') === 'all') {
+            foreach ($tags as $tagName) {
+                $builder->whereHas('javs.tags', function (Builder $tagQuery) use ($tagName): void {
+                    $tagQuery->where('name', $tagName);
+                });
+            }
+
+            return;
+        }
+
+        $builder->whereHas('javs.tags', function (Builder $tagQuery) use ($tags): void {
+            $tagQuery->whereIn('name', $tags);
+        });
     }
 
     private function normalizeDirection(string $direction): string

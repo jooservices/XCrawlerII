@@ -116,6 +116,7 @@ class JAVServiceProvider extends ServiceProvider
             $schedule->command('jav:sync:idols --concurrency=3')->everyMinute()->runInBackground();
             $schedule->command('jav:sync:analytics')->hourly()->runInBackground();
             $schedule->command('jav:sync:recommendations')->twiceDaily(0, 12)->runInBackground();
+            $schedule->command('jav:sync:search')->dailyAt('00:30')->runInBackground();
         });
     }
 

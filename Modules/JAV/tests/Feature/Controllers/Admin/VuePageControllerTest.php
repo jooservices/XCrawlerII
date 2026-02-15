@@ -16,7 +16,6 @@ class VuePageControllerTest extends TestCase
         $admin = $this->makeUserWithRole('admin');
 
         $cases = [
-            ['route' => route('jav.vue.admin.sync'), 'component' => 'Admin/Sync', 'props' => []],
             ['route' => route('jav.vue.admin.analytics'), 'component' => 'Admin/Analytics', 'props' => ['days', 'totals', 'syncHealth']],
             ['route' => route('jav.vue.admin.sync-progress'), 'component' => 'Admin/SyncProgress', 'props' => []],
             ['route' => route('jav.vue.admin.search-quality'), 'component' => 'Admin/SearchQuality', 'props' => []],
@@ -32,10 +31,6 @@ class VuePageControllerTest extends TestCase
     public function test_non_admin_cannot_access_admin_vue_pages(): void
     {
         $moderator = $this->makeUserWithRole('moderator');
-
-        $this->actingAs($moderator)
-            ->get(route('jav.vue.admin.sync'))
-            ->assertForbidden();
 
         $this->actingAs($moderator)
             ->get(route('jav.vue.admin.analytics'))

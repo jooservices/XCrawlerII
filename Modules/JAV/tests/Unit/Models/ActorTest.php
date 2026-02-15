@@ -2,6 +2,7 @@
 
 namespace Modules\JAV\Tests\Unit\Models;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\ActorProfileAttribute;
@@ -48,5 +49,28 @@ class ActorTest extends TestCase
         ]);
 
         $this->assertTrue($actor->favorites->contains($favorite));
+    }
+
+    public function test_cover_respects_show_cover_config_when_no_user_preference_exists(): void
+    {
+        config(['jav.show_cover' => false]);
+        $actor = Actor::factory()->create(['xcity_cover' => 'https://example.com/actor-cover.jpg']);
+
+        $this->assertSame('https://placehold.co/300x400?text=Cover+Hidden', $actor->cover);
+    }
+
+    public function test_cover_preference_overrides_show_cover_config(): void
+    {
+        config(['jav.show_cover' => false]);
+        $user = User::factory()->create([
+            'preferences' => [
+                'show_cover' => true,
+            ],
+        ]);
+        $this->actingAs($user);
+
+        $actor = Actor::factory()->create(['xcity_cover' => 'https://example.com/actor-cover.jpg']);
+
+        $this->assertSame('https://example.com/actor-cover.jpg', $actor->cover);
     }
 }
