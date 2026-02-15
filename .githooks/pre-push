@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${SKIP_GIT_HOOKS:-0}" == "1" ]]; then
+    echo "[pre-push] Skipped (SKIP_GIT_HOOKS=1)."
+    exit 0
+fi
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+echo "[pre-push] Running full test suite..."
+composer test
+echo "[pre-push] Tests passed."

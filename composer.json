@@ -51,6 +51,7 @@
     "scripts": {
         "setup": [
             "composer install",
+            "@composer hooks:install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate",
             "@php artisan migrate --force",
@@ -80,6 +81,9 @@
             "@composer lint",
             "@composer analyse",
             "@composer mess"
+        ],
+        "hooks:install": [
+            "bash scripts/setup-git-hooks.sh"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

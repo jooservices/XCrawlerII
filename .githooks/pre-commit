@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${SKIP_GIT_HOOKS:-0}" == "1" ]]; then
+    echo "[pre-commit] Skipped (SKIP_GIT_HOOKS=1)."
+    exit 0
+fi
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+cd "$ROOT_DIR"
+
+echo "[pre-commit] Running lint checks..."
+composer lint
+echo "[pre-commit] Lint checks passed."
