@@ -1,17 +1,205 @@
 <script setup>
-import { Head, Link, router } from '@inertiajs/vue3';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import axios from 'axios';
+import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
+import AdvancedSearchForm from '@jav/Components/Search/AdvancedSearchForm.vue';
+import { useUIStore } from '@jav/Stores/ui';
 
 const props = defineProps({
     actors: Object,
+    query: String,
+    filters: Object,
+    sort: String,
+    direction: String,
+    tagsInput: String,
+    availableBioKeys: Object,
+    tagSuggestions: Array,
+    bioValueSuggestions: Object,
 });
+const page = usePage();
+const uiStore = useUIStore();
+const hasAuthUser = computed(() => Boolean(page.props.auth?.user));
 
 const visibleActors = ref([...(props.actors?.data || [])]);
 const nextPageUrl = ref(props.actors?.next_page_url || null);
 const loadingMore = ref(false);
 const sentinelRef = ref(null);
+const filterForm = ref({
+    q: props.query || '',
+    tag: props.tagsInput || props.filters?.tag || '',
+    tags_mode: props.filters?.tags_mode || 'any',
+    age: props.filters?.age ?? '',
+    age_min: props.filters?.age_min ?? '',
+    age_max: props.filters?.age_max ?? '',
+});
+const bioFilters = ref(
+    (props.filters?.bio_filters && props.filters.bio_filters.length > 0)
+        ? props.filters.bio_filters.map((row) => ({
+            key: row?.key || '',
+            value: row?.value || '',
+        }))
+        : [{ key: '', value: '' }]
+);
 let observer = null;
+const actorSortOptions = [
+    { label: 'Most JAVs', sort: 'javs_count', direction: 'desc' },
+    { label: 'Fewest JAVs', sort: 'javs_count', direction: 'asc' },
+    { label: 'Name (A-Z)', sort: 'name', direction: 'asc' },
+    { label: 'Name (Z-A)', sort: 'name', direction: 'desc' },
+    { label: 'Newest', sort: 'created_at', direction: 'desc' },
+    { label: 'Oldest', sort: 'created_at', direction: 'asc' },
+];
+const matchedActorsTotal = computed(() => {
+    const total = Number(props.actors?.total);
+    return Number.isFinite(total) ? total : visibleActors.value.length;
+});
+const normalizedTags = computed(() => {
+    return String(filterForm.value.tag || '')
+        .split(',')
+        .map((value) => value.trim())
+        .filter((value) => value !== '');
+});
+const filteredBioFilters = computed(() => {
+    return bioFilters.value.filter((row) => row.key || row.value);
+});
+const likedActorMap = ref({});
+const likeProcessingMap = ref({});
+const formatCount = (value) => {
+    const number = Number(value || 0);
+    return Number.isFinite(number) ? number.toLocaleString() : '0';
+};
+const resolveActorRate = (actor) => {
+    const directRate = Number(actor?.rate);
+    if (Number.isFinite(directRate) && directRate > 0) {
+        return directRate;
+    }
+
+    const profileRate = Number(actor?.xcity_profile?.rate ?? actor?.xcity_profile?.rating);
+    if (Number.isFinite(profileRate) && profileRate > 0) {
+        return profileRate;
+    }
+
+    return null;
+};
+const formatRate = (value) => {
+    const number = Number(value);
+    if (!Number.isFinite(number) || number <= 0) {
+        return null;
+    }
+
+    return Number.isInteger(number) ? String(number) : number.toFixed(1);
+};
+const actorStarCount = (actor) => {
+    const rate = resolveActorRate(actor);
+    if (rate === null) {
+        return 0;
+    }
+
+    return Math.max(0, Math.min(5, Math.round(Number(rate))));
+};
+const isActorLiked = (actor) => {
+    const actorId = actor?.id;
+    if (actorId === null || actorId === undefined) {
+        return false;
+    }
+
+    if (Object.prototype.hasOwnProperty.call(likedActorMap.value, actorId)) {
+        return Boolean(likedActorMap.value[actorId]);
+    }
+
+    return Boolean(actor?.is_liked);
+};
+const isLikeProcessing = (actor) => {
+    const actorId = actor?.id;
+    if (actorId === null || actorId === undefined) {
+        return false;
+    }
+
+    return Boolean(likeProcessingMap.value[actorId]);
+};
+const toggleActorLike = async (actor) => {
+    const actorId = actor?.id;
+    if (!hasAuthUser.value || actorId === null || actorId === undefined || isLikeProcessing(actor)) {
+        return;
+    }
+
+    likeProcessingMap.value = {
+        ...likeProcessingMap.value,
+        [actorId]: true,
+    };
+
+    try {
+        const response = await axios.post(route('jav.api.toggle-like'), {
+            id: actorId,
+            type: 'actor',
+        });
+
+        if (response.data?.success) {
+            const liked = Boolean(response.data?.liked);
+            likedActorMap.value = {
+                ...likedActorMap.value,
+                [actorId]: liked,
+            };
+
+            uiStore.showToast(
+                liked ? 'Added actor to favorites' : 'Removed actor from favorites',
+                'success'
+            );
+        }
+    } catch (error) {
+        uiStore.showToast('Failed to update actor favorite status', 'error');
+    } finally {
+        likeProcessingMap.value = {
+            ...likeProcessingMap.value,
+            [actorId]: false,
+        };
+    }
+};
+const resolveActorAge = (actor) => {
+    const directAge = Number(actor?.age);
+    if (Number.isFinite(directAge) && directAge > 0) {
+        return directAge;
+    }
+
+    const rawBirthDate = actor?.birth_date || actor?.xcity_birth_date || null;
+    if (!rawBirthDate) {
+        return null;
+    }
+
+    const birthDate = new Date(rawBirthDate);
+    if (Number.isNaN(birthDate.getTime())) {
+        return null;
+    }
+
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const hasNotHadBirthday =
+        today.getMonth() < birthDate.getMonth()
+        || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate());
+
+    if (hasNotHadBirthday) {
+        age -= 1;
+    }
+
+    return age >= 0 ? age : null;
+};
+const isAgeFilterActive = (age) => {
+    return String(filterForm.value.age || '') === String(age);
+};
+const filterByAge = (age) => {
+    if (age === null || age === undefined) {
+        return;
+    }
+
+    filterForm.value.age = String(age);
+    filterForm.value.age_min = '';
+    filterForm.value.age_max = '';
+
+    router.get(route('jav.vue.actors'), paramsForSearch(), {
+        preserveScroll: true,
+    });
+};
 
 const parseUrlParams = (url) => {
     try {
@@ -47,6 +235,47 @@ const loadMore = () => {
             loadingMore.value = false;
         },
     });
+};
+
+const paramsForSearch = () => {
+    return {
+        q: filterForm.value.q || '',
+        tag: filterForm.value.tag || '',
+        tags: normalizedTags.value,
+        tags_mode: filterForm.value.tags_mode || 'any',
+        age: filterForm.value.age || '',
+        age_min: filterForm.value.age_min || '',
+        age_max: filterForm.value.age_max || '',
+        bio_filters: filteredBioFilters.value,
+        bio_key: filteredBioFilters.value[0]?.key || '',
+        bio_value: filteredBioFilters.value[0]?.value || '',
+        sort: props.sort || 'javs_count',
+        direction: props.direction || 'desc',
+    };
+};
+
+const submitSearch = () => {
+    router.get(route('jav.vue.actors'), paramsForSearch(), {
+        preserveScroll: true,
+    });
+};
+const applySort = (sort, direction) => {
+    const params = paramsForSearch();
+    params.sort = sort;
+    params.direction = direction;
+
+    router.get(route('jav.vue.actors'), params, {
+        preserveScroll: true,
+    });
+};
+const addBioFilter = () => {
+    bioFilters.value.push({ key: '', value: '' });
+};
+const removeBioFilter = (index) => {
+    if (bioFilters.value.length <= 1) {
+        return;
+    }
+    bioFilters.value.splice(index, 1);
 };
 
 onMounted(() => {
@@ -86,60 +315,148 @@ watch(
     },
     { deep: true }
 );
+
+watch(
+    () => props.query,
+    (incoming) => {
+        filterForm.value.q = incoming || '';
+    }
+);
+watch(
+    () => [props.query, props.filters, props.tagsInput],
+    () => {
+        filterForm.value.q = props.query || '';
+        filterForm.value.tag = props.tagsInput || props.filters?.tag || '';
+        filterForm.value.tags_mode = props.filters?.tags_mode || 'any';
+        filterForm.value.age = props.filters?.age ?? '';
+        filterForm.value.age_min = props.filters?.age_min ?? '';
+        filterForm.value.age_max = props.filters?.age_max ?? '';
+        bioFilters.value = (props.filters?.bio_filters && props.filters.bio_filters.length > 0)
+            ? props.filters.bio_filters.map((row) => ({
+                key: row?.key || '',
+                value: row?.value || '',
+            }))
+            : [{ key: '', value: '' }];
+    },
+    { deep: true }
+);
 </script>
 
 <template>
     <Head title="Actors" />
 
-    <DashboardLayout>
-        <div class="container-fluid">
-            <div class="row mb-4">
-                <div class="col-md-12">
+    
+        <div class="ui-container-fluid">
+            <div class="ui-row mb-4">
+                <div class="ui-col-md-12">
                     <h2>Actors</h2>
                 </div>
             </div>
 
-            <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
-                <div v-for="actor in visibleActors" :key="actor.id" class="col">
-                    <div class="card h-100 shadow-sm hover-shadow">
-                        <div class="position-relative">
-                            <img
-                                :src="actor.cover"
-                                class="card-img-top"
-                                :alt="actor.name"
-                                @error="(e) => { e.target.src = 'https://placehold.co/300x400?text=No+Image'; }"
+            <OrderingBar
+                :total-matches="matchedActorsTotal"
+                :loaded-matches="visibleActors.length"
+                :has-auth-user="false"
+                :show-save-button="false"
+                :show-save-form="false"
+                :show-preset-section="false"
+                :show-sort-section="true"
+                :sort="sort || 'javs_count'"
+                :direction="direction || 'desc'"
+                :options="actorSortOptions"
+                @sort-selected="applySort($event.sort, $event.direction)"
+            />
+
+            <AdvancedSearchForm
+                :filter-form="filterForm"
+                :bio-filters="bioFilters"
+                :available-bio-keys="availableBioKeys"
+                :tag-suggestions="tagSuggestions"
+                :bio-value-suggestions="bioValueSuggestions"
+                context="actors"
+                reset-route-name="jav.vue.actors"
+                @submit="submitSearch"
+                @add-bio-filter="addBioFilter"
+                @remove-bio-filter="removeBioFilter"
+            />
+
+            <div class="ui-row ui-row-cols-2 ui-row-cols-md-4 ui-row-cols-lg-6 ui-g-4">
+                <div v-for="actor in visibleActors" :key="actor.id" class="ui-col">
+                    <div class="ui-card u-h-full u-shadow-sm hover-shadow">
+                        <div class="u-relative">
+                            <Link :href="route('jav.vue.actors.bio', actor.uuid || actor.id)">
+                                <img
+                                    :src="actor.cover"
+                                    class="ui-card-img-top"
+                                    :alt="actor.name"
+                                    @error="(e) => { e.target.src = 'https://placehold.co/300x400?text=No+Image'; }"
+                                >
+                            </Link>
+                            <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
+                                <small><i class="fas fa-heart"></i> {{ formatCount(actor.favorites_count) }}</small>
+                                <small class="ml-2"><i class="fas fa-eye"></i> {{ formatCount(actor.jav_views) }}</small>
+                                <small v-if="resolveActorRate(actor) !== null" class="ml-2"><i class="fas fa-star"></i> {{ formatRate(resolveActorRate(actor)) }}</small>
+                            </div>
+                            <div
+                                v-if="resolveActorAge(actor) !== null"
+                                class="u-absolute u-top-0 u-left-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded actor-age-chip"
+                                :class="{ 'actor-age-chip-active': isAgeFilterActive(resolveActorAge(actor)) }"
+                                role="button"
+                                title="Filter by this age"
+                                @click.stop="filterByAge(resolveActorAge(actor))"
                             >
+                                <small><i class="fas fa-user-clock"></i> {{ resolveActorAge(actor) }}</small>
+                            </div>
                         </div>
-                        <div class="card-body text-center">
-                            <h5 class="card-title text-truncate" :title="actor.name">{{ actor.name }}</h5>
-                            <span class="badge bg-secondary">{{ actor.javs_count || 0 }} JAVs</span>
-                            <div class="mt-3 d-grid gap-2">
-                                <Link :href="route('jav.vue.actors.bio', actor.uuid || actor.id)" class="btn btn-outline-primary btn-sm">
-                                    <i class="fas fa-id-card me-1"></i> Bio
-                                </Link>
-                                <Link :href="route('jav.vue.dashboard', { actor: actor.name })" class="btn btn-outline-success btn-sm">
-                                    <i class="fas fa-film me-1"></i> JAVs
-                                </Link>
+                        <div class="ui-card-body u-text-center">
+                            <h5 class="ui-card-title u-truncate" :title="actor.name">{{ actor.name }}</h5>
+                            <span class="ui-badge u-bg-secondary">{{ actor.javs_count || 0 }} JAVs</span>
+                            <div class="mt-2 u-flex gap-2 actor-actions">
+                                <button
+                                    v-if="hasAuthUser"
+                                    type="button"
+                                    class="ui-btn ui-btn-sm u-z-2 u-relative"
+                                    :class="isActorLiked(actor) ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
+                                    :disabled="isLikeProcessing(actor)"
+                                    title="Like actor"
+                                    @click.prevent="toggleActorLike(actor)"
+                                >
+                                    <i :class="isActorLiked(actor) ? 'fas fa-heart' : 'far fa-heart'"></i>
+                                </button>
+                                <div class="quick-rating-group u-flex u-items-center ml-auto">
+                                    <button
+                                        v-for="star in 5"
+                                        :key="`actor-rate-${actor.id}-${star}`"
+                                        type="button"
+                                        class="ui-btn ui-btn-link ui-btn-sm p-0 mx-1 quick-rate-btn u-z-2 u-relative"
+                                        :class="actorStarCount(actor) >= star ? 'u-text-warning' : 'u-text-secondary'"
+                                        :title="`Actor rate ${star}`"
+                                        tabindex="-1"
+                                    >
+                                        <i class="fas fa-star"></i>
+                                    </button>
+                                    <small v-if="resolveActorRate(actor) !== null" class="ml-1 u-text-muted">{{ formatRate(resolveActorRate(actor)) }}/5</small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div v-if="visibleActors.length === 0" class="col-12">
-                    <div class="alert alert-warning text-center">
+                <div v-if="visibleActors.length === 0" class="ui-col-12">
+                    <div class="ui-alert ui-alert-warning u-text-center">
                         No actors found.
                     </div>
                 </div>
             </div>
 
             <div ref="sentinelRef" id="sentinel"></div>
-            <div v-if="loadingMore" id="loading-spinner" class="text-center my-4">
-                <div class="spinner-border text-primary" role="status">
+            <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
+                <div class="ui-spinner u-text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
         </div>
-    </DashboardLayout>
+    
 </template>
 
 <style scoped>
@@ -149,5 +466,17 @@ watch(
 
 .hover-shadow:hover {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.actor-age-chip {
+    cursor: pointer;
+}
+
+.actor-age-chip-active {
+    background-color: #0d6efd !important;
+}
+
+.actor-actions .quick-rate-btn {
+    pointer-events: none;
 }
 </style>

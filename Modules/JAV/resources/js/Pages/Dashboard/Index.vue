@@ -1,9 +1,17 @@
 <script setup>
-import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
+import { useInfiniteQuery } from '@tanstack/vue-query';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Navigation, Pagination, A11y } from 'swiper/modules';
+import axios from 'axios';
 import MovieCard from '@jav/Components/MovieCard.vue';
+import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
+import AdvancedSearchForm from '@jav/Components/Search/AdvancedSearchForm.vue';
 import { useUIStore } from '@jav/Stores/ui';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 const props = defineProps({
     items: Object,
@@ -27,11 +35,16 @@ const props = defineProps({
 const uiStore = useUIStore();
 const page = usePage();
 const hasAuthUser = computed(() => Boolean(page.props.auth?.user));
-const visibleItems = ref([...(props.items?.data || [])]);
-const nextPageUrl = ref(props.items?.next_page_url || null);
-const loadingMore = ref(false);
 const sentinelRef = ref(null);
+const showSavePreset = ref(false);
 let observer = null;
+const continueWatchingModules = [Navigation, Pagination, A11y];
+const continueWatchingBreakpoints = {
+    0: { slidesPerView: 1.1, spaceBetween: 12 },
+    576: { slidesPerView: 2.1, spaceBetween: 12 },
+    992: { slidesPerView: 3.1, spaceBetween: 16 },
+    1200: { slidesPerView: 4.1, spaceBetween: 16 },
+};
 
 const presetName = ref('');
 const filterForm = ref({
@@ -53,20 +66,6 @@ const bioFilters = ref(
         : [{ key: '', value: '' }]
 );
 
-const sortOptions = [
-    { label: 'Date (Newest)', sort: 'created_at', direction: 'desc' },
-    { label: 'Date (Oldest)', sort: 'created_at', direction: 'asc' },
-    { label: 'Most Viewed', sort: 'views', direction: 'desc' },
-    { label: 'Least Viewed', sort: 'views', direction: 'asc' },
-    { label: 'Most Downloaded', sort: 'downloads', direction: 'desc' },
-    { label: 'Least Downloaded', sort: 'downloads', direction: 'asc' },
-];
-
-const currentSortLabel = computed(() => {
-    const current = sortOptions.find((opt) => opt.sort === props.sort && opt.direction === props.direction);
-    return current ? current.label : 'Date';
-});
-
 const normalizedTags = computed(() => {
     return String(filterForm.value.tag || '')
         .split(',')
@@ -77,6 +76,130 @@ const normalizedTags = computed(() => {
 const filteredBioFilters = computed(() => {
     return bioFilters.value.filter((row) => row.key || row.value);
 });
+
+const normalizeTagLabel = (value) => {
+    const raw = String(value || '');
+    let decoded = raw;
+    try {
+        decoded = decodeURIComponent(raw);
+    } catch (error) {
+        decoded = raw;
+    }
+
+    return decoded.trim().replace(/\s+/g, ' ').toLowerCase();
+};
+
+const selectedDashboardTags = computed(() => {
+    const fromArray = Array.isArray(props.filters?.tags) ? props.filters.tags : [];
+    const fromCsv = String(props.tagsInput || props.filters?.tag || '')
+        .split(',')
+        .map((value) => normalizeTagLabel(value))
+        .filter((value) => value !== '');
+    const fromUrl = [];
+
+    if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+
+        for (const [key, rawValue] of params.entries()) {
+            if (key === 'tag') {
+                String(rawValue || '')
+                    .split(',')
+                    .map((value) => normalizeTagLabel(value))
+                    .filter((value) => value !== '')
+                    .forEach((value) => fromUrl.push(value));
+                continue;
+            }
+
+            if (key === 'tags' || key === 'tags[]' || /^tags\[\d+\]$/.test(key)) {
+                const normalized = normalizeTagLabel(rawValue);
+                if (normalized !== '') {
+                    fromUrl.push(normalized);
+                }
+            }
+        }
+    }
+
+    const normalizedFromArray = fromArray
+        .map((value) => normalizeTagLabel(value))
+        .filter((value) => value !== '');
+
+    return [...new Set([...normalizedFromArray, ...fromCsv, ...fromUrl])];
+});
+
+const dashboardParams = computed(() => {
+    const params = {
+        q: props.query || '',
+        actor: props.filters?.actor || '',
+        tag: props.tagsInput || props.filters?.tag || '',
+        tags: props.filters?.tags || [],
+        tags_mode: props.filters?.tags_mode || 'any',
+        age: props.filters?.age || '',
+        age_min: props.filters?.age_min || '',
+        age_max: props.filters?.age_max || '',
+        bio_filters: props.filters?.bio_filters || [],
+        bio_key: props.filters?.bio_key || '',
+        bio_value: props.filters?.bio_value || '',
+        sort: props.sort || '',
+        direction: props.direction || 'desc',
+        preset: props.preset || 'default',
+    };
+
+    if (props.savedPresetIndex !== null && props.savedPresetIndex !== undefined) {
+        params.saved_preset = props.savedPresetIndex;
+    }
+
+    return params;
+});
+
+const dashboardQueryKey = computed(() => ['dashboard-items', dashboardParams.value]);
+
+const parsePageFromUrl = (url) => {
+    if (!url) {
+        return undefined;
+    }
+
+    try {
+        const parsed = new URL(url, window.location.origin);
+        const page = Number(parsed.searchParams.get('page'));
+        return Number.isFinite(page) && page > 0 ? page : undefined;
+    } catch (error) {
+        return undefined;
+    }
+};
+
+const dashboardItemsQuery = useInfiniteQuery({
+    queryKey: dashboardQueryKey,
+    initialPageParam: Number(props.items?.current_page || 1),
+    queryFn: async ({ pageParam }) => {
+        const response = await axios.get(route('jav.api.dashboard.items'), {
+            params: {
+                ...dashboardParams.value,
+                page: pageParam,
+            },
+        });
+
+        return response.data;
+    },
+    getNextPageParam: (lastPage) => parsePageFromUrl(lastPage?.next_page_url),
+    initialData: () => ({
+        pageParams: [Number(props.items?.current_page || 1)],
+        pages: [props.items || { data: [], current_page: 1, next_page_url: null }],
+    }),
+});
+
+const visibleItems = computed(() => {
+    return (dashboardItemsQuery.data.value?.pages || []).flatMap((pageData) => pageData?.data || []);
+});
+const matchedItemsTotal = computed(() => {
+    const firstPage = dashboardItemsQuery.data.value?.pages?.[0];
+    const total = Number(firstPage?.total);
+    return Number.isFinite(total) ? total : visibleItems.value.length;
+});
+
+const loadingMore = computed(() => dashboardItemsQuery.isFetchingNextPage.value);
+const isRefreshingItems = computed(() => dashboardItemsQuery.isFetching.value && !dashboardItemsQuery.isFetchingNextPage.value);
+const hasItemsQueryError = computed(() => dashboardItemsQuery.isError.value);
+const itemsQueryErrorMessage = computed(() => dashboardItemsQuery.error.value?.message || 'Could not refresh dashboard items.');
 
 const paramsForSearch = () => {
     const params = {
@@ -130,13 +253,6 @@ const removeBioFilter = (index) => {
     bioFilters.value.splice(index, 1);
 };
 
-const bioValueListId = (bioKey) => {
-    const normalized = String(bioKey || '').trim().toLowerCase().replace(/\s+/g, '_');
-    return Object.prototype.hasOwnProperty.call(props.bioValueSuggestions || {}, normalized)
-        ? `bio-values-${normalized}`
-        : 'bio-values-all';
-};
-
 const savePreset = () => {
     if (!presetName.value.trim()) {
         uiStore.showToast('Preset name is required', 'error');
@@ -182,40 +298,12 @@ const continueWatchingTitle = (title) => {
     return `${text.slice(0, 55)}...`;
 };
 
-const parseUrlParams = (url) => {
-    try {
-        const parsed = new URL(url, window.location.origin);
-        return Object.fromEntries(parsed.searchParams.entries());
-    } catch (error) {
-        return {};
-    }
-};
-
 const loadMore = () => {
-    if (loadingMore.value || !nextPageUrl.value) {
+    if (loadingMore.value || !dashboardItemsQuery.hasNextPage.value) {
         return;
     }
 
-    loadingMore.value = true;
-    const params = parseUrlParams(nextPageUrl.value);
-
-    router.get(route('jav.vue.dashboard'), params, {
-        preserveState: true,
-        preserveScroll: true,
-        only: ['items'],
-        onSuccess: (visit) => {
-            const incoming = visit?.props?.items;
-            if (incoming?.data) {
-                visibleItems.value = [...visibleItems.value, ...incoming.data];
-                nextPageUrl.value = incoming.next_page_url || null;
-            } else {
-                nextPageUrl.value = null;
-            }
-        },
-        onFinish: () => {
-            loadingMore.value = false;
-        },
-    });
+    dashboardItemsQuery.fetchNextPage();
 };
 
 const setupObserver = () => {
@@ -234,23 +322,6 @@ const setupObserver = () => {
     observer.observe(sentinelRef.value);
 };
 
-watch(
-    () => props.items,
-    (incoming) => {
-        if (!incoming) {
-            visibleItems.value = [];
-            nextPageUrl.value = null;
-            return;
-        }
-
-        if (Number(incoming.current_page || 1) <= 1) {
-            visibleItems.value = [...(incoming.data || [])];
-        }
-        nextPageUrl.value = incoming.next_page_url || null;
-    },
-    { deep: true }
-);
-
 onMounted(() => {
     setupObserver();
 });
@@ -266,244 +337,186 @@ onBeforeUnmount(() => {
 <template>
     <Head title="JAV Dashboard" />
 
-    <DashboardLayout>
-        <div class="container-fluid">
-            <div class="row mb-3">
-                <div class="col-md-8">
-                    <h2>Movies</h2>
-                    <span v-if="filters?.actor" class="badge bg-primary fs-6">
+    
+        <div class="ui-container-fluid">
+            <div class="ui-row mb-3">
+                <div class="ui-col-md-12">
+                    <h2>
+                        Movies
+                        <span v-if="isRefreshingItems" class="ui-badge u-bg-light u-text-dark u-border ml-2">Refreshing...</span>
+                    </h2>
+                    <span v-if="filters?.actor" class="ui-badge u-bg-primary fs-6">
                         Actor: {{ filters.actor }}
-                        <Link :href="route('jav.vue.dashboard')" class="text-white ms-2"><i class="fas fa-times"></i></Link>
+                        <Link :href="route('jav.vue.dashboard')" class="u-text-white ml-2"><i class="fas fa-times"></i></Link>
                     </span>
-                    <span v-if="filters?.tags && filters.tags.length > 0" class="badge bg-info fs-6">
+                    <span v-if="filters?.tags && filters.tags.length > 0" class="ui-badge u-bg-info fs-6">
                         Tags: {{ filters.tags.join(', ') }}
-                        <Link :href="route('jav.vue.dashboard')" class="text-white ms-2"><i class="fas fa-times"></i></Link>
+                        <Link :href="route('jav.vue.dashboard')" class="u-text-white ml-2"><i class="fas fa-times"></i></Link>
                     </span>
-                    <span v-if="filters?.age" class="badge bg-secondary fs-6">Age: {{ filters.age }}</span>
-                    <span v-else-if="filters?.age_min || filters?.age_max" class="badge bg-secondary fs-6">
+                    <span v-if="filters?.age" class="ui-badge u-bg-secondary fs-6">Age: {{ filters.age }}</span>
+                    <span v-else-if="filters?.age_min || filters?.age_max" class="ui-badge u-bg-secondary fs-6">
                         Age Range: {{ filters.age_min || 'Any' }} - {{ filters.age_max || 'Any' }}
                     </span>
-                    <span v-for="(bioFilter, index) in (filters?.bio_filters || [])" :key="`bio-badge-${index}`" class="badge bg-dark fs-6">
+                    <span v-for="(bioFilter, index) in (filters?.bio_filters || [])" :key="`bio-badge-${index}`" class="ui-badge u-bg-dark fs-6">
                         <template v-if="bioFilter?.key || bioFilter?.value">
                             Bio: {{ bioFilter?.key || 'Any' }} = {{ bioFilter?.value || 'Any' }}
                         </template>
                     </span>
                 </div>
-                <div class="col-md-4 text-md-end">
-                    <button v-if="hasAuthUser" class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#savePresetBox">
-                        <i class="fas fa-save me-1"></i>Save Current As Preset
-                    </button>
-                </div>
             </div>
 
-            <div v-if="hasAuthUser" class="collapse mb-3" id="savePresetBox">
-                <div class="card card-body">
-                    <form class="row g-2 align-items-end" @submit.prevent="savePreset">
-                        <div class="col-md-4">
-                            <label class="form-label">Preset Name</label>
-                            <input v-model="presetName" type="text" class="form-control" maxlength="60" required>
-                        </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-primary w-100" type="submit">Save Preset</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            <OrderingBar
+                :built-in-presets="builtInPresets"
+                :preset="preset"
+                :saved-presets="savedPresets"
+                :saved-preset-index="savedPresetIndex"
+                :query="query"
+                :has-auth-user="hasAuthUser"
+                :show-save-preset="showSavePreset"
+                :preset-name="presetName"
+                :sort="sort"
+                :direction="direction"
+                :total-matches="matchedItemsTotal"
+                :loaded-matches="visibleItems.length"
+                @toggle-save-preset="showSavePreset = !showSavePreset"
+                @update:preset-name="presetName = $event"
+                @save-preset="savePreset"
+                @delete-preset="deletePreset"
+                @sort-selected="applySort($event.sort, $event.direction)"
+            />
 
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="d-flex flex-wrap gap-2 mb-2">
-                        <Link
-                            v-for="(presetLabel, presetKey) in (builtInPresets || {})"
-                            :key="`built-in-${presetKey}`"
-                            :href="route('jav.vue.dashboard', { preset: presetKey, q: query || '' })"
-                            class="btn btn-sm"
-                            :class="preset === presetKey && (savedPresetIndex === null || savedPresetIndex === undefined) ? 'btn-primary' : 'btn-outline-primary'"
-                        >
-                            {{ presetLabel }}
-                        </Link>
-                    </div>
-
-                    <div v-if="savedPresets && savedPresets.length > 0" class="d-flex flex-wrap gap-2">
-                        <template v-for="(saved, index) in savedPresets" :key="`saved-preset-${index}`">
-                            <Link
-                                :href="route('jav.vue.dashboard', { saved_preset: index })"
-                                class="btn btn-sm"
-                                :class="savedPresetIndex === index ? 'btn-success' : 'btn-outline-success'"
-                            >
-                                {{ saved?.name || `Preset ${index + 1}` }}
-                            </Link>
-                            <button type="button" class="btn btn-sm btn-outline-danger" title="Delete preset" @click="deletePreset(index)">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </template>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card mb-3">
-                <div class="card-body">
-                    <form id="advancedSearchForm" class="row g-2 align-items-end" @submit.prevent="submitSearch">
-                        <div class="col-md-3">
-                            <label class="form-label">Keyword</label>
-                            <input v-model="filterForm.q" type="text" name="q" class="form-control" placeholder="Code, title, description">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Actor</label>
-                            <input v-model="filterForm.actor" type="text" name="actor" list="actor-suggestions" class="form-control" placeholder="Name or names, comma-separated">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Tags (multi)</label>
-                            <input v-model="filterForm.tag" type="text" name="tag" list="tag-suggestions" class="form-control" placeholder="Tag A, Tag B, Tag C">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Tags Mode</label>
-                            <select v-model="filterForm.tags_mode" name="tags_mode" class="form-select">
-                                <option value="any">Match Any</option>
-                                <option value="all">Match All</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Exact Age</label>
-                            <input v-model="filterForm.age" type="number" min="18" max="99" name="age" class="form-control" placeholder="e.g. 25">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Age Min</label>
-                            <input v-model="filterForm.age_min" type="number" min="18" max="99" name="age_min" class="form-control">
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Age Max</label>
-                            <input v-model="filterForm.age_max" type="number" min="18" max="99" name="age_max" class="form-control">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Bio Filters</label>
-                            <button type="button" class="btn btn-sm btn-outline-primary w-100" @click="addBioFilter">
-                                <i class="fas fa-plus me-1"></i>Add Bio Filter
-                            </button>
-                        </div>
-                        <div class="col-md-12">
-                            <div id="bioFilterContainer">
-                                <div
-                                    v-for="(bioFilter, bioIndex) in bioFilters"
-                                    :key="`bio-row-${bioIndex}`"
-                                    class="row g-2 align-items-end bio-filter-row mb-2"
-                                >
-                                    <div class="col-md-4">
-                                        <label class="form-label mb-1">Bio Key</label>
-                                        <input
-                                            v-model="bioFilter.key"
-                                            type="text"
-                                            class="form-control bio-key-input"
-                                            :name="`bio_filters[${bioIndex}][key]`"
-                                            list="bio-keys"
-                                            placeholder="e.g. blood_type"
-                                        >
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label mb-1">Bio Value</label>
-                                        <input
-                                            v-model="bioFilter.value"
-                                            type="text"
-                                            class="form-control bio-value-input"
-                                            :name="`bio_filters[${bioIndex}][value]`"
-                                            :list="bioValueListId(bioFilter.key)"
-                                            placeholder="e.g. A, Tokyo"
-                                        >
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="button" class="btn btn-outline-danger w-100 remove-bio-filter-btn" :disabled="bioFilters.length === 1 && bioIndex === 0" @click="removeBioFilter(bioIndex)">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-search me-1"></i>Apply</button>
-                        </div>
-                        <div class="col-md-2">
-                            <Link :href="route('jav.vue.dashboard')" class="btn btn-outline-secondary w-100">Reset</Link>
-                        </div>
-                    </form>
-
-                    <datalist id="actor-suggestions">
-                        <option v-for="actorName in (actorSuggestions || [])" :key="`actor-suggestion-${actorName}`" :value="actorName"></option>
-                    </datalist>
-
-                    <datalist id="tag-suggestions">
-                        <option v-for="tagName in (tagSuggestions || [])" :key="`tag-suggestion-${tagName}`" :value="tagName"></option>
-                    </datalist>
-
-                    <datalist id="bio-keys">
-                        <option v-for="(label, key) in (availableBioKeys || {})" :key="`bio-key-${key}`" :value="key">{{ label }}</option>
-                    </datalist>
-
-                    <datalist id="bio-values-all">
-                        <template v-for="(valueList, bioKey) in (bioValueSuggestions || {})" :key="`bio-values-all-${bioKey}`">
-                            <option v-for="value in valueList" :key="`bio-values-all-${bioKey}-${value}`" :value="value"></option>
-                        </template>
-                    </datalist>
-
-                    <datalist v-for="(valueList, bioKey) in (bioValueSuggestions || {})" :id="`bio-values-${bioKey}`" :key="`bio-values-${bioKey}`">
-                        <option v-for="value in valueList" :key="`bio-values-${bioKey}-${value}`" :value="value"></option>
-                    </datalist>
-                </div>
-            </div>
+            <AdvancedSearchForm
+                :filter-form="filterForm"
+                :bio-filters="bioFilters"
+                :available-bio-keys="availableBioKeys"
+                :actor-suggestions="actorSuggestions"
+                :tag-suggestions="tagSuggestions"
+                :bio-value-suggestions="bioValueSuggestions"
+                @submit="submitSearch"
+                @add-bio-filter="addBioFilter"
+                @remove-bio-filter="removeBioFilter"
+            />
 
             <div v-if="continueWatching && continueWatching.length > 0" class="mb-4">
                 <h5 class="mb-3">Continue Watching</h5>
-                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3">
-                    <div v-for="record in continueWatching" :key="`continue-${record.id}`" class="col">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <Link :href="route('jav.vue.movies.show', record.jav.uuid || record.jav.id)" class="text-decoration-none">
+                <Swiper
+                    :modules="continueWatchingModules"
+                    :breakpoints="continueWatchingBreakpoints"
+                    :slides-per-view="1.1"
+                    :space-between="12"
+                    :navigation="true"
+                    :pagination="{ clickable: true }"
+                    class="continue-watching-swiper pb-4"
+                >
+                    <SwiperSlide v-for="record in continueWatching" :key="`continue-${record.id}`">
+                        <div class="ui-card u-h-full">
+                            <div class="ui-card-body">
+                                <Link :href="route('jav.vue.movies.show', record.jav.uuid || record.jav.id)" class="u-no-underline">
                                     <h6 class="mb-1">{{ record.jav.formatted_code }}</h6>
-                                    <div class="text-muted small">{{ continueWatchingTitle(record.jav.title) }}</div>
+                                    <div class="u-text-muted small">{{ continueWatchingTitle(record.jav.title) }}</div>
                                 </Link>
                                 <div class="mt-2">
-                                    <span class="badge" :class="record.action === 'download' ? 'bg-success' : 'bg-info'">
+                                    <span class="ui-badge" :class="record.action === 'download' ? 'u-bg-success' : 'u-bg-info'">
                                         {{ String(record.action || '').charAt(0).toUpperCase() + String(record.action || '').slice(1) }}
                                     </span>
-                                    <small class="text-muted ms-2">Last activity: {{ record.updated_at_human || record.updated_at }}</small>
+                                    <small class="u-text-muted ml-2">Last activity: {{ record.updated_at_human || record.updated_at }}</small>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </SwiperSlide>
+                </Swiper>
             </div>
 
-            <div class="row mb-3 justify-content-end">
-                <div class="col-auto">
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                            Sort By: {{ currentSortLabel }}
+            <div id="lazy-container" class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-4 ui-g-4">
+                <div v-if="hasItemsQueryError" class="ui-col-12">
+                    <div class="ui-alert ui-alert-danger u-flex u-justify-between u-items-center mb-0">
+                        <span>{{ itemsQueryErrorMessage }}</span>
+                        <button type="button" class="ui-btn ui-btn-sm ui-btn-outline-danger" title="Retry loading items" aria-label="Retry loading items" @click="dashboardItemsQuery.refetch()">
+                            <i class="fas fa-rotate-right"></i>
                         </button>
-                        <ul class="dropdown-menu">
-                            <li v-for="opt in sortOptions" :key="`sort-${opt.sort}-${opt.direction}`">
-                                <a class="dropdown-item" href="#" @click.prevent="applySort(opt.sort, opt.direction)">{{ opt.label }}</a>
-                            </li>
-                        </ul>
                     </div>
                 </div>
-            </div>
 
-            <div id="lazy-container" class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-                <MovieCard v-for="item in visibleItems" :key="item.id" :item="item" />
+                <MovieCard
+                    v-for="item in visibleItems"
+                    :key="item.id"
+                    :item="item"
+                    :active-tags="selectedDashboardTags"
+                />
 
-                <div v-if="visibleItems.length === 0" class="col-12">
-                    <div class="alert alert-warning text-center">
+                <div v-if="visibleItems.length === 0" class="ui-col-12">
+                    <div class="ui-alert ui-alert-warning u-text-center">
                         No movies found.
                     </div>
                 </div>
             </div>
 
             <div ref="sentinelRef" id="sentinel"></div>
-            <div v-if="loadingMore" id="loading-spinner" class="text-center my-4">
-                <div class="spinner-border text-primary" role="status">
+            <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
+                <div class="ui-spinner u-text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
         </div>
-    </DashboardLayout>
+    
 </template>
+
+<style scoped>
+.continue-watching-swiper {
+    --swiper-theme-color: #0d6efd;
+}
+
+.continue-watching-swiper :deep(.swiper-slide) {
+    height: auto;
+}
+
+.continue-watching-swiper :deep(.swiper-button-next),
+.continue-watching-swiper :deep(.swiper-button-prev) {
+    width: 36px;
+    height: 36px;
+    margin-top: -22px;
+    border-radius: 999px;
+    background-color: rgba(33, 37, 41, 0.88);
+    color: #fff;
+    transition: background-color 0.2s ease;
+}
+
+.continue-watching-swiper :deep(.swiper-button-next:hover),
+.continue-watching-swiper :deep(.swiper-button-prev:hover) {
+    background-color: rgba(13, 110, 253, 0.95);
+}
+
+.continue-watching-swiper :deep(.swiper-button-next::after),
+.continue-watching-swiper :deep(.swiper-button-prev::after) {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.continue-watching-swiper :deep(.swiper-pagination-bullet) {
+    width: 9px;
+    height: 9px;
+    background: #adb5bd;
+    opacity: 1;
+}
+
+.continue-watching-swiper :deep(.swiper-pagination-bullet-active) {
+    background: #0d6efd;
+}
+
+.continue-watching-swiper .ui-card {
+    u-border: 1px solid #e9ecef;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.continue-watching-swiper .ui-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.35rem 0.8rem rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 575.98px) {
+    .continue-watching-swiper :deep(.swiper-button-next),
+    .continue-watching-swiper :deep(.swiper-button-prev) {
+        display: none;
+    }
+}
+</style>

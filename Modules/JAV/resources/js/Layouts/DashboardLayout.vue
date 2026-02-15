@@ -1,6 +1,8 @@
 <script setup>
 import { onBeforeUnmount, onMounted, computed, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
+import { useToast } from 'primevue/usetoast';
+import Toast from 'primevue/toast';
 import { useUIStore } from '@jav/Stores/ui';
 import Navbar from './Partials/Navbar.vue';
 import Sidebar from './Partials/Sidebar.vue';
@@ -8,18 +10,16 @@ import Footer from './Partials/Footer.vue';
 
 const uiStore = useUIStore();
 const page = usePage();
+const toast = useToast();
 
 const flashSuccess = computed(() => page.props.flash?.success);
 const flashError = computed(() => page.props.flash?.error);
-
-const toastClass = computed(() => {
-    return uiStore.toast.type === 'success' ? 'bg-success text-white' : 'bg-danger text-white';
-});
 
 const isMobileViewport = () => window.matchMedia('(max-width: 991.98px)').matches;
 
 const syncBodyClasses = () => {
     const userPreferences = page.props.auth?.user?.preferences ?? {};
+    document.body.classList.add('app-dark');
 
     if (userPreferences?.compact_mode) {
         document.body.classList.add('compact-mode');
@@ -76,6 +76,23 @@ onMounted(() => {
 });
 
 watch(
+    () => uiStore.toast,
+    (value) => {
+        if (!value?.show || !value.message) {
+            return;
+        }
+
+        toast.add({
+            severity: value.type === 'success' ? 'success' : 'error',
+            summary: value.type === 'success' ? 'Success' : 'Error',
+            detail: value.message,
+            life: 3000,
+        });
+    },
+    { deep: true }
+);
+
+watch(
     () => [uiStore.sidebarExpanded, uiStore.mobileSidebarOpen, page.props.auth?.user?.preferences],
     () => {
         syncBodyClasses();
@@ -91,31 +108,16 @@ onBeforeUnmount(() => {
 
 <template>
     <div>
+        <Toast position="top-right" />
         <Navbar />
 
-        <div class="container-fluid dashboard-layout">
-            <div class="row g-0">
-                <aside id="sidebarColumn" class="dashboard-sidebar-col d-none d-lg-block col-lg-3 col-xl-2">
+        <div class="ui-container-fluid dashboard-layout">
+            <div class="ui-row ui-g-0">
+                <aside id="sidebarColumn" class="dashboard-sidebar-col u-hidden u-lg-block ui-col-lg-3 ui-col-xl-2">
                     <Sidebar />
                 </aside>
 
-                <main id="mainContentColumn" class="col-12 col-lg-9 col-xl-10 main-content">
-                    <div
-                        v-if="uiStore.toast.show"
-                        class="toast-container position-fixed top-0 end-0 p-3"
-                        style="z-index: 1060; margin-top: 60px;"
-                    >
-                        <div class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
-                            <div class="toast-header" :class="toastClass">
-                                <strong class="me-auto">Notification</strong>
-                                <button type="button" class="btn-close btn-close-white" @click="uiStore.toast.show = false"></button>
-                            </div>
-                            <div class="toast-body text-dark bg-white">
-                                {{ uiStore.toast.message }}
-                            </div>
-                        </div>
-                    </div>
-
+                <main id="mainContentColumn" class="ui-col-12 ui-col-lg-9 ui-col-xl-10 main-content">
                     <slot />
                     <Footer />
                 </main>

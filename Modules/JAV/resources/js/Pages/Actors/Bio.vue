@@ -1,6 +1,5 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
 import MovieCard from '@jav/Components/MovieCard.vue';
 
 const props = defineProps({
@@ -16,37 +15,37 @@ const props = defineProps({
 <template>
     <Head :title="actor.name" />
 
-    <DashboardLayout>
-        <div class="container-fluid">
-            <div class="row mb-4">
-                <div class="col-md-4">
+    
+        <div class="ui-container-fluid">
+            <div class="ui-row mb-4">
+                <div class="ui-col-md-4">
                     <img
                         :src="actor.cover"
-                        class="img-fluid rounded shadow"
+                        class="img-fluid u-rounded u-shadow"
                         :alt="actor.name"
                         @error="(e) => { e.target.src = 'https://placehold.co/400x600?text=No+Image'; }"
                     >
                 </div>
-                <div class="col-md-8">
+                <div class="ui-col-md-8">
                     <h2 class="mb-2">{{ actor.name }}</h2>
                     <div class="mb-3">
-                        <span class="badge bg-secondary">{{ actor.javs_count || 0 }} JAVs</span>
-                        <span v-if="primarySource" class="badge bg-dark">{{ String(primarySource).toUpperCase() }} Primary</span>
-                        <span v-if="primarySyncedAtFormatted" class="badge bg-info text-dark">Synced: {{ primarySyncedAtFormatted }}</span>
+                        <span class="ui-badge u-bg-secondary">{{ actor.javs_count || 0 }} JAVs</span>
+                        <span v-if="primarySource" class="ui-badge u-bg-dark">{{ String(primarySource).toUpperCase() }} Primary</span>
+                        <span v-if="primarySyncedAtFormatted" class="ui-badge u-bg-info u-text-dark">Synced: {{ primarySyncedAtFormatted }}</span>
                     </div>
 
                     <div class="mb-3">
-                        <Link :href="route('jav.vue.dashboard', { actor: actor.name })" class="btn btn-success btn-sm me-2">
-                            <i class="fas fa-film me-1"></i> Show All JAVs
+                        <Link :href="route('jav.vue.dashboard', { actor: actor.name })" class="ui-btn ui-btn-success ui-btn-sm mr-2">
+                            <i class="fas fa-film mr-1"></i> Show All JAVs
                         </Link>
-                        <Link :href="route('jav.vue.actors')" class="btn btn-secondary btn-sm">
-                            <i class="fas fa-arrow-left me-1"></i> Back to Actors
+                        <Link :href="route('jav.vue.actors')" class="ui-btn ui-btn-secondary ui-btn-sm">
+                            <i class="fas fa-arrow-left mr-1"></i> Back to Actors
                         </Link>
                     </div>
 
                     <h5>Bio Profile</h5>
-                    <div v-if="bioProfile && Object.keys(bioProfile).length > 0" class="table-responsive">
-                        <table class="table table-sm table-bordered bg-white">
+                    <div v-if="bioProfile && Object.keys(bioProfile).length > 0" class="ui-table-responsive">
+                        <table class="ui-table ui-table-sm ui-table-bordered u-bg-white">
                             <tbody>
                                 <tr v-for="(value, label) in bioProfile" :key="`bio-${label}`">
                                     <th style="width: 220px;">{{ label }}</th>
@@ -55,7 +54,7 @@ const props = defineProps({
                             </tbody>
                         </table>
                     </div>
-                    <div v-else class="alert alert-warning mb-0">
+                    <div v-else class="ui-alert ui-alert-warning mb-0">
                         No profile data synced yet.
                     </div>
                 </div>
@@ -63,30 +62,30 @@ const props = defineProps({
 
             <hr class="my-4">
 
-            <div class="row mb-3">
-                <div class="col-12">
+            <div class="ui-row mb-3">
+                <div class="ui-col-12">
                     <h4>JAVs</h4>
                 </div>
             </div>
-            <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
+            <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
                 <MovieCard v-for="item in movies.data" :key="item.id" :item="item" />
-                <div v-if="movies.data.length === 0" class="col-12">
-                    <div class="alert alert-warning text-center mb-0">
+                <div v-if="movies.data.length === 0" class="ui-col-12">
+                    <div class="ui-alert ui-alert-warning u-text-center mb-0">
                         No JAVs found for this actor.
                     </div>
                 </div>
             </div>
 
-            <div class="mt-4 d-flex justify-content-center">
+            <div class="mt-4 u-flex u-justify-center">
                 <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li v-for="(link, k) in movies.links" :key="k" class="page-item" :class="{ 'active': link.active, 'disabled': !link.url }">
-                            <Link v-if="link.url" class="page-link" :href="link.url" v-html="link.label" />
-                            <span v-else class="page-link" v-html="link.label"></span>
+                    <ul class="ui-pagination">
+                        <li v-for="(link, k) in movies.links" :key="k" class="ui-page-item" :class="{ 'active': link.active, 'disabled': !link.url }">
+                            <Link v-if="link.url" class="ui-page-link" :href="link.url" v-html="link.label" />
+                            <span v-else class="ui-page-link" v-html="link.label"></span>
                         </li>
                     </ul>
                 </nav>
             </div>
         </div>
-    </DashboardLayout>
+    
 </template>

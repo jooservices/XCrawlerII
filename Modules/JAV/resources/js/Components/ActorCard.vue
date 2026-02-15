@@ -1,14 +1,14 @@
 <template>
-    <div class="card text-center h-100 actor-card">
-        <div class="card-body">
-            <i class="fas fa-user-circle fa-3x text-primary mb-2"></i>
-            <h6 class="card-title mb-1">{{ actor.name }}</h6>
-            <p v-if="actor.movie_count" class="card-text text-muted small mb-0">
+    <div class="ui-card u-text-center u-h-full actor-card">
+        <div class="ui-card-body">
+            <i class="fas fa-user-circle fa-3x u-text-primary mb-2"></i>
+            <h6 class="ui-card-title mb-1">{{ actor.name }}</h6>
+            <p v-if="actor.movie_count" class="ui-card-text u-text-muted small mb-0">
                 {{ actor.movie_count }} movies
             </p>
             <Link
                 :href="`/jav/actors-vue?filter=${actor.name}`"
-                class="btn btn-sm btn-outline-primary mt-2"
+                class="ui-btn ui-btn-sm ui-btn-outline-primary mt-2"
             >
                 View Movies
             </Link>

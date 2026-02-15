@@ -1,7 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import { usePage } from '@inertiajs/vue3';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
 import { computed, ref } from 'vue';
 import axios from 'axios';
 import { useUIStore } from '@jav/Stores/ui';
@@ -55,20 +54,20 @@ const handleFavorite = async () => {
 <template>
     <Head :title="`${jav.formatted_code || jav.code} ${jav.title}`" />
 
-    <DashboardLayout>
-        <div class="container-fluid">
-            <div class="row mb-4">
-                <div class="col-md-6">
+    
+        <div class="ui-container-fluid">
+            <div class="ui-row mb-4">
+                <div class="ui-col-md-6">
                     <img
                         :src="jav.cover"
-                        class="img-fluid rounded shadow"
+                        class="img-fluid u-rounded u-shadow"
                         :alt="jav.formatted_code || jav.code"
                         @error="(e) => { e.target.src = 'https://placehold.co/400x600?text=No+Image'; }"
                     >
                 </div>
-                <div class="col-md-6">
-                    <h2 class="text-primary">{{ jav.formatted_code || jav.code }}</h2>
-                    <h4 class="text-muted">{{ jav.title }}</h4>
+                <div class="ui-col-md-6">
+                    <h2 class="u-text-primary">{{ jav.formatted_code || jav.code }}</h2>
+                    <h4 class="u-text-muted">{{ jav.title }}</h4>
 
                     <div class="mt-3">
                         <p><strong><i class="fas fa-calendar-alt"></i> Date:</strong> {{ formatDate(jav.date) }}</p>
@@ -84,12 +83,12 @@ const handleFavorite = async () => {
                                 v-for="(actor, index) in jav.actors"
                                 :key="`actor-${index}`"
                                 :href="route('jav.vue.dashboard', { actor: resolveName(actor) })"
-                                class="badge bg-success text-decoration-none me-1 mb-1"
+                                class="ui-badge u-bg-success u-no-underline mr-1 mb-1"
                             >
                                 {{ resolveName(actor) }}
                             </Link>
                         </template>
-                        <span v-else class="text-muted">No actors listed</span>
+                        <span v-else class="u-text-muted">No actors listed</span>
                     </div>
 
                     <div class="mb-3">
@@ -99,12 +98,12 @@ const handleFavorite = async () => {
                                 v-for="(tag, index) in jav.tags"
                                 :key="`tag-${index}`"
                                 :href="route('jav.vue.dashboard', { tag: resolveName(tag) })"
-                                class="badge bg-info text-dark text-decoration-none me-1 mb-1"
+                                class="ui-badge u-bg-info u-text-dark u-no-underline mr-1 mb-1"
                             >
                                 {{ resolveName(tag) }}
                             </Link>
                         </template>
-                        <span v-else class="text-muted">No tags listed</span>
+                        <span v-else class="u-text-muted">No tags listed</span>
                     </div>
 
                     <div class="mb-3">
@@ -115,17 +114,17 @@ const handleFavorite = async () => {
                     <div class="mt-4">
                         <button
                             v-if="hasAuthUser"
-                            class="btn btn-lg me-2"
-                            :class="localIsLiked ? 'btn-danger' : 'btn-outline-danger'"
+                            class="ui-btn ui-btn-lg mr-2"
+                            :class="localIsLiked ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
                             :disabled="isProcessing"
                             @click="handleFavorite"
                         >
                             <i class="fas fa-heart"></i> {{ localIsLiked ? 'Liked' : 'Like' }}
                         </button>
-                        <a :href="route('jav.movies.download', jav.uuid || jav.id)" class="btn btn-primary btn-lg me-2">
+                        <a :href="route('jav.movies.download', jav.uuid || jav.id)" class="ui-btn ui-btn-primary ui-btn-lg mr-2">
                             <i class="fas fa-download"></i> Download Torrent
                         </a>
-                        <Link :href="route('jav.vue.dashboard')" class="btn btn-secondary btn-lg">
+                        <Link :href="route('jav.vue.dashboard')" class="ui-btn ui-btn-secondary ui-btn-lg">
                             <i class="fas fa-arrow-left"></i> Back to Dashboard
                         </Link>
                     </div>
@@ -135,29 +134,29 @@ const handleFavorite = async () => {
             <hr class="my-5">
 
             <template v-if="relatedByActors && relatedByActors.length > 0">
-                <div class="row mb-5">
-                    <div class="col-12">
+                <div class="ui-row mb-5">
+                    <div class="ui-col-12">
                         <h3><i class="fas fa-users"></i> Related Movies by Actors</h3>
                     </div>
                 </div>
-                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4 mb-5">
-                    <div v-for="item in relatedByActors" :key="`actor-related-${item.id}`" class="col">
-                        <Link :href="route('jav.vue.movies.show', item.uuid || item.id)" class="text-decoration-none text-dark">
-                            <div class="card h-100 shadow-sm" style="cursor: pointer;">
-                                <div class="position-relative">
+                <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4 mb-5">
+                    <div v-for="item in relatedByActors" :key="`actor-related-${item.id}`" class="ui-col">
+                        <Link :href="route('jav.vue.movies.show', item.uuid || item.id)" class="u-no-underline u-text-dark">
+                            <div class="ui-card u-h-full u-shadow-sm" style="cursor: pointer;">
+                                <div class="u-relative">
                                     <img
                                         :src="item.cover"
-                                        class="card-img-top"
+                                        class="ui-card-img-top"
                                         :alt="item.formatted_code || item.code"
                                         @error="(e) => { e.target.src = 'https://via.placeholder.com/300x400?text=No+Image'; }"
                                     >
-                                    <div class="position-absolute top-0 end-0 bg-dark bg-opacity-75 text-white px-2 py-1 m-2 rounded">
+                                    <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
                                         <small><i class="fas fa-eye"></i> {{ item.views || 0 }}</small>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <h6 class="card-title text-primary">{{ item.formatted_code || item.code }}</h6>
-                                    <p class="card-text text-truncate small" :title="item.title">{{ item.title }}</p>
+                                <div class="ui-card-body">
+                                    <h6 class="ui-card-title u-text-primary">{{ item.formatted_code || item.code }}</h6>
+                                    <p class="ui-card-text u-truncate small" :title="item.title">{{ item.title }}</p>
                                 </div>
                             </div>
                         </Link>
@@ -166,29 +165,29 @@ const handleFavorite = async () => {
             </template>
 
             <template v-if="relatedByTags && relatedByTags.length > 0">
-                <div class="row mb-5">
-                    <div class="col-12">
+                <div class="ui-row mb-5">
+                    <div class="ui-col-12">
                         <h3><i class="fas fa-tags"></i> Related Movies by Tags</h3>
                     </div>
                 </div>
-                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
-                    <div v-for="item in relatedByTags" :key="`tag-related-${item.id}`" class="col">
-                        <Link :href="route('jav.vue.movies.show', item.uuid || item.id)" class="text-decoration-none text-dark">
-                            <div class="card h-100 shadow-sm" style="cursor: pointer;">
-                                <div class="position-relative">
+                <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
+                    <div v-for="item in relatedByTags" :key="`tag-related-${item.id}`" class="ui-col">
+                        <Link :href="route('jav.vue.movies.show', item.uuid || item.id)" class="u-no-underline u-text-dark">
+                            <div class="ui-card u-h-full u-shadow-sm" style="cursor: pointer;">
+                                <div class="u-relative">
                                     <img
                                         :src="item.cover"
-                                        class="card-img-top"
+                                        class="ui-card-img-top"
                                         :alt="item.formatted_code || item.code"
                                         @error="(e) => { e.target.src = 'https://via.placeholder.com/300x400?text=No+Image'; }"
                                     >
-                                    <div class="position-absolute top-0 end-0 bg-dark bg-opacity-75 text-white px-2 py-1 m-2 rounded">
+                                    <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
                                         <small><i class="fas fa-eye"></i> {{ item.views || 0 }}</small>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <h6 class="card-title text-primary">{{ item.formatted_code || item.code }}</h6>
-                                    <p class="card-text text-truncate small" :title="item.title">{{ item.title }}</p>
+                                <div class="ui-card-body">
+                                    <h6 class="ui-card-title u-text-primary">{{ item.formatted_code || item.code }}</h6>
+                                    <p class="ui-card-text u-truncate small" :title="item.title">{{ item.title }}</p>
                                 </div>
                             </div>
                         </Link>
@@ -196,5 +195,5 @@ const handleFavorite = async () => {
                 </div>
             </template>
         </div>
-    </DashboardLayout>
+    
 </template>

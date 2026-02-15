@@ -1,44 +1,44 @@
 <template>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <button class="btn btn-link text-white me-3" @click="toggleSidebar">
+    <nav class="ui-navbar ui-navbar-expand-lg ui-navbar-dark u-bg-dark u-fixed-top">
+        <div class="ui-container-fluid">
+            <button class="ui-btn ui-btn-link u-text-white mr-3" @click="toggleSidebar">
                 <i class="fas fa-bars"></i>
             </button>
 
-            <Link href="/jav/dashboard-vue" class="navbar-brand">
+            <Link href="/jav/dashboard-vue" class="ui-navbar-brand">
                 JAV Collection
             </Link>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <button class="ui-navbar-toggler" type="button" :aria-expanded="navbarOpen ? 'true' : 'false'" @click.stop="navbarOpen = !navbarOpen">
+                <span class="ui-navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <form class="d-flex flex-grow-1 mx-lg-4" @submit.prevent="handleSearch">
+            <div class="collapse ui-navbar-collapse" :class="{ show: navbarOpen }" id="navbarNav">
+                <form class="u-flex u-flex-grow mx-lg-4" @submit.prevent="handleSearch">
                     <input
                         v-model="searchQuery"
-                        class="form-control me-2"
+                        class="ui-form-control mr-2"
                         type="search"
                         placeholder="Search movies..."
                     />
-                    <button class="btn btn-outline-light" type="submit">
+                    <button class="ui-btn ui-btn-outline-light" type="submit">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
 
-                <ul class="navbar-nav ms-auto">
-                    <li v-if="!user" class="nav-item">
-                        <Link href="/login-vue" class="nav-link">Login</Link>
+                <ul class="ui-navbar-nav ml-auto">
+                    <li v-if="!user" class="ui-nav-item">
+                        <Link href="/login-vue" class="ui-nav-link">Login</Link>
                     </li>
-                    <li v-if="!user" class="nav-item">
-                        <Link href="/register-vue" class="nav-link">Register</Link>
+                    <li v-if="!user" class="ui-nav-item">
+                        <Link href="/register-vue" class="ui-nav-link">Register</Link>
                     </li>
-                    <li v-if="user" class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                    <li v-if="user" ref="userMenuRef" class="ui-nav-item ui-dropdown">
+                        <a class="ui-nav-link ui-dropdown-toggle" href="#" :aria-expanded="userMenuOpen ? 'true' : 'false'" @click.prevent.stop="userMenuOpen = !userMenuOpen">
                             {{ user.name }}
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#" @click.prevent="logout">Logout</a></li>
+                        <ul class="ui-dropdown-menu ui-dropdown-menu-end" :class="{ show: userMenuOpen }">
+                            <li><a class="ui-dropdown-item" href="#" @click.prevent="logout">Logout</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { Link, usePage } from '@inertiajs/vue3';
 import { useUIStore } from '../../Stores/ui';
 
@@ -57,6 +57,9 @@ const user = computed(() => page.props.auth?.user);
 const uiStore = useUIStore();
 
 const searchQuery = ref('');
+const navbarOpen = ref(false);
+const userMenuOpen = ref(false);
+const userMenuRef = ref(null);
 
 const toggleSidebar = () => {
     uiStore.toggleSidebar();
@@ -71,4 +74,18 @@ const logout = () => {
     // Placeholder - will implement in Phase 3
     console.log('Logout clicked');
 };
+
+const handleOutsideClick = (event) => {
+    if (userMenuRef.value && !userMenuRef.value.contains(event.target)) {
+        userMenuOpen.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleOutsideClick);
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', handleOutsideClick);
+});
 </script>

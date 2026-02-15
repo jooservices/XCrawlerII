@@ -1,96 +1,97 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
+import MovieCard from '@jav/Components/MovieCard.vue';
 
 const props = defineProps({
     favorites: Object,
 });
 
+const movieFavoriteType = 'Modules\\JAV\\Models\\Jav';
+const actorFavoriteType = 'Modules\\JAV\\Models\\Actor';
+const tagFavoriteType = 'Modules\\JAV\\Models\\Tag';
+
+const isMovieFavorite = (favorite) => favorite?.favoritable_type === movieFavoriteType;
+const toMovieItem = (favorite) => {
+    const movie = favorite?.favoritable || {};
+
+    return {
+        ...movie,
+        actors: Array.isArray(movie.actors) ? movie.actors : [],
+        tags: Array.isArray(movie.tags) ? movie.tags : [],
+        is_liked: true,
+        in_watchlist: Boolean(movie.in_watchlist),
+        watchlist_id: movie.watchlist_id || null,
+        user_rating: movie.user_rating || 0,
+        user_rating_id: movie.user_rating_id || null,
+    };
+};
 </script>
 
 <template>
     <Head title="Favorites" />
 
-    <DashboardLayout>
-        <div class="container-fluid">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2><i class="fas fa-heart text-danger"></i> My Favorites</h2>
-                    <p class="text-muted">Movies, actors, and tags you've liked</p>
+    
+        <div class="ui-container-fluid">
+            <div class="ui-row mb-4">
+                <div class="ui-col-12">
+                    <h2><i class="fas fa-heart u-text-danger"></i> My Favorites</h2>
+                    <p class="u-text-muted">Movies, actors, and tags you've liked</p>
                 </div>
             </div>
 
-            <div v-if="favorites.data.length === 0" class="alert alert-info">
+            <div v-if="favorites.data.length === 0" class="ui-alert ui-alert-info">
                 <i class="fas fa-info-circle"></i> You haven't liked anything yet. Start exploring and save your favorites!
             </div>
 
             <template v-else>
-                <div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-4">
-                    <div v-for="favorite in favorites.data" :key="favorite.id" class="col">
-                        <template v-if="favorite.favoritable_type === 'Modules\\JAV\\Models\\Jav'">
-                            <Link :href="route('jav.vue.movies.show', favorite.favoritable?.uuid || favorite.favoritable?.id)" class="text-decoration-none text-dark">
-                                <div class="card h-100 shadow-sm" style="cursor: pointer;">
-                                    <div class="position-relative">
-                                        <img
-                                            :src="favorite.favoritable?.cover"
-                                            class="card-img-top"
-                                            :alt="favorite.favoritable?.formatted_code"
-                                            @error="(e) => { e.target.src = 'https://placehold.co/300x400?text=No+Image'; }"
-                                        >
-                                        <div class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 m-2 rounded">
-                                            <i class="fas fa-heart"></i>
+                <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
+                    <template v-for="favorite in favorites.data" :key="favorite.id">
+                        <MovieCard
+                            v-if="isMovieFavorite(favorite)"
+                            :item="toMovieItem(favorite)"
+                        />
+
+                        <div v-else class="ui-col">
+                            <template v-if="favorite.favoritable_type === actorFavoriteType">
+                                <Link :href="route('jav.vue.dashboard', { actor: favorite.favoritable?.name })" class="u-no-underline u-text-dark">
+                                    <div class="ui-card u-h-full u-shadow-sm u-bg-success u-bg-opacity-10" style="cursor: pointer;">
+                                        <div class="ui-card-body u-text-center">
+                                            <i class="fas fa-user fa-4x u-text-success mb-3"></i>
+                                            <h5 class="ui-card-title">{{ favorite.favoritable?.name }}</h5>
+                                            <span class="ui-badge u-bg-success"><i class="fas fa-users"></i> Actor</span>
+                                            <p class="u-text-muted small mt-2">Liked {{ favorite.created_at_human || favorite.created_at }}</p>
                                         </div>
                                     </div>
-                                    <div class="card-body">
-                                        <h6 class="card-title text-primary">{{ favorite.favoritable?.formatted_code }}</h6>
-                                        <p class="card-text text-truncate small" :title="favorite.favoritable?.title">
-                                            {{ favorite.favoritable?.title }}
-                                        </p>
-                                        <small class="text-muted">Liked {{ favorite.created_at_human || favorite.created_at }}</small>
-                                    </div>
-                                </div>
-                            </Link>
-                        </template>
+                                </Link>
+                            </template>
 
-                        <template v-else-if="favorite.favoritable_type === 'Modules\\JAV\\Models\\Actor'">
-                            <Link :href="route('jav.vue.dashboard', { actor: favorite.favoritable?.name })" class="text-decoration-none text-dark">
-                                <div class="card h-100 shadow-sm bg-success bg-opacity-10" style="cursor: pointer;">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-user fa-4x text-success mb-3"></i>
-                                        <h5 class="card-title">{{ favorite.favoritable?.name }}</h5>
-                                        <span class="badge bg-success"><i class="fas fa-users"></i> Actor</span>
-                                        <p class="text-muted small mt-2">Liked {{ favorite.created_at_human || favorite.created_at }}</p>
+                            <template v-else-if="favorite.favoritable_type === tagFavoriteType">
+                                <Link :href="route('jav.vue.dashboard', { tag: favorite.favoritable?.name })" class="u-no-underline u-text-dark">
+                                    <div class="ui-card u-h-full u-shadow-sm u-bg-info u-bg-opacity-10" style="cursor: pointer;">
+                                        <div class="ui-card-body u-text-center">
+                                            <i class="fas fa-tag fa-4x u-text-info mb-3"></i>
+                                            <h5 class="ui-card-title">{{ favorite.favoritable?.name }}</h5>
+                                            <span class="ui-badge u-bg-info"><i class="fas fa-tags"></i> Tag</span>
+                                            <p class="u-text-muted small mt-2">Liked {{ favorite.created_at_human || favorite.created_at }}</p>
+                                        </div>
                                     </div>
-                                </div>
-                            </Link>
-                        </template>
-
-                        <template v-else-if="favorite.favoritable_type === 'Modules\\JAV\\Models\\Tag'">
-                            <Link :href="route('jav.vue.dashboard', { tag: favorite.favoritable?.name })" class="text-decoration-none text-dark">
-                                <div class="card h-100 shadow-sm bg-info bg-opacity-10" style="cursor: pointer;">
-                                    <div class="card-body text-center">
-                                        <i class="fas fa-tag fa-4x text-info mb-3"></i>
-                                        <h5 class="card-title">{{ favorite.favoritable?.name }}</h5>
-                                        <span class="badge bg-info"><i class="fas fa-tags"></i> Tag</span>
-                                        <p class="text-muted small mt-2">Liked {{ favorite.created_at_human || favorite.created_at }}</p>
-                                    </div>
-                                </div>
-                            </Link>
-                        </template>
-                    </div>
+                                </Link>
+                            </template>
+                        </div>
+                    </template>
                 </div>
 
-                <div class="d-flex justify-content-center mt-4">
+                <div class="u-flex u-justify-center mt-4">
                     <nav aria-label="Page navigation">
-                        <ul class="pagination">
-                            <li v-for="(link, k) in favorites.links" :key="k" class="page-item" :class="{ 'active': link.active, 'disabled': !link.url }">
-                                <Link v-if="link.url" class="page-link" :href="link.url" v-html="link.label" />
-                                <span v-else class="page-link" v-html="link.label"></span>
+                        <ul class="ui-pagination">
+                            <li v-for="(link, k) in favorites.links" :key="k" class="ui-page-item" :class="{ 'active': link.active, 'disabled': !link.url }">
+                                <Link v-if="link.url" class="ui-page-link" :href="link.url" v-html="link.label" />
+                                <span v-else class="ui-page-link" v-html="link.label"></span>
                             </li>
                         </ul>
                     </nav>
                 </div>
             </template>
         </div>
-    </DashboardLayout>
+    
 </template>

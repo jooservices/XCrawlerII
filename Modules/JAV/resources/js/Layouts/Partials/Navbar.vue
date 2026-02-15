@@ -1,48 +1,35 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
 import { useUIStore } from '@jav/Stores/ui';
 import axios from 'axios';
 
 const uiStore = useUIStore();
 const page = usePage();
+const navbarOpen = ref(false);
+const notificationsOpen = ref(false);
+const userMenuOpen = ref(false);
+const adminMenuOpen = ref(false);
+const adminMenuRef = ref(null);
+const notificationsMenuRef = ref(null);
+const userMenuRef = ref(null);
 
 const user = computed(() => page.props.auth?.user ?? null);
+const roles = computed(() => user.value?.roles || []);
+const permissions = computed(() => user.value?.permissions || []);
+const canViewUsers = computed(() => permissions.value.includes('view-users'));
+const canViewRoles = computed(() => permissions.value.includes('view-roles'));
+const isAdmin = computed(() => roles.value.includes('admin'));
+const isAdminOrModerator = computed(() => roles.value.includes('admin') || roles.value.includes('moderator'));
 const notifications = computed(() => page.props.notifications?.items ?? []);
 const unreadCount = computed(() => Number(page.props.notifications?.count ?? 0));
+const currentUrl = computed(() => String(page.url || ''));
 
-const currentPath = computed(() => String(page.url || ''));
-const currentQuery = computed(() => {
-    const queryPart = currentPath.value.split('?')[1] ?? '';
-    return new URLSearchParams(queryPart);
-});
-
-const isActorsRoute = computed(() => currentPath.value.includes('/jav/actors'));
-const isTagsRoute = computed(() => currentPath.value.includes('/jav/tags'));
-const isDashboardRoute = computed(() => currentPath.value.includes('/jav/dashboard'));
-const dashboardFilters = computed(() => page.props.filters || {});
-
-const searchAction = computed(() => {
-    if (isActorsRoute.value) {
-        return route('jav.vue.actors');
-    }
-    if (isTagsRoute.value) {
-        return route('jav.vue.tags');
-    }
-    return route('jav.vue.dashboard');
-});
-
-const placeholder = computed(() => {
-    if (isActorsRoute.value) {
-        return 'Search actors...';
-    }
-    if (isTagsRoute.value) {
-        return 'Search tags...';
-    }
-    return 'Search movies...';
-});
-
-const getQueryValue = (key) => currentQuery.value.get(key) ?? '';
+const isActive = (routePattern) => {
+    currentUrl.value;
+    return route().current(routePattern);
+};
+const isActiveAny = (routePatterns = []) => routePatterns.some((pattern) => isActive(pattern));
 
 const toggleSidebar = () => {
     if (window.matchMedia('(max-width: 991.98px)').matches) {
@@ -56,6 +43,7 @@ const toggleSidebar = () => {
 const markNotificationRead = async (notificationId) => {
     try {
         await axios.post(route('jav.api.notifications.read', notificationId));
+        notificationsOpen.value = false;
         router.reload({ preserveScroll: true });
     } catch (error) {
         uiStore.showToast('Failed to mark notification as read', 'error');
@@ -65,95 +53,146 @@ const markNotificationRead = async (notificationId) => {
 const markAllNotificationsRead = async () => {
     try {
         await axios.post(route('jav.api.notifications.read-all'));
+        notificationsOpen.value = false;
         router.reload({ preserveScroll: true });
     } catch (error) {
         uiStore.showToast('Failed to mark all notifications as read', 'error');
     }
 };
+
+const toggleNavbar = () => {
+    navbarOpen.value = !navbarOpen.value;
+};
+
+const toggleNotifications = () => {
+    notificationsOpen.value = !notificationsOpen.value;
+    adminMenuOpen.value = false;
+    userMenuOpen.value = false;
+};
+
+const toggleUserMenu = () => {
+    userMenuOpen.value = !userMenuOpen.value;
+    adminMenuOpen.value = false;
+    notificationsOpen.value = false;
+};
+
+const toggleAdminMenu = () => {
+    adminMenuOpen.value = !adminMenuOpen.value;
+    notificationsOpen.value = false;
+    userMenuOpen.value = false;
+};
+
+const handleOutsideClick = (event) => {
+    if (adminMenuRef.value && !adminMenuRef.value.contains(event.target)) {
+        adminMenuOpen.value = false;
+    }
+
+    if (notificationsMenuRef.value && !notificationsMenuRef.value.contains(event.target)) {
+        notificationsOpen.value = false;
+    }
+
+    if (userMenuRef.value && !userMenuRef.value.contains(event.target)) {
+        userMenuOpen.value = false;
+    }
+};
+
+onMounted(() => {
+    document.addEventListener('click', handleOutsideClick);
+});
+
+onBeforeUnmount(() => {
+    document.removeEventListener('click', handleOutsideClick);
+});
 </script>
 
 <template>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <div class="container-fluid">
-            <button id="sidebarToggle" class="btn btn-dark me-2" type="button" @click="toggleSidebar">
+    <nav class="ui-navbar ui-navbar-expand-lg ui-navbar-dark u-bg-dark u-fixed-top">
+        <div class="ui-container-fluid">
+            <button id="sidebarToggle" class="ui-btn ui-btn-dark mr-2" type="button" @click="toggleSidebar">
                 <i class="fas fa-bars"></i>
             </button>
-            <Link class="navbar-brand" :href="route('jav.vue.dashboard')">JAV Dashboard</Link>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
+            <Link class="ui-navbar-brand" :href="route('jav.vue.dashboard')">JAV Dashboard</Link>
+            <button class="ui-navbar-toggler" type="button" :aria-expanded="navbarOpen ? 'true' : 'false'" @click.stop="toggleNavbar">
+                <span class="ui-navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <form :action="searchAction" method="GET" class="d-flex me-auto" style="max-width: 400px;" id="searchForm">
-                    <input class="form-control form-control-sm me-2" type="search" name="q" :placeholder="placeholder" aria-label="Search" :value="getQueryValue('q')">
-                    <template v-if="isDashboardRoute">
-                        <input v-if="dashboardFilters.actor" type="hidden" name="actor" :value="dashboardFilters.actor">
-                        <input v-if="dashboardFilters.tag" type="hidden" name="tag" :value="dashboardFilters.tag">
-                        <template v-for="(selectedTag, index) in (dashboardFilters.tags || [])" :key="`persist-tag-${index}`">
-                            <input type="hidden" name="tags[]" :value="selectedTag">
-                        </template>
-                        <input v-if="dashboardFilters.tags_mode" type="hidden" name="tags_mode" :value="dashboardFilters.tags_mode">
-                        <input v-if="dashboardFilters.age" type="hidden" name="age" :value="dashboardFilters.age">
-                        <input v-if="dashboardFilters.age_min" type="hidden" name="age_min" :value="dashboardFilters.age_min">
-                        <input v-if="dashboardFilters.age_max" type="hidden" name="age_max" :value="dashboardFilters.age_max">
-                        <input v-if="dashboardFilters.bio_key" type="hidden" name="bio_key" :value="dashboardFilters.bio_key">
-                        <input v-if="dashboardFilters.bio_value" type="hidden" name="bio_value" :value="dashboardFilters.bio_value">
-                        <template v-for="(bioFilter, bioIndex) in (dashboardFilters.bio_filters || [])" :key="`persist-bio-${bioIndex}`">
-                            <input
-                                v-if="(bioFilter?.key || bioFilter?.value)"
-                                type="hidden"
-                                :name="`bio_filters[${bioIndex}][key]`"
-                                :value="bioFilter?.key || ''"
-                            >
-                            <input
-                                v-if="(bioFilter?.key || bioFilter?.value)"
-                                type="hidden"
-                                :name="`bio_filters[${bioIndex}][value]`"
-                                :value="bioFilter?.value || ''"
-                            >
-                        </template>
-                        <input v-if="page.props.sort" type="hidden" name="sort" :value="page.props.sort">
-                        <input v-if="page.props.direction" type="hidden" name="direction" :value="page.props.direction">
-                        <input v-if="page.props.preset" type="hidden" name="preset" :value="page.props.preset">
-                        <input v-if="page.props.savedPresetIndex !== null && page.props.savedPresetIndex !== undefined" type="hidden" name="saved_preset" :value="page.props.savedPresetIndex">
-                    </template>
-                    <button class="btn btn-outline-light btn-sm" type="submit"><i class="fas fa-search"></i></button>
-                </form>
-
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <Link class="nav-link" :href="route('jav.vue.dashboard')">Home</Link>
+            <div class="collapse ui-navbar-collapse" :class="{ show: navbarOpen }" id="navbarNav">
+                <ul class="ui-navbar-nav mr-auto">
+                    <li class="ui-nav-item">
+                        <Link
+                            class="ui-nav-link"
+                            :class="{ active: isActiveAny(['jav.vue.dashboard', 'jav.vue.movies.*']) }"
+                            :href="route('jav.vue.dashboard')"
+                        >
+                            Home
+                        </Link>
                     </li>
 
+                    <li v-if="isAdminOrModerator" ref="adminMenuRef" class="ui-nav-item ui-dropdown">
+                        <a
+                            class="ui-nav-link ui-dropdown-toggle"
+                            :class="{ active: isActiveAny(['admin.users.*', 'admin.roles.*', 'jav.vue.admin.*']) }"
+                            href="#"
+                            id="adminDropdown"
+                            role="button"
+                            :aria-expanded="adminMenuOpen ? 'true' : 'false'"
+                            @click.prevent.stop="toggleAdminMenu"
+                        >
+                            Admin
+                        </a>
+                        <ul class="ui-dropdown-menu" :class="{ show: adminMenuOpen }" aria-labelledby="adminDropdown">
+                            <li v-if="canViewUsers">
+                                <Link :href="route('admin.users.index')" class="ui-dropdown-item" :class="{ active: isActive('admin.users.*') }">Users</Link>
+                            </li>
+                            <li v-if="canViewRoles">
+                                <Link :href="route('admin.roles.index')" class="ui-dropdown-item" :class="{ active: isActive('admin.roles.*') }">Roles</Link>
+                            </li>
+                            <template v-if="isAdmin">
+                                <li><hr class="ui-dropdown-divider"></li>
+                                <li>
+                                    <Link :href="route('jav.vue.admin.analytics')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.analytics') }">Analytics</Link>
+                                </li>
+                                <li>
+                                    <Link :href="route('jav.vue.admin.search-quality')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.search-quality') }">Search Quality</Link>
+                                </li>
+                                <li>
+                                    <Link :href="route('jav.vue.admin.provider-sync')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.provider-sync') }">Provider Sync</Link>
+                                </li>
+                            </template>
+                        </ul>
+                    </li>
+                </ul>
+
+                <ul class="ui-navbar-nav ml-auto">
                     <template v-if="!user">
-                        <li class="nav-item">
-                            <Link class="nav-link" :href="route('jav.vue.login')">Login</Link>
+                        <li class="ui-nav-item">
+                            <Link class="ui-nav-link" :href="route('jav.vue.login')">Login</Link>
                         </li>
-                        <li class="nav-item">
-                            <Link class="nav-link" :href="route('jav.vue.register')">Register</Link>
+                        <li class="ui-nav-item">
+                            <Link class="ui-nav-link" :href="route('jav.vue.register')">Register</Link>
                         </li>
                     </template>
 
                     <template v-else>
-                        <li class="nav-item dropdown me-2">
-                            <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications">
+                        <li ref="notificationsMenuRef" class="ui-nav-item ui-dropdown mr-2">
+                            <a class="ui-nav-link u-relative" href="#" id="notificationsDropdown" role="button" :aria-expanded="notificationsOpen ? 'true' : 'false'" title="Notifications" @click.prevent.stop="toggleNotifications">
                                 <i class="fas fa-bell"></i>
-                                <span v-if="unreadCount > 0" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                <span v-if="unreadCount > 0" class="u-absolute u-top-0 u-left-100 u-translate-middle ui-badge u-rounded-pill u-bg-danger">
                                     {{ unreadCount > 99 ? '99+' : unreadCount }}
                                 </span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown" style="min-width: 340px;">
-                                <li class="dropdown-header d-flex justify-content-between align-items-center">
+                            <ul class="ui-dropdown-menu ui-dropdown-menu-end" :class="{ show: notificationsOpen }" aria-labelledby="notificationsDropdown" style="min-width: 340px;">
+                                <li class="ui-dropdown-header u-flex u-justify-between u-items-center">
                                     <span>Notifications</span>
-                                    <button v-if="unreadCount > 0" type="button" class="btn btn-link btn-sm p-0" @click="markAllNotificationsRead">
+                                    <button v-if="unreadCount > 0" type="button" class="ui-btn ui-btn-link ui-btn-sm p-0" @click="markAllNotificationsRead">
                                         Mark all read
                                     </button>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li v-for="notification in notifications" :key="notification.id" class="px-3 py-2 border-bottom">
+                                <li><hr class="ui-dropdown-divider"></li>
+                                <li v-for="notification in notifications" :key="notification.id" class="px-3 py-2 u-border-bottom">
                                     <div class="fw-semibold">{{ notification.title }}</div>
-                                    <div v-if="notification.jav" class="small text-muted mb-1">
-                                        <Link :href="route('jav.vue.movies.show', notification.jav.uuid)" class="text-decoration-none">
+                                    <div v-if="notification.jav" class="small u-text-muted mb-1">
+                                        <Link :href="route('jav.vue.movies.show', notification.jav.uuid)" class="u-no-underline">
                                             {{ notification.jav.code }} {{ notification.jav.title }}
                                         </Link>
                                     </div>
@@ -163,21 +202,25 @@ const markAllNotificationsRead = async () => {
                                     <div v-if="(notification.payload?.matched_tags || []).length > 0" class="small">
                                         Tag: {{ (notification.payload?.matched_tags || []).join(', ') }}
                                     </div>
-                                    <button type="button" class="btn btn-link btn-sm p-0 mt-1" @click="markNotificationRead(notification.id)">
+                                    <button type="button" class="ui-btn ui-btn-link ui-btn-sm p-0 mt-1" @click="markNotificationRead(notification.id)">
                                         Mark as read
                                     </button>
                                 </li>
-                                <li v-if="notifications.length === 0" class="px-3 py-2 text-muted small">No unread notifications</li>
+                                <li v-if="notifications.length === 0" class="px-3 py-2 u-text-muted small">No unread notifications</li>
                             </ul>
                         </li>
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <li ref="userMenuRef" class="ui-nav-item ui-dropdown">
+                            <a class="ui-nav-link ui-dropdown-toggle" href="#" id="navbarDropdown" role="button" :aria-expanded="userMenuOpen ? 'true' : 'false'" @click.prevent.stop="toggleUserMenu">
                                 {{ user.name }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <ul class="ui-dropdown-menu ui-dropdown-menu-end" :class="{ show: userMenuOpen }" aria-labelledby="navbarDropdown">
                                 <li>
-                                    <Link :href="route('logout')" method="post" as="button" class="dropdown-item">Logout</Link>
+                                    <Link :href="route('jav.vue.preferences')" class="ui-dropdown-item">Preferences</Link>
+                                </li>
+                                <li><hr class="ui-dropdown-divider"></li>
+                                <li>
+                                    <Link :href="route('logout')" method="post" as="button" class="ui-dropdown-item">Logout</Link>
                                 </li>
                             </ul>
                         </li>

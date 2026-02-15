@@ -1,53 +1,53 @@
 <template>
     <div
-        class="sidebar bg-dark"
+        class="sidebar u-bg-dark"
         :class="{ 'sidebar-open': uiStore.sidebarOpen }"
     >
         <div class="sidebar-content">
-            <nav class="nav flex-column pt-3">
-                <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">
+            <nav class="ui-nav u-flex-col pt-3">
+                <h6 class="sidebar-heading px-3 mt-4 mb-1 u-text-muted">
                     Browse
                 </h6>
-                <Link href="/jav/dashboard-vue" class="nav-link" :class="{ active: isRoute('jav.dashboard.vue') }">
-                    <i class="fas fa-film me-2"></i> Movies
+                <Link href="/jav/dashboard-vue" class="ui-nav-link" :class="{ active: isRoute('jav.dashboard.vue') }">
+                    <i class="fas fa-film mr-2"></i> Movies
                 </Link>
-                <Link href="/jav/actors-vue" class="nav-link" :class="{ active: isRoute('jav.actors.vue') }">
-                    <i class="fas fa-users me-2"></i> Actors
+                <Link href="/jav/actors-vue" class="ui-nav-link" :class="{ active: isRoute('jav.actors.vue') }">
+                    <i class="fas fa-users mr-2"></i> Actors
                 </Link>
-                <Link href="/jav/tags-vue" class="nav-link" :class="{ active: isRoute('jav.tags.vue') }">
-                    <i class="fas fa-tags me-2"></i> Tags
+                <Link href="/jav/tags-vue" class="ui-nav-link" :class="{ active: isRoute('jav.tags.vue') }">
+                    <i class="fas fa-tags mr-2"></i> Tags
                 </Link>
 
                 <template v-if="user">
-                    <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">
+                    <h6 class="sidebar-heading px-3 mt-4 mb-1 u-text-muted">
                         Personal
                     </h6>
-                    <Link href="/jav/recommendations-vue" class="nav-link" :class="{ active: isRoute('jav.recommendations.vue') }">
-                        <i class="fas fa-star me-2"></i> Recommendations
+                    <Link href="/jav/recommendations-vue" class="ui-nav-link" :class="{ active: isRoute('jav.recommendations.vue') }">
+                        <i class="fas fa-star mr-2"></i> Recommendations
                     </Link>
-                    <Link href="/jav/history-vue" class="nav-link" :class="{ active: isRoute('jav.history.vue') }">
-                        <i class="fas fa-history me-2"></i> History
+                    <Link href="/jav/history-vue" class="ui-nav-link" :class="{ active: isRoute('jav.history.vue') }">
+                        <i class="fas fa-history mr-2"></i> History
                     </Link>
-                    <Link href="/jav/favorites-vue" class="nav-link" :class="{ active: isRoute('jav.favorites.vue') }">
-                        <i class="fas fa-heart me-2"></i> Favorites
+                    <Link href="/jav/favorites-vue" class="ui-nav-link" :class="{ active: isRoute('jav.favorites.vue') }">
+                        <i class="fas fa-heart mr-2"></i> Favorites
                     </Link>
-                    <Link href="/watchlist-vue" class="nav-link" :class="{ active: isRoute('watchlist.index.vue') }">
-                        <i class="fas fa-bookmark me-2"></i> Watchlist
+                    <Link href="/watchlist-vue" class="ui-nav-link" :class="{ active: isRoute('watchlist.index.vue') }">
+                        <i class="fas fa-bookmark mr-2"></i> Watchlist
                     </Link>
-                    <Link href="/ratings-vue" class="nav-link" :class="{ active: isRoute('ratings.index.vue') }">
-                        <i class="fas fa-star-half-alt me-2"></i> Ratings
+                    <Link href="/ratings-vue" class="ui-nav-link" :class="{ active: isRoute('ratings.index.vue') }">
+                        <i class="fas fa-star-half-alt mr-2"></i> Ratings
                     </Link>
                 </template>
 
                 <template v-if="isAdmin">
-                    <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">
+                    <h6 class="sidebar-heading px-3 mt-4 mb-1 u-text-muted">
                         Admin
                     </h6>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-users-cog me-2"></i> Users
+                    <a href="#" class="ui-nav-link">
+                        <i class="fas fa-users-cog mr-2"></i> Users
                     </a>
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-shield-alt me-2"></i> Roles
+                    <a href="#" class="ui-nav-link">
+                        <i class="fas fa-shield-alt mr-2"></i> Roles
                     </a>
                 </template>
             </nav>
@@ -99,17 +99,17 @@ const isRoute = (routeName) => {
     text-transform: uppercase;
 }
 
-.nav-link {
+.ui-nav-link {
     color: rgba(255, 255, 255, 0.7);
     padding: 0.75rem 1rem;
 }
 
-.nav-link:hover {
+.ui-nav-link:hover {
     color: #fff;
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.nav-link.active {
+.ui-nav-link.active {
     color: #fff;
     background-color: rgba(255, 255, 255, 0.2);
 }

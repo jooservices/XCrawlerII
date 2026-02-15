@@ -1,6 +1,5 @@
 <script setup>
 import { Head, router } from '@inertiajs/vue3';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
 import { useUIStore } from '@jav/Stores/ui';
 import axios from 'axios';
 
@@ -52,60 +51,60 @@ const formatTimestamp = (value) => {
 <template>
     <Head title="Notifications" />
 
-    <DashboardLayout>
-        <div class="row mb-4">
-            <div class="col">
+    
+        <div class="ui-row mb-4">
+            <div class="ui-col">
                 <h2>Notifications</h2>
             </div>
-            <div class="col-auto">
+            <div class="ui-col-auto">
                 <button
                     v-if="notifications.length > 0"
-                    class="btn btn-sm btn-outline-primary"
+                    class="ui-btn ui-btn-sm ui-btn-outline-primary"
                     type="button"
                     @click="markAllAsRead"
                 >
-                    <i class="fas fa-check-double me-1"></i>
+                    <i class="fas fa-check-double mr-1"></i>
                     Mark All as Read
                 </button>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-8 mx-auto">
-                <div v-if="notifications.length > 0" class="list-group">
+        <div class="ui-row">
+            <div class="ui-col-md-8 mx-auto">
+                <div v-if="notifications.length > 0" class="ui-list-group">
                     <div
                         v-for="notification in notifications"
                         :key="notification.id"
-                        class="list-group-item list-group-item-action"
-                        :class="{ 'bg-light': !notification.read_at }"
+                        class="ui-list-group-item ui-list-group-item-action"
+                        :class="{ 'u-bg-light': !notification.read_at }"
                     >
-                        <div class="d-flex w-100 justify-content-between align-items-start">
-                            <div class="flex-grow-1">
+                        <div class="u-flex u-w-full u-justify-between u-items-start">
+                            <div class="u-flex-grow">
                                 <h6 class="mb-1">
-                                    <i class="fas fa-bell me-2 text-primary"></i>
+                                    <i class="fas fa-bell mr-2 u-text-primary"></i>
                                     {{ notification.title }}
                                 </h6>
                                 <p class="mb-1">{{ notification.message }}</p>
                                 <div
                                     v-if="notification.jav"
-                                    class="small text-muted mb-1"
+                                    class="small u-text-muted mb-1"
                                 >
                                     <a
                                         :href="route('jav.vue.movies.show', notification.jav.uuid || notification.jav.id)"
-                                        class="text-decoration-none"
+                                        class="u-no-underline"
                                     >
                                         {{ notification.jav.code }} {{ notification.jav.title }}
                                     </a>
                                 </div>
-                                <small class="text-muted">
-                                    <i class="fas fa-clock me-1"></i>
+                                <small class="u-text-muted">
+                                    <i class="fas fa-clock mr-1"></i>
                                     {{ formatTimestamp(notification.created_at) }}
                                 </small>
                             </div>
-                            <div class="ms-3">
+                            <div class="ml-3">
                                 <button
                                     v-if="!notification.read_at"
-                                    class="btn btn-sm btn-outline-secondary"
+                                    class="ui-btn ui-btn-sm ui-btn-outline-secondary"
                                     type="button"
                                     title="Mark as read"
                                     @click="markAsRead(notification.id)"
@@ -117,12 +116,12 @@ const formatTimestamp = (value) => {
                     </div>
                 </div>
 
-                <div v-else class="alert alert-info text-center py-5">
-                    <i class="fas fa-inbox fa-3x mb-3 d-block text-muted"></i>
+                <div v-else class="ui-alert ui-alert-info u-text-center py-5">
+                    <i class="fas fa-inbox fa-3x mb-3 u-block u-text-muted"></i>
                     <h5>No New Notifications</h5>
                     <p>You're all caught up!</p>
                 </div>
             </div>
         </div>
-    </DashboardLayout>
+    
 </template>

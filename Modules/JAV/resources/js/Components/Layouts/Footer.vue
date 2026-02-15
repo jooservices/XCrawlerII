@@ -1,6 +1,6 @@
 <template>
-    <footer class="footer bg-dark text-white text-center py-3 mt-auto">
-        <div class="container">
+    <footer class="footer u-bg-dark u-text-white u-text-center py-3 mt-auto">
+        <div class="ui-container">
             <p class="mb-0">
                 &copy; {{ currentYear }} JAV Collection. All rights reserved.
             </p>

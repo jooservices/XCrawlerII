@@ -2,7 +2,6 @@
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import axios from 'axios';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
 
 const entityType = ref('jav');
 const identifierMode = ref('auto');
@@ -111,75 +110,75 @@ const publish = async () => {
 <template>
     <Head title="Search Quality Controls" />
 
-    <DashboardLayout>
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+    
+        <div class="ui-container-fluid">
+            <div class="u-flex u-justify-between u-items-center mb-3">
                 <h2 class="mb-0">Search Quality Controls</h2>
-                <small class="text-muted">Admin only</small>
+                <small class="u-text-muted">Admin only</small>
             </div>
 
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-3">
-                            <label for="entity-type" class="form-label">Entity Type</label>
-                            <select id="entity-type" v-model="entityType" class="form-select">
+            <div class="ui-card mb-3">
+                <div class="ui-card-body">
+                    <div class="ui-row ui-g-3">
+                        <div class="ui-col-md-3">
+                            <label for="entity-type" class="ui-form-label">Entity Type</label>
+                            <select id="entity-type" v-model="entityType" class="ui-form-select">
                                 <option value="jav">Video (JAV)</option>
                                 <option value="actor">Actor</option>
                             </select>
                         </div>
-                        <div class="col-md-3">
-                            <label for="identifier-mode" class="form-label">Identifier Mode</label>
-                            <select id="identifier-mode" v-model="identifierMode" class="form-select">
+                        <div class="ui-col-md-3">
+                            <label for="identifier-mode" class="ui-form-label">Identifier Mode</label>
+                            <select id="identifier-mode" v-model="identifierMode" class="ui-form-select">
                                 <option value="auto">Auto</option>
                                 <option value="id">ID</option>
                                 <option value="uuid">UUID</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label for="identifier" class="form-label">Identifier</label>
-                            <input id="identifier" v-model="identifier" type="text" class="form-control" placeholder="ID or UUID">
+                        <div class="ui-col-md-6">
+                            <label for="identifier" class="ui-form-label">Identifier</label>
+                            <input id="identifier" v-model="identifier" type="text" class="ui-form-control" placeholder="ID or UUID">
                         </div>
                     </div>
 
-                    <div class="form-check mt-3">
-                        <input id="reindex-related" v-model="reindexRelated" class="form-check-input" type="checkbox">
-                        <label class="form-check-label" for="reindex-related">Reindex related records on publish</label>
+                    <div class="ui-form-check mt-3">
+                        <input id="reindex-related" v-model="reindexRelated" class="ui-form-check-input" type="checkbox">
+                        <label class="ui-form-check-label" for="reindex-related">Reindex related records on publish</label>
                     </div>
 
-                    <div class="d-flex gap-2 mt-3">
-                        <button type="button" class="btn btn-outline-primary" @click="preview">Preview Document</button>
-                        <button type="button" class="btn btn-primary" @click="publish">Publish to Search Index</button>
+                    <div class="u-flex gap-2 mt-3">
+                        <button type="button" class="ui-btn ui-btn-outline-primary" @click="preview">Preview Document</button>
+                        <button type="button" class="ui-btn ui-btn-primary" @click="publish">Publish to Search Index</button>
                     </div>
                 </div>
             </div>
 
-            <div v-if="message" class="alert" :class="`alert-${messageType}`">{{ message }}</div>
+            <div v-if="message" class="ui-alert" :class="`alert-${messageType}`">{{ message }}</div>
 
-            <div class="row g-3">
-                <div class="col-lg-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Quality</h5>
+            <div class="ui-row ui-g-3">
+                <div class="ui-col-lg-4">
+                    <div class="ui-card u-h-full">
+                        <div class="ui-card-body">
+                            <h5 class="ui-card-title">Quality</h5>
                             <p class="mb-1"><strong>Status:</strong> <span>{{ qualityStatus }}</span></p>
                             <p class="mb-3"><strong>Score:</strong> <span>{{ qualityScore }}</span></p>
-                            <ul class="mb-0 text-danger">
-                                <li v-if="qualityWarnings.length === 0" class="text-success">No warnings.</li>
+                            <ul class="mb-0 u-text-danger">
+                                <li v-if="qualityWarnings.length === 0" class="u-text-success">No warnings.</li>
                                 <li v-for="warning in qualityWarnings" :key="warning">{{ warning }}</li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-8">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">Search Payload Preview</h5>
-                            <pre class="bg-light p-3 border rounded mb-0" style="max-height: 420px; overflow: auto;">{{ payloadPreview }}</pre>
+                <div class="ui-col-lg-8">
+                    <div class="ui-card u-h-full">
+                        <div class="ui-card-body">
+                            <h5 class="ui-card-title">Search Payload Preview</h5>
+                            <pre class="u-bg-light p-3 u-border u-rounded mb-0" style="max-height: 420px; overflow: auto;">{{ payloadPreview }}</pre>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </DashboardLayout>
+    
 </template>

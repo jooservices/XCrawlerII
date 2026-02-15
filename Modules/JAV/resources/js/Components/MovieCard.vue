@@ -6,13 +6,22 @@ import { useUIStore } from '@jav/Stores/ui';
 
 const props = defineProps({
     item: Object,
+    activeTags: {
+        type: Array,
+        default: () => [],
+    },
+    recommendationReasons: {
+        type: Object,
+        default: () => ({
+            actors: [],
+            tags: [],
+        }),
+    },
 });
 const page = usePage();
 const uiStore = useUIStore();
 const hasAuthUser = computed(() => Boolean(page.props.auth?.user));
 const preferences = computed(() => page.props.auth?.user?.preferences || {});
-const hideActors = computed(() => Boolean(preferences.value.hide_actors));
-const hideTags = computed(() => Boolean(preferences.value.hide_tags));
 const textPreference = computed(() => preferences.value.text_preference || 'detailed');
 
 // Helper for date formatting
@@ -33,6 +42,21 @@ const resolveName = (obj) => {
     if (typeof obj === 'string') return obj;
     return obj.name || '';
 };
+const resolveActorIdentifier = (actor) => {
+    if (!actor || typeof actor === 'string') {
+        return null;
+    }
+
+    return actor.uuid || actor.id || null;
+};
+const actorLink = (actor) => {
+    const identifier = resolveActorIdentifier(actor);
+    if (identifier) {
+        return route('jav.vue.actors.bio', identifier);
+    }
+
+    return route('jav.vue.dashboard', { actor: resolveName(actor) });
+};
 const titleText = computed(() => {
     const title = String(props.item?.title || '');
     if (textPreference.value !== 'concise') {
@@ -47,6 +71,48 @@ const descriptionText = computed(() => {
     }
     return description.length > 120 ? `${description.slice(0, 120)}...` : description;
 });
+const normalizeTagLabel = (value) => {
+    return String(value || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9]+/g, ' ')
+        .replace(/\s+/g, ' ');
+};
+const normalizedActiveTags = computed(() => {
+    return [...new Set(
+        (props.activeTags || [])
+            .map((tag) => normalizeTagLabel(tag))
+            .filter((tag) => tag !== '')
+    )];
+});
+const reasonActors = computed(() => {
+    const actors = props.recommendationReasons?.actors;
+    return Array.isArray(actors) ? actors.filter((name) => String(name || '').trim() !== '') : [];
+});
+const reasonTags = computed(() => {
+    const tags = props.recommendationReasons?.tags;
+    return Array.isArray(tags) ? tags.filter((name) => String(name || '').trim() !== '') : [];
+});
+const hasRecommendationReasons = computed(() => {
+    return reasonActors.value.length > 0 || reasonTags.value.length > 0;
+});
+const activeTagSet = computed(() => {
+    return new Set(normalizedActiveTags.value);
+});
+const isActiveTag = (tag) => {
+    const normalizedTag = normalizeTagLabel(resolveName(tag));
+    if (!normalizedTag) {
+        return false;
+    }
+
+    if (activeTagSet.value.has(normalizedTag)) {
+        return true;
+    }
+
+    return normalizedActiveTags.value.some((selectedTag) => {
+        return normalizedTag.includes(selectedTag) || selectedTag.includes(normalizedTag);
+    });
+};
 
 const downloadRoute = computed(() => {
     return route('jav.movies.download', props.item.uuid || props.item.id);
@@ -73,6 +139,7 @@ const localUserRatingId = ref(props.item.user_rating_id);
 const isProcessing = ref(false);
 const isWatchlistProcessing = ref(false);
 const ratingProcessing = ref(false);
+const showDescription = ref(false);
 
 const toggleLike = async () => {
     if (isProcessing.value) return;
@@ -184,69 +251,89 @@ const rate = async (rating) => {
 </script>
 
 <template>
-    <div class="col">
-        <div class="card h-100 shadow-sm movie-card" :data-uuid="item.uuid" style="cursor: pointer;" @click="openDetail">
+    <div class="ui-col">
+        <div class="ui-card u-h-full u-shadow-sm movie-card" :data-uuid="item.uuid" style="cursor: pointer;" @click="openDetail">
             <!-- Clickable Area for Navigation (wrapped or handled via click) -->
             <!-- We'll make image link to detail -->
-            <Link :href="detailRoute" class="position-relative d-block">
+            <Link :href="detailRoute" class="u-relative u-block">
                 <img 
                     :src="item.cover" 
-                    class="card-img-top" 
+                    class="ui-card-img-top" 
                     :alt="item.code" 
                     @error="handleImageError"
                     style="height: 300px; object-fit: cover;"
                 >
-                <div class="position-absolute top-0 end-0 bg-dark bg-opacity-75 text-white px-2 py-1 m-2 rounded">
+                <div class="u-absolute u-top-0 u-left-0 u-text-white px-2 py-1 m-2 movie-card-date">
+                    <small><i class="fas fa-calendar-alt"></i> {{ formatDate(item.date) }}</small>
+                </div>
+                <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
                     <small><i class="fas fa-eye"></i> <span>{{ item.views ?? 0 }}</span></small>
-                    <small class="ms-2"><i class="fas fa-download"></i> <span>{{ item.downloads ?? 0 }}</span></small>
+                    <small class="ml-2"><i class="fas fa-download"></i> <span>{{ item.downloads ?? 0 }}</span></small>
                 </div>
             </Link>
 
-            <div class="card-body">
-                <Link :href="detailRoute" class="text-decoration-none">
-                    <h5 class="card-title text-primary">{{ item.formatted_code || item.code }}</h5>
+            <div class="ui-card-body">
+                <Link :href="detailRoute" class="u-no-underline">
+                    <h5 class="ui-card-title u-text-primary">{{ item.formatted_code || item.code }}</h5>
                 </Link>
-                <p class="card-text text-truncate" :title="item.title">{{ titleText }}</p>
-                <p class="card-text">
-                    <small class="text-muted"><i class="fas fa-calendar-alt"></i> {{ formatDate(item.date) }}</small>
-                    <span v-if="item.size" class="float-end badge bg-secondary">{{ item.size }} GB</span>
+                <p class="ui-card-text u-truncate" :title="item.title">{{ titleText }}</p>
+                <p class="ui-card-text">
+                    <span v-if="item.size" class="u-float-end ui-badge u-bg-secondary">{{ item.size }} GB</span>
                 </p>
 
+                <div v-if="hasRecommendationReasons" class="mb-2">
+                    <span
+                        v-for="actorName in reasonActors"
+                        :key="`reason-actor-${item.id}-${actorName}`"
+                        class="ui-badge u-bg-success mr-1"
+                    >
+                        Because you liked actor: {{ actorName }}
+                    </span>
+                    <span
+                        v-for="tagName in reasonTags"
+                        :key="`reason-tag-${item.id}-${tagName}`"
+                        class="ui-badge u-bg-info u-text-dark mr-1"
+                    >
+                        Because you liked tag: {{ tagName }}
+                    </span>
+                </div>
+
                 <!-- Actors -->
-                <div v-if="!hideActors" class="mb-2">
+                <div class="mb-2">
                     <Link 
-                        v-for="(actor, index) in item.actors" 
+                        v-for="(actor, index) in (item.actors || [])" 
                         :key="index"
-                        :href="route('jav.vue.dashboard', { actor: resolveName(actor) })"
-                        class="badge bg-success text-decoration-none z-index-2 position-relative me-1"
+                        :href="actorLink(actor)"
+                        class="ui-badge u-bg-success u-no-underline u-z-2 u-relative mr-1"
                     >
                         {{ resolveName(actor) }}
                     </Link>
                 </div>
 
                 <!-- Tags -->
-                <div v-if="!hideTags" class="mb-2">
+                <div class="mb-2">
                     <Link 
-                        v-for="(tag, index) in item.tags" 
+                        v-for="(tag, index) in (item.tags || [])" 
                         :key="index"
                         :href="route('jav.vue.dashboard', { tag: resolveName(tag) })"
-                        class="badge bg-info text-dark text-decoration-none z-index-2 position-relative me-1"
+                        class="ui-badge u-no-underline u-z-2 u-relative mr-1"
+                        :class="isActiveTag(tag) ? 'u-bg-warning u-text-dark' : 'u-bg-info u-text-dark'"
                     >
                         {{ resolveName(tag) }}
                     </Link>
                 </div>
 
-                <div class="mt-3 d-grid gap-2">
-                    <a :href="downloadRoute" class="btn btn-primary btn-sm download-btn">
+                <div class="mt-3 u-grid gap-2">
+                    <a :href="downloadRoute" class="ui-btn ui-btn-primary ui-btn-sm download-btn">
                         <i class="fas fa-download"></i> Download
                     </a>
                 </div>
 
-                <div v-if="hasAuthUser" class="mt-2 d-flex gap-2">
+                <div v-if="hasAuthUser" class="mt-2 u-flex gap-2">
                     <button
                         type="button"
-                        class="btn btn-sm z-index-2 position-relative"
-                        :class="localIsLiked ? 'btn-danger' : 'btn-outline-danger'"
+                        class="ui-btn ui-btn-sm u-z-2 u-relative"
+                        :class="localIsLiked ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
                         :disabled="isProcessing"
                         title="Like"
                         @click.prevent="toggleLike"
@@ -255,21 +342,21 @@ const rate = async (rating) => {
                     </button>
                     <button
                         type="button"
-                        class="btn btn-sm z-index-2 position-relative"
-                        :class="localInWatchlist ? 'btn-warning' : 'btn-outline-warning'"
+                        class="ui-btn ui-btn-sm u-z-2 u-relative"
+                        :class="localInWatchlist ? 'ui-btn-warning' : 'ui-btn-outline-warning'"
                         :disabled="isWatchlistProcessing"
                         title="Watchlist"
                         @click.prevent="toggleWatchlist"
                     >
                         <i :class="localInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
                     </button>
-                    <div class="quick-rating-group d-flex align-items-center ms-auto">
+                    <div class="quick-rating-group u-flex u-items-center ml-auto">
                         <button
                             v-for="star in 5"
                             :key="`star-${item.id}-${star}`"
                             type="button"
-                            class="btn btn-link btn-sm p-0 mx-1 quick-rate-btn z-index-2 position-relative"
-                            :class="(localUserRating || 0) >= star ? 'text-warning' : 'text-secondary'"
+                            class="ui-btn ui-btn-link ui-btn-sm p-0 mx-1 quick-rate-btn u-z-2 u-relative"
+                            :class="(localUserRating || 0) >= star ? 'u-text-warning' : 'u-text-secondary'"
                             :title="`Rate ${star} star${star > 1 ? 's' : ''}`"
                             @click.prevent="rate(star)"
                         >
@@ -279,12 +366,12 @@ const rate = async (rating) => {
                 </div>
             </div>
             
-            <div class="card-footer bg-transparent border-top-0">
-                <button class="btn btn-sm btn-outline-secondary w-100" type="button" data-bs-toggle="collapse" :data-bs-target="'#desc-' + item.id">
-                    Show Description
+            <div class="ui-card-footer u-bg-transparent u-border-top-0">
+                <button class="ui-btn ui-btn-sm ui-btn-outline-secondary u-w-full" type="button" @click="showDescription = !showDescription">
+                    {{ showDescription ? 'Hide Description' : 'Show Description' }}
                 </button>
-                <div class="collapse mt-2" :id="'desc-' + item.id">
-                    <div class="card card-body small">
+                <div class="collapse mt-2" :class="{ show: showDescription }">
+                    <div class="ui-card ui-card-body small">
                         {{ descriptionText }}
                     </div>
                 </div>
@@ -294,5 +381,7 @@ const rate = async (rating) => {
 </template>
 
 <style scoped>
-/* Scoped styles if needed, mostly bootstrap classes used */
+.movie-card-date {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
 </style>

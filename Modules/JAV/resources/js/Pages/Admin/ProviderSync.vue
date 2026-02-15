@@ -1,25 +1,85 @@
 <script setup>
 import { Head } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import axios from 'axios';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
+import { useUIStore } from '@jav/Stores/ui';
+import '@vuepic/vue-datepicker/dist/main.css';
 
-const dailyDate = ref('');
+const dailyDate = ref(null);
 const message = ref('');
 const messageType = ref('info');
 const loadingKey = ref(null);
+const statusLoading = ref(false);
+const uiStore = useUIStore();
+
+const progress = ref(null);
+const providerStatus = ref({
+    onejav: { new: 0, popular: 0 },
+    '141jav': { new: 0, popular: 0 },
+    ffjav: { new: 0, popular: 0 },
+});
 
 const providers = [
-    { key: 'onejav', label: 'OneJav' },
-    { key: '141jav', label: '141Jav' },
-    { key: 'ffjav', label: 'FfJav' },
+    { key: 'onejav', label: 'OneJav', types: ['new', 'popular', 'daily', 'tags'] },
+    { key: '141jav', label: '141Jav', types: ['new', 'popular', 'daily', 'tags'] },
+    { key: 'ffjav', label: 'FfJav', types: ['new', 'popular', 'daily', 'tags'] },
+    { key: 'xcity', label: 'XCity', types: ['idols'] },
 ];
 
-const types = ['new', 'popular', 'daily', 'tags'];
+let intervalId = null;
+let previousPhase = null;
+let previousPendingJobs = null;
+let lastCompletedSyncKey = null;
 
 const setMessage = (text, type = 'info') => {
     message.value = text;
     messageType.value = type;
+};
+
+const loadStatus = async () => {
+    statusLoading.value = true;
+
+    try {
+        const response = await axios.get(route('jav.admin.provider-sync.status'), {
+            headers: {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        const data = response.data || {};
+        const nextProgress = data.progress || null;
+        const nextPhase = nextProgress?.phase || null;
+        const nextPendingJobs = Number(nextProgress?.pending_jobs || 0);
+        const nextActiveSync = nextProgress?.active_sync || null;
+        const nextSyncKey = nextActiveSync
+            ? [nextActiveSync.provider, nextActiveSync.type, nextActiveSync.started_at].join(':')
+            : null;
+        const queueDrained = previousPendingJobs !== null && previousPendingJobs > 0 && nextPendingJobs === 0;
+
+        if (
+            ((previousPhase === 'processing' && nextPhase === 'completed') || queueDrained)
+            && nextSyncKey
+            && nextSyncKey !== lastCompletedSyncKey
+        ) {
+            uiStore.showToast(`Queue completed: ${nextActiveSync.provider} ${nextActiveSync.type}.`, 'success');
+            lastCompletedSyncKey = nextSyncKey;
+        }
+
+        providerStatus.value = {
+            onejav: data.onejav || { new: 0, popular: 0 },
+            '141jav': data['141jav'] || { new: 0, popular: 0 },
+            ffjav: data.ffjav || { new: 0, popular: 0 },
+        };
+        progress.value = nextProgress;
+        previousPhase = nextPhase;
+        previousPendingJobs = nextPendingJobs;
+    } catch (error) {
+        setMessage(error.response?.data?.message || 'Failed to load sync status.', 'danger');
+    } finally {
+        statusLoading.value = false;
+    }
 };
 
 const dispatchSync = async (source, type) => {
@@ -28,7 +88,10 @@ const dispatchSync = async (source, type) => {
 
     const payload = { source, type };
     if (type === 'daily' && dailyDate.value) {
-        payload.date = dailyDate.value;
+        const year = dailyDate.value.getFullYear();
+        const month = String(dailyDate.value.getMonth() + 1).padStart(2, '0');
+        const day = String(dailyDate.value.getDate()).padStart(2, '0');
+        payload.date = `${year}-${month}-${day}`;
     }
 
     try {
@@ -42,53 +105,114 @@ const dispatchSync = async (source, type) => {
         const body = response.data || {};
         const dateText = body.date ? ` (${body.date})` : '';
         setMessage(
-            `Queued: ${body.source} ${body.type}${dateText}. You can monitor progress in Sync Progress.`,
+            `Queued: ${body.source} ${body.type}${dateText}.`,
             'success'
         );
+
+        await loadStatus();
     } catch (error) {
         setMessage(error.response?.data?.message || 'Dispatch failed due to a network or server error.', 'danger');
     } finally {
         loadingKey.value = null;
     }
 };
+
+onMounted(() => {
+    loadStatus();
+    intervalId = window.setInterval(loadStatus, 10000);
+});
+
+onBeforeUnmount(() => {
+    if (intervalId) {
+        window.clearInterval(intervalId);
+        intervalId = null;
+    }
+});
 </script>
 
 <template>
     <Head title="Provider Sync" />
 
-    <DashboardLayout>
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+    
+        <div class="ui-container-fluid">
+            <div class="u-flex u-justify-between u-items-center mb-3">
                 <h2 class="mb-0">Provider Sync</h2>
-                <small class="text-muted">Admin only</small>
+                <button type="button" class="ui-btn ui-btn-outline-secondary ui-btn-sm" :disabled="statusLoading" @click="loadStatus">
+                    <i class="fas fa-rotate mr-1"></i>Refresh
+                </button>
             </div>
 
-            <div class="card mb-3">
-                <div class="card-body">
-                    <div class="row g-3 align-items-end">
-                        <div class="col-md-4">
-                            <label for="daily-date" class="form-label">Daily Sync Date (optional)</label>
-                            <input id="daily-date" v-model="dailyDate" type="date" class="form-control">
-                            <small class="text-muted">Used only when type is <code>daily</code>.</small>
+            <div class="ui-card mb-3">
+                <div class="ui-card-body">
+                    <div class="ui-row ui-g-3 u-items-end">
+                        <div class="ui-col-md-4">
+                            <label for="daily-date" class="ui-form-label">Daily Sync Date (optional)</label>
+                            <VueDatePicker
+                                id="daily-date"
+                                v-model="dailyDate"
+                                :enable-time-picker="false"
+                                auto-apply
+                                format="yyyy-MM-dd"
+                                model-type="Date"
+                                placeholder="Select date"
+                            />
+                            <small class="u-text-muted">Used only when type is <code>daily</code>.</small>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div v-if="message" class="alert" :class="`alert-${messageType}`">{{ message }}</div>
+            <div v-if="message" class="ui-alert" :class="`alert-${messageType}`">{{ message }}</div>
 
-            <div class="row g-3">
-                <div v-for="provider in providers" :key="provider.key" class="col-lg-4">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ provider.label }}</h5>
-                            <p class="text-muted mb-3">Dispatch provider sync jobs by type.</p>
-                            <div class="d-grid gap-2">
+            <div class="ui-row ui-g-3 mb-3">
+                <div class="ui-col-md-4" v-for="provider in ['onejav', '141jav', 'ffjav']" :key="provider">
+                    <div class="ui-card u-h-full">
+                        <div class="ui-card-body">
+                            <h6 class="ui-card-title u-uppercase">{{ provider }}</h6>
+                            <p class="mb-1"><strong>new page:</strong> {{ providerStatus[provider]?.new ?? 0 }}</p>
+                            <p class="mb-0"><strong>popular page:</strong> {{ providerStatus[provider]?.popular ?? 0 }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui-card mb-3">
+                <div class="ui-card-body">
+                    <h5 class="ui-card-title">Progress Snapshot</h5>
+                    <div v-if="progress" class="ui-row ui-g-3">
+                        <div class="ui-col-md-3">
+                            <p class="u-text-muted mb-1">Phase</p>
+                            <h5 class="mb-0 u-capitalize">{{ progress.phase || '--' }}</h5>
+                        </div>
+                        <div class="ui-col-md-3">
+                            <p class="u-text-muted mb-1">Pending Jobs</p>
+                            <h5 class="mb-0">{{ progress.pending_jobs || 0 }}</h5>
+                        </div>
+                        <div class="ui-col-md-3">
+                            <p class="u-text-muted mb-1">Failed (24h)</p>
+                            <h5 class="mb-0">{{ progress.failed_jobs_24h || 0 }}</h5>
+                        </div>
+                        <div class="ui-col-md-3">
+                            <p class="u-text-muted mb-1">ETA</p>
+                            <h5 class="mb-0">{{ progress.eta_human || '--' }}</h5>
+                        </div>
+                    </div>
+                    <div v-else class="u-text-muted">No progress data yet.</div>
+                </div>
+            </div>
+
+            <div class="ui-row ui-g-3">
+                <div v-for="provider in providers" :key="provider.key" class="ui-col-lg-4">
+                    <div class="ui-card u-h-full">
+                        <div class="ui-card-body">
+                            <h5 class="ui-card-title">{{ provider.label }}</h5>
+                            <p class="u-text-muted mb-3">Dispatch provider sync jobs by type.</p>
+                            <div class="u-grid gap-2">
                                 <button
-                                    v-for="type in types"
+                                    v-for="type in provider.types"
                                     :key="`${provider.key}:${type}`"
                                     type="button"
-                                    class="btn btn-outline-primary"
+                                    class="ui-btn ui-btn-outline-primary"
                                     :disabled="loadingKey === `${provider.key}:${type}`"
                                     @click="dispatchSync(provider.key, type)"
                                 >
@@ -100,5 +224,5 @@ const dispatchSync = async (source, type) => {
                 </div>
             </div>
         </div>
-    </DashboardLayout>
+    
 </template>

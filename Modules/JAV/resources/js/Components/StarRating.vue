@@ -4,9 +4,9 @@
             v-for="star in 5"
             :key="star"
             class="fas fa-star"
-            :class="star <= rating ? 'text-warning' : 'text-muted'"
+            :class="star <= rating ? 'u-text-warning' : 'u-text-muted'"
         ></i>
-        <span v-if="showValue" class="ms-2 text-muted">
+        <span v-if="showValue" class="ml-2 u-text-muted">
             {{ rating.toFixed(1) }}
         </span>
     </div>

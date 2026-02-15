@@ -1,7 +1,6 @@
 <script setup>
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
 import { useUIStore } from '@jav/Stores/ui';
 
 const props = defineProps({
@@ -33,18 +32,18 @@ const deleteRating = async () => {
 <template>
     <Head title="Rating Details" />
 
-    <DashboardLayout>
-        <div class="container-fluid py-4">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <h2><i class="fas fa-star me-2"></i>Rating Details</h2>
+    
+        <div class="ui-container-fluid py-4">
+            <div class="ui-row mb-4">
+                <div class="ui-col-12">
+                    <h2><i class="fas fa-star mr-2"></i>Rating Details</h2>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-body">
+            <div class="ui-row">
+                <div class="ui-col-12">
+                    <div class="ui-card">
+                        <div class="ui-card-body">
                             <div class="mb-3">
                                 <h5>Movie</h5>
                                 <Link :href="route('jav.vue.movies.show', rating.jav?.uuid || rating.jav?.id)">
@@ -59,9 +58,9 @@ const deleteRating = async () => {
                                         v-for="i in 5"
                                         :key="`show-rating-star-${i}`"
                                         class="fas fa-star"
-                                        :class="i <= rating.rating ? 'text-warning' : 'text-muted'"
+                                        :class="i <= rating.rating ? 'u-text-warning' : 'u-text-muted'"
                                     ></i>
-                                    <span class="ms-2">{{ rating.rating }}/5</span>
+                                    <span class="ml-2">{{ rating.rating }}/5</span>
                                 </div>
                             </div>
 
@@ -76,7 +75,7 @@ const deleteRating = async () => {
                             </div>
 
                             <div class="mb-3">
-                                <small class="text-muted">
+                                <small class="u-text-muted">
                                     Created: {{ rating.created_at }}
                                     <template v-if="rating.updated_at && rating.updated_at !== rating.created_at">
                                         • Updated: {{ rating.updated_at }}
@@ -85,8 +84,8 @@ const deleteRating = async () => {
                             </div>
 
                             <div v-if="authId && rating.user_id === authId" class="mt-4">
-                                <button type="button" class="btn btn-danger" @click="deleteRating">
-                                    <i class="fas fa-trash me-2"></i>Delete Rating
+                                <button type="button" class="ui-btn ui-btn-danger" @click="deleteRating">
+                                    <i class="fas fa-trash mr-2"></i>Delete Rating
                                 </button>
                             </div>
                         </div>
@@ -94,5 +93,5 @@ const deleteRating = async () => {
                 </div>
             </div>
         </div>
-    </DashboardLayout>
+    
 </template>

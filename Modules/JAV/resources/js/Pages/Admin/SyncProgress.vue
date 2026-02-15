@@ -2,7 +2,7 @@
 import { Head } from '@inertiajs/vue3';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import axios from 'axios';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
+import { useUIStore } from '@jav/Stores/ui';
 
 const phase = ref('--');
 const pendingJobs = ref(0);
@@ -12,6 +12,11 @@ const updatedAt = ref('--');
 const failedCount = ref(0);
 const activeSync = ref(null);
 const recentFailures = ref([]);
+const uiStore = useUIStore();
+
+let previousPhase = null;
+let previousPendingJobs = null;
+let lastCompletedSyncKey = null;
 
 let intervalId = null;
 
@@ -25,14 +30,37 @@ const poll = async () => {
         });
 
         const data = response.data || {};
+        const nextPhase = data.phase || '--';
+        const nextPendingJobs = Number(data.pending_jobs || 0);
+        const nextActiveSync = data.active_sync || null;
+        const nextSyncKey = nextActiveSync
+            ? [nextActiveSync.provider, nextActiveSync.type, nextActiveSync.started_at].join(':')
+            : null;
+        const queueDrained = previousPendingJobs !== null && previousPendingJobs > 0 && nextPendingJobs === 0;
+
+        if (
+            (previousPhase === 'processing' && nextPhase === 'completed')
+            || queueDrained
+        ) {
+            if (
+                nextSyncKey
+                && nextSyncKey !== lastCompletedSyncKey
+            ) {
+                uiStore.showToast(`Queue completed: ${nextActiveSync.provider} ${nextActiveSync.type}.`, 'success');
+                lastCompletedSyncKey = nextSyncKey;
+            }
+        }
+
         phase.value = data.phase || '--';
-        pendingJobs.value = data.pending_jobs || 0;
+        pendingJobs.value = nextPendingJobs;
         throughput.value = data.throughput_per_min ? `${data.throughput_per_min}/min` : '--';
         eta.value = data.eta_human || '--';
         updatedAt.value = data.updated_at || '--';
         failedCount.value = data.failed_jobs_24h || 0;
-        activeSync.value = data.active_sync || null;
+        activeSync.value = nextActiveSync;
         recentFailures.value = data.recent_failures || [];
+        previousPhase = nextPhase;
+        previousPendingJobs = nextPendingJobs;
     } catch (error) {
         // Ignore transient polling errors.
     }
@@ -54,68 +82,68 @@ onBeforeUnmount(() => {
 <template>
     <Head title="Sync Progress" />
 
-    <DashboardLayout>
-        <div class="container-fluid">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+    
+        <div class="ui-container-fluid">
+            <div class="u-flex u-justify-between u-items-center mb-3">
                 <h2 class="mb-0">Sync Progress</h2>
-                <small class="text-muted">Updated: {{ updatedAt }}</small>
+                <small class="u-text-muted">Updated: {{ updatedAt }}</small>
             </div>
 
-            <div class="row g-3 mb-3">
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-1">Current Phase</p>
-                            <h4 class="mb-0 text-capitalize">{{ phase }}</h4>
+            <div class="ui-row ui-g-3 mb-3">
+                <div class="ui-col-md-3">
+                    <div class="ui-card u-h-full">
+                        <div class="ui-card-body">
+                            <p class="u-text-muted mb-1">Current Phase</p>
+                            <h4 class="mb-0 u-capitalize">{{ phase }}</h4>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-1">Pending Jobs</p>
+                <div class="ui-col-md-3">
+                    <div class="ui-card u-h-full">
+                        <div class="ui-card-body">
+                            <p class="u-text-muted mb-1">Pending Jobs</p>
                             <h4 class="mb-0">{{ pendingJobs }}</h4>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-1">Throughput</p>
+                <div class="ui-col-md-3">
+                    <div class="ui-card u-h-full">
+                        <div class="ui-card-body">
+                            <p class="u-text-muted mb-1">Throughput</p>
                             <h4 class="mb-0">{{ throughput }}</h4>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <p class="text-muted mb-1">ETA</p>
+                <div class="ui-col-md-3">
+                    <div class="ui-card u-h-full">
+                        <div class="ui-card-body">
+                            <p class="u-text-muted mb-1">ETA</p>
                             <h4 class="mb-0">{{ eta }}</h4>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Active Request</h5>
-                    <div v-if="activeSync" class="text-muted">
+            <div class="ui-card mb-3">
+                <div class="ui-card-body">
+                    <h5 class="ui-card-title">Active Request</h5>
+                    <div v-if="activeSync" class="u-text-muted">
                         <strong>Provider:</strong> {{ activeSync.provider }} |
                         <strong>Type:</strong> {{ activeSync.type }} |
                         <strong>Started:</strong> {{ activeSync.started_at }}
                     </div>
-                    <div v-else class="text-muted">No active sync request.</div>
+                    <div v-else class="u-text-muted">No active sync request.</div>
                 </div>
             </div>
 
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <h5 class="card-title mb-0">Recent Failures</h5>
-                        <span class="badge bg-danger">{{ failedCount }} in last 24h</span>
+            <div class="ui-card">
+                <div class="ui-card-body">
+                    <div class="u-flex u-justify-between u-items-center mb-2">
+                        <h5 class="ui-card-title mb-0">Recent Failures</h5>
+                        <span class="ui-badge u-bg-danger">{{ failedCount }} in last 24h</span>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-sm table-striped mb-0">
+                    <div class="ui-table-responsive">
+                        <table class="ui-table ui-table-sm ui-table-striped mb-0">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -125,7 +153,7 @@ onBeforeUnmount(() => {
                             </thead>
                             <tbody>
                                 <tr v-if="recentFailures.length === 0">
-                                    <td colspan="3" class="text-muted">No failures.</td>
+                                    <td colspan="3" class="u-text-muted">No failures.</td>
                                 </tr>
                                 <tr v-for="failure in recentFailures" :key="failure.id">
                                     <td>{{ failure.id }}</td>
@@ -138,5 +166,5 @@ onBeforeUnmount(() => {
                 </div>
             </div>
         </div>
-    </DashboardLayout>
+    
 </template>

@@ -4,21 +4,21 @@
         <Sidebar />
 
         <div class="main-content">
-            <div class="container-fluid py-4">
+            <div class="ui-container-fluid py-4">
                 <!-- Flash Messages -->
-                <div v-if="page.props.flash.success" class="alert alert-success alert-dismissible fade show" role="alert">
+                <div v-if="page.props.flash.success && !dismissed.success" class="ui-alert ui-alert-success ui-alert-dismissible fade show" role="ui-alert">
                     {{ page.props.flash.success }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="ui-btn-close" @click="dismissed.success = true"></button>
                 </div>
 
-                <div v-if="page.props.flash.error" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div v-if="page.props.flash.error && !dismissed.error" class="ui-alert ui-alert-danger ui-alert-dismissible fade show" role="ui-alert">
                     {{ page.props.flash.error }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="ui-btn-close" @click="dismissed.error = true"></button>
                 </div>
 
-                <div v-if="page.props.flash.message" class="alert alert-info alert-dismissible fade show" role="alert">
+                <div v-if="page.props.flash.message && !dismissed.message" class="ui-alert ui-alert-info ui-alert-dismissible fade show" role="ui-alert">
                     {{ page.props.flash.message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="ui-btn-close" @click="dismissed.message = true"></button>
                 </div>
 
                 <!-- Page Content -->
@@ -31,12 +31,18 @@
 </template>
 
 <script setup>
+import { reactive } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import Navbar from './Navbar.vue';
 import Sidebar from './Sidebar.vue';
 import Footer from './Footer.vue';
 
 const page = usePage();
+const dismissed = reactive({
+    success: false,
+    error: false,
+    message: false,
+});
 </script>
 
 <style scoped>

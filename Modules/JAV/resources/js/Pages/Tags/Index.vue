@@ -1,7 +1,6 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
 
 const props = defineProps({
     tags: Object,
@@ -91,41 +90,41 @@ watch(
 <template>
     <Head title="Tags" />
 
-    <DashboardLayout>
-        <div class="container-fluid">
-            <div class="row mb-4">
-                <div class="col-md-12">
+    
+        <div class="ui-container-fluid">
+            <div class="ui-row mb-4">
+                <div class="ui-col-md-12">
                     <h2>Tags</h2>
                 </div>
             </div>
 
-            <div class="row row-cols-2 row-cols-md-4 row-cols-lg-6 g-4">
-                <div v-for="tag in visibleTags" :key="tag.id" class="col">
-                    <Link :href="route('jav.vue.dashboard', { tag: tag.name })" class="text-decoration-none text-dark">
-                        <div class="card h-100 shadow-sm hover-shadow">
-                            <div class="card-body text-center">
-                                <i class="fas fa-tag fa-2x text-info mb-3"></i>
-                                <h5 class="card-title text-truncate" :title="tag.name">{{ tag.name }}</h5>
-                                <span class="badge bg-secondary">{{ tag.javs_count || 0 }} JAVs</span>
+            <div class="ui-row ui-row-cols-2 ui-row-cols-md-4 ui-row-cols-lg-6 ui-g-4">
+                <div v-for="tag in visibleTags" :key="tag.id" class="ui-col">
+                    <Link :href="route('jav.vue.dashboard', { tag: tag.name })" class="u-no-underline u-text-dark">
+                        <div class="ui-card u-h-full u-shadow-sm hover-shadow">
+                            <div class="ui-card-body u-text-center">
+                                <i class="fas fa-tag fa-2x u-text-info mb-3"></i>
+                                <h5 class="ui-card-title u-truncate" :title="tag.name">{{ tag.name }}</h5>
+                                <span class="ui-badge u-bg-secondary">{{ tag.javs_count || 0 }} JAVs</span>
                             </div>
                         </div>
                     </Link>
                 </div>
-                <div v-if="visibleTags.length === 0" class="col-12">
-                    <div class="alert alert-warning text-center">
+                <div v-if="visibleTags.length === 0" class="ui-col-12">
+                    <div class="ui-alert ui-alert-warning u-text-center">
                         No tags found.
                     </div>
                 </div>
             </div>
 
             <div ref="sentinelRef" id="sentinel"></div>
-            <div v-if="loadingMore" id="loading-spinner" class="text-center my-4">
-                <div class="spinner-border text-primary" role="status">
+            <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
+                <div class="ui-spinner u-text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
                 </div>
             </div>
         </div>
-    </DashboardLayout>
+    
 </template>
 
 <style scoped>
