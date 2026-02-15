@@ -96,6 +96,14 @@ const reasonTags = computed(() => {
 const hasRecommendationReasons = computed(() => {
     return reasonActors.value.length > 0 || reasonTags.value.length > 0;
 });
+const reasonActorsToShow = computed(() => reasonActors.value.slice(0, 1));
+const reasonTagsToShow = computed(() => reasonTags.value.slice(0, 1));
+const movieActors = computed(() => (Array.isArray(props.item?.actors) ? props.item.actors : []));
+const movieTags = computed(() => (Array.isArray(props.item?.tags) ? props.item.tags : []));
+const visibleActors = computed(() => movieActors.value.slice(0, 4));
+const visibleTags = computed(() => movieTags.value.slice(0, 4));
+const extraActorCount = computed(() => Math.max(0, movieActors.value.length - visibleActors.value.length));
+const extraTagCount = computed(() => Math.max(0, movieTags.value.length - visibleTags.value.length));
 const activeTagSet = computed(() => {
     return new Set(normalizedActiveTags.value);
 });
@@ -139,7 +147,6 @@ const localUserRatingId = ref(props.item.user_rating_id);
 const isProcessing = ref(false);
 const isWatchlistProcessing = ref(false);
 const ratingProcessing = ref(false);
-const showDescription = ref(false);
 
 const toggleLike = async () => {
     if (isProcessing.value) return;
@@ -252,16 +259,13 @@ const rate = async (rating) => {
 
 <template>
     <div class="ui-col">
-        <div class="ui-card u-h-full u-shadow-sm movie-card" :data-uuid="item.uuid" style="cursor: pointer;" @click="openDetail">
-            <!-- Clickable Area for Navigation (wrapped or handled via click) -->
-            <!-- We'll make image link to detail -->
+        <div class="ui-card u-h-full u-shadow-sm movie-card u-cursor-pointer" :data-uuid="item.uuid" @click="openDetail">
             <Link :href="detailRoute" class="u-relative u-block">
                 <img 
                     :src="item.cover" 
-                    class="ui-card-img-top" 
                     :alt="item.code" 
                     @error="handleImageError"
-                    style="height: 300px; object-fit: cover;"
+                    class="ui-card-img-top u-h-300 u-object-cover"
                 >
                 <div class="u-absolute u-top-0 u-left-0 u-text-white px-2 py-1 m-2 movie-card-date">
                     <small><i class="fas fa-calendar-alt"></i> {{ formatDate(item.date) }}</small>
@@ -272,85 +276,90 @@ const rate = async (rating) => {
                 </div>
             </Link>
 
-            <div class="ui-card-body">
-                <Link :href="detailRoute" class="u-no-underline">
-                    <h5 class="ui-card-title u-text-primary">{{ item.formatted_code || item.code }}</h5>
-                </Link>
-                <p class="ui-card-text u-truncate" :title="item.title">{{ titleText }}</p>
-                <p class="ui-card-text">
-                    <span v-if="item.size" class="u-float-end ui-badge u-bg-secondary">{{ item.size }} GB</span>
-                </p>
+            <div class="ui-card-body movie-card-body">
+                <div class="movie-card-content">
+                    <div class="movie-card-heading">
+                        <Link :href="detailRoute" class="u-no-underline">
+                            <h5 class="ui-card-title u-text-primary mb-1">{{ item.formatted_code || item.code }}</h5>
+                        </Link>
+                        <p class="ui-card-text movie-card-title-line" :title="item.title">{{ titleText }}</p>
+                    </div>
 
-                <div v-if="hasRecommendationReasons" class="mb-2">
+                    <div class="movie-card-meta">
+                        <span v-if="item.size" class="ui-badge movie-card-badge movie-card-badge-meta">{{ item.size }} GB</span>
+                    </div>
+
+                    <div v-if="hasRecommendationReasons" class="movie-card-badge-row movie-card-reasons">
                     <span
-                        v-for="actorName in reasonActors"
+                        v-for="actorName in reasonActorsToShow"
                         :key="`reason-actor-${item.id}-${actorName}`"
-                        class="ui-badge u-bg-success mr-1"
+                        class="ui-badge movie-card-badge movie-card-badge-actor"
                     >
                         Because you liked actor: {{ actorName }}
                     </span>
                     <span
-                        v-for="tagName in reasonTags"
+                        v-for="tagName in reasonTagsToShow"
                         :key="`reason-tag-${item.id}-${tagName}`"
-                        class="ui-badge u-bg-info u-text-dark mr-1"
+                        class="ui-badge movie-card-badge movie-card-badge-tag"
                     >
                         Because you liked tag: {{ tagName }}
                     </span>
                 </div>
 
-                <!-- Actors -->
-                <div class="mb-2">
+                    <div class="movie-card-badge-row movie-card-actors">
                     <Link 
-                        v-for="(actor, index) in (item.actors || [])" 
+                        v-for="(actor, index) in visibleActors" 
                         :key="index"
                         :href="actorLink(actor)"
-                        class="ui-badge u-bg-success u-no-underline u-z-2 u-relative mr-1"
+                        class="ui-badge movie-card-badge movie-card-badge-actor u-no-underline u-z-2 u-relative"
                     >
                         {{ resolveName(actor) }}
                     </Link>
+                    <span v-if="extraActorCount > 0" class="ui-badge movie-card-badge movie-card-badge-meta">+{{ extraActorCount }}</span>
                 </div>
 
-                <!-- Tags -->
-                <div class="mb-2">
+                    <div class="movie-card-badge-row movie-card-tags">
                     <Link 
-                        v-for="(tag, index) in (item.tags || [])" 
+                        v-for="(tag, index) in visibleTags" 
                         :key="index"
                         :href="route('jav.vue.dashboard', { tag: resolveName(tag) })"
-                        class="ui-badge u-no-underline u-z-2 u-relative mr-1"
-                        :class="isActiveTag(tag) ? 'u-bg-warning u-text-dark' : 'u-bg-info u-text-dark'"
+                        class="ui-badge movie-card-badge u-no-underline u-z-2 u-relative"
+                        :class="isActiveTag(tag) ? 'movie-card-badge-tag-active' : 'movie-card-badge-tag'"
                     >
                         {{ resolveName(tag) }}
                     </Link>
+                    <span v-if="extraTagCount > 0" class="ui-badge movie-card-badge movie-card-badge-meta">+{{ extraTagCount }}</span>
                 </div>
 
-                <div class="mt-3 u-grid gap-2">
-                    <a :href="downloadRoute" class="ui-btn ui-btn-primary ui-btn-sm download-btn">
-                        <i class="fas fa-download"></i> Download
-                    </a>
-                </div>
+                    <div class="movie-card-actions">
+                        <div class="u-grid gap-2">
+                            <a :href="downloadRoute" class="ui-btn ui-btn-primary ui-btn-sm download-btn">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        </div>
 
-                <div v-if="hasAuthUser" class="mt-2 u-flex gap-2">
-                    <button
-                        type="button"
-                        class="ui-btn ui-btn-sm u-z-2 u-relative"
-                        :class="localIsLiked ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
-                        :disabled="isProcessing"
-                        title="Like"
-                        @click.prevent="toggleLike"
-                    >
-                        <i :class="localIsLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
-                    </button>
-                    <button
-                        type="button"
-                        class="ui-btn ui-btn-sm u-z-2 u-relative"
-                        :class="localInWatchlist ? 'ui-btn-warning' : 'ui-btn-outline-warning'"
-                        :disabled="isWatchlistProcessing"
-                        title="Watchlist"
-                        @click.prevent="toggleWatchlist"
-                    >
-                        <i :class="localInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-                    </button>
-                    <div class="quick-rating-group u-flex u-items-center ml-auto">
+                        <div v-if="hasAuthUser" class="mt-2 u-flex gap-2">
+                            <button
+                                type="button"
+                                class="ui-btn ui-btn-sm u-z-2 u-relative"
+                                :class="localIsLiked ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
+                                :disabled="isProcessing"
+                                title="Like"
+                                @click.prevent="toggleLike"
+                            >
+                                <i :class="localIsLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
+                            </button>
+                            <button
+                                type="button"
+                                class="ui-btn ui-btn-sm u-z-2 u-relative"
+                                :class="localInWatchlist ? 'ui-btn-warning' : 'ui-btn-outline-warning'"
+                                :disabled="isWatchlistProcessing"
+                                title="Watchlist"
+                                @click.prevent="toggleWatchlist"
+                            >
+                                <i :class="localInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
+                            </button>
+                            <div class="quick-rating-group u-flex u-items-center ml-auto">
                         <button
                             v-for="star in 5"
                             :key="`star-${item.id}-${star}`"
@@ -362,18 +371,12 @@ const rate = async (rating) => {
                         >
                             <i class="fas fa-star"></i>
                         </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div class="ui-card-footer u-bg-transparent u-border-top-0">
-                <button class="ui-btn ui-btn-sm ui-btn-outline-secondary u-w-full" type="button" @click="showDescription = !showDescription">
-                    {{ showDescription ? 'Hide Description' : 'Show Description' }}
-                </button>
-                <div class="collapse mt-2" :class="{ show: showDescription }">
-                    <div class="ui-card ui-card-body small">
-                        {{ descriptionText }}
-                    </div>
+                <div class="movie-card-description">
+                    <p class="movie-card-description-text" :title="descriptionText">{{ descriptionText }}</p>
                 </div>
             </div>
         </div>
@@ -381,6 +384,104 @@ const rate = async (rating) => {
 </template>
 
 <style scoped>
+.movie-card {
+    display: flex;
+    flex-direction: column;
+    min-height: 635px;
+}
+
+.movie-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    min-height: 0;
+}
+
+.movie-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    min-height: 0;
+}
+
+.movie-card-title-line {
+    margin-bottom: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6rem;
+}
+
+.movie-card-meta {
+    min-height: 1.7rem;
+}
+
+.movie-card-badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    align-items: flex-start;
+    min-height: 2rem;
+    max-height: 2rem;
+    overflow: hidden;
+}
+
+.movie-card-reasons {
+    min-height: 1.8rem;
+    max-height: 1.8rem;
+}
+
+.movie-card-actions {
+    min-height: 4.8rem;
+}
+
+.movie-card-description {
+    margin-top: auto;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--border);
+    min-height: 4.3rem;
+}
+
+.movie-card-description-text {
+    margin: 0;
+    color: var(--text-2);
+    font-size: 0.84rem;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.movie-card-badge {
+    border: 1px solid transparent;
+}
+
+.movie-card-badge-actor {
+    background: rgba(22, 163, 74, 0.22) !important;
+    border-color: rgba(34, 197, 94, 0.5) !important;
+    color: #dcfce7 !important;
+}
+
+.movie-card-badge-tag {
+    background: rgba(2, 132, 199, 0.22) !important;
+    border-color: rgba(56, 189, 248, 0.5) !important;
+    color: #e0f2fe !important;
+}
+
+.movie-card-badge-tag-active {
+    background: rgba(245, 158, 11, 0.9) !important;
+    border-color: rgba(251, 191, 36, 0.95) !important;
+    color: #1f2937 !important;
+}
+
+.movie-card-badge-meta {
+    background: rgba(148, 163, 184, 0.18) !important;
+    border-color: rgba(148, 163, 184, 0.4) !important;
+    color: #dbeafe !important;
+}
+
 .movie-card-date {
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }

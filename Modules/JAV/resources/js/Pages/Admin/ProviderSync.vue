@@ -4,6 +4,9 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 import axios from 'axios';
 import { VueDatePicker } from '@vuepic/vue-datepicker';
 import { useUIStore } from '@jav/Stores/ui';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import StatCard from '@jav/Components/UI/StatCard.vue';
 import '@vuepic/vue-datepicker/dist/main.css';
 
 const dailyDate = ref(null);
@@ -133,96 +136,91 @@ onBeforeUnmount(() => {
 <template>
     <Head title="Provider Sync" />
 
-    
-        <div class="ui-container-fluid">
-            <div class="u-flex u-justify-between u-items-center mb-3">
-                <h2 class="mb-0">Provider Sync</h2>
-                <button type="button" class="ui-btn ui-btn-outline-secondary ui-btn-sm" :disabled="statusLoading" @click="loadStatus">
-                    <i class="fas fa-rotate mr-1"></i>Refresh
-                </button>
-            </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Provider Sync" subtitle="Dispatch and monitor provider jobs" />
+        </template>
 
-            <div class="ui-card mb-3">
-                <div class="ui-card-body">
-                    <div class="ui-row ui-g-3 u-items-end">
-                        <div class="ui-col-md-4">
-                            <label for="daily-date" class="ui-form-label">Daily Sync Date (optional)</label>
-                            <VueDatePicker
-                                id="daily-date"
-                                v-model="dailyDate"
-                                :enable-time-picker="false"
-                                auto-apply
-                                format="yyyy-MM-dd"
-                                model-type="Date"
-                                placeholder="Select date"
-                            />
-                            <small class="u-text-muted">Used only when type is <code>daily</code>.</small>
-                        </div>
+        <template #actions>
+            <button type="button" class="ui-btn ui-btn-outline-secondary ui-btn-sm" :disabled="statusLoading" @click="loadStatus">
+                <i class="fas fa-rotate mr-1"></i>Refresh
+            </button>
+        </template>
+
+        <div class="ui-card mb-3">
+            <div class="ui-card-body">
+                <div class="ui-row ui-g-3 u-items-end">
+                    <div class="ui-col-md-4">
+                        <label for="daily-date" class="ui-form-label">Daily Sync Date (optional)</label>
+                        <VueDatePicker
+                            id="daily-date"
+                            v-model="dailyDate"
+                            :enable-time-picker="false"
+                            auto-apply
+                            format="yyyy-MM-dd"
+                            model-type="Date"
+                            placeholder="Select date"
+                        />
+                        <small class="u-text-muted">Used only when type is <code>daily</code>.</small>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div v-if="message" class="ui-alert" :class="`alert-${messageType}`">{{ message }}</div>
+        <div v-if="message" class="ui-alert" :class="`ui-alert-${messageType}`">{{ message }}</div>
 
-            <div class="ui-row ui-g-3 mb-3">
-                <div class="ui-col-md-4" v-for="provider in ['onejav', '141jav', 'ffjav']" :key="provider">
-                    <div class="ui-card u-h-full">
-                        <div class="ui-card-body">
-                            <h6 class="ui-card-title u-uppercase">{{ provider }}</h6>
-                            <p class="mb-1"><strong>new page:</strong> {{ providerStatus[provider]?.new ?? 0 }}</p>
-                            <p class="mb-0"><strong>popular page:</strong> {{ providerStatus[provider]?.popular ?? 0 }}</p>
-                        </div>
+        <div class="ui-row ui-g-3 mb-3">
+            <div class="ui-col-md-4" v-for="provider in ['onejav', '141jav', 'ffjav']" :key="provider">
+                <StatCard :label="provider.toUpperCase()" :value="`new ${providerStatus[provider]?.new ?? 0}`">
+                    <div class="u-text-muted small mt-1">
+                        <p class="mb-1"><strong>new page:</strong> {{ providerStatus[provider]?.new ?? 0 }}</p>
+                        <p class="mb-0"><strong>popular page:</strong> {{ providerStatus[provider]?.popular ?? 0 }}</p>
                     </div>
+                </StatCard>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <h5 class="ui-card-title mb-2">Progress Snapshot</h5>
+            <div v-if="progress" class="ui-row ui-g-3">
+                <div class="ui-col-md-3">
+                    <StatCard label="Phase" :value="progress.phase || '--'" />
+                </div>
+                <div class="ui-col-md-3">
+                    <StatCard label="Pending Jobs" :value="progress.pending_jobs || 0" />
+                </div>
+                <div class="ui-col-md-3">
+                    <StatCard label="Failed (24h)" :value="progress.failed_jobs_24h || 0" />
+                </div>
+                <div class="ui-col-md-3">
+                    <StatCard label="ETA" :value="progress.eta_human || '--'" />
                 </div>
             </div>
+            <div v-else class="u-text-muted">No progress data yet.</div>
+        </div>
 
-            <div class="ui-card mb-3">
-                <div class="ui-card-body">
-                    <h5 class="ui-card-title">Progress Snapshot</h5>
-                    <div v-if="progress" class="ui-row ui-g-3">
-                        <div class="ui-col-md-3">
-                            <p class="u-text-muted mb-1">Phase</p>
-                            <h5 class="mb-0 u-capitalize">{{ progress.phase || '--' }}</h5>
-                        </div>
-                        <div class="ui-col-md-3">
-                            <p class="u-text-muted mb-1">Pending Jobs</p>
-                            <h5 class="mb-0">{{ progress.pending_jobs || 0 }}</h5>
-                        </div>
-                        <div class="ui-col-md-3">
-                            <p class="u-text-muted mb-1">Failed (24h)</p>
-                            <h5 class="mb-0">{{ progress.failed_jobs_24h || 0 }}</h5>
-                        </div>
-                        <div class="ui-col-md-3">
-                            <p class="u-text-muted mb-1">ETA</p>
-                            <h5 class="mb-0">{{ progress.eta_human || '--' }}</h5>
-                        </div>
-                    </div>
-                    <div v-else class="u-text-muted">No progress data yet.</div>
-                </div>
-            </div>
-
-            <div class="ui-row ui-g-3">
-                <div v-for="provider in providers" :key="provider.key" class="ui-col-lg-4">
-                    <div class="ui-card u-h-full">
-                        <div class="ui-card-body">
-                            <h5 class="ui-card-title">{{ provider.label }}</h5>
-                            <p class="u-text-muted mb-3">Dispatch provider sync jobs by type.</p>
-                            <div class="u-grid gap-2">
-                                <button
-                                    v-for="type in provider.types"
-                                    :key="`${provider.key}:${type}`"
-                                    type="button"
-                                    class="ui-btn ui-btn-outline-primary"
-                                    :disabled="loadingKey === `${provider.key}:${type}`"
-                                    @click="dispatchSync(provider.key, type)"
-                                >
-                                    {{ loadingKey === `${provider.key}:${type}` ? 'Dispatching...' : `Sync ${type.charAt(0).toUpperCase()}${type.slice(1)}` }}
-                                </button>
-                            </div>
+        <div class="ui-row ui-g-3">
+            <div v-for="provider in providers" :key="provider.key" class="ui-col-lg-4">
+                <div class="ui-card u-h-full">
+                    <div class="ui-card-body">
+                        <h5 class="ui-card-title">{{ provider.label }}</h5>
+                        <p class="u-text-muted mb-3">Dispatch provider sync jobs by type.</p>
+                        <div class="u-grid gap-2">
+                            <button
+                                v-for="type in provider.types"
+                                :key="`${provider.key}:${type}`"
+                                type="button"
+                                class="ui-btn ui-btn-outline-primary"
+                                :disabled="loadingKey === `${provider.key}:${type}`"
+                                @click="dispatchSync(provider.key, type)"
+                            >
+                                {{ loadingKey === `${provider.key}:${type}` ? 'Dispatching...' : `Sync ${type.charAt(0).toUpperCase()}${type.slice(1)}` }}
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    
+
+    </PageShell>
 </template>

@@ -1,5 +1,9 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
+import DataTableShell from '@jav/Components/UI/DataTableShell.vue';
 
 const props = defineProps({
     history: Object,
@@ -18,20 +22,20 @@ const truncate = (value, max = 50) => {
 <template>
     <Head title="History" />
 
-    
-        <div class="ui-container-fluid">
-            <div class="ui-row mb-4">
-                <div class="ui-col-12">
-                    <h2><i class="fas fa-history"></i> My History</h2>
-                    <p class="u-text-muted">Track your viewed and downloaded movies</p>
-                </div>
-            </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="History" subtitle="Track your viewed and downloaded movies" />
+        </template>
 
-            <div v-if="history.data.length === 0" class="ui-alert ui-alert-info">
-                <i class="fas fa-info-circle"></i> You haven't viewed or downloaded any movies yet.
-            </div>
+        <EmptyState
+            v-if="history.data.length === 0"
+            tone="info"
+            icon="fas fa-history"
+            message="You haven't viewed or downloaded any movies yet."
+        />
 
-            <template v-else>
+        <template v-else>
+            <DataTableShell title="Recent Activity">
                 <div class="ui-table-responsive">
                     <table class="ui-table ui-table-striped ui-table-hover">
                         <thead>
@@ -46,8 +50,7 @@ const truncate = (value, max = 50) => {
                             <tr
                                 v-for="record in history.data"
                                 :key="record.id"
-                                class="history-row"
-                                style="cursor: pointer;"
+                                class="history-row u-cursor-pointer"
                                 @click="router.visit(route('jav.vue.movies.show', record.jav?.uuid || record.jav?.id))"
                             >
                                 <td>
@@ -55,8 +58,7 @@ const truncate = (value, max = 50) => {
                                         <img
                                             :src="record.jav?.cover"
                                             :alt="record.jav?.formatted_code"
-                                            class="img-thumbnail mr-2"
-                                            style="width: 60px;"
+                                            class="img-thumbnail mr-2 u-w-60"
                                             @error="(e) => { e.target.src = 'https://placehold.co/60x80?text=No+Image'; }"
                                         >
                                         {{ truncate(record.jav?.title, 50) }}
@@ -74,18 +76,18 @@ const truncate = (value, max = 50) => {
                         </tbody>
                     </table>
                 </div>
+            </DataTableShell>
 
-                <div class="u-flex u-justify-center mt-4">
-                    <nav aria-label="Page navigation">
-                        <ul class="ui-pagination">
-                            <li v-for="(link, k) in history.links" :key="k" class="ui-page-item" :class="{ 'active': link.active, 'disabled': !link.url }">
-                                <Link v-if="link.url" class="ui-page-link" :href="link.url" v-html="link.label" />
-                                <span v-else class="ui-page-link" v-html="link.label"></span>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </template>
-        </div>
-    
+            <div class="u-flex u-justify-center mt-4">
+                <nav aria-label="Page navigation">
+                    <ul class="ui-pagination">
+                        <li v-for="(link, k) in history.links" :key="k" class="ui-page-item" :class="{ 'active': link.active, 'disabled': !link.url }">
+                            <Link v-if="link.url" class="ui-page-link" :href="link.url" v-html="link.label" />
+                            <span v-else class="ui-page-link" v-html="link.label"></span>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </template>
+    </PageShell>
 </template>

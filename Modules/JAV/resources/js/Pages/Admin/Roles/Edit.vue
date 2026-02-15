@@ -1,6 +1,8 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 
 const props = defineProps({
     role: Object,
@@ -24,8 +26,10 @@ const submit = () => {
 <template>
     <Head :title="`Edit Role: ${role.name}`" />
 
-    <div class="ui-container-fluid">
-        <h2 class="mb-3">Edit Role</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader :title="`Edit Role: ${role.name}`" subtitle="Update role metadata and permissions" />
+        </template>
 
         <form class="ui-card" @submit.prevent="submit">
             <div class="ui-card-body">
@@ -78,5 +82,5 @@ const submit = () => {
                 <Link :href="route('admin.roles.index')" class="ui-btn ui-btn-outline-secondary">Cancel</Link>
             </div>
         </form>
-    </div>
+    </PageShell>
 </template>

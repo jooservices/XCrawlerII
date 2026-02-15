@@ -3,6 +3,10 @@ import { Head } from '@inertiajs/vue3';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import axios from 'axios';
 import { useUIStore } from '@jav/Stores/ui';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import StatCard from '@jav/Components/UI/StatCard.vue';
+import DataTableShell from '@jav/Components/UI/DataTableShell.vue';
 
 const phase = ref('--');
 const pendingJobs = ref(0);
@@ -82,89 +86,69 @@ onBeforeUnmount(() => {
 <template>
     <Head title="Sync Progress" />
 
-    
-        <div class="ui-container-fluid">
-            <div class="u-flex u-justify-between u-items-center mb-3">
-                <h2 class="mb-0">Sync Progress</h2>
-                <small class="u-text-muted">Updated: {{ updatedAt }}</small>
-            </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Sync Progress" subtitle="Monitor active sync status and failures" />
+        </template>
 
-            <div class="ui-row ui-g-3 mb-3">
-                <div class="ui-col-md-3">
-                    <div class="ui-card u-h-full">
-                        <div class="ui-card-body">
-                            <p class="u-text-muted mb-1">Current Phase</p>
-                            <h4 class="mb-0 u-capitalize">{{ phase }}</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="ui-col-md-3">
-                    <div class="ui-card u-h-full">
-                        <div class="ui-card-body">
-                            <p class="u-text-muted mb-1">Pending Jobs</p>
-                            <h4 class="mb-0">{{ pendingJobs }}</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="ui-col-md-3">
-                    <div class="ui-card u-h-full">
-                        <div class="ui-card-body">
-                            <p class="u-text-muted mb-1">Throughput</p>
-                            <h4 class="mb-0">{{ throughput }}</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="ui-col-md-3">
-                    <div class="ui-card u-h-full">
-                        <div class="ui-card-body">
-                            <p class="u-text-muted mb-1">ETA</p>
-                            <h4 class="mb-0">{{ eta }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="u-text-muted small mb-3">Updated: {{ updatedAt }}</div>
 
-            <div class="ui-card mb-3">
-                <div class="ui-card-body">
-                    <h5 class="ui-card-title">Active Request</h5>
-                    <div v-if="activeSync" class="u-text-muted">
-                        <strong>Provider:</strong> {{ activeSync.provider }} |
-                        <strong>Type:</strong> {{ activeSync.type }} |
-                        <strong>Started:</strong> {{ activeSync.started_at }}
-                    </div>
-                    <div v-else class="u-text-muted">No active sync request.</div>
-                </div>
+        <div class="ui-row ui-g-3 mb-3">
+            <div class="ui-col-md-3">
+                <StatCard label="Current Phase" :value="phase" />
             </div>
-
-            <div class="ui-card">
-                <div class="ui-card-body">
-                    <div class="u-flex u-justify-between u-items-center mb-2">
-                        <h5 class="ui-card-title mb-0">Recent Failures</h5>
-                        <span class="ui-badge u-bg-danger">{{ failedCount }} in last 24h</span>
-                    </div>
-                    <div class="ui-table-responsive">
-                        <table class="ui-table ui-table-sm ui-table-striped mb-0">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Failed At</th>
-                                    <th>Error</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr v-if="recentFailures.length === 0">
-                                    <td colspan="3" class="u-text-muted">No failures.</td>
-                                </tr>
-                                <tr v-for="failure in recentFailures" :key="failure.id">
-                                    <td>{{ failure.id }}</td>
-                                    <td>{{ failure.failed_at }}</td>
-                                    <td>{{ failure.message }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="ui-col-md-3">
+                <StatCard label="Pending Jobs" :value="pendingJobs" />
+            </div>
+            <div class="ui-col-md-3">
+                <StatCard label="Throughput" :value="throughput" />
+            </div>
+            <div class="ui-col-md-3">
+                <StatCard label="ETA" :value="eta" />
             </div>
         </div>
-    
+
+        <div class="ui-card mb-3">
+            <div class="ui-card-body">
+                <h5 class="ui-card-title">Active Request</h5>
+                <div v-if="activeSync" class="u-text-muted">
+                    <strong>Provider:</strong> {{ activeSync.provider }} |
+                    <strong>Type:</strong> {{ activeSync.type }} |
+                    <strong>Started:</strong> {{ activeSync.started_at }}
+                </div>
+                <div v-else class="u-text-muted">No active sync request.</div>
+            </div>
+        </div>
+
+        <DataTableShell>
+            <template #header>
+                <div class="u-flex u-justify-between u-items-center u-w-full">
+                    <h5 class="ui-card-title mb-0">Recent Failures</h5>
+                    <span class="ui-badge u-bg-danger">{{ failedCount }} in last 24h</span>
+                </div>
+            </template>
+
+            <div class="ui-table-responsive">
+                <table class="ui-table ui-table-sm ui-table-striped mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Failed At</th>
+                            <th>Error</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="recentFailures.length === 0">
+                            <td colspan="3" class="u-text-muted">No failures.</td>
+                        </tr>
+                        <tr v-for="failure in recentFailures" :key="failure.id">
+                            <td>{{ failure.id }}</td>
+                            <td>{{ failure.failed_at }}</td>
+                            <td>{{ failure.message }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </DataTableShell>
+    </PageShell>
 </template>

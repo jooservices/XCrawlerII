@@ -1,13 +1,16 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 </script>
 
 <template>
     <Head title="Create JAV" />
 
-    
-        <div class="ui-container-fluid py-4">
-            <h2 class="mb-3">Create JAV</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Create JAV" subtitle="Create flow placeholder" />
+        </template>
 
             <div class="ui-card">
                 <div class="ui-card-body">
@@ -19,7 +22,6 @@ import { Head, Link } from '@inertiajs/vue3';
                         Back to list
                     </Link>
                 </div>
-            </div>
-        </div>
-    
+                </div>
+            </PageShell>
 </template>

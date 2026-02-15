@@ -3,6 +3,9 @@ import { Head, Link, router } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import axios from 'axios';
 import { useUIStore } from '@jav/Stores/ui';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
 
 const props = defineProps({
     watchlist: Object,
@@ -49,13 +52,10 @@ const removeFromWatchlist = async (itemId) => {
 <template>
     <Head title="My Watchlist" />
 
-    
-        <div class="ui-container-fluid">
-            <div class="ui-row mb-4">
-                <div class="ui-col-md-12">
-                    <h1 class="h3 mb-3"><i class="fas fa-bookmark mr-2"></i>My Watchlist</h1>
-                </div>
-            </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="My Watchlist" subtitle="Track what to watch next" />
+        </template>
 
             <div class="ui-card mb-4">
                 <div class="ui-card-body">
@@ -154,15 +154,18 @@ const removeFromWatchlist = async (itemId) => {
             </template>
 
             <div v-else class="ui-card">
-                <div class="ui-card-body u-text-center py-5">
-                    <i class="fas fa-bookmark fa-4x u-text-muted mb-3"></i>
-                    <h5 class="u-text-muted">Your watchlist is empty</h5>
-                    <p class="u-text-muted">Start adding movies to your watchlist to keep track of what you want to watch!</p>
-                    <Link :href="route('jav.vue.dashboard')" class="ui-btn ui-btn-primary">
-                        <i class="fas fa-film mr-1"></i>Browse Movies
-                    </Link>
+                <div class="ui-card-body">
+                    <EmptyState
+                        tone="info"
+                        icon="fas fa-bookmark"
+                        message="Your watchlist is empty. Start adding movies to track what you want to watch next."
+                    />
+                    <div class="u-text-center mt-3">
+                        <Link :href="route('jav.vue.dashboard')" class="ui-btn ui-btn-primary">
+                            <i class="fas fa-film mr-1"></i>Browse Movies
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </div>
-    
+    </PageShell>
 </template>

@@ -27,8 +27,10 @@ createInertiaApp({
         const pages = import.meta.glob('./Pages/**/*.vue', { eager: true });
         const page = pages[`./Pages/${name}.vue`];
 
-        // Apply a shared shell so pages only provide content markup.
-        page.default.layout = page.default.layout || DashboardLayout;
+        // Apply a shared shell by default, but allow pages to explicitly opt out.
+        if (!Object.prototype.hasOwnProperty.call(page.default, 'layout')) {
+            page.default.layout = DashboardLayout;
+        }
 
         return page;
     },

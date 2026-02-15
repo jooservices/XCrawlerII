@@ -4,6 +4,8 @@ import { computed, ref, watch } from 'vue';
 import axios from 'axios';
 import VueApexCharts from 'vue3-apexcharts';
 import ActorInsightsPanel from '@jav/Components/ActorInsightsPanel.vue';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 
 const props = defineProps({
     days: Number,
@@ -19,6 +21,17 @@ const props = defineProps({
     quality: Object,
     syncHealth: Object,
 });
+
+const chartPalette = {
+    primary: 'var(--primary-strong)',
+    success: 'var(--success)',
+    danger: 'var(--danger)',
+    warning: 'var(--warning)',
+    info: 'var(--info)',
+    purple: 'var(--accent-purple)',
+    orange: 'var(--accent-orange)',
+    border: 'var(--border)',
+};
 
 const createdLabels = computed(() => props.dailyCreated?.jav?.labels || []);
 const baseChartOptions = computed(() => ({
@@ -42,7 +55,7 @@ const baseChartOptions = computed(() => ({
         },
     },
     grid: {
-        borderColor: '#e9ecef',
+        borderColor: chartPalette.border,
         strokeDashArray: 3,
     },
     legend: {
@@ -65,7 +78,7 @@ const createdSeries = computed(() => ([
 const createdChartOptions = computed(() => ({
     ...baseChartOptions.value,
     stroke: { width: 2, curve: 'smooth' },
-    colors: ['#0d6efd', '#198754', '#6f42c1'],
+    colors: [chartPalette.primary, chartPalette.success, chartPalette.purple],
 }));
 
 const engagementSeries = computed(() => ([
@@ -87,7 +100,7 @@ const engagementChartOptions = computed(() => ({
             columnWidth: '55%',
         },
     },
-    colors: ['#dc3545', '#ffc107', '#0dcaf0', '#20c997'],
+    colors: [chartPalette.danger, chartPalette.warning, chartPalette.info, chartPalette.success],
 }));
 
 const providerSeries = computed(() => {
@@ -101,7 +114,7 @@ const providerSeries = computed(() => {
 const providerChartOptions = computed(() => ({
     ...baseChartOptions.value,
     stroke: { width: 2, curve: 'smooth' },
-    colors: ['#0d6efd', '#198754', '#dc3545', '#6f42c1', '#fd7e14', '#20c997'],
+    colors: [chartPalette.primary, chartPalette.success, chartPalette.danger, chartPalette.purple, chartPalette.orange, chartPalette.info],
 }));
 
 const mode = ref('basic');
@@ -177,7 +190,7 @@ const overviewGenreChartOptions = computed(() => ({
             formatter: (value) => Math.round(Number(value || 0)).toLocaleString(),
         },
     },
-    colors: ['#0d6efd'],
+    colors: [chartPalette.primary],
 }));
 
 const overviewGenreSeries = computed(() => ([
@@ -535,14 +548,17 @@ watch(mode, (nextMode) => {
         <title>Analytics</title>
     </Head>
 
-    <div class="ui-container-fluid">
-        <div class="u-flex u-justify-between u-items-center mb-3">
-            <h2 class="mb-0">Analytics</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Analytics" subtitle="Basic and advanced catalog insights" />
+        </template>
+
+        <template #actions>
             <div class="u-flex u-items-center gap-2">
                 <button type="button" class="ui-btn" :class="mode === 'basic' ? 'ui-btn-primary' : 'ui-btn-outline-primary'" @click="mode = 'basic'">Basic</button>
                 <button type="button" class="ui-btn" :class="mode === 'advanced' ? 'ui-btn-primary' : 'ui-btn-outline-primary'" @click="mode = 'advanced'">Advanced</button>
             </div>
-        </div>
+        </template>
 
         <div v-if="mode === 'basic'">
             <div class="u-flex u-justify-end mb-3">
@@ -747,7 +763,7 @@ watch(mode, (nextMode) => {
         </div>
 
         <div v-else>
-            <div v-if="advancedMessage" class="ui-alert mb-3" :class="`alert-${advancedMessageType}`">{{ advancedMessage }}</div>
+            <div v-if="advancedMessage" class="ui-alert mb-3" :class="`ui-alert-${advancedMessageType}`">{{ advancedMessage }}</div>
 
             <div class="ui-row ui-g-3 mb-3">
                 <div class="ui-col-md-4">
@@ -1037,5 +1053,5 @@ watch(mode, (nextMode) => {
                 </div>
             </div>
         </div>
-    </div>
+    </PageShell>
 </template>

@@ -2,6 +2,9 @@
 import { Head, Link } from '@inertiajs/vue3';
 import MovieCard from '@jav/Components/MovieCard.vue';
 import ActorInsightsPanel from '@jav/Components/ActorInsightsPanel.vue';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
 
 const props = defineProps({
     actor: Object,
@@ -17,8 +20,17 @@ const props = defineProps({
 <template>
     <Head :title="actor.name" />
 
-    
-        <div class="ui-container-fluid">
+    <PageShell>
+        <template #header>
+            <SectionHeader :title="actor.name" subtitle="Actor profile and related titles" />
+        </template>
+
+        <template #actions>
+            <Link :href="route('jav.vue.actors')" class="ui-btn ui-btn-secondary ui-btn-sm">
+                <i class="fas fa-arrow-left mr-1"></i> Back to Actors
+            </Link>
+        </template>
+
             <div class="ui-row mb-4">
                 <div class="ui-col-md-4">
                     <img
@@ -29,7 +41,6 @@ const props = defineProps({
                     >
                 </div>
                 <div class="ui-col-md-8">
-                    <h2 class="mb-2">{{ actor.name }}</h2>
                     <div class="mb-3">
                         <span class="ui-badge u-bg-secondary">{{ actor.javs_count || 0 }} JAVs</span>
                         <span v-if="primarySource" class="ui-badge u-bg-dark">{{ String(primarySource).toUpperCase() }} Primary</span>
@@ -40,9 +51,6 @@ const props = defineProps({
                         <Link :href="route('jav.vue.dashboard', { actor: actor.name })" class="ui-btn ui-btn-success ui-btn-sm mr-2">
                             <i class="fas fa-film mr-1"></i> Show All JAVs
                         </Link>
-                        <Link :href="route('jav.vue.actors')" class="ui-btn ui-btn-secondary ui-btn-sm">
-                            <i class="fas fa-arrow-left mr-1"></i> Back to Actors
-                        </Link>
                     </div>
 
                     <h5>Bio Profile</h5>
@@ -50,15 +58,13 @@ const props = defineProps({
                         <table class="ui-table ui-table-sm ui-table-bordered u-bg-white">
                             <tbody>
                                 <tr v-for="(value, label) in bioProfile" :key="`bio-${label}`">
-                                    <th style="width: 220px;">{{ label }}</th>
+                                    <th class="u-w-220">{{ label }}</th>
                                     <td>{{ value }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div v-else class="ui-alert ui-alert-warning mb-0">
-                        No profile data synced yet.
-                    </div>
+                    <EmptyState v-else tone="warning" icon="fas fa-id-card" message="No profile data synced yet." />
 
                     <div class="mt-4">
                         <ActorInsightsPanel :actor-insights="actorInsights" title="Actor Analytics" :show-title="true" :show-actor-genres="true" />
@@ -76,9 +82,7 @@ const props = defineProps({
             <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
                 <MovieCard v-for="item in movies.data" :key="item.id" :item="item" />
                 <div v-if="movies.data.length === 0" class="ui-col-12">
-                    <div class="ui-alert ui-alert-warning u-text-center mb-0">
-                        No JAVs found for this actor.
-                    </div>
+                    <EmptyState tone="warning" icon="fas fa-film" message="No JAVs found for this actor." />
                 </div>
             </div>
 
@@ -92,6 +96,5 @@ const props = defineProps({
                     </ul>
                 </nav>
             </div>
-        </div>
-    
+    </PageShell>
 </template>

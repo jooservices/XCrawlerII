@@ -2,6 +2,9 @@
 import { Head, router } from '@inertiajs/vue3';
 import { useUIStore } from '@jav/Stores/ui';
 import axios from 'axios';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
 
 const props = defineProps({
     notifications: {
@@ -51,23 +54,22 @@ const formatTimestamp = (value) => {
 <template>
     <Head title="Notifications" />
 
-    
-        <div class="ui-row mb-4">
-            <div class="ui-col">
-                <h2>Notifications</h2>
-            </div>
-            <div class="ui-col-auto">
-                <button
-                    v-if="notifications.length > 0"
-                    class="ui-btn ui-btn-sm ui-btn-outline-primary"
-                    type="button"
-                    @click="markAllAsRead"
-                >
-                    <i class="fas fa-check-double mr-1"></i>
-                    Mark All as Read
-                </button>
-            </div>
-        </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Notifications" subtitle="Recent updates and alerts" />
+        </template>
+
+        <template #actions>
+            <button
+                v-if="notifications.length > 0"
+                class="ui-btn ui-btn-sm ui-btn-outline-primary"
+                type="button"
+                @click="markAllAsRead"
+            >
+                <i class="fas fa-check-double mr-1"></i>
+                Mark All as Read
+            </button>
+        </template>
 
         <div class="ui-row">
             <div class="ui-col-md-8 mx-auto">
@@ -116,12 +118,13 @@ const formatTimestamp = (value) => {
                     </div>
                 </div>
 
-                <div v-else class="ui-alert ui-alert-info u-text-center py-5">
-                    <i class="fas fa-inbox fa-3x mb-3 u-block u-text-muted"></i>
-                    <h5>No New Notifications</h5>
-                    <p>You're all caught up!</p>
-                </div>
+                <EmptyState
+                    v-else
+                    tone="info"
+                    icon="fas fa-inbox"
+                    message="No new notifications. You're all caught up!"
+                />
             </div>
         </div>
-    
+    </PageShell>
 </template>

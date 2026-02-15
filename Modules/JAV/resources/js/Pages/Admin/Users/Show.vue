@@ -1,6 +1,8 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 
 const props = defineProps({
     user: Object,
@@ -17,14 +19,17 @@ const permissions = computed(() => {
 <template>
     <Head :title="`User: ${user.name}`" />
 
-    <div class="ui-container-fluid">
-        <div class="u-flex u-justify-between u-items-center mb-3">
-            <h2 class="mb-0">User Details</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader :title="`User: ${user.name}`" subtitle="User profile, roles, and effective permissions" />
+        </template>
+
+        <template #actions>
             <div class="u-flex gap-2">
                 <Link :href="route('admin.users.edit', user.id)" class="ui-btn ui-btn-warning">Edit</Link>
                 <Link :href="route('admin.users.index')" class="ui-btn ui-btn-outline-secondary">Back</Link>
             </div>
-        </div>
+        </template>
 
         <div class="ui-card mb-3">
             <div class="ui-card-body">
@@ -60,5 +65,5 @@ const permissions = computed(() => {
                 <p v-else class="u-text-muted mb-0">No permissions available.</p>
             </div>
         </div>
-    </div>
+    </PageShell>
 </template>

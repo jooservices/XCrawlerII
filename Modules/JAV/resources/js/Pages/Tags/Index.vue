@@ -2,6 +2,9 @@
 import { Head, Link, router } from '@inertiajs/vue3';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
 
 const props = defineProps({
     tags: Object,
@@ -139,13 +142,10 @@ watch(
         <title>Tags</title>
     </Head>
 
-    
-        <div class="ui-container-fluid">
-            <div class="ui-row mb-4">
-                <div class="ui-col-md-12">
-                    <h2>Tags</h2>
-                </div>
-            </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Tags" subtitle="Browse and filter by tag" />
+        </template>
 
             <OrderingBar
                 :has-auth-user="false"
@@ -182,33 +182,30 @@ watch(
                 </div>
             </div>
 
-            <div class="ui-row ui-row-cols-2 ui-row-cols-md-4 ui-row-cols-lg-6 ui-g-4">
-                <div v-for="tag in visibleTags" :key="tag.id" class="ui-col">
-                    <Link :href="route('jav.vue.dashboard', { tag: tag.name })" class="u-no-underline u-text-dark">
-                        <div class="ui-card u-h-full u-shadow-sm hover-shadow">
-                            <div class="ui-card-body u-text-center">
-                                <i class="fas fa-tag fa-2x u-text-info mb-3"></i>
-                                <h5 class="ui-card-title u-truncate" :title="tag.name">{{ tag.name }}</h5>
-                                <span class="ui-badge u-bg-secondary">{{ tag.javs_count || 0 }} JAVs</span>
-                            </div>
+        <div class="ui-row ui-row-cols-2 ui-row-cols-md-4 ui-row-cols-lg-6 ui-g-4">
+            <div v-for="tag in visibleTags" :key="tag.id" class="ui-col">
+                <Link :href="route('jav.vue.dashboard', { tag: tag.name })" class="u-no-underline u-text-dark">
+                    <div class="ui-card ui-interactive-card u-h-full u-shadow-sm hover-shadow">
+                        <div class="ui-card-body u-text-center">
+                            <i class="fas fa-tag fa-2x u-text-info mb-3"></i>
+                            <h5 class="ui-card-title u-truncate" :title="tag.name">{{ tag.name }}</h5>
+                            <span class="ui-badge u-bg-secondary">{{ tag.javs_count || 0 }} JAVs</span>
                         </div>
-                    </Link>
-                </div>
-                <div v-if="visibleTags.length === 0" class="ui-col-12">
-                    <div class="ui-alert ui-alert-warning u-text-center">
-                        No tags found.
                     </div>
-                </div>
+                </Link>
             </div>
-
-            <div ref="sentinelRef" id="sentinel"></div>
-            <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
-                <output class="ui-spinner u-text-primary" aria-live="polite">
-                    <span class="visually-hidden">Loading...</span>
-                </output>
+            <div v-if="visibleTags.length === 0" class="ui-col-12">
+                <EmptyState tone="warning" icon="fas fa-tags" message="No tags found." />
             </div>
         </div>
-    
+
+        <div ref="sentinelRef" id="sentinel"></div>
+        <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
+            <output class="ui-spinner u-text-primary" aria-live="polite">
+                <span class="visually-hidden">Loading...</span>
+            </output>
+        </div>
+    </PageShell>
 </template>
 
 <style scoped>
@@ -217,6 +214,6 @@ watch(
 }
 
 .hover-shadow:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    box-shadow: var(--card-hover-shadow);
 }
 </style>

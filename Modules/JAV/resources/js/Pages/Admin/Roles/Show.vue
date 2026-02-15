@@ -1,5 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 
 defineProps({
     role: Object,
@@ -9,14 +11,17 @@ defineProps({
 <template>
     <Head :title="`Role: ${role.name}`" />
 
-    <div class="ui-container-fluid">
-        <div class="u-flex u-justify-between u-items-center mb-3">
-            <h2 class="mb-0">Role Details</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader :title="`Role: ${role.name}`" subtitle="Inspect role permissions and assigned users" />
+        </template>
+
+        <template #actions>
             <div class="u-flex gap-2">
                 <Link :href="route('admin.roles.edit', role.id)" class="ui-btn ui-btn-warning">Edit</Link>
                 <Link :href="route('admin.roles.index')" class="ui-btn ui-btn-outline-secondary">Back</Link>
             </div>
-        </div>
+        </template>
 
         <div class="ui-card mb-3">
             <div class="ui-card-body">
@@ -64,5 +69,5 @@ defineProps({
                 <p v-else class="u-text-muted mb-0">No users assigned.</p>
             </div>
         </div>
-    </div>
+    </PageShell>
 </template>

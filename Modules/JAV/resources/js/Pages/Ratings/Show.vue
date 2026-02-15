@@ -2,6 +2,8 @@
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { useUIStore } from '@jav/Stores/ui';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 
 const props = defineProps({
     rating: Object,
@@ -32,13 +34,10 @@ const deleteRating = async () => {
 <template>
     <Head title="Rating Details" />
 
-    
-        <div class="ui-container-fluid py-4">
-            <div class="ui-row mb-4">
-                <div class="ui-col-12">
-                    <h2><i class="fas fa-star mr-2"></i>Rating Details</h2>
-                </div>
-            </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Rating Details" subtitle="Inspect score, review, and author" />
+        </template>
 
             <div class="ui-row">
                 <div class="ui-col-12">
@@ -91,7 +90,6 @@ const deleteRating = async () => {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    
+                </div>
+            </PageShell>
 </template>

@@ -8,6 +8,9 @@ import axios from 'axios';
 import MovieCard from '@jav/Components/MovieCard.vue';
 import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
 import AdvancedSearchForm from '@jav/Components/Search/AdvancedSearchForm.vue';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
 import { useUIStore } from '@jav/Stores/ui';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -337,14 +340,15 @@ onBeforeUnmount(() => {
 <template>
     <Head title="JAV Dashboard" />
 
-    
-        <div class="ui-container-fluid">
-            <div class="ui-row mb-3">
+    <PageShell>
+        <template #header>
+            <div class="ui-row mb-0 u-w-full">
                 <div class="ui-col-md-12">
-                    <h2>
-                        Movies
-                        <span v-if="isRefreshingItems" class="ui-badge u-bg-light u-text-dark u-border ml-2">Refreshing...</span>
-                    </h2>
+                    <SectionHeader class="dashboard-header-single-line" title="Movies" subtitle="Discover and explore content">
+                        <template #actions>
+                            <span v-if="isRefreshingItems" class="ui-badge u-bg-light u-text-dark u-border ml-2">Refreshing...</span>
+                        </template>
+                    </SectionHeader>
                     <span v-if="filters?.actor" class="ui-badge u-bg-primary fs-6">
                         Actor: {{ filters.actor }}
                         <Link :href="route('jav.vue.dashboard')" class="u-text-white ml-2"><i class="fas fa-times"></i></Link>
@@ -364,106 +368,108 @@ onBeforeUnmount(() => {
                     </span>
                 </div>
             </div>
+        </template>
 
-            <OrderingBar
-                :built-in-presets="builtInPresets"
-                :preset="preset"
-                :saved-presets="savedPresets"
-                :saved-preset-index="savedPresetIndex"
-                :query="query"
-                :has-auth-user="hasAuthUser"
-                :show-save-preset="showSavePreset"
-                :preset-name="presetName"
-                :sort="sort"
-                :direction="direction"
-                :total-matches="matchedItemsTotal"
-                :loaded-matches="visibleItems.length"
-                @toggle-save-preset="showSavePreset = !showSavePreset"
-                @update:preset-name="presetName = $event"
-                @save-preset="savePreset"
-                @delete-preset="deletePreset"
-                @sort-selected="applySort($event.sort, $event.direction)"
-            />
+        <OrderingBar
+            :built-in-presets="builtInPresets"
+            :preset="preset"
+            :saved-presets="savedPresets"
+            :saved-preset-index="savedPresetIndex"
+            :query="query"
+            :has-auth-user="hasAuthUser"
+            :show-save-preset="showSavePreset"
+            :preset-name="presetName"
+            :sort="sort"
+            :direction="direction"
+            :total-matches="matchedItemsTotal"
+            :loaded-matches="visibleItems.length"
+            @toggle-save-preset="showSavePreset = !showSavePreset"
+            @update:preset-name="presetName = $event"
+            @save-preset="savePreset"
+            @delete-preset="deletePreset"
+            @sort-selected="applySort($event.sort, $event.direction)"
+        />
 
-            <AdvancedSearchForm
-                :filter-form="filterForm"
-                :bio-filters="bioFilters"
-                :available-bio-keys="availableBioKeys"
-                :actor-suggestions="actorSuggestions"
-                :tag-suggestions="tagSuggestions"
-                :bio-value-suggestions="bioValueSuggestions"
-                @submit="submitSearch"
-                @add-bio-filter="addBioFilter"
-                @remove-bio-filter="removeBioFilter"
-            />
+        <AdvancedSearchForm
+            :filter-form="filterForm"
+            :bio-filters="bioFilters"
+            :available-bio-keys="availableBioKeys"
+            :actor-suggestions="actorSuggestions"
+            :tag-suggestions="tagSuggestions"
+            :bio-value-suggestions="bioValueSuggestions"
+            @submit="submitSearch"
+            @add-bio-filter="addBioFilter"
+            @remove-bio-filter="removeBioFilter"
+        />
 
-            <div v-if="continueWatching && continueWatching.length > 0" class="mb-4">
-                <h5 class="mb-3">Continue Watching</h5>
-                <Swiper
-                    :modules="continueWatchingModules"
-                    :breakpoints="continueWatchingBreakpoints"
-                    :slides-per-view="1.1"
-                    :space-between="12"
-                    :navigation="true"
-                    :pagination="{ clickable: true }"
-                    class="continue-watching-swiper pb-4"
-                >
-                    <SwiperSlide v-for="record in continueWatching" :key="`continue-${record.id}`">
-                        <div class="ui-card u-h-full">
-                            <div class="ui-card-body">
-                                <Link :href="route('jav.vue.movies.show', record.jav.uuid || record.jav.id)" class="u-no-underline">
-                                    <h6 class="mb-1">{{ record.jav.formatted_code }}</h6>
-                                    <div class="u-text-muted small">{{ continueWatchingTitle(record.jav.title) }}</div>
-                                </Link>
-                                <div class="mt-2">
-                                    <span class="ui-badge" :class="record.action === 'download' ? 'u-bg-success' : 'u-bg-info'">
-                                        {{ String(record.action || '').charAt(0).toUpperCase() + String(record.action || '').slice(1) }}
-                                    </span>
-                                    <small class="u-text-muted ml-2">Last activity: {{ record.updated_at_human || record.updated_at }}</small>
-                                </div>
+        <div v-if="continueWatching && continueWatching.length > 0" class="mb-4">
+            <h5 class="mb-3">Continue Watching</h5>
+            <Swiper
+                :modules="continueWatchingModules"
+                :breakpoints="continueWatchingBreakpoints"
+                :slides-per-view="1.1"
+                :space-between="12"
+                :navigation="true"
+                :pagination="{ clickable: true }"
+                class="continue-watching-swiper pb-4"
+            >
+                <SwiperSlide v-for="record in continueWatching" :key="`continue-${record.id}`">
+                    <div class="ui-card u-h-full">
+                        <div class="ui-card-body">
+                            <Link :href="route('jav.vue.movies.show', record.jav.uuid || record.jav.id)" class="u-no-underline">
+                                <h6 class="mb-1">{{ record.jav.formatted_code }}</h6>
+                                <div class="u-text-muted small">{{ continueWatchingTitle(record.jav.title) }}</div>
+                            </Link>
+                            <div class="mt-2">
+                                <span class="ui-badge" :class="record.action === 'download' ? 'u-bg-success' : 'u-bg-info'">
+                                    {{ String(record.action || '').charAt(0).toUpperCase() + String(record.action || '').slice(1) }}
+                                </span>
+                                <small class="u-text-muted ml-2">Last activity: {{ record.updated_at_human || record.updated_at }}</small>
                             </div>
                         </div>
-                    </SwiperSlide>
-                </Swiper>
-            </div>
-
-            <div id="lazy-container" class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-4 ui-g-4">
-                <div v-if="hasItemsQueryError" class="ui-col-12">
-                    <div class="ui-alert ui-alert-danger u-flex u-justify-between u-items-center mb-0">
-                        <span>{{ itemsQueryErrorMessage }}</span>
-                        <button type="button" class="ui-btn ui-btn-sm ui-btn-outline-danger" title="Retry loading items" aria-label="Retry loading items" @click="dashboardItemsQuery.refetch()">
-                            <i class="fas fa-rotate-right"></i>
-                        </button>
                     </div>
-                </div>
+                </SwiperSlide>
+            </Swiper>
+        </div>
 
-                <MovieCard
-                    v-for="item in visibleItems"
-                    :key="item.id"
-                    :item="item"
-                    :active-tags="selectedDashboardTags"
-                />
-
-                <div v-if="visibleItems.length === 0" class="ui-col-12">
-                    <div class="ui-alert ui-alert-warning u-text-center">
-                        No movies found.
-                    </div>
+        <div id="lazy-container" class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-4 ui-g-4">
+            <div v-if="hasItemsQueryError" class="ui-col-12">
+                <div class="ui-alert ui-alert-danger u-flex u-justify-between u-items-center mb-0">
+                    <span>{{ itemsQueryErrorMessage }}</span>
+                    <button type="button" class="ui-btn ui-btn-sm ui-btn-outline-danger" title="Retry loading items" aria-label="Retry loading items" @click="dashboardItemsQuery.refetch()">
+                        <i class="fas fa-rotate-right"></i>
+                    </button>
                 </div>
             </div>
 
-            <div ref="sentinelRef" id="sentinel"></div>
-            <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
-                <div class="ui-spinner u-text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+            <MovieCard
+                v-for="item in visibleItems"
+                :key="item.id"
+                :item="item"
+                :active-tags="selectedDashboardTags"
+            />
+
+            <div v-if="visibleItems.length === 0" class="ui-col-12">
+                <EmptyState tone="warning" icon="fas fa-film" message="No movies found." />
             </div>
         </div>
-    
+
+        <div ref="sentinelRef" id="sentinel"></div>
+        <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
+            <output class="ui-spinner u-text-primary" aria-live="polite">
+                <span class="visually-hidden">Loading...</span>
+            </output>
+        </div>
+    </PageShell>
 </template>
 
 <style scoped>
+.dashboard-header-single-line :deep(.ui-page-subtitle) {
+    white-space: nowrap;
+}
+
 .continue-watching-swiper {
-    --swiper-theme-color: #0d6efd;
+    --swiper-theme-color: var(--primary-strong);
 }
 
 .continue-watching-swiper :deep(.swiper-slide) {
@@ -476,14 +482,14 @@ onBeforeUnmount(() => {
     height: 36px;
     margin-top: -22px;
     border-radius: 999px;
-    background-color: rgba(33, 37, 41, 0.88);
-    color: #fff;
+    background-color: var(--overlay-strong);
+    color: var(--text-1);
     transition: background-color 0.2s ease;
 }
 
 .continue-watching-swiper :deep(.swiper-button-next:hover),
 .continue-watching-swiper :deep(.swiper-button-prev:hover) {
-    background-color: rgba(13, 110, 253, 0.95);
+    background-color: var(--overlay-primary);
 }
 
 .continue-watching-swiper :deep(.swiper-button-next::after),
@@ -495,22 +501,22 @@ onBeforeUnmount(() => {
 .continue-watching-swiper :deep(.swiper-pagination-bullet) {
     width: 9px;
     height: 9px;
-    background: #adb5bd;
+    background: var(--bullet-muted);
     opacity: 1;
 }
 
 .continue-watching-swiper :deep(.swiper-pagination-bullet-active) {
-    background: #0d6efd;
+    background: var(--primary-strong);
 }
 
 .continue-watching-swiper .ui-card {
-    u-border: 1px solid #e9ecef;
+    border: 1px solid var(--border);
     transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .continue-watching-swiper .ui-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 0.35rem 0.8rem rgba(0, 0, 0, 0.12);
+    box-shadow: var(--card-hover-shadow);
 }
 
 @media (max-width: 575.98px) {

@@ -1,5 +1,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 
 const props = defineProps({
     user: Object,
@@ -22,8 +24,10 @@ const submit = () => {
 <template>
     <Head :title="`Edit User: ${user.name}`" />
 
-    <div class="ui-container-fluid">
-        <h2 class="mb-3">Edit User</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader :title="`Edit User: ${user.name}`" subtitle="Update account details and role assignments" />
+        </template>
 
         <form class="ui-card" @submit.prevent="submit">
             <div class="ui-card-body">
@@ -68,5 +72,5 @@ const submit = () => {
                 <Link :href="route('admin.users.index')" class="ui-btn ui-btn-outline-secondary">Cancel</Link>
             </div>
         </form>
-    </div>
+    </PageShell>
 </template>

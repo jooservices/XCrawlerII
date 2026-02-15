@@ -1,6 +1,10 @@
 <script setup>
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
+import DataTableShell from '@jav/Components/UI/DataTableShell.vue';
 
 const props = defineProps({
     roles: Object,
@@ -35,13 +39,16 @@ const isCoreRole = (slug) => ['admin', 'moderator', 'user'].includes(slug);
 <template>
     <Head title="Role Management" />
 
-    <div class="ui-container-fluid">
-        <div class="u-flex u-justify-between u-items-center mb-3">
-            <h2 class="mb-0">Role Management</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Role Management" subtitle="Manage roles and permission bundles" />
+        </template>
+
+        <template #actions>
             <Link v-if="canCreate" :href="route('admin.roles.create')" class="ui-btn ui-btn-primary">
                 <i class="fas fa-plus mr-1" />Add Role
             </Link>
-        </div>
+        </template>
 
         <form class="ui-row ui-g-2 mb-3" @submit.prevent="updateFilter">
             <div class="ui-col-md-6">
@@ -66,7 +73,14 @@ const isCoreRole = (slug) => ['admin', 'moderator', 'user'].includes(slug);
             </div>
         </form>
 
-        <div class="ui-card">
+        <EmptyState
+            v-if="roles.data.length === 0"
+            tone="info"
+            icon="fas fa-shield-alt"
+            message="No roles found. Create a new role to get started."
+        />
+
+        <DataTableShell v-else>
             <div class="ui-table-responsive">
                 <table class="ui-table ui-table-hover mb-0">
                     <thead class="ui-table-light">
@@ -107,14 +121,11 @@ const isCoreRole = (slug) => ['admin', 'moderator', 'user'].includes(slug);
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="roles.data.length === 0">
-                            <td colspan="6" class="u-text-center py-4">No roles found.</td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="ui-card-footer">
+            <template #footer>
                 <nav v-if="roles.links?.length > 3">
                     <ul class="ui-pagination mb-0 u-justify-center">
                         <li
@@ -127,7 +138,7 @@ const isCoreRole = (slug) => ['admin', 'moderator', 'user'].includes(slug);
                         </li>
                     </ul>
                 </nav>
-            </div>
-        </div>
-    </div>
+            </template>
+        </DataTableShell>
+    </PageShell>
 </template>

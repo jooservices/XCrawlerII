@@ -2,6 +2,8 @@
 import { computed } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { useUIStore } from '@jav/Stores/ui';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 
 const props = defineProps({
     preferences: Object,
@@ -115,91 +117,86 @@ const submitProfile = () => {
         <title>Preferences</title>
     </Head>
 
-    
-        <div class="ui-container-fluid">
-            <div class="ui-row mb-4">
-                <div class="ui-col-md-12">
-                    <h2><i class="fas fa-sliders-h mr-2"></i>User Preferences</h2>
-                    <p class="u-text-muted mb-0">Manage your avatar, password, and dashboard display behavior.</p>
-                </div>
-            </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="User Preferences" subtitle="Manage your avatar, password, and dashboard display behavior" />
+        </template>
 
-            <div class="ui-card mb-4">
-                <div class="ui-card-body">
-                    <h5 class="mb-3"><i class="fas fa-user-circle mr-2"></i>Avatar</h5>
-                    <div class="ui-row ui-items-center ui-g-3">
-                        <div class="ui-col-md-2">
-                            <img
-                                v-if="user?.avatar_url"
-                                :src="user.avatar_url"
-                                alt="User avatar"
-                                width="80"
-                                height="80"
-                                class="rounded-circle"
-                            >
-                        </div>
-                        <div class="ui-col-md-10">
-                            <form @submit.prevent="submitAvatar">
-                                <div class="mb-2">
-                                    <input
-                                        type="file"
-                                        class="ui-form-control"
-                                        accept="image/png,image/jpeg,image/webp"
-                                        @change="onAvatarChange"
-                                    >
-                                </div>
-                                <div v-if="avatarForm.errors.avatar" class="ui-text-danger small mb-2">{{ avatarForm.errors.avatar }}</div>
-                                <button type="submit" class="ui-btn ui-btn-primary" :disabled="avatarForm.processing || !avatarForm.avatar">
-                                    <i class="fas fa-upload mr-1"></i>Upload Avatar
-                                </button>
-                                <button
-                                    v-if="user?.avatar_path"
-                                    type="button"
-                                    class="ui-btn ui-btn-outline-secondary ml-2"
-                                    :disabled="avatarForm.processing"
-                                    @click="removeAvatar"
+        <div class="ui-card mb-4">
+            <div class="ui-card-body">
+                <h5 class="mb-3"><i class="fas fa-user-circle mr-2"></i>Avatar</h5>
+                <div class="ui-row ui-items-center ui-g-3">
+                    <div class="ui-col-md-2">
+                        <img
+                            v-if="user?.avatar_url"
+                            :src="user.avatar_url"
+                            alt="User avatar"
+                            width="80"
+                            height="80"
+                            class="rounded-circle"
+                        >
+                    </div>
+                    <div class="ui-col-md-10">
+                        <form @submit.prevent="submitAvatar">
+                            <div class="mb-2">
+                                <input
+                                    type="file"
+                                    class="ui-form-control"
+                                    accept="image/png,image/jpeg,image/webp"
+                                    @change="onAvatarChange"
                                 >
-                                    <i class="fas fa-undo mr-1"></i>Use Gravatar
-                                </button>
-                            </form>
-                        </div>
+                            </div>
+                            <div v-if="avatarForm.errors.avatar" class="ui-text-danger small mb-2">{{ avatarForm.errors.avatar }}</div>
+                            <button type="submit" class="ui-btn ui-btn-primary" :disabled="avatarForm.processing || !avatarForm.avatar">
+                                <i class="fas fa-upload mr-1"></i>Upload Avatar
+                            </button>
+                            <button
+                                v-if="user?.avatar_path"
+                                type="button"
+                                class="ui-btn ui-btn-outline-secondary ml-2"
+                                :disabled="avatarForm.processing"
+                                @click="removeAvatar"
+                            >
+                                <i class="fas fa-undo mr-1"></i>Use Gravatar
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="ui-card mb-4">
-                <div class="ui-card-body">
-                    <h5 class="mb-3"><i class="fas fa-id-badge mr-2"></i>Profile</h5>
-                    <form @submit.prevent="submitProfile">
-                        <div class="ui-row ui-g-3">
-                            <div class="ui-col-md-6">
-                                <label for="profile_name" class="ui-form-label">Name</label>
-                                <input id="profile_name" v-model="profileForm.name" type="text" class="ui-form-control" required>
-                                <div v-if="profileForm.errors.name" class="ui-text-danger small mt-1">{{ profileForm.errors.name }}</div>
-                            </div>
-                            <div class="ui-col-md-6">
-                                <label for="profile_email" class="ui-form-label">Email</label>
-                                <input id="profile_email" v-model="profileForm.email" type="email" class="ui-form-control" required>
-                                <div v-if="profileForm.errors.email" class="ui-text-danger small mt-1">{{ profileForm.errors.email }}</div>
-                                <div v-if="isEmailChanged" class="u-text-muted small mt-1">
-                                    You changed email. Please enter current password to confirm.
-                                </div>
-                            </div>
-                            <div class="ui-col-md-6">
-                                <label for="profile_current_password" class="ui-form-label">Current Password (required when changing email)</label>
-                                <input id="profile_current_password" v-model="profileForm.current_password" type="password" class="ui-form-control" :required="isEmailChanged">
-                                <div v-if="profileForm.errors.current_password" class="ui-text-danger small mt-1">{{ profileForm.errors.current_password }}</div>
+        <div class="ui-card mb-4">
+            <div class="ui-card-body">
+                <h5 class="mb-3"><i class="fas fa-id-badge mr-2"></i>Profile</h5>
+                <form @submit.prevent="submitProfile">
+                    <div class="ui-row ui-g-3">
+                        <div class="ui-col-md-6">
+                            <label for="profile_name" class="ui-form-label">Name</label>
+                            <input id="profile_name" v-model="profileForm.name" type="text" class="ui-form-control" required>
+                            <div v-if="profileForm.errors.name" class="ui-text-danger small mt-1">{{ profileForm.errors.name }}</div>
+                        </div>
+                        <div class="ui-col-md-6">
+                            <label for="profile_email" class="ui-form-label">Email</label>
+                            <input id="profile_email" v-model="profileForm.email" type="email" class="ui-form-control" required>
+                            <div v-if="profileForm.errors.email" class="ui-text-danger small mt-1">{{ profileForm.errors.email }}</div>
+                            <div v-if="isEmailChanged" class="u-text-muted small mt-1">
+                                You changed email. Please enter current password to confirm.
                             </div>
                         </div>
+                        <div class="ui-col-md-6">
+                            <label for="profile_current_password" class="ui-form-label">Current Password (required when changing email)</label>
+                            <input id="profile_current_password" v-model="profileForm.current_password" type="password" class="ui-form-control" :required="isEmailChanged">
+                            <div v-if="profileForm.errors.current_password" class="ui-text-danger small mt-1">{{ profileForm.errors.current_password }}</div>
+                        </div>
+                    </div>
 
-                        <button type="submit" class="ui-btn ui-btn-primary mt-3" :disabled="profileForm.processing">
-                            <i class="fas fa-user-edit mr-1"></i>Update Profile
-                        </button>
-                    </form>
-                </div>
+                    <button type="submit" class="ui-btn ui-btn-primary mt-3" :disabled="profileForm.processing">
+                        <i class="fas fa-user-edit mr-1"></i>Update Profile
+                    </button>
+                </form>
             </div>
-
-            <div class="ui-card mb-4">
+        </div>
+        <div class="ui-card mb-4">
                 <div class="ui-card-body">
                     <h5 class="mb-3"><i class="fas fa-lock mr-2"></i>Change Password</h5>
                     <form @submit.prevent="submitPassword">
@@ -227,7 +224,7 @@ const submitProfile = () => {
                 </div>
             </div>
 
-            <div class="ui-card">
+        <div class="ui-card">
                 <div class="ui-card-body">
                     <form @submit.prevent="submit">
                         <div class="ui-row ui-g-3 mb-3">
@@ -258,6 +255,5 @@ const submitProfile = () => {
                     </form>
                 </div>
             </div>
-        </div>
-    
+            </PageShell>
 </template>

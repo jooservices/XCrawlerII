@@ -1,5 +1,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 
 const props = defineProps({
     roles: Array,
@@ -21,8 +23,10 @@ const submit = () => {
 <template>
     <Head title="Create User" />
 
-    <div class="ui-container-fluid">
-        <h2 class="mb-3">Create User</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Create User" subtitle="Add a new user account and assign roles" />
+        </template>
 
         <form class="ui-card" @submit.prevent="submit">
             <div class="ui-card-body">
@@ -67,5 +71,5 @@ const submit = () => {
                 <Link :href="route('admin.users.index')" class="ui-btn ui-btn-outline-secondary">Cancel</Link>
             </div>
         </form>
-    </div>
+    </PageShell>
 </template>

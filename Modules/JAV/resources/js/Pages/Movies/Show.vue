@@ -1,9 +1,11 @@
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
-import { usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import axios from 'axios';
 import { useUIStore } from '@jav/Stores/ui';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import MovieCard from '@jav/Components/MovieCard.vue';
 
 const props = defineProps({
     jav: Object,
@@ -54,8 +56,17 @@ const handleFavorite = async () => {
 <template>
     <Head :title="`${jav.formatted_code || jav.code} ${jav.title}`" />
 
-    
-        <div class="ui-container-fluid">
+    <PageShell>
+        <template #header>
+            <SectionHeader :title="jav.formatted_code || jav.code" :subtitle="jav.title" />
+        </template>
+
+        <template #actions>
+            <Link :href="route('jav.vue.dashboard')" class="ui-btn ui-btn-secondary ui-btn-sm">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </Link>
+        </template>
+
             <div class="ui-row mb-4">
                 <div class="ui-col-md-6">
                     <img
@@ -66,9 +77,6 @@ const handleFavorite = async () => {
                     >
                 </div>
                 <div class="ui-col-md-6">
-                    <h2 class="u-text-primary">{{ jav.formatted_code || jav.code }}</h2>
-                    <h4 class="u-text-muted">{{ jav.title }}</h4>
-
                     <div class="mt-3">
                         <p><strong><i class="fas fa-calendar-alt"></i> Date:</strong> {{ formatDate(jav.date) }}</p>
                         <p v-if="jav.size"><strong><i class="fas fa-hdd"></i> Size:</strong> {{ jav.size }} GB</p>
@@ -124,9 +132,6 @@ const handleFavorite = async () => {
                         <a :href="route('jav.movies.download', jav.uuid || jav.id)" class="ui-btn ui-btn-primary ui-btn-lg mr-2">
                             <i class="fas fa-download"></i> Download Torrent
                         </a>
-                        <Link :href="route('jav.vue.dashboard')" class="ui-btn ui-btn-secondary ui-btn-lg">
-                            <i class="fas fa-arrow-left"></i> Back to Dashboard
-                        </Link>
                     </div>
                 </div>
             </div>
@@ -140,27 +145,7 @@ const handleFavorite = async () => {
                     </div>
                 </div>
                 <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4 mb-5">
-                    <div v-for="item in relatedByActors" :key="`actor-related-${item.id}`" class="ui-col">
-                        <Link :href="route('jav.vue.movies.show', item.uuid || item.id)" class="u-no-underline u-text-dark">
-                            <div class="ui-card u-h-full u-shadow-sm" style="cursor: pointer;">
-                                <div class="u-relative">
-                                    <img
-                                        :src="item.cover"
-                                        class="ui-card-img-top"
-                                        :alt="item.formatted_code || item.code"
-                                        @error="(e) => { e.target.src = 'https://via.placeholder.com/300x400?text=No+Image'; }"
-                                    >
-                                    <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
-                                        <small><i class="fas fa-eye"></i> {{ item.views || 0 }}</small>
-                                    </div>
-                                </div>
-                                <div class="ui-card-body">
-                                    <h6 class="ui-card-title u-text-primary">{{ item.formatted_code || item.code }}</h6>
-                                    <p class="ui-card-text u-truncate small" :title="item.title">{{ item.title }}</p>
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
+                    <MovieCard v-for="item in relatedByActors" :key="`actor-related-${item.id}`" :item="item" />
                 </div>
             </template>
 
@@ -171,29 +156,8 @@ const handleFavorite = async () => {
                     </div>
                 </div>
                 <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
-                    <div v-for="item in relatedByTags" :key="`tag-related-${item.id}`" class="ui-col">
-                        <Link :href="route('jav.vue.movies.show', item.uuid || item.id)" class="u-no-underline u-text-dark">
-                            <div class="ui-card u-h-full u-shadow-sm" style="cursor: pointer;">
-                                <div class="u-relative">
-                                    <img
-                                        :src="item.cover"
-                                        class="ui-card-img-top"
-                                        :alt="item.formatted_code || item.code"
-                                        @error="(e) => { e.target.src = 'https://via.placeholder.com/300x400?text=No+Image'; }"
-                                    >
-                                    <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
-                                        <small><i class="fas fa-eye"></i> {{ item.views || 0 }}</small>
-                                    </div>
-                                </div>
-                                <div class="ui-card-body">
-                                    <h6 class="ui-card-title u-text-primary">{{ item.formatted_code || item.code }}</h6>
-                                    <p class="ui-card-text u-truncate small" :title="item.title">{{ item.title }}</p>
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
+                    <MovieCard v-for="item in relatedByTags" :key="`tag-related-${item.id}`" :item="item" />
                 </div>
             </template>
-        </div>
-    
+    </PageShell>
 </template>

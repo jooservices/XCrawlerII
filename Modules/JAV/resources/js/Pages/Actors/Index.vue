@@ -4,6 +4,9 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import axios from 'axios';
 import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
 import AdvancedSearchForm from '@jav/Components/Search/AdvancedSearchForm.vue';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
 import { useUIStore } from '@jav/Stores/ui';
 
 const props = defineProps({
@@ -345,118 +348,112 @@ watch(
 <template>
     <Head title="Actors" />
 
-    
-        <div class="ui-container-fluid">
-            <div class="ui-row mb-4">
-                <div class="ui-col-md-12">
-                    <h2>Actors</h2>
-                </div>
-            </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Actors" subtitle="Browse profiles and filter by bio attributes" />
+        </template>
 
-            <OrderingBar
-                :total-matches="matchedActorsTotal"
-                :loaded-matches="visibleActors.length"
-                :has-auth-user="false"
-                :show-save-button="false"
-                :show-save-form="false"
-                :show-preset-section="false"
-                :show-sort-section="true"
-                :sort="sort || 'javs_count'"
-                :direction="direction || 'desc'"
-                :options="actorSortOptions"
-                @sort-selected="applySort($event.sort, $event.direction)"
-            />
+        <OrderingBar
+            :total-matches="matchedActorsTotal"
+            :loaded-matches="visibleActors.length"
+            :has-auth-user="false"
+            :show-save-button="false"
+            :show-save-form="false"
+            :show-preset-section="false"
+            :show-sort-section="true"
+            :sort="sort || 'javs_count'"
+            :direction="direction || 'desc'"
+            :options="actorSortOptions"
+            @sort-selected="applySort($event.sort, $event.direction)"
+        />
 
-            <AdvancedSearchForm
-                :filter-form="filterForm"
-                :bio-filters="bioFilters"
-                :available-bio-keys="availableBioKeys"
-                :tag-suggestions="tagSuggestions"
-                :bio-value-suggestions="bioValueSuggestions"
-                context="actors"
-                reset-route-name="jav.vue.actors"
-                @submit="submitSearch"
-                @add-bio-filter="addBioFilter"
-                @remove-bio-filter="removeBioFilter"
-            />
+        <AdvancedSearchForm
+            :filter-form="filterForm"
+            :bio-filters="bioFilters"
+            :available-bio-keys="availableBioKeys"
+            :tag-suggestions="tagSuggestions"
+            :bio-value-suggestions="bioValueSuggestions"
+            context="actors"
+            reset-route-name="jav.vue.actors"
+            @submit="submitSearch"
+            @add-bio-filter="addBioFilter"
+            @remove-bio-filter="removeBioFilter"
+        />
 
-            <div class="ui-row ui-row-cols-2 ui-row-cols-md-4 ui-row-cols-lg-6 ui-g-4">
-                <div v-for="actor in visibleActors" :key="actor.id" class="ui-col">
-                    <div class="ui-card u-h-full u-shadow-sm hover-shadow">
-                        <div class="u-relative">
-                            <Link :href="route('jav.vue.actors.bio', actor.uuid || actor.id)">
-                                <img
-                                    :src="actor.cover"
-                                    class="ui-card-img-top"
-                                    :alt="actor.name"
-                                    @error="(e) => { e.target.src = 'https://placehold.co/300x400?text=No+Image'; }"
-                                >
-                            </Link>
-                            <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
-                                <small><i class="fas fa-heart"></i> {{ formatCount(actor.favorites_count) }}</small>
-                                <small class="ml-2"><i class="fas fa-eye"></i> {{ formatCount(actor.jav_views) }}</small>
-                                <small v-if="resolveActorRate(actor) !== null" class="ml-2"><i class="fas fa-star"></i> {{ formatRate(resolveActorRate(actor)) }}</small>
-                            </div>
-                            <div
-                                v-if="resolveActorAge(actor) !== null"
-                                class="u-absolute u-top-0 u-left-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded actor-age-chip"
-                                :class="{ 'actor-age-chip-active': isAgeFilterActive(resolveActorAge(actor)) }"
-                                role="button"
-                                title="Filter by this age"
-                                @click.stop="filterByAge(resolveActorAge(actor))"
+        <div class="ui-row ui-row-cols-2 ui-row-cols-md-4 ui-row-cols-lg-6 ui-g-4">
+            <div v-for="actor in visibleActors" :key="actor.id" class="ui-col">
+                <div class="ui-card u-h-full u-shadow-sm hover-shadow">
+                    <div class="u-relative">
+                        <Link :href="route('jav.vue.actors.bio', actor.uuid || actor.id)">
+                            <img
+                                :src="actor.cover"
+                                class="ui-card-img-top"
+                                :alt="actor.name"
+                                @error="(e) => { e.target.src = 'https://placehold.co/300x400?text=No+Image'; }"
                             >
-                                <small><i class="fas fa-user-clock"></i> {{ resolveActorAge(actor) }}</small>
-                            </div>
+                        </Link>
+                        <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
+                            <small><i class="fas fa-heart"></i> {{ formatCount(actor.favorites_count) }}</small>
+                            <small class="ml-2"><i class="fas fa-eye"></i> {{ formatCount(actor.jav_views) }}</small>
+                            <small v-if="resolveActorRate(actor) !== null" class="ml-2"><i class="fas fa-star"></i> {{ formatRate(resolveActorRate(actor)) }}</small>
                         </div>
-                        <div class="ui-card-body u-text-center">
-                            <h5 class="ui-card-title u-truncate" :title="actor.name">{{ actor.name }}</h5>
-                            <span class="ui-badge u-bg-secondary">{{ actor.javs_count || 0 }} JAVs</span>
-                            <div class="mt-2 u-flex gap-2 actor-actions">
-                                <button
-                                    v-if="hasAuthUser"
-                                    type="button"
-                                    class="ui-btn ui-btn-sm u-z-2 u-relative"
-                                    :class="isActorLiked(actor) ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
-                                    :disabled="isLikeProcessing(actor)"
-                                    title="Like actor"
-                                    @click.prevent="toggleActorLike(actor)"
-                                >
-                                    <i :class="isActorLiked(actor) ? 'fas fa-heart' : 'far fa-heart'"></i>
-                                </button>
-                                <div class="quick-rating-group u-flex u-items-center ml-auto">
-                                    <button
-                                        v-for="star in 5"
-                                        :key="`actor-rate-${actor.id}-${star}`"
-                                        type="button"
-                                        class="ui-btn ui-btn-link ui-btn-sm p-0 mx-1 quick-rate-btn u-z-2 u-relative"
-                                        :class="actorStarCount(actor) >= star ? 'u-text-warning' : 'u-text-secondary'"
-                                        :title="`Actor rate ${star}`"
-                                        tabindex="-1"
-                                    >
-                                        <i class="fas fa-star"></i>
-                                    </button>
-                                    <small v-if="resolveActorRate(actor) !== null" class="ml-1 u-text-muted">{{ formatRate(resolveActorRate(actor)) }}/5</small>
-                                </div>
-                            </div>
-                        </div>
+                        <button
+                            v-if="resolveActorAge(actor) !== null"
+                            type="button"
+                            class="u-btn-reset u-absolute u-top-0 u-left-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded actor-age-chip"
+                            :class="{ 'actor-age-chip-active': isAgeFilterActive(resolveActorAge(actor)) }"
+                            title="Filter by this age"
+                            @click.stop="filterByAge(resolveActorAge(actor))"
+                        >
+                            <small><i class="fas fa-user-clock"></i> {{ resolveActorAge(actor) }}</small>
+                        </button>
                     </div>
-                </div>
-
-                <div v-if="visibleActors.length === 0" class="ui-col-12">
-                    <div class="ui-alert ui-alert-warning u-text-center">
-                        No actors found.
+                    <div class="ui-card-body u-text-center">
+                        <h5 class="ui-card-title u-truncate" :title="actor.name">{{ actor.name }}</h5>
+                        <span class="ui-badge u-bg-secondary">{{ actor.javs_count || 0 }} JAVs</span>
+                        <div class="mt-2 u-flex gap-2 actor-actions">
+                            <button
+                                v-if="hasAuthUser"
+                                type="button"
+                                class="ui-btn ui-btn-sm u-z-2 u-relative"
+                                :class="isActorLiked(actor) ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
+                                :disabled="isLikeProcessing(actor)"
+                                title="Like actor"
+                                @click.prevent="toggleActorLike(actor)"
+                            >
+                                <i :class="isActorLiked(actor) ? 'fas fa-heart' : 'far fa-heart'"></i>
+                            </button>
+                            <div class="quick-rating-group u-flex u-items-center ml-auto">
+                                <button
+                                    v-for="star in 5"
+                                    :key="`actor-rate-${actor.id}-${star}`"
+                                    type="button"
+                                    class="ui-btn ui-btn-link ui-btn-sm p-0 mx-1 quick-rate-btn u-z-2 u-relative"
+                                    :class="actorStarCount(actor) >= star ? 'u-text-warning' : 'u-text-secondary'"
+                                    :title="`Actor rate ${star}`"
+                                    tabindex="-1"
+                                >
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <small v-if="resolveActorRate(actor) !== null" class="ml-1 u-text-muted">{{ formatRate(resolveActorRate(actor)) }}/5</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div ref="sentinelRef" id="sentinel"></div>
-            <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
-                <div class="ui-spinner u-text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
+            <div v-if="visibleActors.length === 0" class="ui-col-12">
+                <EmptyState tone="warning" icon="fas fa-users" message="No actors found." />
             </div>
         </div>
-    
+
+        <div ref="sentinelRef" id="sentinel"></div>
+        <div v-if="loadingMore" id="loading-spinner" class="u-text-center my-4">
+            <output class="ui-spinner u-text-primary" aria-live="polite">
+                <span class="visually-hidden">Loading...</span>
+            </output>
+        </div>
+    </PageShell>
 </template>
 
 <style scoped>
@@ -473,7 +470,7 @@ watch(
 }
 
 .actor-age-chip-active {
-    background-color: #0d6efd !important;
+    background-color: var(--primary-strong) !important;
 }
 
 .actor-actions .quick-rate-btn {

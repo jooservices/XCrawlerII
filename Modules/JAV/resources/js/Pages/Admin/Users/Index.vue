@@ -1,6 +1,10 @@
 <script setup>
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
+import DataTableShell from '@jav/Components/UI/DataTableShell.vue';
 
 const props = defineProps({
     users: Object,
@@ -34,13 +38,16 @@ const removeUser = (user) => {
 <template>
     <Head title="User Management" />
 
-    <div class="ui-container-fluid">
-        <div class="u-flex u-justify-between u-items-center mb-3">
-            <h2 class="mb-0">User Management</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="User Management" subtitle="Manage accounts and access roles" />
+        </template>
+
+        <template #actions>
             <Link v-if="canCreate" :href="route('admin.users.create')" class="ui-btn ui-btn-primary">
                 <i class="fas fa-plus mr-1" />Add User
             </Link>
-        </div>
+        </template>
 
         <form class="ui-row ui-g-2 mb-3" @submit.prevent="updateFilter">
             <div class="ui-col-md-4">
@@ -71,7 +78,14 @@ const removeUser = (user) => {
             </div>
         </form>
 
-        <div class="ui-card">
+        <EmptyState
+            v-if="users.data.length === 0"
+            tone="info"
+            icon="fas fa-users"
+            message="No users found. Adjust filters or create a new user."
+        />
+
+        <DataTableShell v-else>
             <div class="ui-table-responsive">
                 <table class="ui-table ui-table-hover mb-0">
                     <thead class="ui-table-light">
@@ -113,14 +127,11 @@ const removeUser = (user) => {
                                 </div>
                             </td>
                         </tr>
-                        <tr v-if="users.data.length === 0">
-                            <td colspan="6" class="u-text-center py-4">No users found.</td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
 
-            <div class="ui-card-footer">
+            <template #footer>
                 <nav v-if="users.links?.length > 3">
                     <ul class="ui-pagination mb-0 u-justify-center">
                         <li
@@ -133,7 +144,7 @@ const removeUser = (user) => {
                         </li>
                     </ul>
                 </nav>
-            </div>
-        </div>
-    </div>
+            </template>
+        </DataTableShell>
+    </PageShell>
 </template>

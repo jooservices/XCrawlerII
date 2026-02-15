@@ -291,7 +291,7 @@ onBeforeUnmount(() => {
             <button id="sidebarToggle" class="ui-btn ui-btn-dark mr-2" type="button" @click="toggleSidebar">
                 <i class="fas fa-bars"></i>
             </button>
-            <Link class="ui-navbar-brand" :href="route('jav.vue.dashboard')">JAV Dashboard</Link>
+            <Link class="ui-navbar-brand" :href="route('jav.vue.dashboard')">XCrawler</Link>
             <button class="ui-navbar-toggler" type="button" :aria-expanded="navbarOpen ? 'true' : 'false'" @click.stop="toggleNavbar">
                 <span class="ui-navbar-toggler-icon"></span>
             </button>
@@ -304,7 +304,7 @@ onBeforeUnmount(() => {
                             :class="{ active: isActiveAny(['jav.vue.dashboard', 'jav.vue.movies.*']) }"
                             :href="route('jav.vue.dashboard')"
                         >
-                            Home
+                            Dashboard
                         </Link>
                     </li>
 
@@ -333,20 +333,20 @@ onBeforeUnmount(() => {
                                     <Link :href="route('jav.vue.admin.analytics')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.analytics') }">Analytics</Link>
                                 </li>
                                 <li>
-                                    <Link :href="route('admin.job-telemetry')" class="ui-dropdown-item" :class="{ active: isActive('admin.job-*') }">Job Telemetry</Link>
+                                    <Link :href="route('admin.job-telemetry')" class="ui-dropdown-item" :class="{ active: isActive('admin.job-*') }">Telemetry</Link>
                                 </li>
                                 <li>
-                                    <Link :href="route('jav.vue.admin.search-quality')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.search-quality') }">Search Quality</Link>
+                                    <Link :href="route('jav.vue.admin.search-quality')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.search-quality') }">Quality</Link>
                                 </li>
                                 <li>
-                                    <Link :href="route('jav.vue.admin.provider-sync')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.provider-sync') }">Provider Sync</Link>
+                                    <Link :href="route('jav.vue.admin.provider-sync')" class="ui-dropdown-item" :class="{ active: isActive('jav.vue.admin.provider-sync') }">Sync</Link>
                                 </li>
                             </template>
                         </ul>
                     </li>
                 </ul>
 
-                <form ref="searchRef" class="u-relative mx-lg-3 u-flex u-items-center" style="min-width: 260px; max-width: 420px; width: 100%;" @submit.prevent="submitGlobalSearch">
+                <form ref="searchRef" class="u-relative mx-lg-3 u-flex u-items-center u-min-w-260 u-max-w-420 u-w-full" @submit.prevent="submitGlobalSearch">
                     <input
                         v-model="searchQuery"
                         class="ui-form-control"
@@ -364,8 +364,7 @@ onBeforeUnmount(() => {
 
                     <ul
                         v-if="searchMenuOpen"
-                        class="ui-dropdown-menu show w-100 mt-1"
-                        style="display: block; max-height: 320px; overflow: auto;"
+                        class="ui-dropdown-menu show w-100 mt-1 u-block u-max-h-320 u-overflow-auto"
                     >
                         <li v-if="isSearching" class="ui-dropdown-item u-text-muted small">Searching...</li>
                         <li
@@ -405,7 +404,7 @@ onBeforeUnmount(() => {
                                     {{ unreadCount > 99 ? '99+' : unreadCount }}
                                 </span>
                             </button>
-                            <ul class="ui-dropdown-menu ui-dropdown-menu-end" :class="{ show: notificationsOpen }" aria-labelledby="notificationsDropdown" style="min-width: 340px;">
+                            <ul class="ui-dropdown-menu ui-dropdown-menu-end u-min-w-340" :class="{ show: notificationsOpen }" aria-labelledby="notificationsDropdown">
                                 <li class="ui-dropdown-header u-flex u-justify-between u-items-center">
                                     <span>Notifications</span>
                                     <button v-if="unreadCount > 0" type="button" class="ui-btn ui-btn-link ui-btn-sm p-0" @click="markAllNotificationsRead">

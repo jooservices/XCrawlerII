@@ -1,5 +1,9 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import EmptyState from '@jav/Components/UI/EmptyState.vue';
+import DataTableShell from '@jav/Components/UI/DataTableShell.vue';
 
 defineProps({
     items: Object,
@@ -9,19 +13,27 @@ defineProps({
 <template>
     <Head title="JAV Resource" />
 
-    
-        <div class="ui-container-fluid py-4">
-            <div class="u-flex u-justify-between u-items-center mb-3">
-                <h2 class="mb-0">JAV Resource</h2>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="JAV Resource" subtitle="Browse raw JAV records" />
+        </template>
+
+        <template #actions>
                 <Link :href="route('jav.vue.javs.create')" class="ui-btn ui-btn-primary ui-btn-sm">
                     <i class="fas fa-plus mr-1"></i>Create
                 </Link>
-            </div>
+        </template>
 
-            <div class="ui-card">
-                <div class="ui-card-body">
-                    <div class="ui-table-responsive">
-                        <table class="ui-table ui-table-striped ui-table-hover mb-0">
+        <EmptyState
+            v-if="(items.data || []).length === 0"
+            tone="info"
+            icon="fas fa-database"
+            message="No records available yet."
+        />
+
+        <DataTableShell v-else>
+            <div class="ui-table-responsive">
+                <table class="ui-table ui-table-striped ui-table-hover mb-0">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -32,9 +44,6 @@ defineProps({
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-if="(items.data || []).length === 0">
-                                    <td colspan="5" class="u-text-muted">No records.</td>
-                                </tr>
                                 <tr v-for="item in items.data || []" :key="item.id">
                                     <td>{{ item.id }}</td>
                                     <td>{{ item.code }}</td>
@@ -46,19 +55,17 @@ defineProps({
                                     </td>
                                 </tr>
                             </tbody>
-                        </table>
-                    </div>
-
-                    <div class="mt-3">
-                        <ul class="ui-pagination mb-0">
-                            <li v-for="(link, index) in items.links || []" :key="index" class="ui-page-item" :class="{ active: link.active, disabled: !link.url }">
-                                <Link v-if="link.url" class="ui-page-link" :href="link.url" v-html="link.label" />
-                                <span v-else class="ui-page-link" v-html="link.label" />
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                </table>
             </div>
-        </div>
-    
+
+            <template #footer>
+                <ul class="ui-pagination mb-0">
+                    <li v-for="(link, index) in items.links || []" :key="index" class="ui-page-item" :class="{ active: link.active, disabled: !link.url }">
+                        <Link v-if="link.url" class="ui-page-link" :href="link.url" v-html="link.label" />
+                        <span v-else class="ui-page-link" v-html="link.label" />
+                    </li>
+                </ul>
+            </template>
+        </DataTableShell>
+    </PageShell>
 </template>

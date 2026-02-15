@@ -3,6 +3,9 @@ import { Head } from '@inertiajs/vue3';
 import { computed, onMounted, ref } from 'vue';
 import axios from 'axios';
 import VueApexCharts from 'vue3-apexcharts';
+import PageShell from '@jav/Components/UI/PageShell.vue';
+import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import StatCard from '@jav/Components/UI/StatCard.vue';
 
 const loading = ref(false);
 const error = ref('');
@@ -105,11 +108,10 @@ onMounted(fetchSummary);
         <title>Job Telemetry</title>
     </Head>
 
-    <div class="ui-container-fluid">
-        <div class="u-flex u-justify-between u-items-center mb-3">
-            <h2 class="mb-0">Job Telemetry</h2>
-            <small class="u-text-muted">Admin-only queue analytics</small>
-        </div>
+    <PageShell>
+        <template #header>
+            <SectionHeader title="Job Telemetry" subtitle="Admin-only queue analytics" />
+        </template>
 
         <div class="ui-card mb-3">
             <div class="ui-card-body">
@@ -162,36 +164,16 @@ onMounted(fetchSummary);
 
         <div class="ui-row ui-g-3 mb-3">
             <div class="ui-col-md-3">
-                <div class="ui-card u-h-full">
-                    <div class="ui-card-body">
-                        <p class="u-text-muted mb-1">Completed</p>
-                        <h4 class="mb-0">{{ Number(summary.total_completed || 0).toLocaleString() }}</h4>
-                    </div>
-                </div>
+                <StatCard label="Completed" :value="Number(summary.total_completed || 0).toLocaleString()" />
             </div>
             <div class="ui-col-md-3">
-                <div class="ui-card u-h-full">
-                    <div class="ui-card-body">
-                        <p class="u-text-muted mb-1">Fail Rate</p>
-                        <h4 class="mb-0">{{ Number(summary.fail_rate || 0).toFixed(2) }}%</h4>
-                    </div>
-                </div>
+                <StatCard label="Fail Rate" :value="`${Number(summary.fail_rate || 0).toFixed(2)}%`" />
             </div>
             <div class="ui-col-md-3">
-                <div class="ui-card u-h-full">
-                    <div class="ui-card-body">
-                        <p class="u-text-muted mb-1">Timeout Rate</p>
-                        <h4 class="mb-0">{{ Number(summary.timeout_rate || 0).toFixed(2) }}%</h4>
-                    </div>
-                </div>
+                <StatCard label="Timeout Rate" :value="`${Number(summary.timeout_rate || 0).toFixed(2)}%`" />
             </div>
             <div class="ui-col-md-3">
-                <div class="ui-card u-h-full">
-                    <div class="ui-card-body">
-                        <p class="u-text-muted mb-1">Throughput / sec</p>
-                        <h4 class="mb-0">{{ Number(summary.throughput_per_sec || 0).toFixed(3) }}</h4>
-                    </div>
-                </div>
+                <StatCard label="Throughput / sec" :value="Number(summary.throughput_per_sec || 0).toFixed(3)" />
             </div>
         </div>
 
@@ -338,5 +320,5 @@ onMounted(fetchSummary);
                 </div>
             </div>
         </div>
-    </div>
+    </PageShell>
 </template>
