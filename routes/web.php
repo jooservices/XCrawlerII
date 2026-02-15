@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/jav/dashboard');
+Route::get('/', WelcomeController::class)->name('home');
 
 // Admin Routes - Protected by role middleware
 Route::middleware(['auth', 'role:admin,moderator'])->prefix('admin')->name('admin.')->group(function () {
