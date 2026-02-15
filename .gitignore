@@ -10,6 +10,9 @@
 /storage/logs/
 /storage/pail/
 /storage/phpstan
+/storage/phpunit/
+phpmd_output.txt
+phpstan_errors.txt
 .env
 .env.*
 !.env.example
