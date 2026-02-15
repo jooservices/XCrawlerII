@@ -2,24 +2,15 @@
 
 namespace Modules\JAV\Tests\Feature\Controllers\Users;
 
-use App\Models\User;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Inertia\Testing\AssertableInertia as Assert;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Tests\TestCase;
 
 class PreferenceControllerTest extends TestCase
 {
-    private function asAuthenticatable(User $user): Authenticatable
-    {
-        assert($user instanceof Authenticatable);
-
-        return $user;
-    }
-
     public function test_user_can_save_preferences(): void
     {
-        $user = User::factory()->create([
+        $user = $this->createUser([
             'preferences' => [
                 'show_cover' => false,
                 'compact_mode' => false,
@@ -45,7 +36,7 @@ class PreferenceControllerTest extends TestCase
 
     public function test_save_preferences_validates_required_fields(): void
     {
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
         $this->actingAs($this->asAuthenticatable($user))
             ->post(route('jav.preferences.save'), [
@@ -56,7 +47,7 @@ class PreferenceControllerTest extends TestCase
 
     public function test_save_preferences_validates_show_cover_is_boolean(): void
     {
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
         $this->actingAs($this->asAuthenticatable($user))
             ->post(route('jav.preferences.save'), [
@@ -78,7 +69,7 @@ class PreferenceControllerTest extends TestCase
 
     public function test_save_preset_rejects_overlong_name_payload(): void
     {
-        $user = User::factory()->create();
+        $user = $this->createUser();
 
         $this->actingAs($this->asAuthenticatable($user))
             ->post(route('jav.presets.save'), [
@@ -109,7 +100,7 @@ class PreferenceControllerTest extends TestCase
                 'preset' => 'default',
             ],
         ];
-        $user = User::factory()->create([
+        $user = $this->createUser([
             'preferences' => [
                 'saved_presets' => $existingPresets,
             ],
@@ -162,7 +153,7 @@ class PreferenceControllerTest extends TestCase
             ];
         }
 
-        $user = User::factory()->create([
+        $user = $this->createUser([
             'preferences' => [
                 'saved_presets' => $existingPresets,
             ],
@@ -204,7 +195,7 @@ class PreferenceControllerTest extends TestCase
 
     public function test_user_can_delete_existing_preset_and_missing_index_is_noop(): void
     {
-        $user = User::factory()->create([
+        $user = $this->createUser([
             'preferences' => [
                 'saved_presets' => [
                     ['name' => 'A'],
@@ -236,7 +227,7 @@ class PreferenceControllerTest extends TestCase
         $javA = Jav::factory()->create(['title' => 'Match A']);
         $javB = Jav::factory()->create(['title' => 'Other B']);
 
-        $user = User::factory()->create([
+        $user = $this->createUser([
             'preferences' => [
                 'saved_presets' => [
                     [

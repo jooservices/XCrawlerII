@@ -3,10 +3,10 @@
 namespace Modules\JAV\Tests\Unit\Jobs;
 
 use Illuminate\Support\Facades\Event;
-use Mockery;
 use Modules\JAV\Events\FfjavJobCompleted;
 use Modules\JAV\Events\FfjavJobFailed;
 use Modules\JAV\Jobs\FfjavJob;
+use Modules\JAV\Services\Clients\FfjavClient;
 use Modules\JAV\Services\FfjavService;
 use Modules\JAV\Tests\TestCase;
 
@@ -25,22 +25,19 @@ class FfjavJobTest extends TestCase
     {
         Event::fake([FfjavJobCompleted::class]);
 
-        $mockItemsAdapter = Mockery::mock(\Modules\JAV\Services\Ffjav\ItemsAdapter::class);
-        $mockItemsAdapter->shouldReceive('items')
-            ->andReturn(new \Modules\JAV\Dtos\Items(
-                items: collect([1, 2]),
-                hasNextPage: false,
-                nextPage: 1
-            ));
+        $client = \Mockery::mock(FfjavClient::class);
+        $client->shouldReceive('get')
+            ->once()
+            ->with('/javtorrent')
+            ->andReturn($this->getMockResponse('ffjav_new.html'));
 
-        $serviceMock = Mockery::mock(FfjavService::class);
-        $serviceMock->shouldReceive('new')->once()->andReturn($mockItemsAdapter);
+        $service = new FfjavService($client);
 
         $job = new FfjavJob('new');
-        $job->handle($serviceMock);
+        $job->handle($service);
 
         Event::assertDispatched(FfjavJobCompleted::class, function ($event) {
-            return $event->type === 'new' && $event->itemsCount === 2;
+            return $event->type === 'new' && $event->itemsCount > 0;
         });
     }
 

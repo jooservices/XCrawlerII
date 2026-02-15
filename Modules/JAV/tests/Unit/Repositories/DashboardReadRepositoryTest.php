@@ -2,186 +2,207 @@
 
 namespace Modules\JAV\Tests\Unit\Repositories;
 
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Cache;
-use Mockery;
 use Modules\JAV\Models\Actor;
+use Modules\JAV\Models\Favorite;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Repositories\ActorRepository;
+use Modules\JAV\Models\Rating;
+use Modules\JAV\Models\Tag;
+use Modules\JAV\Models\UserJavHistory;
+use Modules\JAV\Models\UserLikeNotification;
+use Modules\JAV\Models\Watchlist;
 use Modules\JAV\Repositories\DashboardReadRepository;
-use Modules\JAV\Repositories\FavoriteRepository;
-use Modules\JAV\Repositories\JavRepository;
-use Modules\JAV\Repositories\RatingRepository;
-use Modules\JAV\Repositories\TagRepository;
-use Modules\JAV\Repositories\UserJavHistoryRepository;
-use Modules\JAV\Repositories\UserLikeNotificationRepository;
-use Modules\JAV\Repositories\WatchlistRepository;
-use Modules\JAV\Services\SearchService;
-use Tests\TestCase;
+use Modules\JAV\Tests\TestCase;
 
 class DashboardReadRepositoryTest extends TestCase
 {
-    public function test_search_with_preset_default_delegates_to_search_service(): void
+    public function test_search_with_preset_default_returns_query_matches(): void
     {
-        $paginator = new Paginator(collect(), 0, 30);
-        $search = Mockery::mock(SearchService::class);
-        $search->shouldReceive('searchJav')
-            ->once()
-            ->with('q', ['a' => 'b'], 30, 'created_at', 'desc')
-            ->andReturn($paginator);
+        config(['scout.driver' => 'collection']);
 
-        $repository = $this->makeRepository(['searchService' => $search]);
-        $result = $repository->searchWithPreset('q', ['a' => 'b'], 30, 'created_at', 'desc', 'default');
+        $matched = Jav::factory()->create(['title' => 'Alpha Match']);
+        Jav::factory()->create(['title' => 'Beta']);
 
-        $this->assertSame($paginator, $result);
+        $repository = app(DashboardReadRepository::class);
+        $result = $repository->searchWithPreset('Alpha', [], 30, 'created_at', 'desc', 'default');
+
+        $this->assertCount(1, $result->items());
+        $this->assertSame($matched->id, $result->items()[0]->id);
     }
 
-    public function test_decorate_items_for_user_sets_like_watchlist_and_rating_fields(): void
+    public function test_search_with_preset_weekly_downloads_excludes_old_items_and_sorts_desc(): void
     {
-        $user = Mockery::mock(Authenticatable::class);
-        $user->shouldReceive('getAuthIdentifier')->andReturn(10);
+        config(['scout.driver' => 'collection']);
 
-        $items = collect([(object) ['id' => 1], (object) ['id' => 2]]);
-        $paginator = new Paginator($items, 2, 30);
-
-        $favoriteRepo = Mockery::mock(FavoriteRepository::class);
-        $favoriteRepo->shouldReceive('likedJavIdsForUserAndJavIds')
-            ->once()
-            ->andReturn(collect([1 => 0]));
-
-        $watchlistRepo = Mockery::mock(WatchlistRepository::class);
-        $watchlistRepo->shouldReceive('keyedByJavIdForUserAndJavIds')
-            ->once()
-            ->andReturn(collect([1 => (object) ['id' => 101]]));
-
-        $ratingRepo = Mockery::mock(RatingRepository::class);
-        $ratingRepo->shouldReceive('keyedByJavIdForUserAndJavIds')
-            ->once()
-            ->andReturn(collect([1 => (object) ['id' => 201, 'rating' => 5]]));
-
-        $repository = $this->makeRepository([
-            'favoriteRepository' => $favoriteRepo,
-            'watchlistRepository' => $watchlistRepo,
-            'ratingRepository' => $ratingRepo,
+        $recentHigh = Jav::factory()->create([
+            'downloads' => 500,
+            'created_at' => now()->subDays(2),
+        ]);
+        $recentLow = Jav::factory()->create([
+            'downloads' => 50,
+            'created_at' => now()->subDays(3),
+        ]);
+        Jav::factory()->create([
+            'downloads' => 999,
+            'created_at' => now()->subDays(12),
         ]);
 
-        $repository->decorateItemsForUser($paginator, $user);
+        $repository = app(DashboardReadRepository::class);
+        $result = $repository->searchWithPreset('', [], 30, null, 'asc', 'weekly_downloads');
 
-        $collection = $paginator->getCollection();
-        $first = $collection->first();
-        $second = $collection->last();
+        $this->assertCount(2, $result->items());
+        $this->assertSame($recentHigh->id, $result->items()[0]->id);
+        $this->assertSame($recentLow->id, $result->items()[1]->id);
+    }
+
+    public function test_search_with_preset_preferred_tags_respects_user_preference_favorites(): void
+    {
+        config(['scout.driver' => 'collection']);
+
+        $user = $this->createUser();
+        $preferredTag = Tag::factory()->create(['name' => 'Preferred']);
+        $otherTag = Tag::factory()->create(['name' => 'Other']);
+
+        Favorite::factory()->create([
+            'user_id' => $user->id,
+            'favoritable_type' => Tag::class,
+            'favoritable_id' => $preferredTag->id,
+        ]);
+
+        $preferredMovie = Jav::factory()->create();
+        $preferredMovie->tags()->attach($preferredTag->id);
+
+        $otherMovie = Jav::factory()->create();
+        $otherMovie->tags()->attach($otherTag->id);
+
+        $repository = app(DashboardReadRepository::class);
+        $result = $repository->searchWithPreset('', [], 30, null, 'desc', 'preferred_tags', $this->asAuthenticatable($user));
+
+        $this->assertCount(1, $result->items());
+        $this->assertSame($preferredMovie->id, $result->items()[0]->id);
+        $this->assertNotSame($preferredMovie->id, $otherMovie->id);
+    }
+
+    public function test_decorate_items_for_user_sets_like_watchlist_and_rating_flags(): void
+    {
+        $user = $this->createUser();
+        $likedJav = Jav::factory()->create();
+        $plainJav = Jav::factory()->create();
+
+        Favorite::factory()->create([
+            'user_id' => $user->id,
+            'favoritable_type' => Jav::class,
+            'favoritable_id' => $likedJav->id,
+        ]);
+
+        $watchlist = Watchlist::factory()->create([
+            'user_id' => $user->id,
+            'jav_id' => $likedJav->id,
+        ]);
+
+        $rating = Rating::factory()->create([
+            'user_id' => $user->id,
+            'jav_id' => $likedJav->id,
+            'rating' => 5,
+        ]);
+
+        $items = collect([$likedJav, $plainJav]);
+        $paginator = new Paginator($items, 2, 30);
+
+        $repository = app(DashboardReadRepository::class);
+        $repository->decorateItemsForUser($paginator, $this->asAuthenticatable($user));
+
+        $first = $paginator->items()[0];
+        $second = $paginator->items()[1];
 
         $this->assertTrue($first->is_liked);
-        $this->assertSame(101, $first->watchlist_id);
         $this->assertTrue($first->in_watchlist);
+        $this->assertSame($watchlist->id, $first->watchlist_id);
         $this->assertSame(5, $first->user_rating);
-        $this->assertSame(201, $first->user_rating_id);
+        $this->assertSame($rating->id, $first->user_rating_id);
 
         $this->assertFalse($second->is_liked);
-        $this->assertNull($second->watchlist_id);
         $this->assertFalse($second->in_watchlist);
+        $this->assertNull($second->watchlist_id);
         $this->assertNull($second->user_rating);
         $this->assertNull($second->user_rating_id);
     }
 
-    public function test_passthrough_methods_delegate_to_underlying_repositories(): void
+    public function test_passthrough_methods_return_expected_records(): void
     {
-        $user = Mockery::mock(Authenticatable::class);
-        $actor = Mockery::mock(Actor::class);
-        $jav = Mockery::mock(Jav::class);
-        $paginator = new Paginator(collect(), 0, 30);
-        $collection = collect([1, 2, 3]);
+        config(['scout.driver' => 'collection']);
 
-        $search = Mockery::mock(SearchService::class);
-        $search->shouldReceive('searchActors')->once()->with('amy', [], 60, null, 'desc')->andReturn($paginator);
-        $search->shouldReceive('searchTags')->once()->with('idol', 60, null, 'desc')->andReturn($paginator);
+        $user = $this->createUser();
+        $jav = Jav::factory()->create(['title' => 'Needle Movie']);
+        $actor = Actor::factory()->create(['name' => 'Alice Doe']);
+        $tag = Tag::factory()->create(['name' => 'Idol']);
 
-        $history = Mockery::mock(UserJavHistoryRepository::class);
-        $history->shouldReceive('continueWatching')->once()->with(1, 8)->andReturn($collection);
-        $history->shouldReceive('paginateForUser')->once()->with(1, 30)->andReturn($paginator);
+        $jav->actors()->attach($actor->id);
+        $jav->tags()->attach($tag->id);
 
-        $actorRepo = Mockery::mock(ActorRepository::class);
-        $actorRepo->shouldReceive('actorMovies')->once()->with($actor, 30)->andReturn($paginator);
-
-        $javRepo = Mockery::mock(JavRepository::class);
-        $javRepo->shouldReceive('loadRelations')->once()->with($jav)->andReturn($jav);
-
-        $favoriteRepo = Mockery::mock(FavoriteRepository::class);
-        $favoriteRepo->shouldReceive('isJavLikedByUser')->once()->with($jav, 1)->andReturn(true);
-        $favoriteRepo->shouldReceive('paginateForUser')->once()->with(1, 30)->andReturn($paginator);
-
-        $notifications = Mockery::mock(UserLikeNotificationRepository::class);
-        $notifications->shouldReceive('unreadForUser')->once()->with($user, 20)->andReturn(collect());
-        $notifications->shouldReceive('markAllReadForUser')->once()->with($user)->andReturn(2);
-
-        $repository = $this->makeRepository([
-            'searchService' => $search,
-            'javRepository' => $javRepo,
-            'actorRepository' => $actorRepo,
-            'favoriteRepository' => $favoriteRepo,
-            'historyRepository' => $history,
-            'notificationRepository' => $notifications,
+        Favorite::factory()->create([
+            'user_id' => $user->id,
+            'favoritable_type' => Jav::class,
+            'favoritable_id' => $jav->id,
         ]);
 
-        $this->assertSame($collection, $repository->continueWatching(1, 8));
-        $this->assertSame($paginator, $repository->actorMovies($actor, 30));
-        $this->assertSame($paginator, $repository->searchActors('amy'));
-        $this->assertSame($paginator, $repository->searchTags('idol'));
-        $this->assertSame($jav, $repository->loadJavRelations($jav));
-        $this->assertTrue($repository->isJavLikedByUser($jav, 1));
-        $this->assertSame($paginator, $repository->historyForUser(1, 30));
-        $this->assertSame($paginator, $repository->favoritesForUser(1, 30));
-        $this->assertEquals(collect(), $repository->unreadNotificationsForUser($user, 20));
-        $this->assertSame(2, $repository->markAllNotificationsReadForUser($user));
+        UserJavHistory::factory()->create([
+            'user_id' => $user->id,
+            'jav_id' => $jav->id,
+            'action' => 'view',
+            'updated_at' => now()->subMinute(),
+        ]);
+
+        UserLikeNotification::factory()->create([
+            'user_id' => $user->id,
+            'jav_id' => $jav->id,
+            'read_at' => null,
+        ]);
+
+        $repository = app(DashboardReadRepository::class);
+
+        $this->assertCount(1, $repository->continueWatching($user->id, 8));
+        $this->assertCount(1, $repository->actorMovies($actor, 30)->items());
+        $this->assertCount(1, $repository->searchActors('Alice')->items());
+        $this->assertCount(1, $repository->searchTags('Idol')->items());
+
+        $loaded = $repository->loadJavRelations($jav->fresh());
+        $this->assertTrue($loaded->relationLoaded('actors'));
+        $this->assertTrue($loaded->relationLoaded('tags'));
+
+        $this->assertTrue($repository->isJavLikedByUser($jav, $user->id));
+        $this->assertCount(1, $repository->historyForUser($user->id, 30)->items());
+        $this->assertCount(1, $repository->favoritesForUser($user->id, 30)->items());
+
+        $unread = $repository->unreadNotificationsForUser($this->asAuthenticatable($user), 20);
+        $this->assertCount(1, $unread);
+
+        $marked = $repository->markAllNotificationsReadForUser($this->asAuthenticatable($user));
+        $this->assertSame(1, $marked);
     }
 
     public function test_actor_and_tag_suggestions_are_cached(): void
     {
         Cache::flush();
 
-        $actorRepo = Mockery::mock(ActorRepository::class);
-        $actorRepo->shouldReceive('suggestions')->once()->with(500)->andReturn(['A']);
+        Actor::factory()->create(['name' => '  Alice  ']);
+        Tag::factory()->create(['name' => '  Idol  ']);
 
-        $tagRepo = Mockery::mock(TagRepository::class);
-        $tagRepo->shouldReceive('suggestions')->once()->with(700)->andReturn(['T']);
+        $repository = app(DashboardReadRepository::class);
 
-        $repository = $this->makeRepository([
-            'actorRepository' => $actorRepo,
-            'tagRepository' => $tagRepo,
-        ]);
+        $firstActors = $repository->actorSuggestions();
+        $firstTags = $repository->tagSuggestions();
 
-        $this->assertSame(['A'], $repository->actorSuggestions());
-        $this->assertSame(['A'], $repository->actorSuggestions());
-        $this->assertSame(['T'], $repository->tagSuggestions());
-        $this->assertSame(['T'], $repository->tagSuggestions());
-    }
+        Actor::factory()->create(['name' => 'New Actor']);
+        Tag::factory()->create(['name' => 'New Tag']);
 
-    /**
-     * @param array{
-     *   searchService?: SearchService,
-     *   javRepository?: JavRepository,
-     *   actorRepository?: ActorRepository,
-     *   tagRepository?: TagRepository,
-     *   favoriteRepository?: FavoriteRepository,
-     *   historyRepository?: UserJavHistoryRepository,
-     *   watchlistRepository?: WatchlistRepository,
-     *   ratingRepository?: RatingRepository,
-     *   notificationRepository?: UserLikeNotificationRepository
-     * } $deps
-     */
-    private function makeRepository(array $deps = []): DashboardReadRepository
-    {
-        return new DashboardReadRepository(
-            $deps['searchService'] ?? Mockery::mock(SearchService::class),
-            $deps['javRepository'] ?? Mockery::mock(JavRepository::class),
-            $deps['actorRepository'] ?? Mockery::mock(ActorRepository::class),
-            $deps['tagRepository'] ?? Mockery::mock(TagRepository::class),
-            $deps['favoriteRepository'] ?? Mockery::mock(FavoriteRepository::class),
-            $deps['historyRepository'] ?? Mockery::mock(UserJavHistoryRepository::class),
-            $deps['watchlistRepository'] ?? Mockery::mock(WatchlistRepository::class),
-            $deps['ratingRepository'] ?? Mockery::mock(RatingRepository::class),
-            $deps['notificationRepository'] ?? Mockery::mock(UserLikeNotificationRepository::class),
-        );
+        $secondActors = $repository->actorSuggestions();
+        $secondTags = $repository->tagSuggestions();
+
+        $this->assertSame($firstActors, $secondActors);
+        $this->assertSame($firstTags, $secondTags);
+        $this->assertContains('Alice', $firstActors);
+        $this->assertContains('Idol', $firstTags);
     }
 }

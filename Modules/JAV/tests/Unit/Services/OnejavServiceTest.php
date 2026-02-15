@@ -201,19 +201,7 @@ class OnejavServiceTest extends TestCase
         Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
 
         $responseWrapper = $this->getMockResponse('onejav_popular.html');
-
-        // Mock Config because popular() is called without args (auto mode)
-        Config::shouldReceive('get')
-            ->once()
-            ->with('onejav', 'popular_page', 1)
-            ->andReturn(1); // Default to 1
-
-        // Mock Config set because next page will be extracted
-        // In onejav_popular.html, let's assume valid next page.
-        // It's page 1, next is 2.
-        Config::shouldReceive('set')
-            ->once()
-            ->with('onejav', 'popular_page', 2);
+        Config::set('onejav', 'popular_page', '1');
 
         $client = Mockery::mock(OnejavClient::class);
         $client->shouldReceive('get')->with('/popular/?page=1')->once()->andReturn($responseWrapper);
@@ -247,6 +235,8 @@ class OnejavServiceTest extends TestCase
                 && $event->currentPage === 1
                 && $event->items->items->count() > 0;
         });
+
+        $this->assertSame('2', (string) Config::get('onejav', 'popular_page', '0'));
     }
 
     public function test_popular_pagination_behavior(): void
@@ -422,10 +412,7 @@ class OnejavServiceTest extends TestCase
     public function test_new_with_auto_mode()
     {
         Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
-        Config::shouldReceive('get')
-            ->once()
-            ->with('onejav', 'new_page', 1)
-            ->andReturn(16569);
+        Config::set('onejav', 'new_page', '16569');
 
         $responseWrapper = $this->getMockResponse('onejav_new_16569.html');
 
@@ -434,10 +421,6 @@ class OnejavServiceTest extends TestCase
             ->once()
             ->with('/new?page=16569')
             ->andReturn($responseWrapper);
-
-        Config::shouldReceive('set')
-            ->once()
-            ->with('onejav', 'new_page', 16570);
 
         $service = new OnejavService($client);
         $items = $service->new();
@@ -449,13 +432,14 @@ class OnejavServiceTest extends TestCase
             return $event->source === 'onejav'
                 && $event->currentPage === 16569;
         });
+
+        $this->assertSame('16570', (string) Config::get('onejav', 'new_page', '0'));
     }
 
     public function test_new_with_manual_page()
     {
         Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
-        Config::shouldReceive('get')->never();
-        Config::shouldReceive('set')->never();
+        Config::set('onejav', 'new_page', '9000');
 
         $responseWrapper = $this->getMockResponse('onejav_new_16569.html');
 
@@ -474,5 +458,7 @@ class OnejavServiceTest extends TestCase
             return $event->source === 'onejav'
                 && $event->currentPage === 16569;
         });
+
+        $this->assertSame('9000', (string) Config::get('onejav', 'new_page', '0'));
     }
 }

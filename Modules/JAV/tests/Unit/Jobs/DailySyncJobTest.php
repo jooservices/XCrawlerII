@@ -3,10 +3,8 @@
 namespace Modules\JAV\Tests\Unit\Jobs;
 
 use Illuminate\Support\Facades\Queue;
-use Mockery;
-use Modules\JAV\Dtos\Items;
 use Modules\JAV\Jobs\DailySyncJob;
-use Modules\JAV\Services\Onejav\ItemsAdapter;
+use Modules\JAV\Services\Clients\OnejavClient;
 use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
 
@@ -22,21 +20,13 @@ class DailySyncJobTest extends TestCase
     {
         Queue::fake();
 
-        $mockItemsAdapter = Mockery::mock(ItemsAdapter::class);
-        $mockItemsAdapter->shouldReceive('items')
+        $client = \Mockery::mock(OnejavClient::class);
+        $client->shouldReceive('get')
             ->once()
-            ->andReturn(new Items(
-                items: collect([1]),
-                hasNextPage: true,
-                nextPage: 2
-            ));
+            ->with('/2026/02/14')
+            ->andReturn($this->getMockResponse('onejav_daily_min_page_1_with_next.html'));
 
-        $service = Mockery::mock(OnejavService::class);
-        $service->shouldReceive('daily')
-            ->with('2026-02-14', 1)
-            ->once()
-            ->andReturn($mockItemsAdapter);
-        $this->app->instance(OnejavService::class, $service);
+        $this->app->instance(OnejavService::class, new OnejavService($client));
 
         $job = new DailySyncJob('onejav', '2026-02-14', 1);
         $job->handle();

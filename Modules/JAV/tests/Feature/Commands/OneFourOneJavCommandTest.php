@@ -8,8 +8,6 @@ use Modules\JAV\Tests\TestCase;
 
 class OneFourOneJavCommandTest extends TestCase
 {
-    use \Illuminate\Foundation\Testing\RefreshDatabase;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,11 +30,7 @@ class OneFourOneJavCommandTest extends TestCase
 
     public function test_command_stores_data_via_event()
     {
-        // 0. Mock Config
-        \Modules\Core\Facades\Config::shouldReceive('get')
-            ->with('onefourone', 'new_page', 1)
-            ->andReturn(1);
-        \Modules\Core\Facades\Config::shouldReceive('set');
+        \Modules\Core\Facades\Config::set('onefourone', 'new_page', '1');
 
         // 1. Mock the client
         $client = \Mockery::mock(\Modules\JAV\Services\Clients\OneFourOneJavClient::class);
@@ -47,14 +41,12 @@ class OneFourOneJavCommandTest extends TestCase
 
         $this->app->instance(\Modules\JAV\Services\Clients\OneFourOneJavClient::class, $client);
 
-        // 2. Ensure database is clean
         \Modules\JAV\Models\Jav::where('source', '141jav')->delete();
 
         // 3. Run command synchronously
         $this->artisan('jav:sync:content', ['provider' => '141jav', '--type' => ['new']])
             ->assertExitCode(0);
 
-        // 4. Assert data is stored
         $this->assertDatabaseHas('jav', [
             'source' => '141jav',
             'code' => 'ALOG-026',
@@ -77,10 +69,7 @@ class OneFourOneJavCommandTest extends TestCase
     {
         \Illuminate\Support\Facades\Event::fake();
 
-        \Modules\Core\Facades\Config::shouldReceive('get')
-            ->with('onefourone', 'new_page', 1)
-            ->andReturn(1);
-        \Modules\Core\Facades\Config::shouldReceive('set');
+        \Modules\Core\Facades\Config::set('onefourone', 'new_page', '1');
 
         $client = \Mockery::mock(\Modules\JAV\Services\Clients\OneFourOneJavClient::class);
         $client->shouldReceive('get')

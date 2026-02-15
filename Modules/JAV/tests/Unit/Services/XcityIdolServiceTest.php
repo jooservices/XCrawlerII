@@ -20,42 +20,7 @@ class XcityIdolServiceTest extends TestCase
 
     public function test_sync_kana_page_dispatches_batched_per_idol_chains(): void
     {
-        $pendingBatch = \Mockery::mock(\Illuminate\Bus\PendingBatch::class);
-        $pendingBatch->shouldReceive('name')
-            ->once()
-            ->with('xcity:kana:kana-a')
-            ->andReturnSelf();
-        $pendingBatch->shouldReceive('onQueue')
-            ->once()
-            ->with('jav-idol')
-            ->andReturnSelf();
-        $pendingBatch->shouldReceive('dispatch')
-            ->once();
-
-        Bus::shouldReceive('batch')
-            ->once()
-            ->withArgs(function (array $jobs): bool {
-                if (count($jobs) !== 2) {
-                    return false;
-                }
-
-                foreach ($jobs as $job) {
-                    if (! is_array($job) || count($job) !== 2) {
-                        return false;
-                    }
-
-                    if (! $job[0] instanceof XcityPersistIdolProfileJob) {
-                        return false;
-                    }
-
-                    if (! $job[1] instanceof XcitySyncActorSearchIndexJob) {
-                        return false;
-                    }
-                }
-
-                return true;
-            })
-            ->andReturn($pendingBatch);
+        Bus::fake();
 
         $client = \Mockery::mock(XcityClient::class);
         $client->shouldReceive('get')
@@ -73,6 +38,31 @@ class XcityIdolServiceTest extends TestCase
         $count = $service->syncKanaPage('kana-a', 'https://xxx.xcity.jp/idol/?ini=%E3%81%82&kana=%E3%81%82');
 
         $this->assertSame(2, $count);
+        Bus::assertBatched(function ($batch): bool {
+            if ($batch->name !== 'xcity:kana:kana-a' || $batch->queue() !== 'jav-idol') {
+                return false;
+            }
+
+            if ($batch->jobs->count() !== 2) {
+                return false;
+            }
+
+            foreach ($batch->jobs as $job) {
+                if (! is_array($job) || count($job) !== 2) {
+                    return false;
+                }
+
+                if (! $job[0] instanceof XcityPersistIdolProfileJob) {
+                    return false;
+                }
+
+                if (! $job[1] instanceof XcitySyncActorSearchIndexJob) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
     }
 
     public function test_sync_idol_from_list_item_links_existing_actor_and_creates_new_one(): void

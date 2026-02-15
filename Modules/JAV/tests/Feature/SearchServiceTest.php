@@ -2,18 +2,13 @@
 
 namespace Modules\JAV\Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Services\SearchService;
-use Tests\TestCase;
+use Modules\JAV\Tests\TestCase;
 
 class SearchServiceTest extends TestCase
 {
-    use RefreshDatabase;
-    use WithFaker;
-
     protected SearchService $searchService;
 
     protected function setUp(): void

@@ -14,7 +14,7 @@ class XcityIdolServiceDispatchTest extends TestCase
     {
         $service = new XcityIdolService(
             \Mockery::mock(XcityClient::class),
-            \Mockery::mock(ActorProfileUpsertService::class)
+            new ActorProfileUpsertService
         );
 
         $selected = $service->pickSeedsForDispatch([], 3);
@@ -26,7 +26,7 @@ class XcityIdolServiceDispatchTest extends TestCase
     {
         $service = new XcityIdolService(
             \Mockery::mock(XcityClient::class),
-            \Mockery::mock(ActorProfileUpsertService::class)
+            new ActorProfileUpsertService
         );
 
         $seedUrls = [
@@ -35,34 +35,42 @@ class XcityIdolServiceDispatchTest extends TestCase
             'seed-u' => 'https://xxx.xcity.jp/idol/?kana=u',
         ];
 
-        Config::shouldReceive('get')
-            ->with('xcity', 'cursor', 0)
-            ->once()
-            ->andReturn(0);
-
-        Config::shouldReceive('get')
-            ->with('xcity', 'kana_seed-a_running', '0')
-            ->once()
-            ->andReturn('1');
-
-        Config::shouldReceive('get')
-            ->with('xcity', 'kana_seed-i_running', '0')
-            ->once()
-            ->andReturn('0');
-
-        Config::shouldReceive('get')
-            ->with('xcity', 'kana_seed-u_running', '0')
-            ->once()
-            ->andReturn('0');
-
-        Config::shouldReceive('set')
-            ->with('xcity', 'cursor', '2')
-            ->once();
+        Config::set('xcity', 'cursor', '0');
+        Config::set('xcity', 'kana_seed-a_running', '1');
+        Config::set('xcity', 'kana_seed-i_running', '0');
+        Config::set('xcity', 'kana_seed-u_running', '0');
 
         $selected = $service->pickSeedsForDispatch($seedUrls, 2);
 
         $this->assertCount(2, $selected);
         $this->assertSame('seed-i', $selected[0]['seed_key']);
         $this->assertSame('seed-u', $selected[1]['seed_key']);
+        $this->assertSame('2', Config::get('xcity', 'cursor'));
+    }
+
+    public function test_pick_seeds_for_dispatch_wraps_cursor_when_reaching_end(): void
+    {
+        $service = new XcityIdolService(
+            \Mockery::mock(XcityClient::class),
+            new ActorProfileUpsertService
+        );
+
+        $seedUrls = [
+            'seed-a' => 'https://xxx.xcity.jp/idol/?kana=a',
+            'seed-i' => 'https://xxx.xcity.jp/idol/?kana=i',
+            'seed-u' => 'https://xxx.xcity.jp/idol/?kana=u',
+        ];
+
+        Config::set('xcity', 'cursor', '2');
+        Config::set('xcity', 'kana_seed-a_running', '0');
+        Config::set('xcity', 'kana_seed-i_running', '0');
+        Config::set('xcity', 'kana_seed-u_running', '0');
+
+        $selected = $service->pickSeedsForDispatch($seedUrls, 2);
+
+        $this->assertCount(2, $selected);
+        $this->assertSame('seed-u', $selected[0]['seed_key']);
+        $this->assertSame('seed-a', $selected[1]['seed_key']);
+        $this->assertSame('1', Config::get('xcity', 'cursor'));
     }
 }

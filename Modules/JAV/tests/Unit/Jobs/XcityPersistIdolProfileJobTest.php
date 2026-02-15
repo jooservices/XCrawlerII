@@ -4,8 +4,9 @@ namespace Modules\JAV\Tests\Unit\Jobs;
 
 use Illuminate\Bus\Batchable;
 use Illuminate\Support\Facades\Cache;
-use Mockery;
 use Modules\JAV\Jobs\XcityPersistIdolProfileJob;
+use Modules\JAV\Services\ActorProfileUpsertService;
+use Modules\JAV\Services\Clients\XcityClient;
 use Modules\JAV\Services\XcityIdolService;
 use Modules\JAV\Tests\TestCase;
 
@@ -20,11 +21,13 @@ class XcityPersistIdolProfileJobTest extends TestCase
 
     public function test_handle_persists_profile_and_caches_index_flag(): void
     {
-        $service = Mockery::mock(XcityIdolService::class);
-        $service->shouldReceive('syncIdolFromListItem')
+        $client = \Mockery::mock(XcityClient::class);
+        $client->shouldReceive('get')
             ->once()
-            ->with('1001', 'Airi Kijima', 'https://xxx.xcity.jp/idol/detail/1001/', 'https://example.com/cover.jpg')
-            ->andReturn(true);
+            ->with('https://xxx.xcity.jp/idol/detail/1001/')
+            ->andReturn($this->getMockResponse('xcity_idol_detail_5750.html'));
+
+        $service = new XcityIdolService($client, new ActorProfileUpsertService);
 
         $job = new XcityPersistIdolProfileJob(
             xcityId: '1001',

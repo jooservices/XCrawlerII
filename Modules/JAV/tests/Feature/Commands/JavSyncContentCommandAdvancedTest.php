@@ -2,6 +2,7 @@
 
 namespace Modules\JAV\Tests\Feature\Commands;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Queue;
 use Modules\JAV\Jobs\DailySyncJob;
 use Modules\JAV\Jobs\OnejavJob;
@@ -48,5 +49,53 @@ class JavSyncContentCommandAdvancedTest extends TestCase
         Queue::assertPushedOn('xcity', OnejavJob::class);
         Queue::assertPushedOn('xcity', DailySyncJob::class);
         Queue::assertPushedOn('xcity', TagsSyncJob::class);
+    }
+
+    public function test_command_deduplicates_repeated_types_before_dispatching(): void
+    {
+        Queue::fake();
+
+        $this->artisan('jav:sync:content', [
+            'provider' => 'onejav',
+            '--type' => ['new', 'new', 'daily', 'daily', 'tags'],
+        ])->assertExitCode(0);
+
+        Queue::assertPushed(OnejavJob::class, 1);
+        Queue::assertPushed(DailySyncJob::class, 1);
+        Queue::assertPushed(TagsSyncJob::class, 1);
+    }
+
+    public function test_command_daily_without_date_uses_current_day(): void
+    {
+        Queue::fake();
+        Carbon::setTestNow('2026-02-15 10:00:00');
+
+        try {
+            $this->artisan('jav:sync:content', [
+                'provider' => 'onejav',
+                '--type' => ['daily'],
+            ])->assertExitCode(0);
+        } finally {
+            Carbon::setTestNow();
+        }
+
+        Queue::assertPushed(DailySyncJob::class, function (DailySyncJob $job): bool {
+            return $job->source === 'onejav'
+                && $job->date === '2026-02-15'
+                && $job->page === 1;
+        });
+    }
+
+    public function test_command_returns_failure_when_daily_date_is_invalid(): void
+    {
+        Queue::fake();
+
+        $this->artisan('jav:sync:content', [
+            'provider' => 'onejav',
+            '--type' => ['daily'],
+            '--date' => 'not-a-date',
+        ])->assertExitCode(2);
+
+        Queue::assertNothingPushed();
     }
 }

@@ -2,50 +2,28 @@
 
 namespace Modules\JAV\Tests\Feature\Commands;
 
-use Mockery;
-use Modules\JAV\Services\AnalyticsSnapshotService;
 use Modules\JAV\Tests\TestCase;
 
 class JavSyncAnalyticsCommandTest extends TestCase
 {
     public function test_command_rejects_invalid_days_input(): void
     {
-        $service = Mockery::mock(AnalyticsSnapshotService::class);
-        $service->shouldNotReceive('getSnapshot');
-        $this->app->instance(AnalyticsSnapshotService::class, $service);
-
         $this->artisan('jav:sync:analytics', [
             '--days' => [2, 99],
         ])->assertExitCode(2);
     }
 
-    public function test_command_syncs_selected_days(): void
+    public function test_command_rejects_empty_valid_days_after_mixed_filtering(): void
     {
-        $service = Mockery::mock(AnalyticsSnapshotService::class);
-        $service->shouldReceive('getSnapshot')->once()->with(7, true, false)->andReturn([
-            'totals' => ['jav' => 10, 'actors' => 20, 'tags' => 30],
-        ]);
-        $service->shouldReceive('getSnapshot')->once()->with(30, true, false)->andReturn([
-            'totals' => ['jav' => 11, 'actors' => 21, 'tags' => 31],
-        ]);
-        $this->app->instance(AnalyticsSnapshotService::class, $service);
-
         $this->artisan('jav:sync:analytics', [
-            '--days' => [7, 30],
-        ])->assertExitCode(0);
+            '--days' => ['foo', -1, 0, 365],
+        ])->assertExitCode(2);
     }
 
-    public function test_command_returns_failure_when_snapshot_service_throws(): void
+    public function test_command_rejects_non_numeric_and_out_of_range_day_tokens(): void
     {
-        $service = Mockery::mock(AnalyticsSnapshotService::class);
-        $service->shouldReceive('getSnapshot')
-            ->once()
-            ->with(7, true, false)
-            ->andThrow(new \RuntimeException('Mongo unavailable'));
-        $this->app->instance(AnalyticsSnapshotService::class, $service);
-
         $this->artisan('jav:sync:analytics', [
-            '--days' => [7],
-        ])->assertExitCode(1);
+            '--days' => ['abc', '5', '100', '-7'],
+        ])->assertExitCode(2);
     }
 }

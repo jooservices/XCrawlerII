@@ -2,8 +2,9 @@
 
 namespace Modules\JAV\Tests\Unit\Jobs;
 
-use Mockery;
 use Modules\JAV\Jobs\TagsSyncJob;
+use Modules\JAV\Models\Tag;
+use Modules\JAV\Services\Clients\OnejavClient;
 use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
 
@@ -18,13 +19,18 @@ class TagsSyncJobTest extends TestCase
 
     public function test_handle_calls_tags_on_resolved_service(): void
     {
-        $service = Mockery::mock(OnejavService::class);
-        $service->shouldReceive('tags')
+        $client = \Mockery::mock(OnejavClient::class);
+        $client->shouldReceive('get')
             ->once()
-            ->andReturn(collect(['4K']));
-        $this->app->instance(OnejavService::class, $service);
+            ->with('/tag')
+            ->andReturn($this->getMockResponse('onejav_tags_minimal.html'));
+        $this->app->instance(OnejavService::class, new OnejavService($client));
 
         $job = new TagsSyncJob('onejav');
         $job->handle();
+
+        $this->assertDatabaseHas((new Tag)->getTable(), ['name' => '4K']);
+        $this->assertDatabaseHas((new Tag)->getTable(), ['name' => 'VR']);
+        $this->assertSame(2, Tag::query()->whereIn('name', ['4K', 'VR'])->count());
     }
 }

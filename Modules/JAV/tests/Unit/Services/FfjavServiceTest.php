@@ -19,10 +19,14 @@ class FfjavServiceTest extends TestCase
 
         $responseWrapper = $this->getMockResponse('ffjav_new.html');
         $client = Mockery::mock(FfjavClient::class);
-        $client->shouldReceive('get')->with('/javtorrent')->once()->andReturn($responseWrapper);
+        $client->shouldReceive('get')
+            ->once()
+            ->withArgs(function (string $path): bool {
+                return in_array($path, ['/javtorrent', '/javtorrent/page/1'], true);
+            })
+            ->andReturn($responseWrapper);
 
-        Config::shouldReceive('get')->once()->with('ffjav', 'new_page', 1)->andReturn(1);
-        Config::shouldReceive('set')->once()->with('ffjav', 'new_page', 2);
+        Config::set('ffjav', 'new_page', '1');
 
         $service = new FfjavService($client);
         $adapter = $service->new();
@@ -31,6 +35,7 @@ class FfjavServiceTest extends TestCase
         $items = $adapter->items();
         $this->assertCount(2, $items->items);
         $this->assertEquals('MKMP-707', $items->items->first()->code);
+        $this->assertSame('2', (string) Config::get('ffjav', 'new_page', '0'));
     }
 
     public function test_popular_with_explicit_page_uses_path_pagination(): void

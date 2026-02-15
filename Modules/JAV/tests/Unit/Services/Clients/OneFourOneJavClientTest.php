@@ -3,7 +3,6 @@
 namespace Modules\JAV\Tests\Unit\Services\Clients;
 
 use JOOservices\Client\Contracts\HttpClientInterface as Client;
-use JOOservices\Client\Contracts\ResponseWrapperInterface as ResponseWrapper;
 use Mockery;
 use Modules\JAV\Services\Clients\OneFourOneJavClient;
 use Modules\JAV\Tests\TestCase;
@@ -21,7 +20,7 @@ class OneFourOneJavClientTest extends TestCase
     public function test_proxies_calls_to_client()
     {
         $mockClient = Mockery::mock(Client::class);
-        $response = Mockery::mock(ResponseWrapper::class);
+        $response = $this->getMockResponse('141jav_new.html');
 
         $mockClient->shouldReceive('get')
             ->once()

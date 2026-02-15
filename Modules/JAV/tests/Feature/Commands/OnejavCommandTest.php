@@ -2,15 +2,12 @@
 
 namespace Modules\JAV\Tests\Feature\Commands;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Modules\JAV\Jobs\OnejavJob;
 use Modules\JAV\Tests\TestCase;
 
 class OnejavCommandTest extends TestCase
 {
-    use RefreshDatabase;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,12 +30,7 @@ class OnejavCommandTest extends TestCase
 
     public function test_command_stores_data_via_event()
     {
-
-        // 0. Mock Config to ensure page is 1
-        \Modules\Core\Facades\Config::shouldReceive('get')
-            ->with('onejav', 'new_page', 1)
-            ->andReturn(1);
-        \Modules\Core\Facades\Config::shouldReceive('set'); // Allow set
+        \Modules\Core\Facades\Config::set('onejav', 'new_page', '1');
 
         // 1. Mock the client to return known data
         $client = \Mockery::mock(\Modules\JAV\Services\Clients\OnejavClient::class);
@@ -57,7 +49,6 @@ class OnejavCommandTest extends TestCase
         $this->artisan('jav:sync:content', ['provider' => 'onejav', '--type' => ['new']])
             ->assertExitCode(0);
 
-        // 5. Assert data is stored
         $this->assertDatabaseHas('jav', [
             'source' => 'onejav',
             'code' => 'ABP-462',
@@ -80,11 +71,7 @@ class OnejavCommandTest extends TestCase
     {
         \Illuminate\Support\Facades\Event::fake();
 
-        // 0. Mock Config to ensure page is 1
-        \Modules\Core\Facades\Config::shouldReceive('get')
-            ->with('onejav', 'new_page', 1)
-            ->andReturn(1);
-        \Modules\Core\Facades\Config::shouldReceive('set');
+        \Modules\Core\Facades\Config::set('onejav', 'new_page', '1');
 
         // Mock the client
         $client = \Mockery::mock(\Modules\JAV\Services\Clients\OnejavClient::class);
@@ -96,15 +83,6 @@ class OnejavCommandTest extends TestCase
 
         $this->artisan('jav:sync:content', ['provider' => 'onejav', '--type' => ['new']])
             ->assertExitCode(0);
-
-        // Debug assertions
-        if (\Illuminate\Support\Facades\Event::hasDispatched(\Modules\JAV\Events\OnejavJobFailed::class)) {
-            $failedEvents = \Illuminate\Support\Facades\Event::dispatched(\Modules\JAV\Events\OnejavJobFailed::class);
-            dump('OnejavJobFailed Dispatched:');
-            foreach ($failedEvents as $event) {
-                dump($event[0]->exception->getMessage());
-            }
-        }
 
         \Illuminate\Support\Facades\Event::assertDispatched(\Modules\JAV\Events\ItemsFetched::class);
     }

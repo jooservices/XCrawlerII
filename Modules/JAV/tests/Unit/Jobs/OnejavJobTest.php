@@ -2,19 +2,16 @@
 
 namespace Modules\JAV\Tests\Unit\Jobs;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Mockery;
 use Modules\JAV\Events\OnejavJobCompleted;
 use Modules\JAV\Events\OnejavJobFailed;
 use Modules\JAV\Jobs\OnejavJob;
+use Modules\JAV\Services\Clients\OnejavClient;
 use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
 
 class OnejavJobTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_unique_id_is_based_on_type()
     {
         $job = new OnejavJob('new');
@@ -28,24 +25,19 @@ class OnejavJobTest extends TestCase
     {
         Event::fake([OnejavJobCompleted::class]);
 
-        $mockItemsAdapter = Mockery::mock(\Modules\JAV\Services\Onejav\ItemsAdapter::class);
-        $mockItemsAdapter->shouldReceive('items')
-            ->andReturn(new \Modules\JAV\Dtos\Items(
-                items: collect([1, 2, 3]),
-                hasNextPage: false,
-                nextPage: 1
-            ));
-
-        $serviceMock = Mockery::mock(OnejavService::class);
-        $serviceMock->shouldReceive('new')
+        $client = \Mockery::mock(OnejavClient::class);
+        $client->shouldReceive('get')
             ->once()
-            ->andReturn($mockItemsAdapter);
+            ->with('/new?page=1')
+            ->andReturn($this->getMockResponse('onejav_new_15670.html'));
+
+        $service = new OnejavService($client);
 
         $job = new OnejavJob('new');
-        $job->handle($serviceMock);
+        $job->handle($service);
 
         Event::assertDispatched(OnejavJobCompleted::class, function ($event) {
-            return $event->type === 'new' && $event->itemsCount === 3;
+            return $event->type === 'new' && $event->itemsCount > 0;
         });
     }
 

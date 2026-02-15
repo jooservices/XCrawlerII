@@ -29,4 +29,31 @@ class FfjavCommandTest extends TestCase
             return $job->type === 'new';
         });
     }
+
+    public function test_command_dispatches_popular_job_to_custom_queue(): void
+    {
+        Queue::fake();
+
+        $this->artisan('jav:sync:content', [
+            'provider' => 'ffjav',
+            '--type' => ['popular'],
+            '--queue' => 'xcity',
+        ])->assertExitCode(0);
+
+        Queue::assertPushedOn('xcity', FfjavJob::class, function (FfjavJob $job): bool {
+            return $job->type === 'popular';
+        });
+    }
+
+    public function test_command_rejects_invalid_type(): void
+    {
+        Queue::fake();
+
+        $this->artisan('jav:sync:content', [
+            'provider' => 'ffjav',
+            '--type' => ['invalid'],
+        ])->assertExitCode(2);
+
+        Queue::assertNothingPushed();
+    }
 }

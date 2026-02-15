@@ -48,17 +48,7 @@ class OneFourOneJavServiceTest extends TestCase
         Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
 
         $responseWrapper = $this->getMockResponse('141jav_popular.html');
-
-        Config::shouldReceive('get')
-            ->once()
-            ->with('onefourone', 'popular_page', 1)
-            ->andReturn(1); // Default to 1
-
-        // In 141jav_popular.html, let's assume valid next page.
-        // It's page 1, next is 2.
-        Config::shouldReceive('set')
-            ->once()
-            ->with('onefourone', 'popular_page', 2);
+        Config::set('onefourone', 'popular_page', '1');
 
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/popular/?page=1')->once()->andReturn($responseWrapper);
@@ -77,6 +67,8 @@ class OneFourOneJavServiceTest extends TestCase
                 && $event->currentPage === 1
                 && $event->items->items->count() > 0;
         });
+
+        $this->assertSame('2', (string) Config::get('onefourone', 'popular_page', '0'));
 
         // ... (assertions)
     }
@@ -260,10 +252,7 @@ class OneFourOneJavServiceTest extends TestCase
     public function test_new_with_auto_mode()
     {
         Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
-        Config::shouldReceive('get')
-            ->once()
-            ->with('onefourone', 'new_page', 1)
-            ->andReturn(5);
+        Config::set('onefourone', 'new_page', '5');
 
         $responseWrapper = $this->getMockResponse('141jav_new.html');
         $client = Mockery::mock(OneFourOneJavClient::class);
@@ -271,10 +260,6 @@ class OneFourOneJavServiceTest extends TestCase
             ->once()
             ->with('/new?page=5')
             ->andReturn($responseWrapper);
-
-        Config::shouldReceive('set')
-            ->once()
-            ->with('onefourone', 'new_page', 2);
 
         $service = new OneFourOneJavService($client);
         $items = $service->new();
@@ -286,13 +271,14 @@ class OneFourOneJavServiceTest extends TestCase
             return $event->source === '141jav'
                 && $event->currentPage === 1; // Fixture is page 1
         });
+
+        $this->assertSame('2', (string) Config::get('onefourone', 'new_page', '0'));
     }
 
     public function test_new_with_manual_page()
     {
         Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
-        Config::shouldReceive('get')->never();
-        Config::shouldReceive('set')->never();
+        Config::set('onefourone', 'new_page', '9000');
 
         $responseWrapper = $this->getMockResponse('141jav_new.html');
 
@@ -311,5 +297,7 @@ class OneFourOneJavServiceTest extends TestCase
             return $event->source === '141jav'
                 && $event->currentPage === 1;
         });
+
+        $this->assertSame('9000', (string) Config::get('onefourone', 'new_page', '0'));
     }
 }

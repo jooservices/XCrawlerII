@@ -3,6 +3,7 @@
 namespace Modules\JAV\Console;
 
 use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Console\Command;
 use Modules\JAV\Jobs\DailySyncJob;
 use Modules\JAV\Jobs\FfjavJob;
@@ -36,23 +37,28 @@ class JavSyncContentCommand extends Command
 
         $typesOption = (array) $this->option('type');
         $types = $typesOption === [] ? $this->defaultTypes : array_values(array_unique($typesOption));
+        $exitCode = self::SUCCESS;
 
         foreach ($types as $syncType) {
             if (! in_array($syncType, ['new', 'popular', 'daily', 'tags'], true)) {
                 $this->error('Invalid type. Supported: new, popular, daily, tags');
 
-                return self::INVALID;
+                $exitCode = self::INVALID;
+                break;
             }
 
-            $this->dispatchByType($provider, $syncType);
+            if ($this->dispatchByType($provider, $syncType) !== self::SUCCESS) {
+                $exitCode = self::INVALID;
+                break;
+            }
         }
 
-        return self::SUCCESS;
+        return $exitCode;
     }
 
-    private function dispatchByType(string $provider, string $type): void
+    private function dispatchByType(string $provider, string $type): int
     {
-        match ($type) {
+        return match ($type) {
             'new' => $this->dispatchFeedJob($provider, 'new'),
             'popular' => $this->dispatchFeedJob($provider, 'popular'),
             'daily' => $this->dispatchDailyJob($provider),
@@ -60,7 +66,7 @@ class JavSyncContentCommand extends Command
         };
     }
 
-    private function dispatchFeedJob(string $provider, string $type): void
+    private function dispatchFeedJob(string $provider, string $type): int
     {
         $queue = (string) $this->option('queue');
 
@@ -73,26 +79,40 @@ class JavSyncContentCommand extends Command
         };
 
         $this->info("Dispatched {$provider} {$type} job to queue '{$queue}'.");
+
+        return self::SUCCESS;
     }
 
-    private function dispatchDailyJob(string $provider): void
+    private function dispatchDailyJob(string $provider): int
     {
         $dateOption = $this->option('date');
-        $resolvedDate = $dateOption
-            ? Carbon::parse((string) $dateOption)->toDateString()
-            : Carbon::now()->toDateString();
+
+        try {
+            $resolvedDate = $dateOption
+                ? Carbon::parse((string) $dateOption)->toDateString()
+                : Carbon::now()->toDateString();
+        } catch (InvalidFormatException) {
+            $this->error('Invalid date. Expected format: YYYY-MM-DD');
+
+            return self::INVALID;
+        }
+
         $queue = (string) $this->option('queue');
 
         DailySyncJob::dispatch($provider, $resolvedDate, 1)->onQueue($queue);
 
         $this->info("Dispatched {$provider} daily sync ({$resolvedDate}) page 1.");
+
+        return self::SUCCESS;
     }
 
-    private function syncTags(string $provider): void
+    private function syncTags(string $provider): int
     {
         $queue = (string) $this->option('queue');
         TagsSyncJob::dispatch($provider)->onQueue($queue);
 
         $this->info("Dispatched {$provider} tags sync job to queue '{$queue}'.");
+
+        return self::SUCCESS;
     }
 }

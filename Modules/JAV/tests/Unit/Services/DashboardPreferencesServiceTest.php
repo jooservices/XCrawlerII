@@ -2,7 +2,6 @@
 
 namespace Modules\JAV\Tests\Unit\Services;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Modules\JAV\Services\DashboardPreferencesService;
 use Modules\JAV\Tests\TestCase;
@@ -19,10 +18,10 @@ class DashboardPreferencesServiceTest extends TestCase
         $this->assertSame('detailed', $defaults['text_preference']);
         $this->assertSame([], $defaults['saved_presets']);
 
-        $user = User::factory()->make();
+        $user = $this->createUser();
         $user->preferences = 'invalid';
 
-        $resolved = $service->resolve($user);
+        $resolved = $service->resolve($this->asAuthenticatable($user));
         $this->assertSame($defaults, $resolved);
     }
 
@@ -31,14 +30,14 @@ class DashboardPreferencesServiceTest extends TestCase
         config(['jav.show_cover' => true]);
         $service = new DashboardPreferencesService;
 
-        $user = User::factory()->make();
+        $user = $this->createUser();
         $user->preferences = [
             'show_cover' => false,
             'text_preference' => 'concise',
             'legacy_key' => 'legacy-value',
         ];
 
-        $resolved = $service->resolve($user);
+        $resolved = $service->resolve($this->asAuthenticatable($user));
 
         $this->assertSame(false, $resolved['show_cover']);
         $this->assertSame('concise', $resolved['text_preference']);
@@ -77,5 +76,38 @@ class DashboardPreferencesServiceTest extends TestCase
         $this->assertSame([
             ['key' => 'special_skill', 'value' => 'Dancing'],
         ], $fallback);
+    }
+
+    public function test_normalize_tag_values_deduplicates_and_reindexes_values(): void
+    {
+        $service = new DashboardPreferencesService;
+
+        $normalized = $service->normalizeTagValues([
+            '  Drama ',
+            '',
+            'Action',
+            'Drama',
+            null,
+            '  Mystery  ',
+        ]);
+
+        $this->assertSame(['Drama', 'Action', 'Mystery'], $normalized);
+    }
+
+    public function test_normalize_bio_filters_preserves_partial_rows_with_null_side(): void
+    {
+        $service = new DashboardPreferencesService;
+
+        $normalized = $service->normalizeBioFilters([
+            ['key' => 'Height', 'value' => ''],
+            ['key' => '', 'value' => '170'],
+            ['key' => 'Hair Color', 'value' => 'Black'],
+        ]);
+
+        $this->assertSame([
+            ['key' => 'height', 'value' => null],
+            ['key' => null, 'value' => '170'],
+            ['key' => 'hair_color', 'value' => 'Black'],
+        ], $normalized);
     }
 }

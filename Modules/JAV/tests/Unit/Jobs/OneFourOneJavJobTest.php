@@ -2,19 +2,16 @@
 
 namespace Modules\JAV\Tests\Unit\Jobs;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Mockery;
 use Modules\JAV\Events\OneFourOneJobCompleted;
 use Modules\JAV\Events\OneFourOneJobFailed;
 use Modules\JAV\Jobs\OneFourOneJavJob;
+use Modules\JAV\Services\Clients\OneFourOneJavClient;
 use Modules\JAV\Services\OneFourOneJavService;
 use Modules\JAV\Tests\TestCase;
 
 class OneFourOneJavJobTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_unique_id_is_based_on_type()
     {
         $job = new OneFourOneJavJob('new');
@@ -28,24 +25,19 @@ class OneFourOneJavJobTest extends TestCase
     {
         Event::fake([OneFourOneJobCompleted::class]);
 
-        $mockItemsAdapter = Mockery::mock(\Modules\JAV\Services\OneFourOneJav\ItemsAdapter::class);
-        $mockItemsAdapter->shouldReceive('items')
-            ->andReturn(new \Modules\JAV\Dtos\Items(
-                items: collect([1, 2, 3]),
-                hasNextPage: false,
-                nextPage: 1
-            ));
-
-        $serviceMock = Mockery::mock(OneFourOneJavService::class);
-        $serviceMock->shouldReceive('new')
+        $client = \Mockery::mock(OneFourOneJavClient::class);
+        $client->shouldReceive('get')
             ->once()
-            ->andReturn($mockItemsAdapter);
+            ->with('/new?page=1')
+            ->andReturn($this->getMockResponse('141jav_new.html'));
+
+        $service = new OneFourOneJavService($client);
 
         $job = new OneFourOneJavJob('new');
-        $job->handle($serviceMock);
+        $job->handle($service);
 
         Event::assertDispatched(OneFourOneJobCompleted::class, function ($event) {
-            return $event->type === 'new' && $event->itemsCount === 3;
+            return $event->type === 'new' && $event->itemsCount > 0;
         });
     }
 

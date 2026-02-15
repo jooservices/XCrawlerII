@@ -2,21 +2,16 @@
 
 namespace Modules\JAV\Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Event;
 use Modules\JAV\Events\ContentSynced;
 use Modules\JAV\Events\ContentSyncing;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
-use Tests\TestCase;
+use Modules\JAV\Tests\TestCase;
 
 class ContentSyncEventTest extends TestCase
 {
-    use RefreshDatabase;
-    use WithFaker;
-
     protected function setUp(): void
     {
         putenv('SCOUT_DRIVER=collection');

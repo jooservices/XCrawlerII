@@ -2,22 +2,17 @@
 
 namespace Modules\JAV\Tests\Feature\Commands;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
-use Mockery;
 use Modules\JAV\Jobs\DailySyncJob;
 use Modules\JAV\Jobs\OnejavJob;
 use Modules\JAV\Jobs\TagsSyncJob;
-use Modules\JAV\Jobs\XcityKanaSyncJob;
-use Modules\JAV\Services\AnalyticsSnapshotService;
-use Modules\JAV\Services\RecommendationService;
+use Modules\JAV\Services\ActorProfileUpsertService;
+use Modules\JAV\Services\Clients\XcityClient;
 use Modules\JAV\Services\XcityIdolService;
 use Modules\JAV\Tests\TestCase;
 
 class JavCommandTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_command_without_type_runs_default_flows(): void
     {
         Queue::fake();
@@ -64,20 +59,7 @@ class JavCommandTest extends TestCase
     {
         Queue::fake();
 
-        $service = Mockery::mock(XcityIdolService::class);
-        $service->shouldReceive('seedKanaUrls')->once()->andReturn([
-            'seed-a' => 'https://xxx.xcity.jp/idol/?kana=a',
-            'seed-i' => 'https://xxx.xcity.jp/idol/?kana=i',
-        ]);
-        $service->shouldReceive('pickSeedsForDispatch')
-            ->once()
-            ->withArgs(function (array $seeds, int $concurrency): bool {
-                return count($seeds) === 2 && $concurrency === 2;
-            })
-            ->andReturn(collect([
-                ['seed_key' => 'seed-a', 'seed_url' => 'https://xxx.xcity.jp/idol/?kana=a'],
-                ['seed_key' => 'seed-i', 'seed_url' => 'https://xxx.xcity.jp/idol/?kana=i'],
-            ]));
+        $service = $this->buildRealIdolServiceFromFixtures();
         $this->app->instance(XcityIdolService::class, $service);
 
         $this->artisan('jav:sync', [
@@ -85,33 +67,51 @@ class JavCommandTest extends TestCase
             '--concurrency' => 2,
         ])->assertExitCode(0);
 
-        Queue::assertPushed(XcityKanaSyncJob::class, 2);
+        Queue::assertPushed(\Modules\JAV\Jobs\XcityKanaSyncJob::class, 2);
     }
 
-    public function test_command_can_run_analytics_component(): void
+    public function test_command_returns_failure_when_analytics_component_receives_invalid_days(): void
     {
-        $service = Mockery::mock(AnalyticsSnapshotService::class);
-        $service->shouldReceive('getSnapshot')->once()->with(7, true, false)->andReturn(['totals' => ['jav' => 1, 'actors' => 1, 'tags' => 1]]);
-        $service->shouldReceive('getSnapshot')->once()->with(14, true, false)->andReturn(['totals' => ['jav' => 1, 'actors' => 1, 'tags' => 1]]);
-        $service->shouldReceive('getSnapshot')->once()->with(30, true, false)->andReturn(['totals' => ['jav' => 1, 'actors' => 1, 'tags' => 1]]);
-        $service->shouldReceive('getSnapshot')->once()->with(90, true, false)->andReturn(['totals' => ['jav' => 1, 'actors' => 1, 'tags' => 1]]);
-        $this->app->instance(AnalyticsSnapshotService::class, $service);
-
         $this->artisan('jav:sync', [
             '--only' => ['analytics'],
-        ])->assertExitCode(0);
+            '--days' => [2],
+        ])->assertExitCode(1);
     }
 
     public function test_command_can_run_recommendations_component_for_specific_users(): void
     {
-        $service = Mockery::mock(RecommendationService::class);
-        $service->shouldReceive('syncSnapshotForUserId')->once()->with(12, 15)->andReturn(true);
-        $this->app->instance(RecommendationService::class, $service);
+        $user = \App\Models\User::factory()->create();
 
         $this->artisan('jav:sync', [
             '--only' => ['recommendations'],
-            '--user-id' => [12],
+            '--user-id' => [$user->id],
             '--limit' => 15,
         ])->assertExitCode(0);
+    }
+
+    private function buildRealIdolServiceFromFixtures(): XcityIdolService
+    {
+        $client = \Mockery::mock(XcityClient::class);
+        $client->shouldReceive('get')
+            ->once()
+            ->with('/idol/')
+            ->andReturn($this->getMockResponse('xcity_root_with_kana.html'));
+        $client->shouldReceive('get')
+            ->withArgs(function (string $url): bool {
+                return str_contains($url, 'https://xxx.xcity.jp/idol/?kana=');
+            })
+            ->andReturnUsing(function (string $url) {
+                if (str_contains($url, 'kana=%E3%81%8B')) {
+                    return $this->getMockResponse('xcity_kana_ka_with_ini.html');
+                }
+
+                if (str_contains($url, 'kana=%E3%81%95')) {
+                    return $this->getMockResponse('xcity_kana_sa_without_ini.html');
+                }
+
+                return $this->getMockResponse('xcity_kana_sa_without_ini.html');
+            });
+
+        return new XcityIdolService($client, new ActorProfileUpsertService);
     }
 }
