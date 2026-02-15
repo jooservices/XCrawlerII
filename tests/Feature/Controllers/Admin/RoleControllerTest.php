@@ -6,6 +6,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class RoleControllerTest extends TestCase
@@ -42,8 +43,7 @@ class RoleControllerTest extends TestCase
     {
         $response = $this->actingAs($this->adminUser)->get(route('admin.roles.index'));
 
-        $response->assertOk();
-        $response->assertViewIs('admin.roles.index');
+        $this->assertInertiaComponent($response, 'Admin/Roles/Index');
     }
 
     public function test_non_admin_cannot_view_roles_index(): void
@@ -128,8 +128,7 @@ class RoleControllerTest extends TestCase
 
         $response = $this->actingAs($this->adminUser)->get(route('admin.roles.show', $role));
 
-        $response->assertOk();
-        $response->assertViewIs('admin.roles.show');
+        $this->assertInertiaComponent($response, 'Admin/Roles/Show');
         $response->assertSee($role->name);
     }
 
@@ -178,5 +177,18 @@ class RoleControllerTest extends TestCase
         $response->assertRedirect(route('admin.roles.index'));
         $this->assertTrue($role->fresh()->permissions->contains($permission1));
         $this->assertTrue($role->fresh()->permissions->contains($permission2));
+    }
+
+    private function assertInertiaComponent(TestResponse $response, string $component): void
+    {
+        $response->assertOk();
+        $response->assertViewHas('page');
+
+        $page = $response->viewData('page');
+        if (is_string($page)) {
+            $page = json_decode($page, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        $this->assertSame($component, $page['component'] ?? null);
     }
 }

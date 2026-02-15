@@ -9,14 +9,15 @@ use App\Http\Requests\Admin\UpdateRoleRequest;
 use App\Models\Permission;
 use App\Models\Role;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class RoleController extends Controller
 {
     /**
      * Display a listing of roles.
      */
-    public function index(GetRolesRequest $request): View
+    public function index(GetRolesRequest $request): Response
     {
         $query = Role::query()->with('permissions');
 
@@ -29,22 +30,29 @@ class RoleController extends Controller
             });
         }
 
-        $roles = $query->paginate($request->input('per_page', 15));
-        $permissions = Permission::all();
+        $roles = $query->paginate($request->integer('per_page', 15))->withQueryString();
 
-        return view('admin.roles.index', compact('roles', 'permissions'));
+        return Inertia::render('Admin/Roles/Index', [
+            'roles' => $roles,
+            'filters' => [
+                'search' => $request->input('search', ''),
+                'per_page' => $request->integer('per_page', 15),
+            ],
+        ]);
     }
 
     /**
      * Show the form for creating a new role.
      */
-    public function create(): View
+    public function create(): Response
     {
         $permissions = Permission::all()->groupBy(function ($permission) {
             return explode('-', $permission->slug)[0];
         });
 
-        return view('admin.roles.create', compact('permissions'));
+        return Inertia::render('Admin/Roles/Create', [
+            'permissions' => $permissions,
+        ]);
     }
 
     /**
@@ -66,24 +74,29 @@ class RoleController extends Controller
     /**
      * Display the specified role.
      */
-    public function show(Role $role): View
+    public function show(Role $role): Response
     {
         $role->load(['permissions', 'users']);
 
-        return view('admin.roles.show', compact('role'));
+        return Inertia::render('Admin/Roles/Show', [
+            'role' => $role,
+        ]);
     }
 
     /**
      * Show the form for editing the specified role.
      */
-    public function edit(Role $role): View
+    public function edit(Role $role): Response
     {
         $permissions = Permission::all()->groupBy(function ($permission) {
             return explode('-', $permission->slug)[0];
         });
         $role->load('permissions');
 
-        return view('admin.roles.edit', compact('role', 'permissions'));
+        return Inertia::render('Admin/Roles/Edit', [
+            'role' => $role,
+            'permissions' => $permissions,
+        ]);
     }
 
     /**

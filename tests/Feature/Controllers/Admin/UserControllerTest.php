@@ -6,6 +6,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class UserControllerTest extends TestCase
@@ -44,8 +45,7 @@ class UserControllerTest extends TestCase
     {
         $response = $this->actingAs($this->adminUser)->get(route('admin.users.index'));
 
-        $response->assertOk();
-        $response->assertViewIs('admin.users.index');
+        $this->assertInertiaComponent($response, 'Admin/Users/Index');
     }
 
     public function test_non_admin_cannot_view_users_index(): void
@@ -171,5 +171,18 @@ class UserControllerTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors(['email']);
+    }
+
+    private function assertInertiaComponent(TestResponse $response, string $component): void
+    {
+        $response->assertOk();
+        $response->assertViewHas('page');
+
+        $page = $response->viewData('page');
+        if (is_string($page)) {
+            $page = json_decode($page, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        $this->assertSame($component, $page['component'] ?? null);
     }
 }

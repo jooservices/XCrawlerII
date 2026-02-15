@@ -11,14 +11,15 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of users.
      */
-    public function index(GetUsersRequest $request): View
+    public function index(GetUsersRequest $request): Response
     {
         $query = User::query()->with('roles');
 
@@ -44,20 +45,32 @@ class UserController extends Controller
         $sortDirection = $request->input('sort_direction', 'desc');
         $query->orderBy($sortBy, $sortDirection);
 
-        $users = $query->paginate($request->input('per_page', 15));
+        $users = $query->paginate($request->integer('per_page', 15))->withQueryString();
         $roles = Role::all();
 
-        return view('admin.users.index', compact('users', 'roles'));
+        return Inertia::render('Admin/Users/Index', [
+            'users' => $users,
+            'roles' => $roles,
+            'filters' => [
+                'search' => $request->input('search', ''),
+                'role' => $request->input('role', ''),
+                'per_page' => $request->integer('per_page', 15),
+                'sort_by' => $sortBy,
+                'sort_direction' => $sortDirection,
+            ],
+        ]);
     }
 
     /**
      * Show the form for creating a new user.
      */
-    public function create(): View
+    public function create(): Response
     {
         $roles = Role::all();
 
-        return view('admin.users.create', compact('roles'));
+        return Inertia::render('Admin/Users/Create', [
+            'roles' => $roles,
+        ]);
     }
 
     /**
@@ -85,22 +98,27 @@ class UserController extends Controller
     /**
      * Display the specified user.
      */
-    public function show(User $user): View
+    public function show(User $user): Response
     {
         $user->load('roles.permissions');
 
-        return view('admin.users.show', compact('user'));
+        return Inertia::render('Admin/Users/Show', [
+            'user' => $user,
+        ]);
     }
 
     /**
      * Show the form for editing the specified user.
      */
-    public function edit(User $user): View
+    public function edit(User $user): Response
     {
         $roles = Role::all();
         $user->load('roles');
 
-        return view('admin.users.edit', compact('user', 'roles'));
+        return Inertia::render('Admin/Users/Edit', [
+            'user' => $user,
+            'roles' => $roles,
+        ]);
     }
 
     /**
