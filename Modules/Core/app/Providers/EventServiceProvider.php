@@ -2,7 +2,13 @@
 
 namespace Modules\Core\Providers;
 
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\Core\Listeners\Queue\LogJobFailedListener;
+use Modules\Core\Listeners\Queue\LogJobProcessedListener;
+use Modules\Core\Listeners\Queue\LogJobStartedListener;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -11,7 +17,17 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array<string, array<int, string>>
      */
-    protected $listen = [];
+    protected $listen = [
+        JobProcessing::class => [
+            LogJobStartedListener::class,
+        ],
+        JobProcessed::class => [
+            LogJobProcessedListener::class,
+        ],
+        JobFailed::class => [
+            LogJobFailedListener::class,
+        ],
+    ];
 
     /**
      * Indicates if events should be discovered.

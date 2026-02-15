@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
 
     <head>
         <meta charset="utf-8">
@@ -21,7 +21,7 @@
         {{-- {{ module_vite('build-core', 'resources/assets/sass/app.scss') }} --}}
     </head>
 
-    <body>
+    <body class="app-dark dark">
         {{ $slot }}
 
         {{-- Vite JS --}}

@@ -15,6 +15,7 @@
         "jooservices/dto": "^1.0",
         "jooservices/useragent": "^1.1",
         "laravel/framework": "^12.0",
+        "laravel/horizon": "^5.44",
         "laravel/scout": "^10.24",
         "laravel/tinker": "^2.10.1",
         "matchish/laravel-scout-elasticsearch": "^7.12",
