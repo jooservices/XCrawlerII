@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Modules\JAV\Services\FfjavService;
 use Modules\JAV\Services\OneFourOneJavService;
 use Modules\JAV\Services\OnejavService;
@@ -38,7 +39,7 @@ class TagsSyncJob implements ShouldBeUnique, ShouldQueue
 
     public function failed(Throwable $exception): void
     {
-        \Log::error('TagsSyncJob failed', [
+        Log::error('TagsSyncJob failed', [
             'source' => $this->source,
             'error' => $exception->getMessage(),
         ]);

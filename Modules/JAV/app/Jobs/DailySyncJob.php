@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Modules\JAV\Services\FfjavService;
 use Modules\JAV\Services\OneFourOneJavService;
 use Modules\JAV\Services\OnejavService;
@@ -54,7 +55,7 @@ class DailySyncJob implements ShouldBeUnique, ShouldQueue
 
     public function failed(Throwable $exception): void
     {
-        \Log::error('DailySyncJob failed', [
+        Log::error('DailySyncJob failed', [
             'source' => $this->source,
             'date' => $this->resolvedDate(),
             'page' => $this->page,
