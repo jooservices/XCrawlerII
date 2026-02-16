@@ -14,6 +14,7 @@ docs/
 ├── guides/
 │   ├── getting-started.md
 │   ├── implementation-guide.md
+│   ├── obs-observability-handover-plan.md
 │   └── code-skeletons/
 ├── api/
 │   └── api-reference.md
@@ -33,7 +34,8 @@ docs/
 4. Lifecycle details: [architecture/request-lifecycle.md](architecture/request-lifecycle.md)
 5. Setup and build flow: [guides/getting-started.md](guides/getting-started.md)
 6. Feature implementation: [guides/implementation-guide.md](guides/implementation-guide.md)
-7. API contracts: [api/api-reference.md](api/api-reference.md)
-8. Quality and testing: [testing/testing-strategy.md](testing/testing-strategy.md)
-9. Delivery operations: [deployment/deployment-guide.md](deployment/deployment-guide.md)
-10. Issue recovery: [troubleshooting/faq.md](troubleshooting/faq.md)
+7. OBS handover plan: [guides/obs-observability-handover-plan.md](guides/obs-observability-handover-plan.md)
+8. API contracts: [api/api-reference.md](api/api-reference.md)
+9. Quality and testing: [testing/testing-strategy.md](testing/testing-strategy.md)
+10. Delivery operations: [deployment/deployment-guide.md](deployment/deployment-guide.md)
+11. Issue recovery: [troubleshooting/faq.md](troubleshooting/faq.md)

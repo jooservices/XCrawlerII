@@ -13,6 +13,10 @@ return [
         'critical_per_second' => env('JOB_TELEMETRY_RATE_CRITICAL_PER_SECOND', 40),
     ],
 
+    'snapshot' => [
+        'enabled' => env('JOB_TELEMETRY_SNAPSHOT_ENABLED', true),
+    ],
+
     'site_thresholds' => [
         // 'xcity.jp' => ['warning' => 15, 'critical' => 25],
     ],
