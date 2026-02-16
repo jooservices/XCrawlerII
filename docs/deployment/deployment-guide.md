@@ -48,6 +48,25 @@ The project may require additional system libraries for certain extensions (e.g.
 sudo apt install libcurl4-openssl-dev pkg-config libssl-dev -y
 ```
 
+### 5. Storage & Permissions
+
+Ensure the storage directory structure exists and is writable by the web server (usually `www-data`):
+
+```bash
+# Create necessary directories
+mkdir -p storage/framework/{sessions,views,cache}
+mkdir -p storage/logs
+mkdir -p bootstrap/cache
+
+# Set permissions
+sudo chown -R $USER:www-data storage bootstrap/cache
+chmod -R 775 storage bootstrap/cache
+```
+
+> [!IMPORTANT]
+> If `storage/framework/views` is missing, `php artisan` commands will fail with `Please provide a valid cache path`.
+
+
 
 ## Environments
 
