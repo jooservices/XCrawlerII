@@ -10,6 +10,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Modules\Core\Models\Mongo\JobTelemetryEvent;
+use Modules\Core\Observability\Contracts\TelemetryEmitterInterface;
+use Modules\Core\Observability\BlockSignalDetector;
+use Modules\Core\Observability\QueueSnapshotBuilder;
 use Throwable;
 
 class JobTelemetryService
@@ -20,7 +23,14 @@ class JobTelemetryService
 
     private const RATE_ALERT_CACHE_PREFIX = 'job_telemetry:rate_alert';
 
+    private const SNAPSHOT_CACHE_PREFIX = 'job_telemetry:snapshot';
+
     private static bool $indexesEnsured = false;
+
+    public function __construct(
+        private readonly BlockSignalDetector $blockSignalDetector,
+        private readonly QueueSnapshotBuilder $queueSnapshotBuilder,
+    ) {}
 
     public function recordStarted(JobProcessing $event): void
     {
@@ -47,6 +57,13 @@ class JobTelemetryService
             ...$context,
         ], $timestamp);
 
+        $this->emitToObs('queue.job.started', [
+            ...$context,
+            'event_type' => 'started',
+            'status' => 'running',
+            'timestamp' => $timestamp,
+        ], 'info', 'Queue job started');
+
         $this->trackRate($context, $timestamp);
     }
 
@@ -68,6 +85,15 @@ class JobTelemetryService
             'duration_ms' => $duration,
             ...$context,
         ], $timestamp);
+
+        $this->emitToObs('queue.job.completed', [
+            ...$context,
+            'event_type' => 'completed',
+            'status' => 'success',
+            'timestamp' => $timestamp,
+            'finished_at' => $timestamp,
+            'duration_ms' => $duration,
+        ], 'info', 'Queue job completed');
     }
 
     public function recordFailed(JobFailed $event): void
@@ -85,7 +111,7 @@ class JobTelemetryService
             $observedTimeout = (int) $matches[1];
         }
 
-        $this->writeEvent([
+        $eventData = [
             'event_type' => 'completed',
             'status' => 'failed',
             'timestamp' => $timestamp,
@@ -96,7 +122,20 @@ class JobTelemetryService
             'error_message_short' => mb_substr($event->exception->getMessage(), 0, 500),
             'timeout_ms_observed' => $observedTimeout,
             ...$context,
-        ], $timestamp);
+        ];
+
+        $this->writeEvent($eventData, $timestamp);
+
+        $this->emitToObs('queue.job.failed', $eventData, 'error', 'Queue job failed');
+
+        $signal = $this->blockSignalDetector->detect($eventData);
+        if ($signal !== null) {
+            $status = (int) ($signal['http_status'] ?? 0);
+            $level = $status === 403 ? 'error' : 'warning';
+
+            $this->emitToObs('crawler.target.block_signal', $signal, $level, 'Crawler block signal detected');
+            $this->emitToObs('crawler.target.cooldown_applied', $signal, 'info', 'Crawler cooldown recommended');
+        }
     }
 
     private function buildContext(Job $job, ?string $connectionName): array
@@ -224,6 +263,20 @@ class JobTelemetryService
         Cache::add($rateKey, 0, now()->addSeconds(120));
         $jobsPerSecond = (int) Cache::increment($rateKey);
 
+        if ((bool) config('core.job_telemetry.snapshot.enabled', true)) {
+            $snapshotKey = implode(':', [
+                self::SNAPSHOT_CACHE_PREFIX,
+                (string) ($context['connection'] ?? 'unknown'),
+                (string) ($context['queue'] ?? 'default'),
+                (string) $bucket,
+            ]);
+
+            if (Cache::add($snapshotKey, 1, now()->addSeconds(120))) {
+                $snapshot = $this->queueSnapshotBuilder->build($context, $jobsPerSecond);
+                $this->emitToObs('queue.snapshot', $snapshot, 'info', 'Queue snapshot recorded');
+            }
+        }
+
         $criticalThreshold = $this->thresholdForSite($site, 'critical');
         $warningThreshold = $this->thresholdForSite($site, 'warning');
         $level = null;
@@ -243,7 +296,7 @@ class JobTelemetryService
             return;
         }
 
-        $this->writeEvent([
+        $eventData = [
             'event_type' => 'rate_limit_exceeded',
             'status' => $level,
             'timestamp' => $timestamp,
@@ -256,7 +309,11 @@ class JobTelemetryService
             'queue' => $context['queue'] ?? null,
             'connection' => $context['connection'] ?? null,
             'worker_host' => $context['worker_host'] ?? null,
-        ], $timestamp);
+        ];
+
+        $this->writeEvent($eventData, $timestamp);
+
+        $this->emitToObs('queue.rate_limit_exceeded', $eventData, $level === 'critical' ? 'error' : 'warning', 'Queue job rate threshold exceeded');
     }
 
     private function thresholdForSite(string $site, string $level): int
@@ -335,5 +392,17 @@ class JobTelemetryService
     private function isEnabled(): bool
     {
         return (bool) config('core.job_telemetry.enabled', true);
+    }
+
+    private function emitToObs(string $eventType, array $context, string $level, string $message): void
+    {
+        try {
+            app(TelemetryEmitterInterface::class)->emit($eventType, $context, $level, $message);
+        } catch (Throwable $exception) {
+            Log::warning('Unable to emit queue telemetry to OBS', [
+                'event_type' => $eventType,
+                'error' => $exception->getMessage(),
+            ]);
+        }
     }
 }

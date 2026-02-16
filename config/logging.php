@@ -4,6 +4,9 @@ use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
+use Modules\Core\Logging\ObsMonologHandler;
+
+$defaultLogPath = storage_path('logs/laravel.log');
 
 return [
 
@@ -54,20 +57,20 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
-            'ignore_exceptions' => false,
+            'channels' => explode(',', (string) env('LOG_STACK', 'single,obs')),
+            'ignore_exceptions' => true,
         ],
 
         'single' => [
             'driver' => 'single',
-            'path' => storage_path('logs/laravel.log'),
+            'path' => $defaultLogPath,
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/laravel.log'),
+            'path' => $defaultLogPath,
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => env('LOG_DAILY_DAYS', 14),
             'replace_placeholders' => true,
@@ -118,13 +121,19 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'obs' => [
+            'driver' => 'monolog',
+            'handler' => ObsMonologHandler::class,
+            'level' => env('OBS_LOG_LEVEL_MIN', 'info'),
+        ],
+
         'null' => [
             'driver' => 'monolog',
             'handler' => NullHandler::class,
         ],
 
         'emergency' => [
-            'path' => storage_path('logs/laravel.log'),
+            'path' => $defaultLogPath,
         ],
 
     ],

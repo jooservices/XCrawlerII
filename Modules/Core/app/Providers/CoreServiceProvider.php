@@ -2,8 +2,13 @@
 
 namespace Modules\Core\Providers;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\Core\Observability\Contracts\ObservabilityClientInterface;
+use Modules\Core\Observability\Contracts\TelemetryEmitterInterface;
+use Modules\Core\Observability\ObsHttpClient;
+use Modules\Core\Observability\TelemetryEmitter;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -38,7 +43,10 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(\Matchish\ScoutElasticSearch\ElasticSearchServiceProvider::class);
 
-        $this->app->singleton(\Modules\Core\Services\ConfigService::class, function ($app) {
+        $this->app->bind(ObservabilityClientInterface::class, ObsHttpClient::class);
+        $this->app->singleton(TelemetryEmitterInterface::class, TelemetryEmitter::class);
+
+        $this->app->singleton(\Modules\Core\Services\ConfigService::class, function () {
             return new \Modules\Core\Services\ConfigService;
         });
 
@@ -52,6 +60,7 @@ class CoreServiceProvider extends ServiceProvider
     {
         $this->commands([
             \Modules\Core\Console\AuthAuthorizeCommand::class,
+            \Modules\Core\Console\ObsDependenciesHealthCommand::class,
         ]);
     }
 
@@ -60,10 +69,19 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function registerCommandSchedules(): void
     {
-        // $this->app->booted(function () {
-        //     $schedule = $this->app->make(Schedule::class);
-        //     $schedule->command('inspire')->hourly();
-        // });
+        $this->app->booted(function (): void {
+            if (! (bool) config('services.obs.dependency_health.schedule_enabled', false)) {
+                return;
+            }
+
+            /** @var Schedule $schedule */
+            $schedule = $this->app->make(Schedule::class);
+
+            $schedule->command('obs:dependencies-health')
+                ->cron((string) config('services.obs.dependency_health.schedule_cron', '*/5 * * * *'))
+                ->withoutOverlapping()
+                ->onOneServer();
+        });
     }
 
     /**
