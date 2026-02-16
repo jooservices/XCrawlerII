@@ -66,6 +66,52 @@ chmod -R 775 storage bootstrap/cache
 > [!IMPORTANT]
 > If `storage/framework/views` is missing, `php artisan` commands will fail with `Please provide a valid cache path`.
 
+### 6. Supervisor Configuration (for Horizon)
+
+To keep Laravel Horizon running automatically, install Supervisor and create a configuration file:
+
+```bash
+sudo apt install supervisor -y
+```
+
+Create a new configuration file at `/etc/supervisor/conf.d/xcrawler-horizon.conf`:
+
+```ini
+[program:xcrawler-horizon]
+process_name=%(program_name)s
+command=php /home/joos/XCrawlerII/artisan horizon
+autostart=true
+autorestart=true
+user=joos
+redirect_stderr=true
+stdout_logfile=/home/joos/XCrawlerII/storage/logs/horizon.log
+stopwaitsecs=3600
+```
+
+Apply the changes:
+
+```bash
+sudo reread
+sudo update
+sudo start xcrawler-horizon
+```
+
+### 7. Crontab setup (for Scheduler)
+
+To run the Laravel Scheduler every minute, add a cron entry:
+
+```bash
+# Open crontab editor
+crontab -e
+```
+
+Add the following line to the end of the file:
+
+```bash
+* * * * * cd /home/joos/XCrawlerII && php artisan schedule:run >> /dev/null 2>&1
+```
+
+
 
 
 ## Environments
