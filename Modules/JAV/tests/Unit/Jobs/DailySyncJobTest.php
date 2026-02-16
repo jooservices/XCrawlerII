@@ -14,6 +14,33 @@ use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
 
 class DailySyncJobTest extends TestCase
+    public function test_handle_dispatches_next_page_to_jav_idol_queue_when_available(): void
+    {
+        Queue::fake();
+        config(['jav.idol_queue' => 'jav-idol']);
+
+        $itemsAdapter = \Mockery::mock(FfjavItemsAdapter::class);
+        $itemsAdapter->shouldReceive('items')
+            ->once()
+            ->andReturn(new Items(collect(), true, 2));
+
+        $service = \Mockery::mock(FfjavService::class);
+        $service->shouldReceive('daily')
+            ->once()
+            ->with('2026-02-14', 1)
+            ->andReturn($itemsAdapter);
+
+        $this->app->instance(FfjavService::class, $service);
+
+        $job = new DailySyncJob('ffjav', '2026-02-14', 1);
+        $job->handle();
+
+        Queue::assertPushedOn('jav-idol', DailySyncJob::class, function (DailySyncJob $nextJob): bool {
+            return $nextJob->source === 'ffjav'
+                && $nextJob->date === '2026-02-14'
+                && $nextJob->page === 2;
+        });
+    }
 {
     public function test_unique_id_contains_source_date_and_page()
     {

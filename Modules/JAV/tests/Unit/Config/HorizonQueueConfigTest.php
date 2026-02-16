@@ -11,6 +11,7 @@ class HorizonQueueConfigTest extends TestCase
         $waits = (array) config('horizon.waits', []);
 
         $this->assertArrayHasKey('redis:jav', $waits);
+        $this->assertArrayHasKey('redis:jav-idol', $waits);
         $this->assertArrayHasKey('redis:onejav', $waits);
         $this->assertArrayHasKey('redis:141', $waits);
         $this->assertArrayHasKey('redis:xcity', $waits);
@@ -25,7 +26,7 @@ class HorizonQueueConfigTest extends TestCase
         $onefourone = (array) ($defaults['supervisor-141'] ?? []);
         $xcity = (array) ($defaults['supervisor-xcity'] ?? []);
 
-        $this->assertSame(['jav'], $jav['queue'] ?? null);
+        $this->assertSame(['jav', 'jav-idol'], $jav['queue'] ?? null);
         $this->assertSame(5, $jav['maxProcesses'] ?? null);
         $this->assertSame(5, $jav['minProcesses'] ?? null);
         $this->assertSame(3600, $jav['timeout'] ?? null);
@@ -40,7 +41,8 @@ class HorizonQueueConfigTest extends TestCase
         $this->assertSame(4, $onefourone['minProcesses'] ?? null);
         $this->assertSame(3600, $onefourone['timeout'] ?? null);
 
-        $this->assertSame(['xcity'], $xcity['queue'] ?? null);
+        $this->assertSame(['xcity', 'jav-idol'], $xcity['queue'] ?? null);
+            $this->assertSame(['xcity', 'jav-idol'], $xcity['queue'] ?? null);
         $this->assertSame(2, $xcity['maxProcesses'] ?? null);
         $this->assertSame(2, $xcity['minProcesses'] ?? null);
         $this->assertSame(3600, $xcity['timeout'] ?? null);

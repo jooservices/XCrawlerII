@@ -99,6 +99,7 @@ return [
     'waits' => [
         'redis:default' => 60,
         'redis:jav' => 60,
+        'redis:jav-idol' => 60,
         'redis:onejav' => 60,
         'redis:141' => 60,
         'redis:xcity' => 60,
@@ -220,7 +221,7 @@ return [
 
         'supervisor-jav' => [
             'connection' => 'redis',
-            'queue' => ['jav'],
+            'queue' => ['jav', 'jav-idol'],
             'balance' => 'simple',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 5,
@@ -274,7 +275,7 @@ return [
 
         'supervisor-xcity' => [
             'connection' => 'redis',
-            'queue' => ['xcity'],
+            'queue' => ['xcity', 'jav-idol'],
             'balance' => 'simple',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 2,

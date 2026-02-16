@@ -47,6 +47,14 @@ No remaining unresolved clarity questions.
 4. **Search results are stale**
    - Validate Elasticsearch connectivity and index sync job completion.
 
+5. **Need emergency root admin access (server SSH only)**
+    - Reset root admin password without current password:
+       - `php artisan auth:authorize --new-password='YourNewStrongPass123'`
+    - Test access with a password:
+       - `php artisan auth:authorize --test-access --password='YourNewStrongPass123'`
+    - If root admin email differs from default (`admin@xcrawler.local`), include:
+       - `--email='root@yourdomain.com'`
+
 ## Error-to-Action Quick Table
 
 - `401 Unauthorized` → login/session issue; authenticate first.
