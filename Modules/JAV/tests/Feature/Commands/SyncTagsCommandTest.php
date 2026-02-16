@@ -15,7 +15,7 @@ class SyncTagsCommandTest extends TestCase
         $this->artisan('jav:sync:content', ['provider' => 'onejav', '--type' => ['tags']])
             ->assertExitCode(0);
 
-        Queue::assertPushedOn('jav', TagsSyncJob::class, function (TagsSyncJob $job): bool {
+        Queue::assertPushedOn('onejav', TagsSyncJob::class, function (TagsSyncJob $job): bool {
             return $job->source === 'onejav';
         });
     }

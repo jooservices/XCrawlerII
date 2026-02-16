@@ -22,7 +22,7 @@ class XcityIdolSyncCommandTest extends TestCase
             ->assertExitCode(0);
 
         Queue::assertPushed(XcityKanaSyncJob::class, 2);
-        Queue::assertPushedOn('jav-idol', XcityKanaSyncJob::class);
+        Queue::assertPushedOn('xcity', XcityKanaSyncJob::class);
     }
 
     private function buildRealServiceFromFixtures(): XcityIdolService

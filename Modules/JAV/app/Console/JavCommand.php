@@ -39,8 +39,7 @@ class JavCommand extends Command
 
         $hasFailure = false;
         $queueOption = trim((string) $this->option('queue'));
-        $contentQueue = $queueOption !== '' ? $queueOption : 'jav';
-        $idolQueue = $queueOption !== '' ? $queueOption : (string) config('jav.idol_queue', 'jav-idol');
+        $idolQueue = $queueOption !== '' ? $queueOption : (string) config('jav.idol_queue', 'xcity');
         $types = (array) $this->option('type');
         $providersOption = (array) $this->option('provider');
         $providers = $providersOption === [] ? ['onejav', '141jav', 'ffjav'] : array_values(array_unique($providersOption));
@@ -50,8 +49,11 @@ class JavCommand extends Command
             foreach ($providers as $provider) {
                 $payload = [
                     'provider' => $provider,
-                    '--queue' => $contentQueue,
                 ];
+
+                if ($queueOption !== '') {
+                    $payload['--queue'] = $queueOption;
+                }
 
                 if ($types !== []) {
                     $payload['--type'] = $types;

@@ -15,7 +15,12 @@ class FfjavServiceTest extends TestCase
 {
     public function test_new(): void
     {
-        Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
+        Event::fake([
+            ItemParsed::class,
+            \Modules\JAV\Events\ItemsFetched::class,
+            \Modules\JAV\Events\ProviderFetchStarted::class,
+            \Modules\JAV\Events\ProviderFetchCompleted::class,
+        ]);
 
         $responseWrapper = $this->getMockResponse('ffjav_new.html');
         $client = Mockery::mock(FfjavClient::class);
@@ -36,6 +41,18 @@ class FfjavServiceTest extends TestCase
         $this->assertCount(2, $items->items);
         $this->assertEquals('MKMP-707', $items->items->first()->code);
         $this->assertSame('2', (string) Config::get('ffjav', 'new_page', '0'));
+
+        Event::assertDispatched(\Modules\JAV\Events\ProviderFetchStarted::class, function (\Modules\JAV\Events\ProviderFetchStarted $event): bool {
+            return $event->source === 'ffjav'
+                && $event->type === 'new'
+                && in_array($event->path, ['/javtorrent', '/javtorrent/page/1'], true);
+        });
+
+        Event::assertDispatched(\Modules\JAV\Events\ProviderFetchCompleted::class, function (\Modules\JAV\Events\ProviderFetchCompleted $event): bool {
+            return $event->source === 'ffjav'
+                && $event->type === 'new'
+                && $event->itemsCount === 2;
+        });
     }
 
     public function test_popular_with_explicit_page_uses_path_pagination(): void
@@ -53,6 +70,8 @@ class FfjavServiceTest extends TestCase
 
     public function test_item_extracts_download_and_normalized_code(): void
     {
+        Event::fake([ItemParsed::class]);
+
         $responseWrapper = $this->getMockResponse('ffjav_item_mkmp707.html');
         $client = Mockery::mock(FfjavClient::class);
         $client->shouldReceive('get')
@@ -66,5 +85,13 @@ class FfjavServiceTest extends TestCase
         $this->assertEquals('MKMP-707', $item->code);
         $this->assertEquals('mkmp707', $item->id);
         $this->assertEquals('https://ffjav.com/download/2026/202602/ffjav.com_mkmp707.torrent', $item->download);
+
+        Event::assertDispatched(ItemParsed::class, 1);
+        Event::assertDispatched(ItemParsed::class, function (ItemParsed $event) use ($item): bool {
+            return $event->source === 'ffjav'
+                && $event->item->id === $item->id
+                && $event->item->code === $item->code
+                && $event->item->download === $item->download;
+        });
     }
 }

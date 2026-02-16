@@ -18,7 +18,7 @@ class DailySyncCommandTest extends TestCase
             '--date' => '2026-02-14',
         ])->assertExitCode(0);
 
-        Queue::assertPushedOn('jav', DailySyncJob::class, function ($job) {
+        Queue::assertPushedOn('onejav', DailySyncJob::class, function ($job) {
             return $job->source === 'onejav'
                 && $job->date === '2026-02-14'
                 && $job->page === 1;

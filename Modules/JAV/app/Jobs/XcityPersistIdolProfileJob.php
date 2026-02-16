@@ -15,7 +15,9 @@ class XcityPersistIdolProfileJob implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $tries = 2;
+    public int $tries = 4;
+
+    public int $timeout = 3600;
 
     public function __construct(
         public string $xcityId,
@@ -34,6 +36,11 @@ class XcityPersistIdolProfileJob implements ShouldQueue
         );
 
         Cache::put($this->indexFlagKey(), $shouldIndex, now()->addMinutes(30));
+    }
+
+    public function backoff(): array
+    {
+        return [1800, 2700, 3600];
     }
 
     private function indexFlagKey(): string

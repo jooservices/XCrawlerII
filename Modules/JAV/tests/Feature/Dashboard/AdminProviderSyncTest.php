@@ -49,7 +49,7 @@ class AdminProviderSyncTest extends TestCase
             ->assertJsonPath('type', 'daily')
             ->assertJsonPath('date', '2026-02-14');
 
-        Queue::assertPushedOn('jav', DailySyncJob::class, function (DailySyncJob $job): bool {
+        Queue::assertPushedOn('onejav', DailySyncJob::class, function (DailySyncJob $job): bool {
             return $job->source === 'onejav'
                 && $job->date === '2026-02-14'
                 && $job->page === 1;
@@ -95,7 +95,7 @@ class AdminProviderSyncTest extends TestCase
         $jobs = (int) ($response->json('jobs') ?? 0);
         $this->assertGreaterThan(0, $jobs);
 
-        Queue::assertPushedOn('jav-idol', XcityKanaSyncJob::class);
+        Queue::assertPushedOn('xcity', XcityKanaSyncJob::class);
     }
 
     private function buildRealIdolServiceFromFixtures(): XcityIdolService

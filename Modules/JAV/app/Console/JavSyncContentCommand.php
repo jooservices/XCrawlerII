@@ -17,7 +17,7 @@ class JavSyncContentCommand extends Command
                             {provider : onejav|141jav|ffjav}
                             {--type=* : new|popular|daily|tags}
                             {--date= : YYYY-MM-DD for daily type}
-                            {--queue=jav : Queue name}';
+                            {--queue= : Queue name override}';
 
     protected $description = 'Sync JAV provider content by type';
 
@@ -68,7 +68,7 @@ class JavSyncContentCommand extends Command
 
     private function dispatchFeedJob(string $provider, string $type): int
     {
-        $queue = (string) $this->option('queue');
+        $queue = $this->resolveQueue($provider);
 
         $this->info("Starting {$provider} {$type} sync.");
 
@@ -97,7 +97,7 @@ class JavSyncContentCommand extends Command
             return self::INVALID;
         }
 
-        $queue = (string) $this->option('queue');
+        $queue = $this->resolveQueue($provider);
 
         DailySyncJob::dispatch($provider, $resolvedDate, 1)->onQueue($queue);
 
@@ -108,11 +108,26 @@ class JavSyncContentCommand extends Command
 
     private function syncTags(string $provider): int
     {
-        $queue = (string) $this->option('queue');
+        $queue = $this->resolveQueue($provider);
         TagsSyncJob::dispatch($provider)->onQueue($queue);
 
         $this->info("Dispatched {$provider} tags sync job to queue '{$queue}'.");
 
         return self::SUCCESS;
+    }
+
+    private function resolveQueue(string $provider): string
+    {
+        $override = trim((string) $this->option('queue'));
+        if ($override !== '') {
+            return $override;
+        }
+
+        return match ($provider) {
+            'onejav' => (string) config('jav.content_queues.onejav', 'onejav'),
+            '141jav' => (string) config('jav.content_queues.141jav', '141'),
+            'ffjav' => (string) config('jav.content_queues.ffjav', 'jav'),
+            default => 'jav',
+        };
     }
 }

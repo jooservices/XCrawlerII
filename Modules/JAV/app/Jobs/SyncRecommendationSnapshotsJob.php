@@ -17,7 +17,7 @@ class SyncRecommendationSnapshotsJob implements ShouldQueue
 
     public int $tries = 3;
 
-    public int $timeout = 180;
+    public int $timeout = 3600;
 
     public function __construct(
         public readonly ?int $javId = null,

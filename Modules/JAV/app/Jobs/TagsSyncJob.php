@@ -17,6 +17,10 @@ class TagsSyncJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public int $tries = 4;
+
+    public int $timeout = 3600;
+
     public function __construct(
         public string $source
     ) {}
@@ -38,6 +42,11 @@ class TagsSyncJob implements ShouldBeUnique, ShouldQueue
             'source' => $this->source,
             'error' => $exception->getMessage(),
         ]);
+    }
+
+    public function backoff(): array
+    {
+        return [1800, 2700, 3600];
     }
 
     private function resolveService(): OnejavService|OneFourOneJavService|FfjavService

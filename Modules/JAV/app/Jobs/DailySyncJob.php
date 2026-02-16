@@ -18,6 +18,10 @@ class DailySyncJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public int $tries = 4;
+
+    public int $timeout = 3600;
+
     public function __construct(
         public string $source,
         public ?string $date = null,
@@ -36,11 +40,15 @@ class DailySyncJob implements ShouldBeUnique, ShouldQueue
         $items = $result->items();
 
         if ($items->hasNextPage) {
+            $nextQueue = (is_string($this->queue) && $this->queue !== '')
+                ? $this->queue
+                : $this->defaultQueueForSource();
+
             self::dispatch(
                 source: $this->source,
                 date: $this->resolvedDate(),
                 page: $items->nextPage
-            )->onQueue('jav');
+            )->onQueue($nextQueue);
         }
     }
 
@@ -68,6 +76,20 @@ class DailySyncJob implements ShouldBeUnique, ShouldQueue
             '141jav' => app(OneFourOneJavService::class),
             'ffjav' => app(FfjavService::class),
             default => throw new \InvalidArgumentException("Unsupported source: {$this->source}"),
+        };
+    }
+
+    public function backoff(): array
+    {
+        return [1800, 2700, 3600];
+    }
+
+    private function defaultQueueForSource(): string
+    {
+        return match ($this->source) {
+            'onejav' => (string) config('jav.content_queues.onejav', 'onejav'),
+            '141jav' => (string) config('jav.content_queues.141jav', '141'),
+            default => (string) config('jav.content_queues.ffjav', 'jav'),
         };
     }
 }

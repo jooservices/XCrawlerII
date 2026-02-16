@@ -23,15 +23,15 @@ class JavCommandTest extends TestCase
         ])
             ->assertExitCode(0);
 
-        Queue::assertPushedOn('jav', DailySyncJob::class, function ($job) {
+        Queue::assertPushedOn('onejav', DailySyncJob::class, function ($job) {
             return $job->source === 'onejav' && $job->page === 1;
         });
 
-        Queue::assertPushedOn('jav', OnejavJob::class, function ($job) {
+        Queue::assertPushedOn('onejav', OnejavJob::class, function ($job) {
             return $job->type === 'popular';
         });
 
-        Queue::assertPushedOn('jav', TagsSyncJob::class, function (TagsSyncJob $job) {
+        Queue::assertPushedOn('onejav', TagsSyncJob::class, function (TagsSyncJob $job) {
             return $job->source === 'onejav';
         });
     }

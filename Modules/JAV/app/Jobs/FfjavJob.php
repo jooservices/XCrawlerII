@@ -17,6 +17,10 @@ class FfjavJob implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public int $tries = 4;
+
+    public int $timeout = 3600;
+
     public function __construct(
         public string $type
     ) {}
@@ -40,5 +44,10 @@ class FfjavJob implements ShouldBeUnique, ShouldQueue
     public function failed(Throwable $exception): void
     {
         FfjavJobFailed::dispatch($this->type, $exception);
+    }
+
+    public function backoff(): array
+    {
+        return [1800, 2700, 3600];
     }
 }
