@@ -3,7 +3,10 @@
 namespace Modules\JAV\Services;
 
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Modules\JAV\Dtos\Item;
+use Modules\JAV\Events\JavStored;
+use Modules\JAV\Events\JavStoreFailed;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
@@ -43,20 +46,53 @@ class JavManager
                 $data
             );
 
-            // Sync actors
-            $actorIds = $item->actresses->map(
-                fn (string $name) => Actor::firstOrCreate(['name' => $name])->id
-            )->toArray();
-            $jav->actors()->sync($actorIds);
+            // Bulk upsert actors
+            $actorNames = $item->actresses
+                ->map(fn ($name) => trim($name))
+                ->filter(fn ($name) => $name !== '')
+                ->unique()
+                ->values();
+            $existingActors = Actor::whereIn('name', $actorNames)->pluck('id', 'name');
+            $missingActors = $actorNames->diff($existingActors->keys());
+            if ($missingActors->isNotEmpty()) {
+                $now = now();
+                $toInsert = $missingActors->map(fn ($name) => [
+                    'uuid' => (string) Str::uuid(),
+                    'name' => $name,
+                    'created_at' => $now,
+                    'updated_at' => $now,
+                ])->all();
+                Actor::insertOrIgnore($toInsert);
+            }
+            $allActors = Actor::whereIn('name', $actorNames)->pluck('id', 'name');
+            $jav->actors()->sync($allActors->values()->all());
 
-            // Sync tags
-            $tagIds = $item->tags->map(
-                fn (string $name) => Tag::firstOrCreate(['name' => $name])->id
-            )->toArray();
-            $jav->tags()->sync($tagIds);
+            // Bulk upsert tags
+            $tagNames = $item->tags
+                ->map(fn ($name) => trim($name))
+                ->filter(fn ($name) => $name !== '')
+                ->unique()
+                ->values();
+            $existingTags = Tag::whereIn('name', $tagNames)->pluck('id', 'name');
+            $missingTags = $tagNames->diff($existingTags->keys());
+            if ($missingTags->isNotEmpty()) {
+                $toInsert = $missingTags->map(fn ($name) => ['name' => $name])->all();
+                Tag::insertOrIgnore($toInsert);
+            }
+            $allTags = Tag::whereIn('name', $tagNames)->pluck('id', 'name');
+            $jav->tags()->sync($allTags->values()->all());
 
             // Force re-index to include actors and tags
             $jav->searchable();
+
+            JavStored::dispatch(
+                (int) $jav->id,
+                (string) $normalizedCode,
+                $source,
+                count($allActors->values()->all()),
+                count($allTags->values()->all()),
+                (bool) $jav->wasRecentlyCreated
+            );
 
             Log::info('JAV item stored successfully', [
                 'code' => $item->code,
@@ -66,6 +102,8 @@ class JavManager
 
             return $jav;
         } catch (\Exception $e) {
+            JavStoreFailed::dispatch($item->code, $source, $e->getMessage());
+
             Log::error('Failed to store JAV item', [
                 'code' => $item->code,
                 'source' => $source,

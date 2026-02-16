@@ -103,7 +103,7 @@ class XcityIdolService
     {
         $resolvedQueue = (is_string($queue) && $queue !== '')
             ? $queue
-            : (string) config('jav.idol_queue', 'jav-idol');
+            : (string) config('jav.idol_queue', 'xcity');
 
         Config::set('xcity', $this->runningKey($seedKey), '1');
 

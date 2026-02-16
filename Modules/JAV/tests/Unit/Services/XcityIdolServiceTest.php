@@ -39,7 +39,7 @@ class XcityIdolServiceTest extends TestCase
 
         $this->assertSame(2, $count);
         Bus::assertBatched(function ($batch): bool {
-            if ($batch->name !== 'xcity:kana:kana-a' || $batch->queue() !== 'jav-idol') {
+            if ($batch->name !== 'xcity:kana:kana-a' || $batch->queue() !== 'xcity') {
                 return false;
             }
 

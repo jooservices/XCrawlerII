@@ -23,7 +23,7 @@ class OnejavCommandTest extends TestCase
         $this->artisan('jav:sync:content', ['provider' => 'onejav', '--type' => ['new']])
             ->assertExitCode(0);
 
-        Queue::assertPushedOn('jav', OnejavJob::class, function ($job) {
+        Queue::assertPushedOn('onejav', OnejavJob::class, function ($job) {
             return $job->type === 'new';
         });
     }

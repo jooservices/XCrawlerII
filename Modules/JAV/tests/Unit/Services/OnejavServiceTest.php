@@ -26,7 +26,12 @@ class OnejavServiceTest extends TestCase
 
     public function test_new(): void
     {
-        Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
+        Event::fake([
+            ItemParsed::class,
+            \Modules\JAV\Events\ItemsFetched::class,
+            \Modules\JAV\Events\ProviderFetchStarted::class,
+            \Modules\JAV\Events\ProviderFetchCompleted::class,
+        ]);
 
         $responseWrapper = $this->getMockResponse('onejav_new_15670.html');
 
@@ -149,6 +154,20 @@ class OnejavServiceTest extends TestCase
             return $event->source === 'onejav'
                 && $event->currentPage === 16570
                 && $event->items->items->count() === 6;
+        });
+
+        Event::assertDispatched(\Modules\JAV\Events\ProviderFetchStarted::class, function (\Modules\JAV\Events\ProviderFetchStarted $event): bool {
+            return $event->source === 'onejav'
+                && $event->type === 'new'
+                && $event->path === '/new?page=16570'
+                && $event->page === 16570;
+        });
+
+        Event::assertDispatched(\Modules\JAV\Events\ProviderFetchCompleted::class, function (\Modules\JAV\Events\ProviderFetchCompleted $event): bool {
+            return $event->source === 'onejav'
+                && $event->type === 'new'
+                && $event->path === '/new?page=16570'
+                && $event->itemsCount === 6;
         });
     }
 

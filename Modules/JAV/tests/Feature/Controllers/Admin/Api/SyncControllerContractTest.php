@@ -33,7 +33,7 @@ class SyncControllerContractTest extends TestCase
             ->assertJsonPath('type', 'daily')
             ->assertJsonPath('date', '2026-02-14');
 
-        Queue::assertPushedOn('jav', DailySyncJob::class);
+        Queue::assertPushedOn('onejav', DailySyncJob::class);
     }
 
     public function test_admin_provider_sync_dispatch_tags_is_queued_on_jav(): void
@@ -51,7 +51,7 @@ class SyncControllerContractTest extends TestCase
             ->assertJsonPath('type', 'tags')
             ->assertJsonPath('date', null);
 
-        Queue::assertPushedOn('jav', TagsSyncJob::class, function (TagsSyncJob $job): bool {
+        Queue::assertPushedOn('141', TagsSyncJob::class, function (TagsSyncJob $job): bool {
             return $job->source === '141jav';
         });
     }
@@ -75,7 +75,7 @@ class SyncControllerContractTest extends TestCase
         $jobs = (int) ($response->json('jobs') ?? 0);
         $this->assertGreaterThan(0, $jobs);
 
-        Queue::assertPushedOn('jav-idol', XcityKanaSyncJob::class);
+        Queue::assertPushedOn('xcity', XcityKanaSyncJob::class);
     }
 
     private function buildRealIdolServiceFromFixtures(): XcityIdolService

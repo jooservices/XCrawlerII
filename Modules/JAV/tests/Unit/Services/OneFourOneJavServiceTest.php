@@ -16,9 +16,22 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class OneFourOneJavServiceTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+        \Modules\JAV\Models\Jav::disableSearchSyncing();
+        \Modules\JAV\Models\Tag::disableSearchSyncing();
+        \Modules\JAV\Models\Actor::disableSearchSyncing();
+    }
+
     public function test_new(): void
     {
-        Event::fake([ItemParsed::class, \Modules\JAV\Events\ItemsFetched::class]);
+        Event::fake([
+            ItemParsed::class,
+            \Modules\JAV\Events\ItemsFetched::class,
+            \Modules\JAV\Events\ProviderFetchStarted::class,
+            \Modules\JAV\Events\ProviderFetchCompleted::class,
+        ]);
 
         $responseWrapper = $this->getMockResponse('141jav_new.html');
 
@@ -36,6 +49,21 @@ class OneFourOneJavServiceTest extends TestCase
             return $event->source === '141jav'
                 && $event->currentPage === 1
                 && $event->items->items->count() === 10;
+        });
+
+        Event::assertDispatched(\Modules\JAV\Events\ProviderFetchStarted::class, function (\Modules\JAV\Events\ProviderFetchStarted $event): bool {
+            return $event->source === '141jav'
+                && $event->type === 'new'
+                && $event->path === '/new?page=1'
+                && $event->page === 1;
+        });
+
+        Event::assertDispatched(\Modules\JAV\Events\ProviderFetchCompleted::class, function (\Modules\JAV\Events\ProviderFetchCompleted $event): bool {
+            return $event->source === '141jav'
+                && $event->type === 'new'
+                && $event->path === '/new?page=1'
+                && $event->page === 1
+                && $event->itemsCount === 10;
         });
 
         // ... (assertions)
@@ -299,5 +327,121 @@ class OneFourOneJavServiceTest extends TestCase
         });
 
         $this->assertSame('9000', (string) Config::get('onefourone', 'new_page', '0'));
+    }
+
+    public function test_bulk_tag_sync_creates_new_tags(): void
+    {
+        Event::fake([
+            \Modules\JAV\Events\TagsSyncCompleted::class,
+            \Modules\JAV\Events\TagsSyncFailed::class,
+        ]);
+
+        $responseWrapper = $this->getMockResponse('141jav_tags.html');
+
+        $client = Mockery::mock(OneFourOneJavClient::class);
+        $client->shouldReceive('get')->with('/tag')->once()->andReturn($responseWrapper);
+
+        $service = new OneFourOneJavService($client);
+        $tags = $service->tags();
+
+        $this->assertGreaterThan(20, $tags->count());
+        $this->assertSame($tags->count(), \Modules\JAV\Models\Tag::query()->count());
+        $this->assertDatabaseHas('tags', ['name' => 'Anal']);
+        $this->assertDatabaseHas('tags', ['name' => 'Mature Woman']);
+
+        Event::assertDispatched(\Modules\JAV\Events\TagsSyncCompleted::class, function (\Modules\JAV\Events\TagsSyncCompleted $event) use ($tags): bool {
+            return $event->source === '141jav'
+                && $event->totalTags === $tags->count()
+                && $event->insertedTags > 0;
+        });
+        Event::assertNotDispatched(\Modules\JAV\Events\TagsSyncFailed::class);
+    }
+
+    public function test_new_dispatches_provider_fetch_failed_on_exception(): void
+    {
+        Event::fake([\Modules\JAV\Events\ProviderFetchFailed::class]);
+
+        $client = Mockery::mock(OneFourOneJavClient::class);
+        $client->shouldReceive('get')->with('/new?page=1')->once()->andThrow(new \RuntimeException('network down'));
+
+        $service = new OneFourOneJavService($client);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('network down');
+
+        try {
+            $service->new(1);
+        } finally {
+            Event::assertDispatched(\Modules\JAV\Events\ProviderFetchFailed::class, function (\Modules\JAV\Events\ProviderFetchFailed $event): bool {
+                return $event->source === '141jav'
+                    && $event->type === 'new'
+                    && $event->path === '/new?page=1'
+                    && $event->page === 1
+                    && str_contains($event->error, 'network down');
+            });
+        }
+    }
+
+    public function test_tags_dispatches_tags_sync_failed_on_exception(): void
+    {
+        Event::fake([\Modules\JAV\Events\TagsSyncFailed::class]);
+
+        $client = Mockery::mock(OneFourOneJavClient::class);
+        $client->shouldReceive('get')->with('/tag')->once()->andThrow(new \RuntimeException('tag unavailable'));
+
+        $service = new OneFourOneJavService($client);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('tag unavailable');
+
+        try {
+            $service->tags();
+        } finally {
+            Event::assertDispatched(\Modules\JAV\Events\TagsSyncFailed::class, function (\Modules\JAV\Events\TagsSyncFailed $event): bool {
+                return $event->source === '141jav'
+                    && str_contains($event->error, 'tag unavailable');
+            });
+        }
+    }
+
+    public function test_bulk_tag_sync_does_not_duplicate_existing_tags(): void
+    {
+        \Modules\JAV\Models\Tag::query()->create(['name' => 'Anal']);
+
+        $responseWrapper = $this->getMockResponse('141jav_tags.html');
+        $client = Mockery::mock(OneFourOneJavClient::class);
+        $client->shouldReceive('get')->with('/tag')->once()->andReturn($responseWrapper);
+
+        $service = new OneFourOneJavService($client);
+        $tags = $service->tags();
+
+        $this->assertSame(1, \Modules\JAV\Models\Tag::query()->where('name', 'Anal')->count());
+        $this->assertSame($tags->count(), \Modules\JAV\Models\Tag::query()->count());
+    }
+
+    public function test_bulk_tag_sync_filters_empty_and_duplicate_names(): void
+    {
+        $responseWrapper = $this->getMockResponse('141jav_tags.html');
+        $client = Mockery::mock(OneFourOneJavClient::class);
+        $client->shouldReceive('get')->with('/tag')->once()->andReturn($responseWrapper);
+
+        $service = new OneFourOneJavService($client);
+        $tags = $service->tags();
+
+        $this->assertSame($tags->count(), $tags->unique()->count());
+        $this->assertSame($tags->count(), \Modules\JAV\Models\Tag::query()->count());
+    }
+
+    public function test_bulk_tag_sync_returns_empty_when_no_tag_nodes(): void
+    {
+        $responseWrapper = $this->getMockResponse('141jav_new.html');
+        $client = Mockery::mock(OneFourOneJavClient::class);
+        $client->shouldReceive('get')->with('/tag')->once()->andReturn($responseWrapper);
+
+        $service = new OneFourOneJavService($client);
+        $tags = $service->tags();
+
+        $this->assertCount(0, $tags);
+        $this->assertSame(0, \Modules\JAV\Models\Tag::query()->count());
     }
 }

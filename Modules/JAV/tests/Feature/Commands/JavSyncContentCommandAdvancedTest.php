@@ -19,19 +19,19 @@ class JavSyncContentCommandAdvancedTest extends TestCase
             'provider' => 'onejav',
         ])->assertExitCode(0);
 
-        Queue::assertPushedOn('jav', OnejavJob::class, function (OnejavJob $job): bool {
+        Queue::assertPushedOn('onejav', OnejavJob::class, function (OnejavJob $job): bool {
             return $job->type === 'new';
         });
 
-        Queue::assertPushedOn('jav', OnejavJob::class, function (OnejavJob $job): bool {
+        Queue::assertPushedOn('onejav', OnejavJob::class, function (OnejavJob $job): bool {
             return $job->type === 'popular';
         });
 
-        Queue::assertPushedOn('jav', DailySyncJob::class, function (DailySyncJob $job): bool {
+        Queue::assertPushedOn('onejav', DailySyncJob::class, function (DailySyncJob $job): bool {
             return $job->source === 'onejav' && $job->page === 1;
         });
 
-        Queue::assertPushedOn('jav', TagsSyncJob::class, function (TagsSyncJob $job): bool {
+        Queue::assertPushedOn('onejav', TagsSyncJob::class, function (TagsSyncJob $job): bool {
             return $job->source === 'onejav';
         });
     }

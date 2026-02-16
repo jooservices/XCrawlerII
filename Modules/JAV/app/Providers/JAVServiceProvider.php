@@ -82,6 +82,7 @@ class JAVServiceProvider extends ServiceProvider
 
         $this->commands([
             \Modules\JAV\Console\JavCommand::class,
+            \Modules\JAV\Console\JavAnalyticsReportCommand::class,
             \Modules\JAV\Console\JavSyncContentCommand::class,
             \Modules\JAV\Console\JavSyncSearchCommand::class,
             \Modules\JAV\Console\JavSyncIdolsCommand::class,

@@ -16,7 +16,7 @@ class RecommendationService
     public function getRecommendationsWithReasons($user, $limit = 20)
     {
         $snapshotRecommendations = $this->loadRecommendationsFromSnapshot((int) $user->id, (int) $limit);
-        if ($snapshotRecommendations !== null) {
+        if ($snapshotRecommendations !== null && $snapshotRecommendations->isNotEmpty()) {
             return $snapshotRecommendations;
         }
 

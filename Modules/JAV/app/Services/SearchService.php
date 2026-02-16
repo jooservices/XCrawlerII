@@ -7,6 +7,10 @@ use Elastic\Elasticsearch\Client;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Cache;
+use Modules\JAV\Events\RelatedCacheHit;
+use Modules\JAV\Events\RelatedCacheMiss;
+use Modules\JAV\Events\RelatedCacheWarmed;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
@@ -115,41 +119,71 @@ class SearchService // NOSONAR
     public function getRelatedByActors(Jav $jav, int $limit = 10): \Illuminate\Support\Collection
     {
         $actorNames = $jav->actors->pluck('name')->toArray();
-
         if (empty($actorNames)) {
             return collect();
         }
+        $cacheKey = 'jav:related:actors:'.$jav->id.':v1';
+        $cached = Cache::get($cacheKey);
+        if ($cached !== null) {
+            $collection = $cached instanceof \Illuminate\Support\Collection ? $cached : collect($cached);
+            RelatedCacheHit::dispatch('jav', 'actors', (int) $jav->id, $limit, $cacheKey, $collection->count());
 
-        if ($this->isElasticsearchAvailable('jav')) {
-            // Search for movies with any of the same actors, excluding the current movie
-            return Jav::search('*')
-                ->query(fn ($q) => $q->with(['actors', 'tags']))
-                ->take($limit + 10) // Get extra to filter out current movie
-                ->get()
-                ->filter(function ($item) use ($jav, $actorNames) {
-                    if ($item->id === $jav->id) {
-                        return false;
-                    }
-                    $itemActors = is_array($item->actors)
-                        ? collect($item->actors)->pluck('name')->toArray()
-                        : $item->actors->pluck('name')->toArray();
-
-                    return ! empty(array_intersect($itemActors, $actorNames));
-                })
-                ->take($limit);
+            return $collection;
         }
 
-        \Illuminate\Support\Facades\Log::warning('Elasticsearch unavailable (related actors), using database.');
+        RelatedCacheMiss::dispatch('jav', 'actors', (int) $jav->id, $limit, $cacheKey);
 
-        return Jav::query()
-            ->with(['actors', 'tags'])
-            ->whereHas('actors', function ($q) use ($actorNames) {
-                $q->whereIn('name', $actorNames);
-            })
-            ->where('id', '!=', $jav->id)
-            ->orderByDesc('date')
-            ->take($limit)
-            ->get();
+        $results = (function () use ($jav, $actorNames, $limit) {
+            if ($this->isElasticsearchAvailable('jav')) {
+                // Search for movies with any of the same actors, excluding the current movie
+                return Jav::search('*')
+                    ->query(fn ($q) => $q
+                        ->with(['actors', 'tags'])
+                        ->where('id', '!=', $jav->id)
+                    )
+                    ->take($limit + 20)
+                    ->get()
+                    ->filter(function ($item) use ($actorNames) {
+                        $itemActorsRaw = is_array($item->actors)
+                            ? collect($item->actors)
+                            : collect($item->actors ?? []);
+                        $itemActors = $itemActorsRaw
+                            ->map(static function ($actor): string {
+                                if (is_array($actor)) {
+                                    return trim((string) ($actor['name'] ?? ''));
+                                }
+                                if (is_object($actor)) {
+                                    return trim((string) ($actor->name ?? ''));
+                                }
+
+                                return trim((string) $actor);
+                            })
+                            ->filter(static fn (string $name): bool => $name !== '')
+                            ->values()
+                            ->toArray();
+
+                        return ! empty(array_intersect($itemActors, $actorNames));
+                    })
+                    ->take($limit)
+                    ->values();
+            }
+            \Illuminate\Support\Facades\Log::warning('Elasticsearch unavailable (related actors), using database.');
+
+            return Jav::query()
+                ->with(['actors', 'tags'])
+                ->whereHas('actors', function ($q) use ($actorNames) {
+                    $q->whereIn('name', $actorNames);
+                })
+                ->where('id', '!=', $jav->id)
+                ->orderByDesc('date')
+                ->take($limit)
+                ->get();
+        })();
+
+        Cache::put($cacheKey, $results, now()->addMinutes(10));
+        RelatedCacheWarmed::dispatch('jav', 'actors', (int) $jav->id, $limit, $cacheKey, $results->count(), 600);
+
+        return $results;
     }
 
     /**
@@ -161,41 +195,71 @@ class SearchService // NOSONAR
     public function getRelatedByTags(Jav $jav, int $limit = 10): \Illuminate\Support\Collection
     {
         $tagNames = $jav->tags->pluck('name')->toArray();
-
         if (empty($tagNames)) {
             return collect();
         }
+        $cacheKey = 'jav:related:tags:'.$jav->id.':v1';
+        $cached = Cache::get($cacheKey);
+        if ($cached !== null) {
+            $collection = $cached instanceof \Illuminate\Support\Collection ? $cached : collect($cached);
+            RelatedCacheHit::dispatch('jav', 'tags', (int) $jav->id, $limit, $cacheKey, $collection->count());
 
-        if ($this->isElasticsearchAvailable('jav')) {
-            // Search for movies with any of the same tags, excluding the current movie
-            return Jav::search('*')
-                ->query(fn ($q) => $q->with(['actors', 'tags']))
-                ->take($limit + 10) // Get extra to filter out current movie
-                ->get()
-                ->filter(function ($item) use ($jav, $tagNames) {
-                    if ($item->id === $jav->id) {
-                        return false;
-                    }
-                    $itemTags = is_array($item->tags)
-                        ? collect($item->tags)->pluck('name')->toArray()
-                        : $item->tags->pluck('name')->toArray();
-
-                    return ! empty(array_intersect($itemTags, $tagNames));
-                })
-                ->take($limit);
+            return $collection;
         }
 
-        \Illuminate\Support\Facades\Log::warning('Elasticsearch unavailable (related tags), using database.');
+        RelatedCacheMiss::dispatch('jav', 'tags', (int) $jav->id, $limit, $cacheKey);
 
-        return Jav::query()
-            ->with(['actors', 'tags'])
-            ->whereHas('tags', function ($q) use ($tagNames) {
-                $q->whereIn('name', $tagNames);
-            })
-            ->where('id', '!=', $jav->id)
-            ->orderByDesc('date')
-            ->take($limit)
-            ->get();
+        $results = (function () use ($jav, $tagNames, $limit) {
+            if ($this->isElasticsearchAvailable('jav')) {
+                // Search for movies with any of the same tags, excluding the current movie
+                return Jav::search('*')
+                    ->query(fn ($q) => $q
+                        ->with(['actors', 'tags'])
+                        ->where('id', '!=', $jav->id)
+                    )
+                    ->take($limit + 20)
+                    ->get()
+                    ->filter(function ($item) use ($tagNames) {
+                        $itemTagsRaw = is_array($item->tags)
+                            ? collect($item->tags)
+                            : collect($item->tags ?? []);
+                        $itemTags = $itemTagsRaw
+                            ->map(static function ($tag): string {
+                                if (is_array($tag)) {
+                                    return trim((string) ($tag['name'] ?? ''));
+                                }
+                                if (is_object($tag)) {
+                                    return trim((string) ($tag->name ?? ''));
+                                }
+
+                                return trim((string) $tag);
+                            })
+                            ->filter(static fn (string $name): bool => $name !== '')
+                            ->values()
+                            ->toArray();
+
+                        return ! empty(array_intersect($itemTags, $tagNames));
+                    })
+                    ->take($limit)
+                    ->values();
+            }
+            \Illuminate\Support\Facades\Log::warning('Elasticsearch unavailable (related tags), using database.');
+
+            return Jav::query()
+                ->with(['actors', 'tags'])
+                ->whereHas('tags', function ($q) use ($tagNames) {
+                    $q->whereIn('name', $tagNames);
+                })
+                ->where('id', '!=', $jav->id)
+                ->orderByDesc('date')
+                ->take($limit)
+                ->get();
+        })();
+
+        Cache::put($cacheKey, $results, now()->addMinutes(10));
+        RelatedCacheWarmed::dispatch('jav', 'tags', (int) $jav->id, $limit, $cacheKey, $results->count(), 600);
+
+        return $results;
     }
 
     public function applyDatabaseFilters(Builder $builder, string $query, array $filters): void

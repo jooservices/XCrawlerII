@@ -13,6 +13,10 @@ use Modules\JAV\Services\SearchService;
 
 class DashboardReadRepository
 {
+    private const SHORT_TTL_SECONDS = 30;
+
+    private const MEDIUM_TTL_SECONDS = 120;
+
     public function __construct(
         private readonly SearchService $searchService,
         private readonly JavRepository $javRepository,
@@ -34,40 +38,54 @@ class DashboardReadRepository
         string $preset,
         ?Authenticatable $user = null
     ): LengthAwarePaginator {
-        if ($preset === 'default') {
-            return $this->searchService->searchJav($query, $filters, $perPage, $sort, $direction);
-        }
+        $userId = (int) ($user?->getAuthIdentifier() ?? 0);
+        $cacheKey = $this->cacheKey('search', [
+            'query' => $query,
+            'filters' => $filters,
+            'per_page' => $perPage,
+            'sort' => $sort,
+            'direction' => $direction,
+            'preset' => $preset,
+            'user_id' => $userId,
+            'page' => request()->integer('page', 1),
+        ]);
 
-        $sortField = in_array((string) $sort, ['created_at', 'updated_at', 'views', 'downloads'], true)
-            ? (string) $sort
-            : 'created_at';
-        $sortDirection = in_array($direction, ['asc', 'desc'], true) ? $direction : 'desc';
-
-        $builder = $this->javRepository->queryWithRelations();
-        $this->searchService->applyDatabaseFilters($builder, $query, $filters);
-
-        if ($preset === 'weekly_downloads') {
-            $builder->where('created_at', '>=', now()->subWeek());
-            $sortField = 'downloads';
-            $sortDirection = 'desc';
-        }
-
-        if ($preset === 'preferred_tags' && $user !== null) {
-            $preferredTagNames = $this->favoriteRepository->preferredTagNamesForUser((int) $user->getAuthIdentifier());
-
-            if ($preferredTagNames->isNotEmpty()) {
-                $builder->whereHas('tags', function ($q) use ($preferredTagNames): void {
-                    $q->whereIn('name', $preferredTagNames);
-                });
-            } else {
-                $builder->whereRaw('1 = 0');
+        return Cache::remember($cacheKey, now()->addSeconds(self::SHORT_TTL_SECONDS), function () use ($preset, $query, $filters, $perPage, $sort, $direction, $user): LengthAwarePaginator {
+            if ($preset === 'default') {
+                return $this->searchService->searchJav($query, $filters, $perPage, $sort, $direction);
             }
-        }
 
-        return $builder
-            ->orderBy($sortField, $sortDirection)
-            ->paginate($perPage)
-            ->withQueryString();
+            $sortField = in_array((string) $sort, ['created_at', 'updated_at', 'views', 'downloads'], true)
+                ? (string) $sort
+                : 'created_at';
+            $sortDirection = in_array($direction, ['asc', 'desc'], true) ? $direction : 'desc';
+
+            $builder = $this->javRepository->queryWithRelations();
+            $this->searchService->applyDatabaseFilters($builder, $query, $filters);
+
+            if ($preset === 'weekly_downloads') {
+                $builder->where('created_at', '>=', now()->subWeek());
+                $sortField = 'downloads';
+                $sortDirection = 'desc';
+            }
+
+            if ($preset === 'preferred_tags' && $user !== null) {
+                $preferredTagNames = $this->favoriteRepository->preferredTagNamesForUser((int) $user->getAuthIdentifier());
+
+                if ($preferredTagNames->isNotEmpty()) {
+                    $builder->whereHas('tags', function ($q) use ($preferredTagNames): void {
+                        $q->whereIn('name', $preferredTagNames);
+                    });
+                } else {
+                    $builder->whereRaw('1 = 0');
+                }
+            }
+
+            return $builder
+                ->orderBy($sortField, $sortDirection)
+                ->paginate($perPage)
+                ->withQueryString();
+        });
     }
 
     public function decorateItemsForUser(LengthAwarePaginator $items, ?Authenticatable $user): void
@@ -106,12 +124,24 @@ class DashboardReadRepository
      */
     public function continueWatching(int $userId, int $limit = 8): Collection
     {
-        return $this->historyRepository->continueWatching($userId, $limit);
+        return Cache::remember(
+            $this->cacheKey('continue_watching', ['user_id' => $userId, 'limit' => $limit]),
+            now()->addSeconds(self::SHORT_TTL_SECONDS),
+            fn (): Collection => $this->historyRepository->continueWatching($userId, $limit)
+        );
     }
 
     public function actorMovies(Actor $actor, int $perPage = 30): LengthAwarePaginator
     {
-        return $this->actorRepository->actorMovies($actor, $perPage);
+        return Cache::remember(
+            $this->cacheKey('actor_movies', [
+                'actor_id' => (int) $actor->id,
+                'per_page' => $perPage,
+                'page' => request()->integer('page', 1),
+            ]),
+            now()->addSeconds(self::MEDIUM_TTL_SECONDS),
+            fn (): LengthAwarePaginator => $this->actorRepository->actorMovies($actor, $perPage)
+        );
     }
 
     public function searchActors(
@@ -121,12 +151,32 @@ class DashboardReadRepository
         ?string $sort = null,
         string $direction = 'desc'
     ): LengthAwarePaginator {
-        return $this->searchService->searchActors($query, $filters, $perPage, $sort, $direction);
+        return Cache::remember(
+            $this->cacheKey('actors', [
+                'query' => $query,
+                'filters' => $filters,
+                'per_page' => $perPage,
+                'sort' => $sort,
+                'direction' => $direction,
+                'page' => request()->integer('page', 1),
+            ]),
+            now()->addSeconds(self::MEDIUM_TTL_SECONDS),
+            fn (): LengthAwarePaginator => $this->searchService->searchActors($query, $filters, $perPage, $sort, $direction)
+        );
     }
 
     public function searchTags(string $query, ?string $sort = null, string $direction = 'desc'): LengthAwarePaginator
     {
-        return $this->searchService->searchTags($query, 60, $sort, $direction);
+        return Cache::remember(
+            $this->cacheKey('tags', [
+                'query' => $query,
+                'sort' => $sort,
+                'direction' => $direction,
+                'page' => request()->integer('page', 1),
+            ]),
+            now()->addSeconds(self::MEDIUM_TTL_SECONDS),
+            fn (): LengthAwarePaginator => $this->searchService->searchTags($query, 60, $sort, $direction)
+        );
     }
 
     public function loadJavRelations(Jav $jav): Jav
@@ -141,12 +191,28 @@ class DashboardReadRepository
 
     public function historyForUser(int $userId, int $perPage = 30): LengthAwarePaginator
     {
-        return $this->historyRepository->paginateForUser($userId, $perPage);
+        return Cache::remember(
+            $this->cacheKey('history', [
+                'user_id' => $userId,
+                'per_page' => $perPage,
+                'page' => request()->integer('page', 1),
+            ]),
+            now()->addSeconds(self::SHORT_TTL_SECONDS),
+            fn (): LengthAwarePaginator => $this->historyRepository->paginateForUser($userId, $perPage)
+        );
     }
 
     public function favoritesForUser(int $userId, int $perPage = 30): LengthAwarePaginator
     {
-        return $this->favoriteRepository->paginateForUser($userId, $perPage);
+        return Cache::remember(
+            $this->cacheKey('favorites', [
+                'user_id' => $userId,
+                'per_page' => $perPage,
+                'page' => request()->integer('page', 1),
+            ]),
+            now()->addSeconds(self::SHORT_TTL_SECONDS),
+            fn (): LengthAwarePaginator => $this->favoriteRepository->paginateForUser($userId, $perPage)
+        );
     }
 
     /**
@@ -245,5 +311,31 @@ class DashboardReadRepository
             'other' => 'xcity_other',
             default => null,
         };
+    }
+
+    private function cacheKey(string $segment, array $payload): string
+    {
+        $normalized = $this->normalizeForCache($payload);
+        $encoded = json_encode($normalized, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        return sprintf('jav:dashboard:%s:v1:%s', $segment, sha1((string) $encoded));
+    }
+
+    private function normalizeForCache(mixed $value): mixed
+    {
+        if (! is_array($value)) {
+            return $value;
+        }
+
+        $isSequential = array_keys($value) === range(0, count($value) - 1);
+        if (! $isSequential) {
+            ksort($value);
+        }
+
+        foreach ($value as $key => $item) {
+            $value[$key] = $this->normalizeForCache($item);
+        }
+
+        return $value;
     }
 }

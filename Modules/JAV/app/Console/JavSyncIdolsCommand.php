@@ -26,7 +26,7 @@ class JavSyncIdolsCommand extends Command
         $concurrency = max(1, (int) $this->option('concurrency'));
         $queue = trim((string) $this->option('queue'));
         if ($queue === '') {
-            $queue = (string) config('jav.idol_queue', 'jav-idol');
+            $queue = (string) config('jav.idol_queue', 'xcity');
         }
 
         $seeds = $service->seedKanaUrls();

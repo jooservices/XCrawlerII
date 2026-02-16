@@ -12,6 +12,10 @@
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
             <directory>Modules/*/tests/Feature</directory>
+            <exclude>Modules/JAV/tests/Feature/Services/XcityLiveScrapeTest.php</exclude>
+        </testsuite>
+        <testsuite name="Live">
+            <file>Modules/JAV/tests/Feature/Services/XcityLiveScrapeTest.php</file>
         </testsuite>
     </testsuites>
     <source>
