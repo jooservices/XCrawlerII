@@ -14,10 +14,10 @@ use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
 
 class DailySyncJobTest extends TestCase
+{
     public function test_handle_dispatches_next_page_to_jav_idol_queue_when_available(): void
     {
         Queue::fake();
-        config(['jav.idol_queue' => 'jav-idol']);
 
         $itemsAdapter = \Mockery::mock(FfjavItemsAdapter::class);
         $itemsAdapter->shouldReceive('items')
@@ -33,6 +33,7 @@ class DailySyncJobTest extends TestCase
         $this->app->instance(FfjavService::class, $service);
 
         $job = new DailySyncJob('ffjav', '2026-02-14', 1);
+        $job->onQueue('jav-idol');
         $job->handle();
 
         Queue::assertPushedOn('jav-idol', DailySyncJob::class, function (DailySyncJob $nextJob): bool {
@@ -41,14 +42,15 @@ class DailySyncJobTest extends TestCase
                 && $nextJob->page === 2;
         });
     }
-{
-    public function test_unique_id_contains_source_date_and_page()
+
+    public function test_unique_id_contains_source_date_and_page(): void
     {
         $job = new DailySyncJob('onejav', '2026-02-14', 3);
+
         $this->assertEquals('onejav:2026-02-14:3', $job->uniqueId());
     }
 
-    public function test_handle_dispatches_next_page_when_available()
+    public function test_handle_dispatches_next_page_when_available(): void
     {
         Queue::fake();
 
@@ -63,7 +65,7 @@ class DailySyncJobTest extends TestCase
         $job = new DailySyncJob('onejav', '2026-02-14', 1);
         $job->handle();
 
-        Queue::assertPushedOn('onejav', DailySyncJob::class, function (DailySyncJob $nextJob) {
+        Queue::assertPushedOn('onejav', DailySyncJob::class, function (DailySyncJob $nextJob): bool {
             return $nextJob->source === 'onejav'
                 && $nextJob->date === '2026-02-14'
                 && $nextJob->page === 2;

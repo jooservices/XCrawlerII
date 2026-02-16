@@ -42,7 +42,6 @@ class HorizonQueueConfigTest extends TestCase
         $this->assertSame(3600, $onefourone['timeout'] ?? null);
 
         $this->assertSame(['xcity', 'jav-idol'], $xcity['queue'] ?? null);
-            $this->assertSame(['xcity', 'jav-idol'], $xcity['queue'] ?? null);
         $this->assertSame(2, $xcity['maxProcesses'] ?? null);
         $this->assertSame(2, $xcity['minProcesses'] ?? null);
         $this->assertSame(3600, $xcity['timeout'] ?? null);
