@@ -10,8 +10,8 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Modules\Core\Models\Mongo\JobTelemetryEvent;
-use Modules\Core\Observability\Contracts\TelemetryEmitterInterface;
 use Modules\Core\Observability\BlockSignalDetector;
+use Modules\Core\Observability\Contracts\TelemetryEmitterInterface;
 use Modules\Core\Observability\QueueSnapshotBuilder;
 use Throwable;
 

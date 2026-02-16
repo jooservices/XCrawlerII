@@ -5,9 +5,9 @@ namespace Modules\Core\Tests\Unit\Observability;
 use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Modules\Core\Observability\ObsHttpClient;
 use Modules\Core\Observability\Exceptions\ObsConfigurationException;
 use Modules\Core\Observability\Exceptions\ObsNonRetryableException;
+use Modules\Core\Observability\ObsHttpClient;
 use Tests\TestCase;
 
 class ObsHttpClientTest extends TestCase
