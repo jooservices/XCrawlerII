@@ -1,5 +1,54 @@
 # Deployment Guide
 
+## Server Setup & Prerequisites
+
+These steps assume an Ubuntu 24.04+ environment.
+
+### 1. Install PHP 8.5
+
+Add the Ondrej PHP PPA and install PHP 8.5 with common extensions:
+
+```bash
+sudo add-apt-repository ppa:ondrej/php -y
+sudo apt update
+sudo apt install php8.5 php8.5-cli php8.5-common php8.5-curl php8.5-mbstring php8.5-xml php8.5-zip php8.5-bcmath php8.5-intl php8.5-gd php8.5-dev php-pear -y
+```
+
+### 2. Install Redis and MongoDB Extensions (via PECL)
+
+The project requires `redis` and `mongodb` extensions. Use PECL to install them:
+
+```bash
+# Install Redis extension
+sudo pecl install redis
+echo "extension=redis.so" | sudo tee /etc/php/8.5/mods-available/redis.ini
+sudo phpenmod redis
+
+# Install MongoDB extension
+sudo pecl install mongodb
+echo "extension=mongodb.so" | sudo tee /etc/php/8.5/mods-available/mongodb.ini
+sudo phpenmod mongodb
+```
+
+### 3. Install Composer
+
+Download and install the latest version of Composer:
+
+```bash
+curl -sS https://getcomposer.org/installer | php
+sudo mv composer.phar /usr/local/bin/composer
+composer --version
+```
+
+### 4. System Dependencies
+
+The project may require additional system libraries for certain extensions (e.g., `libmongoc` dependencies):
+
+```bash
+sudo apt install libcurl4-openssl-dev pkg-config libssl-dev -y
+```
+
+
 ## Environments
 
 - Development: local machine, relaxed observability settings.
