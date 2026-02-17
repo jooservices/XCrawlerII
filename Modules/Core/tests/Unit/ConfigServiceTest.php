@@ -27,6 +27,28 @@ class ConfigServiceTest extends TestCase
         $this->assertEquals('default', $service->get('app', 'non_existent', 'default'));
     }
 
+    public function test_reads_from_env_when_config_missing()
+    {
+        $service = new ConfigService;
+
+        putenv('ONEJAV_CRAWLER_CACHE_TTL=7200');
+        $_ENV['ONEJAV_CRAWLER_CACHE_TTL'] = '7200';
+
+        $this->assertSame('7200', $service->get('onejav', 'crawler_cache_ttl', '0'));
+    }
+
+    public function test_config_value_overrides_env()
+    {
+        $service = new ConfigService;
+
+        putenv('ONEJAV_CRAWLER_CACHE_TTL=7200');
+        $_ENV['ONEJAV_CRAWLER_CACHE_TTL'] = '7200';
+
+        $service->set('onejav', 'crawler_cache_ttl', '1800');
+
+        $this->assertSame('1800', $service->get('onejav', 'crawler_cache_ttl', '0'));
+    }
+
     public function test_can_update_existing_config_value()
     {
         $service = new ConfigService;

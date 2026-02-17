@@ -15,7 +15,14 @@ class ConfigService
             ->where('key', $key)
             ->first();
 
-        return $config ? $config->value : $default;
+        if ($config) {
+            return $config->value;
+        }
+
+        $envKey = $this->buildEnvKey($group, $key);
+        $envValue = $this->readEnv($envKey);
+
+        return $envValue !== null ? $envValue : $default;
     }
 
     /**
@@ -35,5 +42,36 @@ class ConfigService
             ['group' => $group, 'key' => $key],
             $data
         );
+    }
+
+    private function buildEnvKey(string $group, string $key): string
+    {
+        $groupSegment = $this->normalizeEnvSegment($group);
+        $keySegment = $this->normalizeEnvSegment($key);
+
+        return trim($groupSegment . '_' . $keySegment, '_');
+    }
+
+    private function normalizeEnvSegment(string $value): string
+    {
+        $normalized = strtoupper($value);
+        $normalized = preg_replace('/[^A-Z0-9]+/', '_', $normalized) ?? '';
+
+        return trim($normalized, '_');
+    }
+
+    private function readEnv(string $key): mixed
+    {
+        $value = env($key);
+
+        if ($value === null) {
+            $value = getenv($key);
+        }
+
+        if ($value === false) {
+            return null;
+        }
+
+        return $value;
     }
 }
