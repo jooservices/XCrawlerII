@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\JAV\Events\FfjavJobCompleted;
 use Modules\JAV\Events\FfjavJobFailed;
+use Modules\JAV\Exceptions\CrawlerDelayException;
 use Modules\JAV\Services\FfjavService;
 use Throwable;
 
@@ -32,8 +33,13 @@ class FfjavJob implements ShouldBeUnique, ShouldQueue
 
     public function handle(FfjavService $service): void
     {
-        $result = $service->{$this->type}();
-        $items = $result->items();
+        try {
+            $result = $service->{$this->type}();
+            $items = $result->items();
+        } catch (CrawlerDelayException $exception) {
+            $this->release($exception->delaySeconds());
+            return;
+        }
 
         FfjavJobCompleted::dispatch(
             $this->type,

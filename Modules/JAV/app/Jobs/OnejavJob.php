@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\JAV\Events\OnejavJobCompleted;
 use Modules\JAV\Events\OnejavJobFailed;
+use Modules\JAV\Exceptions\CrawlerDelayException;
 use Modules\JAV\Services\OnejavService;
 use Throwable;
 
@@ -38,8 +39,13 @@ class OnejavJob implements ShouldBeUnique, ShouldQueue
      */
     public function handle(OnejavService $service): void
     {
-        $result = $service->{$this->type}();
-        $items = $result->items();
+        try {
+            $result = $service->{$this->type}();
+            $items = $result->items();
+        } catch (CrawlerDelayException $exception) {
+            $this->release($exception->delaySeconds());
+            return;
+        }
 
         OnejavJobCompleted::dispatch(
             $this->type,

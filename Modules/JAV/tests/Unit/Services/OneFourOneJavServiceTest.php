@@ -9,6 +9,9 @@ use Modules\Core\Facades\Config;
 use Modules\JAV\Dtos\Item;
 use Modules\JAV\Events\ItemParsed;
 use Modules\JAV\Services\Clients\OneFourOneJavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\OneFourOneJav\ItemsAdapter;
 use Modules\JAV\Services\OneFourOneJavService;
 use Modules\JAV\Tests\TestCase;
@@ -22,6 +25,16 @@ class OneFourOneJavServiceTest extends TestCase
         \Modules\JAV\Models\Jav::disableSearchSyncing();
         \Modules\JAV\Models\Tag::disableSearchSyncing();
         \Modules\JAV\Models\Actor::disableSearchSyncing();
+    }
+
+    private function makeService(OneFourOneJavClient $client): OneFourOneJavService
+    {
+        return new OneFourOneJavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        );
     }
 
     public function test_new(): void
@@ -38,7 +51,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/new?page=1')->once()->andReturn($responseWrapper);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->new(1);
 
         $this->assertInstanceOf(ItemsAdapter::class, $adapter);
@@ -81,7 +94,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/popular/?page=1')->once()->andReturn($responseWrapper);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->popular();
 
         $this->assertInstanceOf(ItemsAdapter::class, $adapter);
@@ -109,7 +122,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/popular/?page=107')->once()->andReturn($responseWrapper107);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->popular(107);
 
         $this->assertEquals(107, $adapter->currentPage());
@@ -122,7 +135,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/popular/?page=108')->once()->andReturn($responseWrapper108);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->popular(108);
 
         $this->assertEquals(108, $adapter->currentPage());
@@ -134,7 +147,7 @@ class OneFourOneJavServiceTest extends TestCase
     {
         $client = app(OneFourOneJavClient::class);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $this->assertInstanceOf(Collection::class, $service->tags());
     }
 
@@ -229,7 +242,7 @@ class OneFourOneJavServiceTest extends TestCase
             ->once()
             ->andReturn($responseWrapper);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $item = $service->item("https://www.141jav.com/torrent/{$itemId}");
 
         // Basic assertions
@@ -289,7 +302,7 @@ class OneFourOneJavServiceTest extends TestCase
             ->with('/new?page=5')
             ->andReturn($responseWrapper);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $items = $service->new();
 
         $this->assertInstanceOf(ItemsAdapter::class, $items);
@@ -316,7 +329,7 @@ class OneFourOneJavServiceTest extends TestCase
             ->with('/new?page=10')
             ->andReturn($responseWrapper);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $items = $service->new(10);
 
         $this->assertInstanceOf(ItemsAdapter::class, $items);
@@ -341,7 +354,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/tag')->once()->andReturn($responseWrapper);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $tags = $service->tags();
 
         $this->assertGreaterThan(20, $tags->count());
@@ -364,7 +377,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/new?page=1')->once()->andThrow(new \RuntimeException('network down'));
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('network down');
@@ -389,7 +402,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/tag')->once()->andThrow(new \RuntimeException('tag unavailable'));
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('tag unavailable');
@@ -412,7 +425,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/tag')->once()->andReturn($responseWrapper);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $tags = $service->tags();
 
         $this->assertSame(1, \Modules\JAV\Models\Tag::query()->where('name', 'Anal')->count());
@@ -425,7 +438,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/tag')->once()->andReturn($responseWrapper);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $tags = $service->tags();
 
         $this->assertSame($tags->count(), $tags->unique()->count());
@@ -438,7 +451,7 @@ class OneFourOneJavServiceTest extends TestCase
         $client = Mockery::mock(OneFourOneJavClient::class);
         $client->shouldReceive('get')->with('/tag')->once()->andReturn($responseWrapper);
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
         $tags = $service->tags();
 
         $this->assertCount(0, $tags);

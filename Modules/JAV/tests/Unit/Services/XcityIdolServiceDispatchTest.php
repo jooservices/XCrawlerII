@@ -5,6 +5,7 @@ namespace Modules\JAV\Tests\Unit\Services;
 use Modules\Core\Facades\Config;
 use Modules\JAV\Services\ActorProfileUpsertService;
 use Modules\JAV\Services\Clients\XcityClient;
+use Modules\JAV\Services\CrawlerResponseCacheService;
 use Modules\JAV\Services\XcityIdolService;
 use Modules\JAV\Tests\TestCase;
 
@@ -14,6 +15,7 @@ class XcityIdolServiceDispatchTest extends TestCase
     {
         $service = new XcityIdolService(
             \Mockery::mock(XcityClient::class),
+            app(CrawlerResponseCacheService::class),
             new ActorProfileUpsertService
         );
 
@@ -26,6 +28,7 @@ class XcityIdolServiceDispatchTest extends TestCase
     {
         $service = new XcityIdolService(
             \Mockery::mock(XcityClient::class),
+            app(CrawlerResponseCacheService::class),
             new ActorProfileUpsertService
         );
 
@@ -52,6 +55,7 @@ class XcityIdolServiceDispatchTest extends TestCase
     {
         $service = new XcityIdolService(
             \Mockery::mock(XcityClient::class),
+            app(CrawlerResponseCacheService::class),
             new ActorProfileUpsertService
         );
 

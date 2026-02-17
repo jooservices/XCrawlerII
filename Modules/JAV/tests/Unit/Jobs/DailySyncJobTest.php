@@ -6,6 +6,9 @@ use Illuminate\Support\Facades\Queue;
 use Modules\JAV\Dtos\Items;
 use Modules\JAV\Jobs\DailySyncJob;
 use Modules\JAV\Services\Clients\OnejavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\Ffjav\ItemsAdapter as FfjavItemsAdapter;
 use Modules\JAV\Services\FfjavService;
 use Modules\JAV\Services\OneFourOneJav\ItemsAdapter as OneFourOneItemsAdapter;
@@ -60,7 +63,12 @@ class DailySyncJobTest extends TestCase
             ->with('/2026/02/14')
             ->andReturn($this->getMockResponse('onejav_daily_min_page_1_with_next.html'));
 
-        $this->app->instance(OnejavService::class, new OnejavService($client));
+        $this->app->instance(OnejavService::class, new OnejavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        ));
 
         $job = new DailySyncJob('onejav', '2026-02-14', 1);
         $job->handle();

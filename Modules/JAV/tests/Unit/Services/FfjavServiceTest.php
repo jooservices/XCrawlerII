@@ -7,12 +7,25 @@ use Mockery;
 use Modules\Core\Facades\Config;
 use Modules\JAV\Events\ItemParsed;
 use Modules\JAV\Services\Clients\FfjavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\Ffjav\ItemsAdapter;
 use Modules\JAV\Services\FfjavService;
 use Modules\JAV\Tests\TestCase;
 
 class FfjavServiceTest extends TestCase
 {
+    private function makeService(FfjavClient $client): FfjavService
+    {
+        return new FfjavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        );
+    }
+
     public function test_new(): void
     {
         Event::fake([
@@ -33,7 +46,7 @@ class FfjavServiceTest extends TestCase
 
         Config::set('ffjav', 'new_page', '1');
 
-        $service = new FfjavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->new();
 
         $this->assertInstanceOf(ItemsAdapter::class, $adapter);
@@ -61,7 +74,7 @@ class FfjavServiceTest extends TestCase
         $client = Mockery::mock(FfjavClient::class);
         $client->shouldReceive('get')->with('/popular/page/2')->once()->andReturn($responseWrapper);
 
-        $service = new FfjavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->popular(2);
 
         $this->assertEquals(1, $adapter->currentPage());
@@ -79,7 +92,7 @@ class FfjavServiceTest extends TestCase
             ->once()
             ->andReturn($responseWrapper);
 
-        $service = new FfjavService($client);
+        $service = $this->makeService($client);
         $item = $service->item('https://ffjav.com/torrent/mkmp-707-sample');
 
         $this->assertEquals('MKMP-707', $item->code);

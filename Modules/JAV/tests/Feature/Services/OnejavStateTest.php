@@ -8,12 +8,25 @@ use Mockery;
 use Modules\Core\Models\Config;
 use Modules\JAV\Events\ItemParsed;
 use Modules\JAV\Services\Clients\OnejavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
 
 class OnejavStateTest extends TestCase
 {
     use RefreshDatabase;
+
+    private function makeService(OnejavClient $client): OnejavService
+    {
+        return new OnejavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        );
+    }
 
     public function test_it_updates_config_after_fetching_new_items_in_auto_mode()
     {
@@ -33,7 +46,7 @@ class OnejavStateTest extends TestCase
             ->andReturn($responseWrapper);
 
         // 3. Resolve Service (Real Service, Mocked Client)
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
 
         // 4. Call new() in auto mode
         Event::fake([ItemParsed::class]);
@@ -65,7 +78,7 @@ class OnejavStateTest extends TestCase
             ->andReturn($responseWrapper);
 
         // 3. Resolve Service
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
 
         // 4. Call new(16569) manually
         Event::fake([ItemParsed::class]);
@@ -106,7 +119,7 @@ class OnejavStateTest extends TestCase
             ->andReturn($responseWrapper);
 
         // 3. Resolve Service
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
 
         // 4. Call popular() in auto mode
         Event::fake([ItemParsed::class]);

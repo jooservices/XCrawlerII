@@ -19,5 +19,13 @@ class Item extends Dto
         public readonly ?string $description = null,
         public readonly Collection $actresses = new Collection,
         public readonly ?string $download = null,
+        public readonly Collection $genres = new Collection,
+        public readonly Collection $series = new Collection,
+        public readonly Collection $maker = new Collection,
+        public readonly Collection $studio = new Collection,
+        public readonly Collection $producer = new Collection,
+        public readonly Collection $director = new Collection,
+        public readonly Collection $label = new Collection,
+        public readonly Collection $tag = new Collection,
     ) {}
 }

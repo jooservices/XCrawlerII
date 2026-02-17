@@ -66,6 +66,14 @@ class Jav extends Model
         'date',
         'size',
         'description',
+        'genres',
+        'series',
+        'maker',
+        'studio',
+        'producer',
+        'director',
+        'label',
+        'tag',
         'download',
         'source',
         'views',
@@ -78,6 +86,14 @@ class Jav extends Model
         'size' => 'float',
         'views' => 'integer',
         'downloads' => 'integer',
+        'genres' => 'array',
+        'series' => 'array',
+        'maker' => 'array',
+        'studio' => 'array',
+        'producer' => 'array',
+        'director' => 'array',
+        'label' => 'array',
+        'tag' => 'array',
     ];
 
     public function actors(): BelongsToMany
@@ -157,6 +173,54 @@ class Jav extends Model
             'tags' => $tags->all(),
             'tags_keyword' => $tags
                 ->map(static fn (string $name): string => mb_strtolower($name))
+                ->values()
+                ->all(),
+            'genres' => (array) ($this->genres ?? []),
+            'series' => (array) ($this->series ?? []),
+            'maker' => (array) ($this->maker ?? []),
+            'studio' => (array) ($this->studio ?? []),
+            'producer' => (array) ($this->producer ?? []),
+            'director' => (array) ($this->director ?? []),
+            'label' => (array) ($this->label ?? []),
+            'tag' => (array) ($this->tag ?? []),
+            'genres_keyword' => collect((array) ($this->genres ?? []))
+                ->map(static fn (string $name): string => mb_strtolower(trim($name)))
+                ->filter(static fn (string $name): bool => $name !== '')
+                ->values()
+                ->all(),
+            'series_keyword' => collect((array) ($this->series ?? []))
+                ->map(static fn (string $name): string => mb_strtolower(trim($name)))
+                ->filter(static fn (string $name): bool => $name !== '')
+                ->values()
+                ->all(),
+            'maker_keyword' => collect((array) ($this->maker ?? []))
+                ->map(static fn (string $name): string => mb_strtolower(trim($name)))
+                ->filter(static fn (string $name): bool => $name !== '')
+                ->values()
+                ->all(),
+            'studio_keyword' => collect((array) ($this->studio ?? []))
+                ->map(static fn (string $name): string => mb_strtolower(trim($name)))
+                ->filter(static fn (string $name): bool => $name !== '')
+                ->values()
+                ->all(),
+            'producer_keyword' => collect((array) ($this->producer ?? []))
+                ->map(static fn (string $name): string => mb_strtolower(trim($name)))
+                ->filter(static fn (string $name): bool => $name !== '')
+                ->values()
+                ->all(),
+            'director_keyword' => collect((array) ($this->director ?? []))
+                ->map(static fn (string $name): string => mb_strtolower(trim($name)))
+                ->filter(static fn (string $name): bool => $name !== '')
+                ->values()
+                ->all(),
+            'label_keyword' => collect((array) ($this->label ?? []))
+                ->map(static fn (string $name): string => mb_strtolower(trim($name)))
+                ->filter(static fn (string $name): bool => $name !== '')
+                ->values()
+                ->all(),
+            'tag_keyword' => collect((array) ($this->tag ?? []))
+                ->map(static fn (string $name): string => mb_strtolower(trim($name)))
+                ->filter(static fn (string $name): bool => $name !== '')
                 ->values()
                 ->all(),
             'actor_ages' => $actorAges,

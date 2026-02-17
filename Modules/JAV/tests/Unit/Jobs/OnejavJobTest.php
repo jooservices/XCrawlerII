@@ -7,6 +7,9 @@ use Modules\JAV\Events\OnejavJobCompleted;
 use Modules\JAV\Events\OnejavJobFailed;
 use Modules\JAV\Jobs\OnejavJob;
 use Modules\JAV\Services\Clients\OnejavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
 
@@ -31,7 +34,12 @@ class OnejavJobTest extends TestCase
             ->with('/new?page=1')
             ->andReturn($this->getMockResponse('onejav_new_15670.html'));
 
-        $service = new OnejavService($client);
+        $service = new OnejavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        );
 
         $job = new OnejavJob('new');
         $job->handle($service);

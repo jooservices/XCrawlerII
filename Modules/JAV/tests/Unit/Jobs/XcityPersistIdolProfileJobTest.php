@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Modules\JAV\Jobs\XcityPersistIdolProfileJob;
 use Modules\JAV\Services\ActorProfileUpsertService;
 use Modules\JAV\Services\Clients\XcityClient;
+use Modules\JAV\Services\CrawlerResponseCacheService;
 use Modules\JAV\Services\XcityIdolService;
 use Modules\JAV\Tests\TestCase;
 
@@ -27,7 +28,7 @@ class XcityPersistIdolProfileJobTest extends TestCase
             ->with('https://xxx.xcity.jp/idol/detail/1001/')
             ->andReturn($this->getMockResponse('xcity_idol_detail_5750.html'));
 
-        $service = new XcityIdolService($client, new ActorProfileUpsertService);
+        $service = new XcityIdolService($client, app(CrawlerResponseCacheService::class), new ActorProfileUpsertService);
 
         $job = new XcityPersistIdolProfileJob(
             xcityId: '1001',

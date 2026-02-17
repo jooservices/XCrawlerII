@@ -56,6 +56,10 @@ class JAVServiceProvider extends ServiceProvider
             );
         });
 
+        $this->app->bind(\Modules\JAV\Services\Clients\MissavBrowserClient::class, function () {
+            return new \Modules\JAV\Services\Clients\MissavBrowserClient('https://missav.ai');
+        });
+
         $this->app->bind(\Modules\JAV\Services\Clients\XcityClient::class, function () {
             return new \Modules\JAV\Services\Clients\XcityClient(
                 \JOOservices\Client\Client\ClientBuilder::create()
@@ -88,6 +92,8 @@ class JAVServiceProvider extends ServiceProvider
             \Modules\JAV\Console\JavSyncIdolsCommand::class,
             \Modules\JAV\Console\JavSyncAnalyticsCommand::class,
             \Modules\JAV\Console\JavSyncRecommendationsCommand::class,
+            \Modules\JAV\Console\MissavProcessScheduleCommand::class,
+            \Modules\JAV\Console\MissavItemCommand::class,
         ]);
     }
 
@@ -101,6 +107,7 @@ class JAVServiceProvider extends ServiceProvider
             $schedule->command('jav:sync:content onejav --type=new')->everyMinute()->runInBackground();
             $schedule->command('jav:sync:content 141jav --type=new')->everyMinute()->runInBackground();
             $schedule->command('jav:sync:content ffjav --type=new')->everyMinute()->runInBackground();
+            // MissAV is intentionally excluded from scheduler.
 
             $schedule->command('jav:sync:content onejav --type=daily')->dailyAt('00:00')->runInBackground();
             $schedule->command('jav:sync:content 141jav --type=daily')->dailyAt('00:00')->runInBackground();

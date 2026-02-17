@@ -7,6 +7,9 @@ use Mockery;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Services\Clients\OneFourOneJavClient;
 use Modules\JAV\Services\Clients\OnejavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\OneFourOneJavService;
 use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
@@ -18,6 +21,26 @@ class JavServiceTest extends TestCase
 {
     use RefreshDatabase;
 
+    private function makeOnejavService(OnejavClient $client): OnejavService
+    {
+        return new OnejavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        );
+    }
+
+    private function makeOneFourOneService(OneFourOneJavClient $client): OneFourOneJavService
+    {
+        return new OneFourOneJavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        );
+    }
+
     public function test_onejav_new_stores_items_in_database(): void
     {
         $client = Mockery::mock(OnejavClient::class);
@@ -26,7 +49,7 @@ class JavServiceTest extends TestCase
             ->once()
             ->andReturn($this->getMockResponse('onejav_new_15670.html'));
 
-        $service = new OnejavService($client);
+        $service = $this->makeOnejavService($client);
         $adapter = $service->new(15670);
         $items = $adapter->items();
 
@@ -73,7 +96,7 @@ class JavServiceTest extends TestCase
             ->once()
             ->andReturn($this->getMockResponse('onejav_popular.html'));
 
-        $service = new OnejavService($client);
+        $service = $this->makeOnejavService($client);
         $adapter = $service->popular();
         $items = $adapter->items();
 
@@ -97,7 +120,7 @@ class JavServiceTest extends TestCase
             ->once()
             ->andReturn($this->getMockResponse('141jav_new.html'));
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeOneFourOneService($client);
         $adapter = $service->new();
         $items = $adapter->items();
 
@@ -120,7 +143,7 @@ class JavServiceTest extends TestCase
             ->once()
             ->andReturn($this->getMockResponse('141jav_popular.html'));
 
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeOneFourOneService($client);
         $adapter = $service->popular();
         $items = $adapter->items();
 
@@ -136,7 +159,7 @@ class JavServiceTest extends TestCase
             ->with('/new?page=15670')
             ->andReturn($this->getMockResponse('onejav_new_15670.html'));
 
-        $service = new OnejavService($client);
+        $service = $this->makeOnejavService($client);
 
         // First parse
         $service->new(15670)->items();
@@ -163,7 +186,7 @@ class JavServiceTest extends TestCase
         $onejavClient = Mockery::mock(OnejavClient::class);
         $onejavClient->shouldReceive('get')
             ->andReturn($this->getMockResponse('onejav_new_15670.html'));
-        $onejavService = new OnejavService($onejavClient);
+        $onejavService = $this->makeOnejavService($onejavClient);
         $onejavService->new(15670)->items();
 
         $onejavCount = Jav::where('source', 'onejav')->count();
@@ -173,7 +196,7 @@ class JavServiceTest extends TestCase
         $jav141Client = Mockery::mock(OneFourOneJavClient::class);
         $jav141Client->shouldReceive('get')
             ->andReturn($this->getMockResponse('141jav_new.html'));
-        $jav141Service = new OneFourOneJavService($jav141Client);
+        $jav141Service = $this->makeOneFourOneService($jav141Client);
         $jav141Service->new()->items();
 
         $jav141Count = Jav::where('source', '141jav')->count();

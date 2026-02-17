@@ -7,6 +7,9 @@ use Modules\JAV\Events\FfjavJobCompleted;
 use Modules\JAV\Events\FfjavJobFailed;
 use Modules\JAV\Jobs\FfjavJob;
 use Modules\JAV\Services\Clients\FfjavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\FfjavService;
 use Modules\JAV\Tests\TestCase;
 
@@ -31,7 +34,12 @@ class FfjavJobTest extends TestCase
             ->with('/javtorrent')
             ->andReturn($this->getMockResponse('ffjav_new.html'));
 
-        $service = new FfjavService($client);
+        $service = new FfjavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        );
 
         $job = new FfjavJob('new');
         $job->handle($service);

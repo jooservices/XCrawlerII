@@ -10,8 +10,12 @@ use Modules\JAV\Events\ProviderFetchFailed;
 use Modules\JAV\Events\ProviderFetchStarted;
 use Modules\JAV\Events\TagsSyncCompleted;
 use Modules\JAV\Events\TagsSyncFailed;
+use Modules\JAV\Exceptions\CrawlerDelayException;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Services\Clients\FfjavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\Ffjav\ItemAdapter;
 use Modules\JAV\Services\Ffjav\ItemsAdapter;
 use Modules\JAV\Services\Ffjav\TagsAdapter;
@@ -20,20 +24,40 @@ use Symfony\Component\DomCrawler\Crawler;
 class FfjavService
 {
     public function __construct(
-        protected FfjavClient $client
+        protected FfjavClient $client,
+        protected CrawlerResponseCacheService $cacheService,
+        protected CrawlerPaginationStateService $paginationState,
+        protected CrawlerStatusPolicyService $statusPolicy
     ) {}
 
     public function new(?int $page = null): ItemsAdapter
     {
-        $page = $page ?? Config::get('ffjav', 'new_page', 1);
+        $isAutoMode = $page === null;
+        $page = $page ?? $this->paginationState->getState('ffjav', 'new', 'new_page')['current_page'];
 
         $path = $page === 1 ? '/javtorrent' : '/javtorrent/page/'.$page;
         $startedAt = microtime(true);
         ProviderFetchStarted::dispatch('ffjav', 'new', $path, $page);
 
         try {
-            $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get($path)]);
+            $response = $this->fetchResponse('ffjav', 'new', $path);
+            $status = $response->status();
+
+            if ($status >= 400) {
+                return $this->handleFailure('ffjav', 'new', $path, $page, $status, false, $isAutoMode, 'new_page', $startedAt);
+            }
+
+            $items = app()->makeWith(ItemsAdapter::class, ['response' => $response]);
             $itemsDto = $items->items();
+            $isEmpty = $itemsDto->items->count() === 0;
+
+            if ($isAutoMode) {
+                if ($isEmpty) {
+                    $this->handleEmptyResult('ffjav', 'new', $path, $page, $startedAt, 'new_page');
+                } else {
+                    $this->paginationState->recordSuccess('ffjav', 'new', $items->currentPage(), $items->hasNextPage(), 'new_page');
+                }
+            }
 
             ProviderFetchCompleted::dispatch(
                 'ffjav',
@@ -42,7 +66,7 @@ class FfjavService
                 $page,
                 $items->currentPage(),
                 $itemsDto->items->count(),
-                $items->nextPage(),
+                $this->resolveNextPage('ffjav', 'new', $items->nextPage(), $isAutoMode, 'new_page'),
                 (int) round((microtime(true) - $startedAt) * 1000)
             );
 
@@ -52,9 +76,9 @@ class FfjavService
                 $items->currentPage()
             );
 
-            Config::set('ffjav', 'new_page', $items->nextPage());
-
             return $items;
+        } catch (CrawlerDelayException $exception) {
+            throw $exception;
         } catch (\Throwable $exception) {
             ProviderFetchFailed::dispatch(
                 'ffjav',
@@ -71,15 +95,32 @@ class FfjavService
 
     public function popular(?int $page = null): ItemsAdapter
     {
-        $page = $page ?? Config::get('ffjav', 'popular_page', 1);
+        $isAutoMode = $page === null;
+        $page = $page ?? $this->paginationState->getState('ffjav', 'popular', 'popular_page')['current_page'];
 
         $path = $page === 1 ? '/popular' : '/popular/page/'.$page;
         $startedAt = microtime(true);
         ProviderFetchStarted::dispatch('ffjav', 'popular', $path, $page);
 
         try {
-            $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get($path)]);
+            $response = $this->fetchResponse('ffjav', 'popular', $path);
+            $status = $response->status();
+
+            if ($status >= 400) {
+                return $this->handleFailure('ffjav', 'popular', $path, $page, $status, false, $isAutoMode, 'popular_page', $startedAt);
+            }
+
+            $items = app()->makeWith(ItemsAdapter::class, ['response' => $response]);
             $itemsDto = $items->items();
+            $isEmpty = $itemsDto->items->count() === 0;
+
+            if ($isAutoMode) {
+                if ($isEmpty) {
+                    $this->handleEmptyResult('ffjav', 'popular', $path, $page, $startedAt, 'popular_page');
+                } else {
+                    $this->paginationState->recordSuccess('ffjav', 'popular', $items->currentPage(), $items->hasNextPage(), 'popular_page');
+                }
+            }
 
             ProviderFetchCompleted::dispatch(
                 'ffjav',
@@ -88,7 +129,7 @@ class FfjavService
                 $page,
                 $items->currentPage(),
                 $itemsDto->items->count(),
-                $items->nextPage(),
+                $this->resolveNextPage('ffjav', 'popular', $items->nextPage(), $isAutoMode, 'popular_page'),
                 (int) round((microtime(true) - $startedAt) * 1000)
             );
 
@@ -98,9 +139,9 @@ class FfjavService
                 $items->currentPage()
             );
 
-            Config::set('ffjav', 'popular_page', $items->nextPage());
-
             return $items;
+        } catch (CrawlerDelayException $exception) {
+            throw $exception;
         } catch (\Throwable $exception) {
             ProviderFetchFailed::dispatch(
                 'ffjav',
@@ -130,7 +171,14 @@ class FfjavService
         ProviderFetchStarted::dispatch('ffjav', 'daily', $path, $effectivePage);
 
         try {
-            $items = app()->makeWith(ItemsAdapter::class, ['response' => $this->client->get($path)]);
+            $response = $this->fetchResponse('ffjav', 'daily', $path);
+            $status = $response->status();
+
+            if ($status >= 400) {
+                return $this->handleFailure('ffjav', 'daily', $path, $effectivePage, $status, false, false, null, $startedAt);
+            }
+
+            $items = app()->makeWith(ItemsAdapter::class, ['response' => $response]);
             $itemsDto = $items->items();
 
             ProviderFetchCompleted::dispatch(
@@ -151,6 +199,8 @@ class FfjavService
             );
 
             return $items;
+        } catch (CrawlerDelayException $exception) {
+            throw $exception;
         } catch (\Throwable $exception) {
             ProviderFetchFailed::dispatch(
                 'ffjav',
@@ -167,10 +217,123 @@ class FfjavService
 
     public function item(string $url): Item
     {
-        $response = $this->client->get($url);
+        $response = $this->fetchResponse('ffjav', 'item', $url);
         $crawler = new Crawler($response->toPsrResponse()->getBody()->getContents());
 
         return (new ItemAdapter($crawler))->getItem();
+    }
+
+    private function fetchResponse(string $provider, string $type, string $path)
+    {
+        $cached = $this->cacheService->getCachedResponse($provider, $type, $path);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $response = $this->client->get($path);
+        $this->cacheService->storeResponse($provider, $type, $path, $response->toPsrResponse());
+
+        return $response;
+    }
+
+    private function handleFailure(
+        string $provider,
+        string $type,
+        string $path,
+        int $page,
+        int $status,
+        bool $isEmpty,
+        bool $isAutoMode,
+        ?string $legacyKey,
+        float $startedAt
+    ): ItemsAdapter {
+        $policy = $this->statusPolicy->resolvePolicy($status, $isEmpty);
+        $retryLimit = $this->resolveRetryLimit($provider);
+        $jumpLimit = $this->resolveJumpLimit($provider);
+
+        $result = $isAutoMode
+            ? $this->paginationState->recordFailure($provider, $type, $page, $retryLimit, $jumpLimit, $policy['count_as_tail'], $legacyKey)
+            : ['state' => ['current_page' => $page, 'current_page_failures' => 0, 'consecutive_skips' => 0], 'action' => 'advance'];
+
+        ProviderFetchFailed::dispatch(
+            $provider,
+            $type,
+            $path,
+            $page,
+            "HTTP {$status}",
+            (int) round((microtime(true) - $startedAt) * 1000)
+        );
+
+        if (in_array($policy['action'], ['retry', 'cooldown'], true) && $result['action'] === 'retry_same') {
+            $delay = max(0, (int) $policy['delay_sec']);
+            $message = "HTTP {$status}";
+            throw $policy['action'] === 'cooldown'
+                ? CrawlerDelayException::forCooldown($delay, $message)
+                : CrawlerDelayException::forRetry($delay, $message);
+        }
+
+        return $this->emptyItems();
+    }
+
+    private function handleEmptyResult(
+        string $provider,
+        string $type,
+        string $path,
+        int $page,
+        float $startedAt,
+        ?string $legacyKey
+    ): void {
+        $policy = $this->statusPolicy->resolvePolicy(200, true);
+        $retryLimit = $this->resolveRetryLimit($provider);
+        $jumpLimit = $this->resolveJumpLimit($provider);
+
+        $result = $this->paginationState->recordFailure($provider, $type, $page, $retryLimit, $jumpLimit, $policy['count_as_tail'], $legacyKey);
+
+        ProviderFetchFailed::dispatch(
+            $provider,
+            $type,
+            $path,
+            $page,
+            'Empty page response',
+            (int) round((microtime(true) - $startedAt) * 1000)
+        );
+
+        if (in_array($policy['action'], ['retry', 'cooldown'], true) && $result['action'] === 'retry_same') {
+            $delay = max(0, (int) $policy['delay_sec']);
+            throw $policy['action'] === 'cooldown'
+                ? CrawlerDelayException::forCooldown($delay, 'Empty page response')
+                : CrawlerDelayException::forRetry($delay, 'Empty page response');
+        }
+    }
+
+    private function resolveNextPage(string $provider, string $type, int $fallback, bool $isAutoMode, ?string $legacyKey): int
+    {
+        if (! $isAutoMode) {
+            return $fallback;
+        }
+
+        return $this->paginationState->getState($provider, $type, $legacyKey)['current_page'];
+    }
+
+    private function resolveRetryLimit(string $provider): int
+    {
+        $value = (int) Config::get($provider, 'page_retry_limit', 3);
+
+        return $value > 0 ? $value : 3;
+    }
+
+    private function resolveJumpLimit(string $provider): int
+    {
+        $value = (int) Config::get($provider, 'page_jump_limit', 3);
+
+        return $value > 0 ? $value : 3;
+    }
+
+    private function emptyItems(): ItemsAdapter
+    {
+        $emptyResponse = new \JOOservices\Client\Response\ResponseWrapper(new \GuzzleHttp\Psr7\Response(200, [], ''));
+
+        return app()->makeWith(ItemsAdapter::class, ['response' => $emptyResponse]);
     }
 
     public function tags(): \Illuminate\Support\Collection

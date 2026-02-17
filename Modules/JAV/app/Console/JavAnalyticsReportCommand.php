@@ -97,7 +97,7 @@ class JavAnalyticsReportCommand extends Command
         $bySource = $rawRows->keyBy(static fn (array $row): string => (string) ($row['source'] ?? 'unknown'));
         $totalJav = (int) ($snapshot['totals']['jav'] ?? 0);
 
-        $providers = ['onejav', '141jav', 'ffjav'];
+        $providers = ['onejav', '141jav', 'ffjav', 'missav'];
         $rows = [];
 
         foreach ($providers as $source) {

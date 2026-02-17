@@ -5,6 +5,9 @@ namespace Modules\JAV\Tests\Unit\Jobs;
 use Modules\JAV\Jobs\TagsSyncJob;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Services\Clients\OnejavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
 
@@ -24,7 +27,12 @@ class TagsSyncJobTest extends TestCase
             ->once()
             ->with('/tag')
             ->andReturn($this->getMockResponse('onejav_tags_minimal.html'));
-        $this->app->instance(OnejavService::class, new OnejavService($client));
+        $this->app->instance(OnejavService::class, new OnejavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        ));
 
         $job = new TagsSyncJob('onejav');
         $job->handle();

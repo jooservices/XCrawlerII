@@ -9,6 +9,9 @@ use Modules\Core\Facades\Config;
 use Modules\JAV\Dtos\Item;
 use Modules\JAV\Events\ItemParsed;
 use Modules\JAV\Services\Clients\OnejavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\Onejav\ItemsAdapter;
 use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Tests\TestCase;
@@ -22,6 +25,16 @@ class OnejavServiceTest extends TestCase
         \Modules\JAV\Models\Jav::disableSearchSyncing();
         \Modules\JAV\Models\Tag::disableSearchSyncing();
         \Modules\JAV\Models\Actor::disableSearchSyncing();
+    }
+
+    private function makeService(OnejavClient $client): OnejavService
+    {
+        return new OnejavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        );
     }
 
     public function test_new(): void
@@ -38,7 +51,7 @@ class OnejavServiceTest extends TestCase
         $client = Mockery::mock(OnejavClient::class);
         $client->shouldReceive('get')->with('/new?page=16570')->once()->andReturn($responseWrapper);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->new(16570);
 
         $this->assertInstanceOf(ItemsAdapter::class, $adapter);
@@ -178,7 +191,7 @@ class OnejavServiceTest extends TestCase
         $client = Mockery::mock(OnejavClient::class);
         $client->shouldReceive('get')->with('/new?page=16570')->once()->andReturn($responseWrapper);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->new(16570);
 
         $this->assertEquals(16570, $adapter->currentPage());
@@ -194,7 +207,7 @@ class OnejavServiceTest extends TestCase
         $client = Mockery::mock(OnejavClient::class);
         $client->shouldReceive('get')->with('/new?page=16569')->once()->andReturn($responseWrapper16569);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->new(16569);
 
         $this->assertEquals(16569, $adapter->currentPage());
@@ -207,7 +220,7 @@ class OnejavServiceTest extends TestCase
         $client = Mockery::mock(OnejavClient::class);
         $client->shouldReceive('get')->with('/new?page=16570')->once()->andReturn($responseWrapper16570);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->new(16570);
 
         $this->assertEquals(16570, $adapter->currentPage());
@@ -225,7 +238,7 @@ class OnejavServiceTest extends TestCase
         $client = Mockery::mock(OnejavClient::class);
         $client->shouldReceive('get')->with('/popular/?page=1')->once()->andReturn($responseWrapper);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->popular();
 
         $this->assertInstanceOf(ItemsAdapter::class, $adapter);
@@ -266,7 +279,7 @@ class OnejavServiceTest extends TestCase
         $client = Mockery::mock(OnejavClient::class);
         $client->shouldReceive('get')->with('/popular/?page=4')->once()->andReturn($responseWrapper4);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->popular(4);
 
         $this->assertEquals(4, $adapter->currentPage());
@@ -279,7 +292,7 @@ class OnejavServiceTest extends TestCase
         $client = Mockery::mock(OnejavClient::class);
         $client->shouldReceive('get')->with('/popular/?page=5')->once()->andReturn($responseWrapper5);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $adapter = $service->popular(5);
 
         $this->assertEquals(5, $adapter->currentPage());
@@ -291,7 +304,7 @@ class OnejavServiceTest extends TestCase
     {
         $client = app(OnejavClient::class);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $this->assertInstanceOf(Collection::class, $service->tags());
     }
 
@@ -386,7 +399,7 @@ class OnejavServiceTest extends TestCase
             ->once()
             ->andReturn($responseWrapper);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $item = $service->item("https://onejav.com/torrent/{$itemId}");
 
         // Basic assertions
@@ -441,7 +454,7 @@ class OnejavServiceTest extends TestCase
             ->with('/new?page=16569')
             ->andReturn($responseWrapper);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $items = $service->new();
 
         $this->assertInstanceOf(ItemsAdapter::class, $items);
@@ -468,7 +481,7 @@ class OnejavServiceTest extends TestCase
             ->with('/new?page=16569') // Using 16569 for manual test too
             ->andReturn($responseWrapper);
 
-        $service = new OnejavService($client);
+        $service = $this->makeService($client);
         $items = $service->new(16569);
 
         $this->assertInstanceOf(ItemsAdapter::class, $items);

@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Modules\JAV\Events\OneFourOneJobCompleted;
 use Modules\JAV\Events\OneFourOneJobFailed;
+use Modules\JAV\Exceptions\CrawlerDelayException;
 use Modules\JAV\Services\OneFourOneJavService;
 use Throwable;
 
@@ -38,8 +39,13 @@ class OneFourOneJavJob implements ShouldBeUnique, ShouldQueue
      */
     public function handle(OneFourOneJavService $service): void
     {
-        $result = $service->{$this->type}();
-        $items = $result->items();
+        try {
+            $result = $service->{$this->type}();
+            $items = $result->items();
+        } catch (CrawlerDelayException $exception) {
+            $this->release($exception->delaySeconds());
+            return;
+        }
 
         OneFourOneJobCompleted::dispatch(
             $this->type,

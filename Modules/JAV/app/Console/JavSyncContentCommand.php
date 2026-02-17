@@ -7,6 +7,7 @@ use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Console\Command;
 use Modules\JAV\Jobs\DailySyncJob;
 use Modules\JAV\Jobs\FfjavJob;
+use Modules\JAV\Services\MissavService;
 use Modules\JAV\Jobs\OneFourOneJavJob;
 use Modules\JAV\Jobs\OnejavJob;
 use Modules\JAV\Jobs\TagsSyncJob;
@@ -14,7 +15,7 @@ use Modules\JAV\Jobs\TagsSyncJob;
 class JavSyncContentCommand extends Command
 {
     protected $signature = 'jav:sync:content
-                            {provider : onejav|141jav|ffjav}
+                            {provider : onejav|141jav|ffjav|missav}
                             {--type=* : new|popular|daily|tags}
                             {--date= : YYYY-MM-DD for daily type}
                             {--queue= : Queue name override}';
@@ -29,8 +30,8 @@ class JavSyncContentCommand extends Command
     public function handle(): int
     {
         $provider = (string) $this->argument('provider');
-        if (! in_array($provider, ['onejav', '141jav', 'ffjav'], true)) {
-            $this->error('Invalid provider. Supported: onejav, 141jav, ffjav');
+        if (! in_array($provider, ['onejav', '141jav', 'ffjav', 'missav'], true)) {
+            $this->error('Invalid provider. Supported: onejav, 141jav, ffjav, missav');
 
             return self::INVALID;
         }
@@ -76,11 +77,18 @@ class JavSyncContentCommand extends Command
             'onejav' => OnejavJob::dispatch($type)->onQueue($queue),
             '141jav' => OneFourOneJavJob::dispatch($type)->onQueue($queue),
             'ffjav' => FfjavJob::dispatch($type)->onQueue($queue),
+            'missav' => $this->runMissavSync($type),
         };
 
         $this->info("Dispatched {$provider} {$type} job to queue '{$queue}'.");
 
         return self::SUCCESS;
+    }
+
+    private function runMissavSync(string $type): void
+    {
+        $service = $this->laravel->make(MissavService::class);
+        $service->{$type}();
     }
 
     private function dispatchDailyJob(string $provider): int
@@ -127,6 +135,7 @@ class JavSyncContentCommand extends Command
             'onejav' => (string) config('jav.content_queues.onejav', 'onejav'),
             '141jav' => (string) config('jav.content_queues.141jav', '141'),
             'ffjav' => (string) config('jav.content_queues.ffjav', 'jav'),
+            'missav' => (string) config('jav.content_queues.missav', 'missav'),
             default => 'jav',
         };
     }

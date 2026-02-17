@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Bus;
 use Modules\JAV\Jobs\XcityKanaSyncJob;
 use Modules\JAV\Services\ActorProfileUpsertService;
 use Modules\JAV\Services\Clients\XcityClient;
+use Modules\JAV\Services\CrawlerResponseCacheService;
 use Modules\JAV\Services\XcityIdolService;
 use Modules\JAV\Tests\TestCase;
 
@@ -56,6 +57,6 @@ class XcityKanaSyncJobTest extends TestCase
             ->with($url)
             ->andReturn($this->getMockResponse('xcity_idol_list_page_1.html'));
 
-        return new XcityIdolService($client, new ActorProfileUpsertService);
+        return new XcityIdolService($client, app(CrawlerResponseCacheService::class), new ActorProfileUpsertService);
     }
 }

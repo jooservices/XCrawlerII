@@ -10,6 +10,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Modules\JAV\Services\FfjavService;
+use Modules\JAV\Services\MissavService;
 use Modules\JAV\Services\OneFourOneJavService;
 use Modules\JAV\Services\OnejavService;
 use Throwable;
@@ -50,12 +51,13 @@ class TagsSyncJob implements ShouldBeUnique, ShouldQueue
         return [1800, 2700, 3600];
     }
 
-    private function resolveService(): OnejavService|OneFourOneJavService|FfjavService
+    private function resolveService(): OnejavService|OneFourOneJavService|FfjavService|MissavService
     {
         return match ($this->source) {
             'onejav' => app(OnejavService::class),
             '141jav' => app(OneFourOneJavService::class),
             'ffjav' => app(FfjavService::class),
+            'missav' => app(MissavService::class),
             default => throw new \InvalidArgumentException("Unsupported source: {$this->source}"),
         };
     }

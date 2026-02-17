@@ -11,6 +11,7 @@ use Modules\JAV\Jobs\TagsSyncJob;
 use Modules\JAV\Jobs\XcityKanaSyncJob;
 use Modules\JAV\Services\ActorProfileUpsertService;
 use Modules\JAV\Services\Clients\XcityClient;
+use Modules\JAV\Services\CrawlerResponseCacheService;
 use Modules\JAV\Services\XcityIdolService;
 use Modules\JAV\Tests\TestCase;
 
@@ -101,7 +102,7 @@ class SyncControllerContractTest extends TestCase
                 return $this->getMockResponse('xcity_kana_sa_without_ini.html');
             });
 
-        return new XcityIdolService($client, new ActorProfileUpsertService);
+        return new XcityIdolService($client, app(CrawlerResponseCacheService::class), new ActorProfileUpsertService);
     }
 
     public function test_admin_provider_sync_dispatch_rejects_invalid_payload(): void

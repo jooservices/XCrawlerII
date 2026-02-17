@@ -10,6 +10,7 @@ use Modules\Core\Facades\Config;
 use Modules\JAV\Jobs\XcityPersistIdolProfileJob;
 use Modules\JAV\Jobs\XcitySyncActorSearchIndexJob;
 use Modules\JAV\Models\Actor;
+use Modules\JAV\Services\CrawlerResponseCacheService;
 use Modules\JAV\Services\Clients\XcityClient;
 use Modules\JAV\Services\Xcity\XcityDetailAdapter;
 use Modules\JAV\Services\Xcity\XcityListAdapter;
@@ -23,6 +24,7 @@ class XcityIdolService
 
     public function __construct(
         protected XcityClient $client,
+        protected CrawlerResponseCacheService $cacheService,
         protected ActorProfileUpsertService $profileUpsertService
     ) {}
 
@@ -146,7 +148,7 @@ class XcityIdolService
 
     public function listPage(string $url): \Modules\JAV\Dtos\XcityIdolPage
     {
-        $response = $this->client->get($url);
+        $response = $this->fetchResponse('xcity', 'idol_list', $url);
         $html = $response->toPsrResponse()->getBody()->getContents();
         $crawler = new Crawler($html);
 
@@ -163,11 +165,24 @@ class XcityIdolService
      */
     public function idolDetail(string $url): array
     {
-        $response = $this->client->get($url);
+        $response = $this->fetchResponse('xcity', 'idol_detail', $url);
         $html = $response->toPsrResponse()->getBody()->getContents();
         $crawler = new Crawler($html);
 
         return (new XcityDetailAdapter($crawler))->profile();
+    }
+
+    private function fetchResponse(string $provider, string $type, string $path)
+    {
+        $cached = $this->cacheService->getCachedResponse($provider, $type, $path);
+        if ($cached !== null) {
+            return $cached;
+        }
+
+        $response = $this->client->get($path);
+        $this->cacheService->storeResponse($provider, $type, $path, $response->toPsrResponse());
+
+        return $response;
     }
 
     public function syncIdolFromListItem(string $xcityId, string $name, string $detailUrl, ?string $coverImage): bool

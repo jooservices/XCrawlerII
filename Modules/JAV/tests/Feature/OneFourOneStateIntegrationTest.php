@@ -8,12 +8,25 @@ use Mockery;
 use Modules\Core\Models\Config;
 use Modules\JAV\Events\ItemParsed;
 use Modules\JAV\Services\Clients\OneFourOneJavClient;
+use Modules\JAV\Services\CrawlerPaginationStateService;
+use Modules\JAV\Services\CrawlerResponseCacheService;
+use Modules\JAV\Services\CrawlerStatusPolicyService;
 use Modules\JAV\Services\OneFourOneJavService;
 use Modules\JAV\Tests\TestCase;
 
 class OneFourOneStateIntegrationTest extends TestCase
 {
     use RefreshDatabase;
+
+    private function makeService(OneFourOneJavClient $client): OneFourOneJavService
+    {
+        return new OneFourOneJavService(
+            $client,
+            app(CrawlerResponseCacheService::class),
+            app(CrawlerPaginationStateService::class),
+            app(CrawlerStatusPolicyService::class)
+        );
+    }
 
     public function test_it_updates_config_after_fetching_new_items_in_auto_mode()
     {
@@ -33,7 +46,7 @@ class OneFourOneStateIntegrationTest extends TestCase
             ->andReturn($responseWrapper);
 
         // 3. Resolve Service (Real Service, Mocked Client)
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
 
         // 4. Call new() in auto mode
         Event::fake([ItemParsed::class]);
@@ -65,7 +78,7 @@ class OneFourOneStateIntegrationTest extends TestCase
             ->andReturn($responseWrapper);
 
         // 3. Resolve Service
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
 
         // 4. Call new(5) manually
         Event::fake([ItemParsed::class]);
@@ -97,7 +110,7 @@ class OneFourOneStateIntegrationTest extends TestCase
             ->andReturn($responseWrapper);
 
         // 3. Resolve Service
-        $service = new OneFourOneJavService($client);
+        $service = $this->makeService($client);
 
         // 4. Call popular() in auto mode
         Event::fake([ItemParsed::class]);
