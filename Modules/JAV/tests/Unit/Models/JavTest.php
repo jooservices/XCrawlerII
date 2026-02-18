@@ -5,9 +5,8 @@ namespace Modules\JAV\Tests\Unit\Models;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Models\UserJavHistory;
 use Modules\JAV\Models\UserLikeNotification;
@@ -39,10 +38,7 @@ class JavTest extends TestCase
     public function test_jav_has_favorites_relationship(): void
     {
         $jav = Jav::factory()->create();
-        $favorite = Favorite::factory()->create([
-            'favoritable_type' => Jav::class,
-            'favoritable_id' => $jav->id,
-        ]);
+        $favorite = Interaction::factory()->forJav($jav)->favorite()->create();
 
         $this->assertTrue($jav->favorites->contains($favorite));
     }
@@ -50,7 +46,7 @@ class JavTest extends TestCase
     public function test_jav_has_ratings_relationship(): void
     {
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create(['jav_id' => $jav->id]);
+        $rating = Interaction::factory()->forJav($jav)->rating(4)->create();
 
         $this->assertTrue($jav->ratings->contains($rating));
     }

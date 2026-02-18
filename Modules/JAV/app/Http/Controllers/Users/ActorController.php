@@ -72,6 +72,7 @@ class ActorController extends Controller
         $actor->loadCount('javs')->load(['profileAttributes', 'profileSources']);
 
         $movies = $this->dashboardReadRepository->actorMovies($actor, 30);
+        $this->dashboardReadRepository->decorateItemsForUser($movies, auth()->user());
 
         $bioProfile = $this->actorProfileResolver->toDisplayMap($actor);
         $resolved = $this->actorProfileResolver->resolve($actor);

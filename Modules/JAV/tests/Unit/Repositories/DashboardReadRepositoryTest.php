@@ -5,9 +5,8 @@ namespace Modules\JAV\Tests\Unit\Repositories;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Illuminate\Support\Facades\Cache;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Models\UserJavHistory;
 use Modules\JAV\Models\UserLikeNotification;
@@ -64,11 +63,7 @@ class DashboardReadRepositoryTest extends TestCase
         $preferredTag = Tag::factory()->create(['name' => 'Preferred']);
         $otherTag = Tag::factory()->create(['name' => 'Other']);
 
-        Favorite::factory()->create([
-            'user_id' => $user->id,
-            'favoritable_type' => Tag::class,
-            'favoritable_id' => $preferredTag->id,
-        ]);
+        Interaction::factory()->forTag($preferredTag)->favorite()->create(['user_id' => $user->id]);
 
         $preferredMovie = Jav::factory()->create();
         $preferredMovie->tags()->attach($preferredTag->id);
@@ -90,22 +85,17 @@ class DashboardReadRepositoryTest extends TestCase
         $likedJav = Jav::factory()->create();
         $plainJav = Jav::factory()->create();
 
-        Favorite::factory()->create([
-            'user_id' => $user->id,
-            'favoritable_type' => Jav::class,
-            'favoritable_id' => $likedJav->id,
-        ]);
+        Interaction::factory()->forJav($likedJav)->favorite()->create(['user_id' => $user->id]);
 
         $watchlist = Watchlist::factory()->create([
             'user_id' => $user->id,
             'jav_id' => $likedJav->id,
         ]);
 
-        $rating = Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $likedJav->id,
-            'rating' => 5,
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($likedJav)
+            ->rating(5)
+            ->create(['user_id' => $user->id]);
 
         $items = collect([$likedJav, $plainJav]);
         $paginator = new Paginator($items, 2, 30);
@@ -141,11 +131,7 @@ class DashboardReadRepositoryTest extends TestCase
         $jav->actors()->attach($actor->id);
         $jav->tags()->attach($tag->id);
 
-        Favorite::factory()->create([
-            'user_id' => $user->id,
-            'favoritable_type' => Jav::class,
-            'favoritable_id' => $jav->id,
-        ]);
+        Interaction::factory()->forJav($jav)->favorite()->create(['user_id' => $user->id]);
 
         UserJavHistory::factory()->create([
             'user_id' => $user->id,

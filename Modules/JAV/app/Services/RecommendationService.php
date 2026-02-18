@@ -5,7 +5,10 @@ namespace Modules\JAV\Services;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Modules\JAV\Models\Actor;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
+use Modules\JAV\Models\Tag;
 use Modules\JAV\Models\Mongo\RecommendationSnapshot;
 use Modules\JAV\Models\UserJavHistory;
 
@@ -29,15 +32,38 @@ class RecommendationService
 
     public function getRecommendations($user, $limit = 20)
     {
-        // 1. Get user's liked actors and tags
-        $likedActors = $user->favorites()->where('favoritable_type', \Modules\JAV\Models\Actor::class)->pluck('favoritable_id');
-        $likedTags = $user->favorites()->where('favoritable_type', \Modules\JAV\Models\Tag::class)->pluck('favoritable_id');
+        $actorType = Interaction::morphTypeFor(Actor::class);
+        $tagType = Interaction::morphTypeFor(Tag::class);
+        $javType = Interaction::morphTypeFor(Jav::class);
 
-        // Also get actors/tags from liked movies
-        $likedMovies = $user->favorites()->where('favoritable_type', \Modules\JAV\Models\Jav::class)->with('favoritable.actors', 'favoritable.tags')->get();
-        foreach ($likedMovies as $favorite) {
-            $likedActors = $likedActors->merge($favorite->favoritable->actors->pluck('id'));
-            $likedTags = $likedTags->merge($favorite->favoritable->tags->pluck('id'));
+        // 1. Get user's liked actors and tags
+        $likedActors = Interaction::query()
+            ->where('user_id', $user->id)
+            ->where('item_type', $actorType)
+            ->where('action', Interaction::ACTION_FAVORITE)
+            ->pluck('item_id');
+        $likedTags = Interaction::query()
+            ->where('user_id', $user->id)
+            ->where('item_type', $tagType)
+            ->where('action', Interaction::ACTION_FAVORITE)
+            ->pluck('item_id');
+
+        $likedMovieIds = Interaction::query()
+            ->where('user_id', $user->id)
+            ->where('item_type', $javType)
+            ->where('action', Interaction::ACTION_FAVORITE)
+            ->pluck('item_id')
+            ->values();
+
+        if ($likedMovieIds->isNotEmpty()) {
+            $likedMovies = Jav::query()
+                ->with(['actors', 'tags'])
+                ->whereIn('id', $likedMovieIds)
+                ->get();
+            foreach ($likedMovies as $movie) {
+                $likedActors = $likedActors->merge($movie->actors->pluck('id'));
+                $likedTags = $likedTags->merge($movie->tags->pluck('id'));
+            }
         }
 
         $likedActors = $likedActors->unique();
@@ -73,7 +99,11 @@ class RecommendationService
 
         // Exclude already viewed or liked movies
         $viewedIds = UserJavHistory::where('user_id', $user->id)->pluck('jav_id');
-        $likedIds = $user->favorites()->where('favoritable_type', \Modules\JAV\Models\Jav::class)->pluck('favoritable_id');
+        $likedIds = Interaction::query()
+            ->where('user_id', $user->id)
+            ->where('item_type', $javType)
+            ->where('action', Interaction::ACTION_FAVORITE)
+            ->pluck('item_id');
         $excludeIds = $viewedIds->merge($likedIds)->unique();
 
         $query->whereNotIn('id', $excludeIds);
@@ -107,26 +137,31 @@ class RecommendationService
         $actorIds = $jav->actors->pluck('id')->filter()->values();
         $tagIds = $jav->tags->pluck('id')->filter()->values();
 
+        $actorType = Interaction::morphTypeFor(Actor::class);
+        $tagType = Interaction::morphTypeFor(Tag::class);
+
         if ($actorIds->isEmpty() && $tagIds->isEmpty()) {
             return 0;
         }
 
-        $query = DB::table('favorites')
+        $query = DB::table('user_interactions')
             ->select('user_id')
             ->distinct();
 
-        $query->where(function ($favoriteQuery) use ($actorIds, $tagIds): void {
+        $query->where(function ($favoriteQuery) use ($actorIds, $tagIds, $actorType, $tagType): void {
             if ($actorIds->isNotEmpty()) {
-                $favoriteQuery->orWhere(function ($q) use ($actorIds): void {
-                    $q->where('favoritable_type', \Modules\JAV\Models\Actor::class)
-                        ->whereIn('favoritable_id', $actorIds);
+                $favoriteQuery->orWhere(function ($q) use ($actorIds, $actorType): void {
+                    $q->where('action', Interaction::ACTION_FAVORITE)
+                        ->where('item_type', $actorType)
+                        ->whereIn('item_id', $actorIds);
                 });
             }
 
             if ($tagIds->isNotEmpty()) {
-                $favoriteQuery->orWhere(function ($q) use ($tagIds): void {
-                    $q->where('favoritable_type', \Modules\JAV\Models\Tag::class)
-                        ->whereIn('favoritable_id', $tagIds);
+                $favoriteQuery->orWhere(function ($q) use ($tagIds, $tagType): void {
+                    $q->where('action', Interaction::ACTION_FAVORITE)
+                        ->where('item_type', $tagType)
+                        ->whereIn('item_id', $tagIds);
                 });
             }
         });
@@ -144,16 +179,23 @@ class RecommendationService
 
     private function buildRecommendationsWithReasons(User $user, Collection $movies): Collection
     {
-        $likedActorNames = $user->favorites()
-            ->where('favoritable_type', \Modules\JAV\Models\Actor::class)
-            ->join('actors', 'favorites.favoritable_id', '=', 'actors.id')
+        $actorType = Interaction::morphTypeFor(Actor::class);
+        $tagType = Interaction::morphTypeFor(Tag::class);
+
+        $likedActorNames = Interaction::query()
+            ->where('user_id', $user->id)
+            ->where('action', Interaction::ACTION_FAVORITE)
+            ->where('item_type', $actorType)
+            ->join('actors', 'user_interactions.item_id', '=', 'actors.id')
             ->pluck('actors.name')
             ->unique()
             ->values();
 
-        $likedTagNames = $user->favorites()
-            ->where('favoritable_type', \Modules\JAV\Models\Tag::class)
-            ->join('tags', 'favorites.favoritable_id', '=', 'tags.id')
+        $likedTagNames = Interaction::query()
+            ->where('user_id', $user->id)
+            ->where('action', Interaction::ACTION_FAVORITE)
+            ->where('item_type', $tagType)
+            ->join('tags', 'user_interactions.item_id', '=', 'tags.id')
             ->pluck('tags.name')
             ->unique()
             ->values();

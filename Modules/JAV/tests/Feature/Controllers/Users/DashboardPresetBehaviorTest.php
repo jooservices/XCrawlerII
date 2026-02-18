@@ -4,7 +4,7 @@ namespace Modules\JAV\Tests\Feature\Controllers\Users;
 
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Tests\TestCase;
@@ -56,11 +56,7 @@ class DashboardPresetBehaviorTest extends TestCase
         $preferredTag = Tag::factory()->create(['name' => 'Preferred']);
         $otherTag = Tag::factory()->create(['name' => 'Other']);
 
-        Favorite::query()->create([
-            'user_id' => $user->id,
-            'favoritable_type' => Tag::class,
-            'favoritable_id' => $preferredTag->id,
-        ]);
+        Interaction::factory()->forTag($preferredTag)->favorite()->create(['user_id' => $user->id]);
 
         $matching = Jav::factory()->create();
         $matching->tags()->attach($preferredTag->id);

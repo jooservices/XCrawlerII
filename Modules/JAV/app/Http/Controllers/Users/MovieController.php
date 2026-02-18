@@ -50,6 +50,12 @@ class MovieController extends Controller
         $relatedByActors = $this->searchService->getRelatedByActors($jav, 10);
         $relatedByTags = $this->searchService->getRelatedByTags($jav, 10);
 
+        $user = auth()->user();
+        if ($user !== null) {
+            $this->dashboardReadRepository->decorateJavsForUser($relatedByActors, $user);
+            $this->dashboardReadRepository->decorateJavsForUser($relatedByTags, $user);
+        }
+
         return Inertia::render('Movies/Show', [
             'jav' => $jav,
             'relatedByActors' => $relatedByActors,

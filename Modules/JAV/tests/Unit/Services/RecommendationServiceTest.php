@@ -4,7 +4,7 @@ namespace Modules\JAV\Tests\Unit\Services;
 
 use App\Models\User;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Models\UserJavHistory;
@@ -29,24 +29,12 @@ class RecommendationServiceTest extends TestCase
         $likedActor = Actor::factory()->create(['name' => 'Actor One']);
         $likedTag = Tag::factory()->create(['name' => 'Tag One']);
 
-        Favorite::query()->create([
-            'user_id' => $user->id,
-            'favoritable_id' => $likedActor->id,
-            'favoritable_type' => Actor::class,
-        ]);
-        Favorite::query()->create([
-            'user_id' => $user->id,
-            'favoritable_id' => $likedTag->id,
-            'favoritable_type' => Tag::class,
-        ]);
+        Interaction::factory()->forActor($likedActor)->favorite()->create(['user_id' => $user->id]);
+        Interaction::factory()->forTag($likedTag)->favorite()->create(['user_id' => $user->id]);
 
         $likedMovie = Jav::factory()->create(['views' => 999, 'downloads' => 999]);
         $likedMovie->actors()->attach($likedActor->id);
-        Favorite::query()->create([
-            'user_id' => $user->id,
-            'favoritable_id' => $likedMovie->id,
-            'favoritable_type' => Jav::class,
-        ]);
+        Interaction::factory()->forJav($likedMovie)->favorite()->create(['user_id' => $user->id]);
 
         $viewedMovie = Jav::factory()->create(['views' => 998, 'downloads' => 998]);
         $viewedMovie->tags()->attach($likedTag->id);
@@ -84,21 +72,9 @@ class RecommendationServiceTest extends TestCase
         $jav->actors()->attach($actor->id);
         $jav->tags()->attach($tag->id);
 
-        Favorite::query()->create([
-            'user_id' => $relatedUser->id,
-            'favoritable_id' => $actor->id,
-            'favoritable_type' => Actor::class,
-        ]);
-        Favorite::query()->create([
-            'user_id' => $relatedByTag->id,
-            'favoritable_id' => $tag->id,
-            'favoritable_type' => Tag::class,
-        ]);
-        Favorite::query()->create([
-            'user_id' => $unrelatedUser->id,
-            'favoritable_id' => Jav::factory()->create()->id,
-            'favoritable_type' => Jav::class,
-        ]);
+        Interaction::factory()->forActor($actor)->favorite()->create(['user_id' => $relatedUser->id]);
+        Interaction::factory()->forTag($tag)->favorite()->create(['user_id' => $relatedByTag->id]);
+        Interaction::factory()->forJav(Jav::factory()->create())->favorite()->create(['user_id' => $unrelatedUser->id]);
 
         $service = app(RecommendationService::class);
         $synced = $service->syncSnapshotsForUsersByJav($jav, 5);
@@ -130,19 +106,11 @@ class RecommendationServiceTest extends TestCase
         $tags = Tag::factory()->count(3)->create();
 
         foreach ($actors as $actor) {
-            Favorite::query()->create([
-                'user_id' => $user->id,
-                'favoritable_id' => $actor->id,
-                'favoritable_type' => Actor::class,
-            ]);
+            Interaction::factory()->forActor($actor)->favorite()->create(['user_id' => $user->id]);
         }
 
         foreach ($tags as $tag) {
-            Favorite::query()->create([
-                'user_id' => $user->id,
-                'favoritable_id' => $tag->id,
-                'favoritable_type' => Tag::class,
-            ]);
+            Interaction::factory()->forTag($tag)->favorite()->create(['user_id' => $user->id]);
         }
 
         $recommended = Jav::factory()->create(['views' => 100, 'downloads' => 50]);

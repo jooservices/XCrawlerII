@@ -4,7 +4,7 @@ namespace Modules\JAV\Tests\Feature\Controllers\Users\Api;
 
 use App\Models\User;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Tests\TestCase;
 
@@ -35,10 +35,11 @@ class LibraryControllerEdgeTest extends TestCase
             ->assertOk()
             ->assertJsonPath('liked', true);
 
-        $this->assertDatabaseHas('favorites', [
+        $this->assertDatabaseHas('user_interactions', [
             'user_id' => $user->id,
-            'favoritable_type' => Actor::class,
-            'favoritable_id' => $actor->id,
+            'item_type' => Interaction::morphTypeFor(Actor::class),
+            'item_id' => $actor->id,
+            'action' => Interaction::ACTION_FAVORITE,
         ]);
 
         $this->actingAs($user)
@@ -49,10 +50,11 @@ class LibraryControllerEdgeTest extends TestCase
             ->assertOk()
             ->assertJsonPath('liked', false);
 
-        $this->assertDatabaseMissing('favorites', [
+        $this->assertDatabaseMissing('user_interactions', [
             'user_id' => $user->id,
-            'favoritable_type' => Actor::class,
-            'favoritable_id' => $actor->id,
+            'item_type' => Interaction::morphTypeFor(Actor::class),
+            'item_id' => $actor->id,
+            'action' => Interaction::ACTION_FAVORITE,
         ]);
     }
 
@@ -69,18 +71,20 @@ class LibraryControllerEdgeTest extends TestCase
             ->assertOk()
             ->assertJsonPath('liked', true);
 
-        $this->assertDatabaseHas('favorites', [
+        $this->assertDatabaseHas('user_interactions', [
             'user_id' => $user->id,
-            'favoritable_type' => Tag::class,
-            'favoritable_id' => $tag->id,
+            'item_type' => Interaction::morphTypeFor(Tag::class),
+            'item_id' => $tag->id,
+            'action' => Interaction::ACTION_FAVORITE,
         ]);
 
         $this->assertSame(
             1,
-            Favorite::query()
+            Interaction::query()
                 ->where('user_id', $user->id)
-                ->where('favoritable_type', Tag::class)
-                ->where('favoritable_id', $tag->id)
+                ->where('item_type', Interaction::morphTypeFor(Tag::class))
+                ->where('item_id', $tag->id)
+                ->where('action', Interaction::ACTION_FAVORITE)
                 ->count()
         );
     }

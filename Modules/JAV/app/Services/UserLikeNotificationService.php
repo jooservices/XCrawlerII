@@ -5,7 +5,7 @@ namespace Modules\JAV\Services;
 use Illuminate\Support\Collection;
 use Modules\JAV\Events\UserLikeMatchedJav;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Models\UserLikeNotification;
@@ -22,6 +22,9 @@ class UserLikeNotificationService
         $actorIds = $jav->actors->pluck('id')->all();
         $tagIds = $jav->tags->pluck('id')->all();
 
+        $actorType = Interaction::morphTypeFor(Actor::class);
+        $tagType = Interaction::morphTypeFor(Tag::class);
+
         if ($actorIds === [] && $tagIds === []) {
             return 0;
         }
@@ -29,23 +32,24 @@ class UserLikeNotificationService
         $actorNameById = $jav->actors->pluck('name', 'id');
         $tagNameById = $jav->tags->pluck('name', 'id');
 
-        $favorites = Favorite::query()
-            ->select(['user_id', 'favoritable_type', 'favoritable_id'])
-            ->where(function ($query) use ($actorIds, $tagIds): void {
+        $favorites = Interaction::query()
+            ->select(['user_id', 'item_type', 'item_id'])
+            ->where('action', Interaction::ACTION_FAVORITE)
+            ->where(function ($query) use ($actorIds, $tagIds, $actorType, $tagType): void {
                 if ($actorIds !== []) {
-                    $query->where(function ($subQuery) use ($actorIds): void {
+                    $query->where(function ($subQuery) use ($actorIds, $actorType): void {
                         $subQuery
-                            ->where('favoritable_type', Actor::class)
-                            ->whereIn('favoritable_id', $actorIds);
+                            ->where('item_type', $actorType)
+                            ->whereIn('item_id', $actorIds);
                     });
                 }
 
                 if ($tagIds !== []) {
                     $method = $actorIds !== [] ? 'orWhere' : 'where';
-                    $query->{$method}(function ($subQuery) use ($tagIds): void {
+                    $query->{$method}(function ($subQuery) use ($tagIds, $tagType): void {
                         $subQuery
-                            ->where('favoritable_type', Tag::class)
-                            ->whereIn('favoritable_id', $tagIds);
+                            ->where('item_type', $tagType)
+                            ->whereIn('item_id', $tagIds);
                     });
                 }
             })
@@ -84,7 +88,7 @@ class UserLikeNotificationService
     }
 
     /**
-     * @param  Collection<int, Favorite>  $favorites
+    * @param  Collection<int, Interaction>  $favorites
      * @param  Collection<int, string>  $actorNameById
      * @param  Collection<int, string>  $tagNameById
      * @return array<int, array{matched_actors: array<int, string>, matched_tags: array<int, string>}>
@@ -92,6 +96,8 @@ class UserLikeNotificationService
     private function groupReasonsByUser(Collection $favorites, Collection $actorNameById, Collection $tagNameById): array
     {
         $reasonsByUser = [];
+        $actorType = Interaction::morphTypeFor(Actor::class);
+        $tagType = Interaction::morphTypeFor(Tag::class);
 
         foreach ($favorites as $favorite) {
             $userId = (int) $favorite->user_id;
@@ -103,15 +109,15 @@ class UserLikeNotificationService
                 ];
             }
 
-            if ($favorite->favoritable_type === Actor::class) {
-                $name = $actorNameById->get($favorite->favoritable_id);
+            if ($favorite->item_type === $actorType) {
+                $name = $actorNameById->get($favorite->item_id);
                 if ($name !== null) {
                     $reasonsByUser[$userId]['matched_actors'][] = $name;
                 }
             }
 
-            if ($favorite->favoritable_type === Tag::class) {
-                $name = $tagNameById->get($favorite->favoritable_id);
+            if ($favorite->item_type === $tagType) {
+                $name = $tagNameById->get($favorite->item_id);
                 if ($name !== null) {
                     $reasonsByUser[$userId]['matched_tags'][] = $name;
                 }

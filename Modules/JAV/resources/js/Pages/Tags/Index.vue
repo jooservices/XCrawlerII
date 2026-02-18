@@ -5,6 +5,7 @@ import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
 import PageShell from '@jav/Components/UI/PageShell.vue';
 import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 import EmptyState from '@jav/Components/UI/EmptyState.vue';
+import FeaturedQuickAction from '@jav/Components/FeaturedQuickAction.vue';
 
 const props = defineProps({
     tags: Object,
@@ -64,20 +65,6 @@ const loadMore = () => {
         onFinish: () => {
             loadingMore.value = false;
         },
-    });
-};
-
-const paramsForSearch = () => {
-    return {
-        q: filterForm.value.q || '',
-        sort: props.sort || 'javs_count',
-        direction: props.direction || 'desc',
-    };
-};
-
-const submitSearch = () => {
-    router.get(route('jav.vue.tags'), paramsForSearch(), {
-        preserveScroll: true,
     });
 };
 
@@ -162,37 +149,25 @@ watch(
                 @sort-selected="handleSortSelected"
             />
 
-            <div class="ui-card mb-3">
-                <div class="ui-card-body">
-                    <form class="u-flex u-items-end" @submit.prevent="submitSearch">
-                        <div class="u-flex-grow-1 mr-2">
-                            <input
-                                id="tags_search_q"
-                                v-model="filterForm.q"
-                                type="text"
-                                name="q"
-                                class="ui-form-control"
-                                placeholder="Search ..."
-                            >
-                        </div>
-                        <button type="submit" class="ui-btn ui-btn-primary" title="Search" aria-label="Search">
-                            <i class="fas fa-search"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-
         <div class="ui-row ui-row-cols-2 ui-row-cols-md-4 ui-row-cols-lg-6 ui-g-4">
             <div v-for="tag in visibleTags" :key="tag.id" class="ui-col">
-                <Link :href="route('jav.vue.dashboard', { tag: tag.name })" class="u-no-underline u-text-dark">
-                    <div class="ui-card ui-interactive-card u-h-full u-shadow-sm hover-shadow">
-                        <div class="ui-card-body u-text-center">
-                            <i class="fas fa-tag fa-2x u-text-info mb-3"></i>
+                <div class="ui-card ui-interactive-card u-h-full u-shadow-sm hover-shadow">
+                    <div class="ui-card-body u-text-center">
+                        <div class="tag-card-heading">
+                            <i class="fas fa-tag fa-2x u-text-info"></i>
+                            <FeaturedQuickAction
+                                inline
+                                item-type="tag"
+                                :item-id="tag.id"
+                                :item-label="tag.name"
+                            />
+                        </div>
+                        <Link :href="route('jav.vue.dashboard', { tag: tag.name })" class="u-no-underline u-text-dark">
                             <h5 class="ui-card-title u-truncate" :title="tag.name">{{ tag.name }}</h5>
                             <span class="ui-badge u-bg-secondary">{{ tag.javs_count || 0 }} JAVs</span>
-                        </div>
+                        </Link>
                     </div>
-                </Link>
+                </div>
             </div>
             <div v-if="visibleTags.length === 0" class="ui-col-12">
                 <EmptyState tone="warning" icon="fas fa-tags" message="No tags found." />
@@ -215,5 +190,13 @@ watch(
 
 .hover-shadow:hover {
     box-shadow: var(--card-hover-shadow);
+}
+
+.tag-card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 0.75rem;
 }
 </style>

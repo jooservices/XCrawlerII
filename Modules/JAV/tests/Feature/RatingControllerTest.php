@@ -5,8 +5,8 @@ namespace Modules\JAV\Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 use Tests\TestCase;
 
 class RatingControllerTest extends TestCase
@@ -40,8 +40,8 @@ class RatingControllerTest extends TestCase
         $jav1 = Jav::factory()->create();
         $jav2 = Jav::factory()->create();
 
-        Rating::factory()->create(['jav_id' => $jav1->id]);
-        Rating::factory()->create(['jav_id' => $jav2->id]);
+        Interaction::factory()->forJav($jav1)->rating(4)->create();
+        Interaction::factory()->forJav($jav2)->rating(5)->create();
 
         $this->actingAs($this->user);
         $response = $this->get(route('jav.vue.ratings', ['jav_id' => $jav1->id]));
@@ -66,12 +66,20 @@ class RatingControllerTest extends TestCase
 
         $response->assertCreated();
         $response->assertJson(['success' => true]);
-        $this->assertDatabaseHas('ratings', [
+        $this->assertDatabaseHas('user_interactions', [
             'user_id' => $this->user->id,
-            'jav_id' => $jav->id,
-            'rating' => 5,
-            'review' => 'Great movie!',
+            'item_id' => $jav->id,
+            'item_type' => Interaction::morphTypeFor(Jav::class),
+            'action' => Interaction::ACTION_RATING,
+            'value' => 5,
         ]);
+        $record = Interaction::query()
+            ->where('user_id', $this->user->id)
+            ->where('item_id', $jav->id)
+            ->where('item_type', Interaction::morphTypeFor(Jav::class))
+            ->where('action', Interaction::ACTION_RATING)
+            ->first();
+        $this->assertSame('Great movie!', $record?->meta['review'] ?? null);
     }
 
     public function test_guest_cannot_submit_rating(): void
@@ -132,11 +140,10 @@ class RatingControllerTest extends TestCase
     {
         $jav = Jav::factory()->create();
 
-        Rating::factory()->create([
-            'user_id' => $this->user->id,
-            'jav_id' => $jav->id,
-            'rating' => 4,
-        ]);
+        Interaction::factory()
+            ->forJav($jav)
+            ->rating(4)
+            ->create(['user_id' => $this->user->id]);
 
         $response = $this->actingAs($this->user)->postJson(route('ratings.store'), [
             'jav_id' => $jav->id,
@@ -144,18 +151,24 @@ class RatingControllerTest extends TestCase
         ]);
 
         $response->assertStatus(422);
-        $this->assertDatabaseCount('ratings', 1);
+        $this->assertSame(
+            1,
+            Interaction::query()
+                ->where('user_id', $this->user->id)
+                ->where('item_type', Interaction::morphTypeFor(Jav::class))
+                ->where('item_id', $jav->id)
+                ->where('action', Interaction::ACTION_RATING)
+                ->count()
+        );
     }
 
     public function test_user_can_update_their_own_rating(): void
     {
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $this->user->id,
-            'jav_id' => $jav->id,
-            'rating' => 4,
-            'review' => 'Good',
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(4, 'Good')
+            ->create(['user_id' => $this->user->id]);
 
         $response = $this->actingAs($this->user)->putJson(route('ratings.update', $rating), [
             'rating' => 5,
@@ -163,21 +176,23 @@ class RatingControllerTest extends TestCase
         ]);
 
         $response->assertOk();
-        $this->assertDatabaseHas('ratings', [
+        $this->assertDatabaseHas('user_interactions', [
             'id' => $rating->id,
-            'rating' => 5,
-            'review' => 'Excellent!',
+            'action' => Interaction::ACTION_RATING,
+            'value' => 5,
         ]);
+        $rating->refresh();
+        $this->assertSame('Excellent!', $rating->meta['review'] ?? null);
     }
 
     public function test_user_cannot_update_another_users_rating(): void
     {
         $otherUser = User::factory()->create();
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $otherUser->id,
-            'jav_id' => $jav->id,
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(3)
+            ->create(['user_id' => $otherUser->id]);
 
         $response = $this->actingAs($this->user)->putJson(route('ratings.update', $rating), [
             'rating' => 5,
@@ -189,41 +204,39 @@ class RatingControllerTest extends TestCase
     public function test_user_can_delete_their_own_rating(): void
     {
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $this->user->id,
-            'jav_id' => $jav->id,
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(3)
+            ->create(['user_id' => $this->user->id]);
 
         $response = $this->actingAs($this->user)->deleteJson(route('ratings.destroy', $rating));
 
         $response->assertOk();
-        $this->assertDatabaseMissing('ratings', ['id' => $rating->id]);
+        $this->assertDatabaseMissing('user_interactions', ['id' => $rating->id]);
     }
 
     public function test_user_cannot_delete_another_users_rating(): void
     {
         $otherUser = User::factory()->create();
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $otherUser->id,
-            'jav_id' => $jav->id,
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(3)
+            ->create(['user_id' => $otherUser->id]);
 
         $response = $this->actingAs($this->user)->deleteJson(route('ratings.destroy', $rating));
 
         $response->assertForbidden();
-        $this->assertDatabaseHas('ratings', ['id' => $rating->id]);
+        $this->assertDatabaseHas('user_interactions', ['id' => $rating->id]);
     }
 
     public function test_check_endpoint_returns_user_rating_if_exists(): void
     {
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $this->user->id,
-            'jav_id' => $jav->id,
-            'rating' => 4,
-            'review' => 'Nice',
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(4, 'Nice')
+            ->create(['user_id' => $this->user->id]);
 
         $response = $this->actingAs($this->user)->getJson(route('ratings.check', $jav->id));
 
@@ -251,12 +264,10 @@ class RatingControllerTest extends TestCase
     public function test_ratings_can_be_sorted_by_recent(): void
     {
         $jav = Jav::factory()->create();
-        $old = Rating::factory()->create([
-            'jav_id' => $jav->id,
+        $old = Interaction::factory()->forJav($jav)->rating(2)->create([
             'created_at' => now()->subDays(5),
         ]);
-        $new = Rating::factory()->create([
-            'jav_id' => $jav->id,
+        $new = Interaction::factory()->forJav($jav)->rating(4)->create([
             'created_at' => now(),
         ]);
 
@@ -273,8 +284,8 @@ class RatingControllerTest extends TestCase
     public function test_ratings_can_be_sorted_by_highest(): void
     {
         $jav = Jav::factory()->create();
-        Rating::factory()->create(['jav_id' => $jav->id, 'rating' => 3]);
-        $highest = Rating::factory()->create(['jav_id' => $jav->id, 'rating' => 5]);
+        Interaction::factory()->forJav($jav)->rating(3)->create();
+        Interaction::factory()->forJav($jav)->rating(5)->create();
 
         $this->actingAs($this->user);
         $response = $this->get(route('jav.vue.ratings', ['jav_id' => $jav->id, 'sort' => 'highest']));
@@ -296,11 +307,19 @@ class RatingControllerTest extends TestCase
         ]);
 
         $response->assertCreated();
-        $this->assertDatabaseHas('ratings', [
+        $this->assertDatabaseHas('user_interactions', [
             'user_id' => $this->user->id,
-            'jav_id' => $jav->id,
-            'rating' => 5,
-            'review' => null,
+            'item_id' => $jav->id,
+            'item_type' => Interaction::morphTypeFor(Jav::class),
+            'action' => Interaction::ACTION_RATING,
+            'value' => 5,
         ]);
+        $record = Interaction::query()
+            ->where('user_id', $this->user->id)
+            ->where('item_id', $jav->id)
+            ->where('item_type', Interaction::morphTypeFor(Jav::class))
+            ->where('action', Interaction::ACTION_RATING)
+            ->first();
+        $this->assertNull($record?->meta['review'] ?? null);
     }
 }

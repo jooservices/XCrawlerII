@@ -9,11 +9,11 @@ const props = defineProps({
     favorites: Object,
 });
 
-const movieFavoriteType = 'Modules\\JAV\\Models\\Jav';
-const actorFavoriteType = 'Modules\\JAV\\Models\\Actor';
-const tagFavoriteType = 'Modules\\JAV\\Models\\Tag';
+const movieFavoriteTypes = ['movie', 'Modules\\JAV\\Models\\Jav'];
+const actorFavoriteTypes = ['actor', 'Modules\\JAV\\Models\\Actor'];
+const tagFavoriteTypes = ['tag', 'Modules\\JAV\\Models\\Tag'];
 
-const isMovieFavorite = (favorite) => favorite?.favoritable_type === movieFavoriteType;
+const isMovieFavorite = (favorite) => movieFavoriteTypes.includes(favorite?.favoritable_type);
 const toMovieItem = (favorite) => {
     const movie = favorite?.favoritable || {};
 
@@ -54,7 +54,7 @@ const toMovieItem = (favorite) => {
                     />
 
                     <div v-else class="ui-col">
-                        <template v-if="favorite.favoritable_type === actorFavoriteType">
+                        <template v-if="actorFavoriteTypes.includes(favorite.favoritable_type)">
                             <Link :href="route('jav.vue.dashboard', { actor: favorite.favoritable?.name })" class="u-no-underline u-text-dark">
                                 <div class="ui-card ui-interactive-card u-h-full u-bg-success u-bg-opacity-10">
                                     <div class="ui-card-body u-text-center">
@@ -67,7 +67,7 @@ const toMovieItem = (favorite) => {
                             </Link>
                         </template>
 
-                        <template v-else-if="favorite.favoritable_type === tagFavoriteType">
+                        <template v-else-if="tagFavoriteTypes.includes(favorite.favoritable_type)">
                             <Link :href="route('jav.vue.dashboard', { tag: favorite.favoritable?.name })" class="u-no-underline u-text-dark">
                                 <div class="ui-card ui-interactive-card u-h-full u-bg-info u-bg-opacity-10">
                                     <div class="ui-card-body u-text-center">

@@ -6,8 +6,9 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 import { Navigation, Pagination, A11y } from 'swiper/modules';
 import axios from 'axios';
 import MovieCard from '@jav/Components/MovieCard.vue';
+import ActorCard from '@jav/Components/ActorCard.vue';
+import TagCard from '@jav/Components/TagCard.vue';
 import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
-import AdvancedSearchForm from '@jav/Components/Search/AdvancedSearchForm.vue';
 import PageShell from '@jav/Components/UI/PageShell.vue';
 import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 import EmptyState from '@jav/Components/UI/EmptyState.vue';
@@ -27,6 +28,7 @@ const props = defineProps({
     savedPresets: Array,
     savedPresetIndex: Number,
     continueWatching: Array,
+    featuredGroups: Array,
     preferences: Object,
     tagsInput: String,
     availableBioKeys: Object,
@@ -49,35 +51,51 @@ const continueWatchingBreakpoints = {
     1200: { slidesPerView: 4.1, spaceBetween: 16 },
 };
 
-const presetName = ref('');
-const filterForm = ref({
-    q: props.query || '',
-    actor: props.filters?.actor || '',
-    tag: props.tagsInput || props.filters?.tag || '',
-    tags_mode: props.filters?.tags_mode || 'any',
-    age: props.filters?.age ?? '',
-    age_min: props.filters?.age_min ?? '',
-    age_max: props.filters?.age_max ?? '',
+const groupTitleMap = {
+    recent: 'Recent Updates',
+    trending: 'Trending',
+    top: 'Top Views',
+    staff_pick: 'Staff Picks',
+};
+
+const featuredSections = computed(() => {
+    const groups = Array.isArray(props.featuredGroups) ? props.featuredGroups : [];
+
+    return groups.map((group) => {
+        const items = Array.isArray(group.items) ? group.items : [];
+        const movieItems = items
+            .filter((entry) => entry.item_type === 'movie' && entry.item)
+            .map((entry) => entry.item);
+        const actorItems = items
+            .filter((entry) => entry.item_type === 'actor' && entry.item)
+            .map((entry) => entry.item);
+        const tagItems = items
+            .filter((entry) => entry.item_type === 'tag' && entry.item)
+            .map((entry) => entry.item);
+
+        return {
+            key: group.key,
+            title: groupTitleMap[group.key] || String(group.key || 'Featured'),
+            movieItems,
+            actorItems,
+            tagItems,
+        };
+    });
 });
 
-const bioFilters = ref(
-    (props.filters?.bio_filters && props.filters.bio_filters.length > 0)
-        ? props.filters.bio_filters.map((row) => ({
-            key: row?.key || '',
-            value: row?.value || '',
-        }))
-        : [{ key: '', value: '' }]
-);
 
+const presetName = ref('');
+
+// Helper to normalized tags from props
 const normalizedTags = computed(() => {
-    return String(filterForm.value.tag || '')
+    return String(props.tagsInput || props.filters?.tag || '')
         .split(',')
         .map((value) => value.trim())
         .filter((value) => value !== '');
 });
 
 const filteredBioFilters = computed(() => {
-    return bioFilters.value.filter((row) => row.key || row.value);
+    return (props.filters?.bio_filters || []).filter((row) => row.key || row.value);
 });
 
 const normalizeTagLabel = (value) => {
@@ -206,17 +224,17 @@ const itemsQueryErrorMessage = computed(() => dashboardItemsQuery.error.value?.m
 
 const paramsForSearch = () => {
     const params = {
-        q: filterForm.value.q || '',
-        actor: filterForm.value.actor || '',
-        tag: filterForm.value.tag || '',
+        q: props.query || '',
+        actor: props.filters?.actor || '',
+        tag: props.tagsInput || props.filters?.tag || '',
         tags: normalizedTags.value,
-        tags_mode: filterForm.value.tags_mode || 'any',
-        age: filterForm.value.age || '',
-        age_min: filterForm.value.age_min || '',
-        age_max: filterForm.value.age_max || '',
-        bio_filters: filteredBioFilters.value,
-        bio_key: filteredBioFilters.value[0]?.key || '',
-        bio_value: filteredBioFilters.value[0]?.value || '',
+        tags_mode: props.filters?.tags_mode || 'any',
+        age: props.filters?.age || '',
+        age_min: props.filters?.age_min || '',
+        age_max: props.filters?.age_max || '',
+        bio_filters: props.filters?.bio_filters || [],
+        bio_key: props.filters?.bio_key || '',
+        bio_value: props.filters?.bio_value || '',
         sort: props.sort || '',
         direction: props.direction || 'desc',
         preset: props.preset || 'default',
@@ -229,12 +247,6 @@ const paramsForSearch = () => {
     return params;
 };
 
-const submitSearch = () => {
-    router.get(route('jav.vue.dashboard'), paramsForSearch(), {
-        preserveScroll: true,
-    });
-};
-
 const applySort = (sort, direction) => {
     const params = paramsForSearch();
     params.sort = sort;
@@ -245,17 +257,6 @@ const applySort = (sort, direction) => {
     });
 };
 
-const addBioFilter = () => {
-    bioFilters.value.push({ key: '', value: '' });
-};
-
-const removeBioFilter = (index) => {
-    if (bioFilters.value.length <= 1) {
-        return;
-    }
-    bioFilters.value.splice(index, 1);
-};
-
 const savePreset = () => {
     if (!presetName.value.trim()) {
         uiStore.showToast('Preset name is required', 'error');
@@ -264,14 +265,14 @@ const savePreset = () => {
 
     router.post(route('jav.presets.save'), {
         name: presetName.value.trim(),
-        q: filterForm.value.q || '',
-        actor: filterForm.value.actor || '',
-        tag: filterForm.value.tag || '',
-        tags: normalizedTags.value,
-        tags_mode: filterForm.value.tags_mode || 'any',
-        age: filterForm.value.age || '',
-        age_min: filterForm.value.age_min || '',
-        age_max: filterForm.value.age_max || '',
+        q: props.query || '',
+        actor: props.filters?.actor || '',
+        tag: props.tagsInput || props.filters?.tag || '',
+        tags: props.filters?.tags || [],
+        tags_mode: props.filters?.tags_mode || 'any',
+        age: props.filters?.age || '',
+        age_min: props.filters?.age_min || '',
+        age_max: props.filters?.age_max || '',
         bio_key: filteredBioFilters.value[0]?.key || '',
         bio_value: filteredBioFilters.value[0]?.value || '',
         bio_filters: filteredBioFilters.value,
@@ -390,17 +391,34 @@ onBeforeUnmount(() => {
             @sort-selected="applySort($event.sort, $event.direction)"
         />
 
-        <AdvancedSearchForm
-            :filter-form="filterForm"
-            :bio-filters="bioFilters"
-            :available-bio-keys="availableBioKeys"
-            :actor-suggestions="actorSuggestions"
-            :tag-suggestions="tagSuggestions"
-            :bio-value-suggestions="bioValueSuggestions"
-            @submit="submitSearch"
-            @add-bio-filter="addBioFilter"
-            @remove-bio-filter="removeBioFilter"
-        />
+        <div v-if="featuredSections.length > 0" class="mb-4">
+            <div v-for="group in featuredSections" :key="group.key" class="mb-4">
+                <h5 class="mb-3">{{ group.title }}</h5>
+
+                <div v-if="group.movieItems.length" class="mb-3">
+                    <h6 class="u-text-muted mb-2">Movies</h6>
+                    <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
+                        <MovieCard v-for="item in group.movieItems" :key="`movie-${item.id}`" :item="item" :active-tags="selectedDashboardTags" />
+                    </div>
+                </div>
+
+                <div v-if="group.actorItems.length" class="mb-3">
+                    <h6 class="u-text-muted mb-2">Actors</h6>
+                    <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
+                        <ActorCard v-for="actor in group.actorItems" :key="`actor-${actor.id}`" :actor="actor" />
+                    </div>
+                </div>
+
+                <div v-if="group.tagItems.length" class="mb-3">
+                    <h6 class="u-text-muted mb-2">Tags</h6>
+                    <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
+                        <TagCard v-for="tag in group.tagItems" :key="`tag-${tag.id}`" :tag="tag" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
 
         <div v-if="continueWatching && continueWatching.length > 0" class="mb-4">
             <h5 class="mb-3">Continue Watching</h5>
@@ -432,7 +450,7 @@ onBeforeUnmount(() => {
             </Swiper>
         </div>
 
-        <div id="lazy-container" class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-4 ui-g-4">
+        <div id="lazy-container" class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
             <div v-if="hasItemsQueryError" class="ui-col-12">
                 <div class="ui-alert ui-alert-danger u-flex u-justify-between u-items-center mb-0">
                     <span>{{ itemsQueryErrorMessage }}</span>

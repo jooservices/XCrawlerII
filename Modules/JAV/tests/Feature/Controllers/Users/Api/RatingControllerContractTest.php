@@ -3,8 +3,8 @@
 namespace Modules\JAV\Tests\Feature\Controllers\Users\Api;
 
 use App\Models\User;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 use Modules\JAV\Tests\TestCase;
 
 class RatingControllerContractTest extends TestCase
@@ -45,12 +45,16 @@ class RatingControllerContractTest extends TestCase
             ->assertStatus(422)
             ->assertJsonValidationErrors(['rating']);
 
-        $myRating = Rating::query()->where('user_id', $user->id)->where('jav_id', $jav->id)->firstOrFail();
-        $otherRating = Rating::factory()->create([
-            'user_id' => $other->id,
-            'jav_id' => $jav->id,
-            'rating' => 3,
-        ]);
+        $myRating = Interaction::query()
+            ->where('user_id', $user->id)
+            ->where('item_type', Interaction::morphTypeFor(Jav::class))
+            ->where('item_id', $jav->id)
+            ->where('action', Interaction::ACTION_RATING)
+            ->firstOrFail();
+        $otherRating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(3)
+            ->create(['user_id' => $other->id]);
 
         $this->actingAs($user)
             ->putJson(route('jav.api.ratings.update', $myRating), [

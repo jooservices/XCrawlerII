@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Event;
 use Modules\JAV\Events\UserLikeMatchedJav;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Models\UserLikeNotification;
@@ -27,16 +27,8 @@ class UserLikeNotificationServiceTest extends TestCase
         $jav->actors()->sync([$actor->id]);
         $jav->tags()->sync([$tag->id]);
 
-        Favorite::query()->create([
-            'user_id' => $user->id,
-            'favoritable_id' => $actor->id,
-            'favoritable_type' => Actor::class,
-        ]);
-        Favorite::query()->create([
-            'user_id' => $user->id,
-            'favoritable_id' => $tag->id,
-            'favoritable_type' => Tag::class,
-        ]);
+        Interaction::factory()->forActor($actor)->favorite()->create(['user_id' => $user->id]);
+        Interaction::factory()->forTag($tag)->favorite()->create(['user_id' => $user->id]);
 
         $created = app(UserLikeNotificationService::class)->notifyForJav($jav);
 
@@ -61,11 +53,7 @@ class UserLikeNotificationServiceTest extends TestCase
         $jav = Jav::factory()->create(['code' => 'ABP-222', 'source' => 'onejav']);
         $jav->actors()->sync([$actor->id]);
 
-        Favorite::query()->create([
-            'user_id' => $user->id,
-            'favoritable_id' => $actor->id,
-            'favoritable_type' => Actor::class,
-        ]);
+        Interaction::factory()->forActor($actor)->favorite()->create(['user_id' => $user->id]);
 
         $service = app(UserLikeNotificationService::class);
 

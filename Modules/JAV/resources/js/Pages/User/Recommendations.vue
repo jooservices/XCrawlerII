@@ -28,7 +28,7 @@ const props = defineProps({
             message="No recommendations yet. Like some movies, actors, or tags to get personalized suggestions!"
         />
 
-        <div v-else class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-4 ui-g-4">
+        <div v-else class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
             <MovieCard
                 v-for="(recommendation, index) in recommendations"
                 :key="recommendation.movie?.id || index"

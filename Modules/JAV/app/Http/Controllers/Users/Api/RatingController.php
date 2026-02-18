@@ -6,15 +6,18 @@ use Illuminate\Http\JsonResponse;
 use Modules\JAV\Http\Controllers\Api\ApiController;
 use Modules\JAV\Http\Requests\StoreRatingRequest;
 use Modules\JAV\Http\Requests\UpdateRatingRequest;
-use Modules\JAV\Models\Rating;
+use Modules\JAV\Models\Interaction;
+use Modules\JAV\Models\Jav;
 
 class RatingController extends ApiController
 {
     public function store(StoreRatingRequest $request): JsonResponse
     {
-        $existingRating = Rating::query()
+        $existingRating = Interaction::query()
             ->where('user_id', $request->user()->id)
-            ->where('jav_id', $request->input('jav_id'))
+            ->where('item_type', Interaction::morphTypeFor(Jav::class))
+            ->where('item_id', $request->input('jav_id'))
+            ->where('action', Interaction::ACTION_RATING)
             ->first();
 
         if ($existingRating) {
@@ -24,30 +27,36 @@ class RatingController extends ApiController
             );
         }
 
-        $rating = Rating::create([
+        $rating = Interaction::create([
             'user_id' => $request->user()->id,
-            'jav_id' => $request->input('jav_id'),
-            'rating' => $request->input('rating'),
-            'review' => $request->input('review'),
+            'item_type' => Interaction::morphTypeFor(Jav::class),
+            'item_id' => $request->input('jav_id'),
+            'action' => Interaction::ACTION_RATING,
+            'value' => $request->input('rating'),
+            'meta' => [
+                'review' => $request->input('review'),
+            ],
         ]);
 
-        return $this->created($rating->load('user'), 'Rating submitted successfully!');
+        return $this->created($rating->load('user', 'item'), 'Rating submitted successfully!');
     }
 
-    public function update(UpdateRatingRequest $request, Rating $rating): JsonResponse
+    public function update(UpdateRatingRequest $request, Interaction $rating): JsonResponse
     {
         $rating->update([
-            'rating' => $request->input('rating'),
-            'review' => $request->input('review'),
+            'value' => $request->input('rating'),
+            'meta' => [
+                'review' => $request->input('review'),
+            ],
         ]);
 
         return $this->result([
             'message' => 'Rating updated successfully!',
-            'data' => $rating->fresh()->load('user'),
+            'data' => $rating->fresh()->load('user', 'item'),
         ]);
     }
 
-    public function destroy(Rating $rating): JsonResponse
+    public function destroy(Interaction $rating): JsonResponse
     {
         if (! auth()->check() || $rating->user_id !== auth()->id()) {
             return $this->error('Unauthorized.', 403);
@@ -66,9 +75,11 @@ class RatingController extends ApiController
             return $this->result(['has_rated' => false]);
         }
 
-        $rating = Rating::query()
+        $rating = Interaction::query()
             ->where('user_id', auth()->id())
-            ->where('jav_id', $javId)
+            ->where('item_type', Interaction::morphTypeFor(Jav::class))
+            ->where('item_id', $javId)
+            ->where('action', Interaction::ACTION_RATING)
             ->first();
 
         if (! $rating) {
@@ -77,8 +88,8 @@ class RatingController extends ApiController
 
         return $this->result([
             'has_rated' => true,
-            'rating' => $rating->rating,
-            'review' => $rating->review,
+            'rating' => $rating->value,
+            'review' => $rating->meta['review'] ?? null,
             'id' => $rating->id,
         ]);
     }

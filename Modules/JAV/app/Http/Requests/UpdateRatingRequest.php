@@ -3,6 +3,8 @@
 namespace Modules\JAV\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Modules\JAV\Models\Interaction;
+use Modules\JAV\Models\Jav;
 
 class UpdateRatingRequest extends FormRequest
 {
@@ -14,7 +16,11 @@ class UpdateRatingRequest extends FormRequest
         $rating = $this->route('rating');
 
         // User can only update their own rating
-        return $rating && $this->user() && $rating->user_id === $this->user()->id;
+        return $rating
+            && $rating->action === Interaction::ACTION_RATING
+            && $rating->item_type === Interaction::morphTypeFor(Jav::class)
+            && $this->user()
+            && $rating->user_id === $this->user()->id;
     }
 
     /**

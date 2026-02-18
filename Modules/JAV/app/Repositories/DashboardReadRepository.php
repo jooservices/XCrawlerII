@@ -2,6 +2,7 @@
 
 namespace Modules\JAV\Repositories;
 
+use App\Models\FeaturedItem;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -22,10 +23,9 @@ class DashboardReadRepository
         private readonly JavRepository $javRepository,
         private readonly ActorRepository $actorRepository,
         private readonly TagRepository $tagRepository,
-        private readonly FavoriteRepository $favoriteRepository,
+        private readonly InteractionRepository $interactionRepository,
         private readonly UserJavHistoryRepository $historyRepository,
         private readonly WatchlistRepository $watchlistRepository,
-        private readonly RatingRepository $ratingRepository,
         private readonly UserLikeNotificationRepository $notificationRepository,
     ) {}
 
@@ -70,7 +70,7 @@ class DashboardReadRepository
             }
 
             if ($preset === 'preferred_tags' && $user !== null) {
-                $preferredTagNames = $this->favoriteRepository->preferredTagNamesForUser((int) $user->getAuthIdentifier());
+                $preferredTagNames = $this->interactionRepository->preferredTagNamesForUser((int) $user->getAuthIdentifier());
 
                 if ($preferredTagNames->isNotEmpty()) {
                     $builder->whereHas('tags', function ($q) use ($preferredTagNames): void {
@@ -94,8 +94,19 @@ class DashboardReadRepository
             return;
         }
 
-        $pageItems = $items->items();
-        $ids = collect($pageItems)
+        $this->decorateJavsForUser(collect($items->items()), $user);
+    }
+
+    /**
+     * @param  Collection<int, Jav>  $items
+     */
+    public function decorateJavsForUser(Collection $items, ?Authenticatable $user): void
+    {
+        if ($user === null || $items->isEmpty()) {
+            return;
+        }
+
+        $ids = $items
             ->map(static fn ($item) => $item->id ?? null)
             ->filter(static fn ($id) => $id !== null)
             ->values();
@@ -105,17 +116,28 @@ class DashboardReadRepository
         }
 
         $userId = (int) $user->getAuthIdentifier();
-        $likedIds = $this->favoriteRepository->likedJavIdsForUserAndJavIds($userId, $ids);
+        $likedIds = $this->interactionRepository->likedJavIdsForUserAndJavIds($userId, $ids);
         $watchlist = $this->watchlistRepository->keyedByJavIdForUserAndJavIds($userId, $ids);
-        $ratings = $this->ratingRepository->keyedByJavIdForUserAndJavIds($userId, $ids);
+        $ratings = $this->interactionRepository->keyedRatingsForUserAndJavIds($userId, $ids);
+        $featuredIds = FeaturedItem::query()
+            ->where('item_type', 'movie')
+            ->whereIn('item_id', $ids)
+            ->where('is_active', true)
+            ->where(function ($query): void {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>=', now());
+            })
+            ->pluck('item_id')
+            ->flip();
 
-        foreach ($pageItems as $item) {
+        foreach ($items as $item) {
             $itemId = $item->id ?? null;
             $item->is_liked = $itemId !== null && $likedIds->has($itemId);
             $item->watchlist_id = $itemId !== null ? optional($watchlist->get($itemId))->id : null;
             $item->in_watchlist = $item->watchlist_id !== null;
-            $item->user_rating = $itemId !== null ? optional($ratings->get($itemId))->rating : null;
+            $item->user_rating = $itemId !== null ? optional($ratings->get($itemId))->value : null;
             $item->user_rating_id = $itemId !== null ? optional($ratings->get($itemId))->id : null;
+            $item->is_featured = $itemId !== null && $featuredIds->has($itemId);
         }
     }
 
@@ -186,7 +208,7 @@ class DashboardReadRepository
 
     public function isJavLikedByUser(Jav $jav, int $userId): bool
     {
-        return $this->favoriteRepository->isJavLikedByUser($jav, $userId);
+        return $this->interactionRepository->isJavLikedByUser($jav, $userId);
     }
 
     public function historyForUser(int $userId, int $perPage = 30): LengthAwarePaginator
@@ -211,7 +233,7 @@ class DashboardReadRepository
                 'page' => request()->integer('page', 1),
             ]),
             now()->addSeconds(self::SHORT_TTL_SECONDS),
-            fn (): LengthAwarePaginator => $this->favoriteRepository->paginateForUser($userId, $perPage)
+            fn (): LengthAwarePaginator => $this->interactionRepository->paginateFavoritesForUser($userId, $perPage)
         );
     }
 

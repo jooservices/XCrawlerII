@@ -39,7 +39,9 @@ class JavSyncRecommendationsCommand extends Command
         }
 
         User::query()
-            ->whereHas('favorites')
+            ->whereHas('interactions', function ($query): void {
+                $query->where('action', \Modules\JAV\Models\Interaction::ACTION_FAVORITE);
+            })
             ->select('id')
             ->chunkById(200, function ($users) use (&$synced, $limit, $recommendationService): void {
                 foreach ($users as $user) {

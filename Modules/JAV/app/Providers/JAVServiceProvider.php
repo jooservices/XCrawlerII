@@ -88,6 +88,7 @@ class JAVServiceProvider extends ServiceProvider
             \Modules\JAV\Console\JavCommand::class,
             \Modules\JAV\Console\JavAnalyticsReportCommand::class,
             \Modules\JAV\Console\JavSyncContentCommand::class,
+            \Modules\JAV\Console\JavMigrateInteractionsCommand::class,
             \Modules\JAV\Console\JavSyncSearchCommand::class,
             \Modules\JAV\Console\JavSyncIdolsCommand::class,
             \Modules\JAV\Console\JavSyncAnalyticsCommand::class,

@@ -65,7 +65,8 @@ class User extends Authenticatable
 
     public function favorites(): HasMany
     {
-        return $this->hasMany(\Modules\JAV\Models\Favorite::class);
+        return $this->hasMany(\Modules\JAV\Models\Interaction::class)
+            ->where('action', \Modules\JAV\Models\Interaction::ACTION_FAVORITE);
     }
 
     public function javNotifications(): HasMany
@@ -99,7 +100,13 @@ class User extends Authenticatable
      */
     public function ratings(): HasMany
     {
-        return $this->hasMany(\Modules\JAV\Models\Rating::class);
+        return $this->hasMany(\Modules\JAV\Models\Interaction::class)
+            ->where('action', \Modules\JAV\Models\Interaction::ACTION_RATING);
+    }
+
+    public function interactions(): HasMany
+    {
+        return $this->hasMany(\Modules\JAV\Models\Interaction::class);
     }
 
     /**

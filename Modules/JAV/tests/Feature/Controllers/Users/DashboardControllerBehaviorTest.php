@@ -5,7 +5,7 @@ namespace Modules\JAV\Tests\Feature\Controllers\Users;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Tests\TestCase;
 
@@ -55,11 +55,7 @@ class DashboardControllerBehaviorTest extends TestCase
         $likedActor = Actor::factory()->create(['name' => 'Alpha Actor']);
         $otherActor = Actor::factory()->create(['name' => 'Beta Actor']);
 
-        Favorite::query()->create([
-            'user_id' => $user->id,
-            'favoritable_type' => Actor::class,
-            'favoritable_id' => $likedActor->id,
-        ]);
+        Interaction::factory()->forActor($likedActor)->favorite()->create(['user_id' => $user->id]);
 
         $this->actingAs($user)
             ->get(route('jav.vue.actors', [

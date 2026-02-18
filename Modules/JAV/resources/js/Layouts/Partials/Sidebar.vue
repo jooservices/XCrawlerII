@@ -2,6 +2,7 @@
 import { Link, usePage } from '@inertiajs/vue3';
 import { useUIStore } from '@jav/Stores/ui';
 import { computed } from 'vue';
+import GlobalSearch from '@jav/Components/Search/GlobalSearch.vue';
 
 const props = defineProps({
     mobile: Boolean
@@ -10,6 +11,8 @@ const props = defineProps({
 const uiStore = useUIStore();
 const page = usePage();
 const currentUrl = computed(() => String(page.url || ''));
+const roles = computed(() => page.props.auth?.user?.roles || []);
+const isAdmin = computed(() => roles.value.includes('admin'));
 const currentRouteName = computed(() => {
     const currentUrlValue = currentUrl.value;
     const routeName = route().current();
@@ -67,6 +70,7 @@ const showText = computed(() => props.mobile || uiStore.sidebarExpanded);
 
 <template>
     <div id="sidebar" class="sidebar">
+
         <div class="ui-nav u-flex-col">
             <Link
                 :href="route('jav.vue.dashboard')"
@@ -113,6 +117,10 @@ const showText = computed(() => props.mobile || uiStore.sidebarExpanded);
                 <i class="fas fa-star mr-2"></i>
                 <span v-if="showText">Ratings</span>
             </Link>
+
+        </div>
+        <div class="sidebar-search px-2 mb-3">
+            <GlobalSearch />
         </div>
     </div>
 </template>

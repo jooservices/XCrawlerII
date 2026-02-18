@@ -3,6 +3,7 @@
 namespace Modules\JAV\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
+use App\Models\FeaturedItem;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
@@ -111,6 +112,61 @@ class DashboardController extends Controller
             ];
         })->values();
 
+        $featuredItems = FeaturedItem::query()
+            ->with('item')
+            ->where('is_active', true)
+            ->where(function ($query): void {
+                $query->whereNull('expires_at')
+                    ->orWhere('expires_at', '>=', now());
+            })
+            ->orderBy('group')
+            ->orderBy('rank')
+            ->orderByDesc('featured_at')
+            ->get();
+
+        $featuredGroups = $featuredItems
+            ->groupBy('group')
+            ->map(function ($groupItems, $groupKey): array {
+                $items = $groupItems->map(function (FeaturedItem $item): array {
+                    $resource = $item->item;
+
+                    if ($item->item_type === 'actor' && $resource) {
+                        $resource->setAttribute('movie_count', $resource->javs()->count());
+                    }
+
+                    if ($item->item_type === 'tag' && $resource) {
+                        $resource->setAttribute('movie_count', $resource->javs()->count());
+                    }
+
+                    return [
+                        'id' => (int) $item->id,
+                        'item_type' => (string) $item->item_type,
+                        'item_id' => (int) $item->item_id,
+                        'rank' => (int) $item->rank,
+                        'featured_at' => optional($item->featured_at)->toISOString(),
+                        'expires_at' => optional($item->expires_at)->toISOString(),
+                        'item' => $resource,
+                    ];
+                })->values();
+
+                return [
+                    'key' => (string) $groupKey,
+                    'items' => $items,
+                ];
+            })
+            ->values();
+
+        if ($user !== null) {
+            $featuredMovies = $featuredGroups
+                ->flatMap(static fn (array $group): Collection => collect($group['items']))
+                ->filter(static fn (array $item): bool => ($item['item_type'] ?? '') === 'movie')
+                ->map(static fn (array $item) => $item['item'])
+                ->filter(static fn ($item): bool => $item instanceof \Modules\JAV\Models\Jav)
+                ->values();
+
+            $this->dashboardReadRepository->decorateJavsForUser($featuredMovies, $user);
+        }
+
         $builtInPresets = [
             'default' => 'Default',
             'weekly_downloads' => 'Most Downloaded This Week',
@@ -144,6 +200,7 @@ class DashboardController extends Controller
             'savedPresets' => $savedPresets,
             'savedPresetIndex' => $savedPresetIndex,
             'continueWatching' => $continueWatching,
+            'featuredGroups' => $featuredGroups,
             'preferences' => $preferences,
             'tagsInput' => $tagsInput,
             'availableBioKeys' => $availableBioKeys,
@@ -184,6 +241,7 @@ class DashboardController extends Controller
         $actor->loadCount('javs')->load(['profileAttributes', 'profileSources']);
 
         $movies = $this->dashboardReadRepository->actorMovies($actor, 30);
+        $this->dashboardReadRepository->decorateItemsForUser($movies, Auth::user());
 
         $bioProfile = $this->actorProfileResolver->toDisplayMap($actor);
         $resolved = $this->actorProfileResolver->resolve($actor);
@@ -226,6 +284,14 @@ class DashboardController extends Controller
         foreach ($favorites->items() as $favorite) {
             $favorite->created_at_human = $favorite->created_at?->diffForHumans();
         }
+        $favoriteMovies = collect($favorites->items())
+            ->map(static fn ($favorite) => $favorite->favoritable)
+            ->filter(static fn ($item) => $item instanceof \Modules\JAV\Models\Jav)
+            ->values();
+        $this->dashboardReadRepository->decorateJavsForUser($favoriteMovies, $user);
+        foreach ($favoriteMovies as $movie) {
+            $movie->is_liked = true;
+        }
 
         return Inertia::render('User/Favorites', [
             'favorites' => $favorites,
@@ -236,6 +302,10 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $recommendations = $this->recommendationService->getRecommendationsWithReasons($user, 30);
+        $this->dashboardReadRepository->decorateJavsForUser(
+            collect($recommendations)->pluck('movie')->filter()->values(),
+            $user
+        );
 
         return Inertia::render('User/Recommendations', [
             'recommendations' => $recommendations,

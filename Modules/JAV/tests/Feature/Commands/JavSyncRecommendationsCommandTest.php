@@ -3,7 +3,7 @@
 namespace Modules\JAV\Tests\Feature\Commands;
 
 use App\Models\User;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Tests\TestCase;
 
@@ -30,11 +30,7 @@ class JavSyncRecommendationsCommandTest extends TestCase
         $withFavorite = User::factory()->create();
         $withoutFavorite = User::factory()->create();
 
-        Favorite::query()->create([
-            'user_id' => $withFavorite->id,
-            'favoritable_id' => $jav->id,
-            'favoritable_type' => Jav::class,
-        ]);
+        Interaction::factory()->forJav($jav)->favorite()->create(['user_id' => $withFavorite->id]);
 
         $this->artisan('jav:sync:recommendations')
             ->expectsOutput('Recommendation sync completed. Synced users: 1.')

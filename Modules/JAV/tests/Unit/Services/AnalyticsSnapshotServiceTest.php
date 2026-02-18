@@ -4,9 +4,8 @@ namespace Modules\JAV\Tests\Unit\Services;
 
 use App\Models\User;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Models\UserJavHistory;
 use Modules\JAV\Models\Watchlist;
@@ -44,13 +43,14 @@ class AnalyticsSnapshotServiceTest extends TestCase
             'created_at' => now(),
         ]);
 
-        Favorite::factory()->create([
-            'user_id' => $user->id,
-            'favoritable_id' => $completeJav->id,
-            'favoritable_type' => Jav::class,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        Interaction::factory()
+            ->forJav($completeJav)
+            ->favorite()
+            ->create([
+                'user_id' => $user->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
         Watchlist::factory()->create([
             'user_id' => $user->id,
@@ -60,13 +60,14 @@ class AnalyticsSnapshotServiceTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $completeJav->id,
-            'rating' => 5,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        Interaction::factory()
+            ->forJav($completeJav)
+            ->rating(5)
+            ->create([
+                'user_id' => $user->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
         UserJavHistory::factory()->create([
             'user_id' => $user->id,

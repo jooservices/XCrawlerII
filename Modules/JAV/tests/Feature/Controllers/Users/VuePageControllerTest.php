@@ -4,8 +4,8 @@ namespace Modules\JAV\Tests\Feature\Controllers\Users;
 
 use App\Models\User;
 use Modules\JAV\Models\Actor;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 use Modules\JAV\Tests\Feature\Controllers\Concerns\InteractsWithInertiaPage;
 use Modules\JAV\Tests\TestCase;
 
@@ -20,10 +20,10 @@ class VuePageControllerTest extends TestCase
         $user = User::factory()->create();
         $actor = Actor::factory()->create();
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $jav->id,
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(4)
+            ->create(['user_id' => $user->id]);
 
         $cases = [
             ['route' => route('jav.vue.dashboard'), 'component' => 'Dashboard/Index', 'props' => ['items', 'filters', 'preferences']],

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\ActorProfileAttribute;
 use Modules\JAV\Models\ActorProfileSource;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
 use Tests\TestCase;
 
@@ -43,10 +43,7 @@ class ActorTest extends TestCase
     public function test_actor_has_favorites_relationship(): void
     {
         $actor = Actor::factory()->create();
-        $favorite = Favorite::factory()->create([
-            'favoritable_type' => Actor::class,
-            'favoritable_id' => $actor->id,
-        ]);
+        $favorite = Interaction::factory()->forActor($actor)->favorite()->create();
 
         $this->assertTrue($actor->favorites->contains($favorite));
     }

@@ -7,9 +7,8 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
-use Modules\JAV\Models\Favorite;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 use Modules\JAV\Models\UserJavHistory;
 use Modules\JAV\Models\UserLikeNotification;
 use Modules\JAV\Models\Watchlist;
@@ -125,10 +124,10 @@ class UserTest extends TestCase
     {
         $user = User::factory()->create();
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $jav->id,
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(4)
+            ->create(['user_id' => $user->id]);
 
         $this->assertTrue($user->ratings->contains($rating));
     }
@@ -172,11 +171,10 @@ class UserTest extends TestCase
         $user = User::factory()->create();
         $jav = Jav::factory()->create();
 
-        $favorite = Favorite::factory()->create([
-            'user_id' => $user->id,
-            'favoritable_id' => $jav->id,
-            'favoritable_type' => Jav::class,
-        ]);
+        $favorite = Interaction::factory()
+            ->forJav($jav)
+            ->favorite()
+            ->create(['user_id' => $user->id]);
 
         $notification = UserLikeNotification::factory()->create([
             'user_id' => $user->id,

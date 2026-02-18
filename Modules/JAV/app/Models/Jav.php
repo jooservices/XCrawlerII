@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
+use Modules\JAV\Models\Interaction;
 
 class Jav extends Model
 {
@@ -270,14 +271,19 @@ class Jav extends Model
         return $this->image;
     }
 
-    public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    public function interactions(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
-        return $this->morphMany(Favorite::class, 'favoritable');
+        return $this->morphMany(Interaction::class, 'item');
     }
 
-    public function ratings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
-        return $this->hasMany(Rating::class);
+        return $this->interactions()->where('action', Interaction::ACTION_FAVORITE);
+    }
+
+    public function ratings(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->interactions()->where('action', Interaction::ACTION_RATING);
     }
 
     public function watchlists(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -300,7 +306,7 @@ class Jav extends Model
      */
     public function getAverageRatingAttribute(): ?float
     {
-        $average = $this->ratings()->avg('rating');
+        $average = $this->ratings()->avg('value');
 
         return $average ? round($average, 1) : null;
     }

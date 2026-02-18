@@ -3,8 +3,8 @@
 namespace Modules\JAV\Tests\Feature\Requests;
 
 use App\Models\User;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 use Modules\JAV\Models\Watchlist;
 use Modules\JAV\Tests\TestCase;
 
@@ -39,11 +39,10 @@ class RequestValidationAdditionalTest extends TestCase
     {
         $user = User::factory()->create();
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $jav->id,
-            'rating' => 3,
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(3)
+            ->create(['user_id' => $user->id]);
 
         $this->actingAs($user)
             ->putJson(route('ratings.update', $rating), [

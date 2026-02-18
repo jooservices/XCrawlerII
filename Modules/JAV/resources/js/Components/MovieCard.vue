@@ -1,11 +1,15 @@
 <script setup>
-import { Link, router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import { router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
 import { useUIStore } from '@jav/Stores/ui';
+import BaseCard from '@jav/Components/BaseCard.vue';
 
 const props = defineProps({
-    item: Object,
+    item: {
+        type: Object,
+        required: true,
+    },
     activeTags: {
         type: Array,
         default: () => [],
@@ -18,132 +22,52 @@ const props = defineProps({
         }),
     },
 });
+
 const page = usePage();
 const uiStore = useUIStore();
 const hasAuthUser = computed(() => Boolean(page.props.auth?.user));
-const preferences = computed(() => page.props.auth?.user?.preferences || {});
-const textPreference = computed(() => preferences.value.text_preference || 'detailed');
+const roles = computed(() => page.props.auth?.user?.roles || []);
+const isAdmin = computed(() => roles.value.includes('admin'));
 
-// Helper for date formatting
 const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 };
 
-// Helper for fallback image
-const handleImageError = (e) => {
-    e.target.src = 'https://placehold.co/300x400?text=No+Image';
+const resolveName = (value) => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+    return value.name || '';
 };
 
-// Resolvers for Actor/Tag names (handling object or string variants from backend)
-const resolveName = (obj) => {
-    if (!obj) return '';
-    if (typeof obj === 'string') return obj;
-    return obj.name || '';
-};
-const resolveActorIdentifier = (actor) => {
-    if (!actor || typeof actor === 'string') {
-        return null;
-    }
-
-    return actor.uuid || actor.id || null;
-};
-const actorLink = (actor) => {
-    const identifier = resolveActorIdentifier(actor);
-    if (identifier) {
-        return route('jav.vue.actors.bio', identifier);
-    }
-
-    return route('jav.vue.dashboard', { actor: resolveName(actor) });
-};
-const titleText = computed(() => {
-    const title = String(props.item?.title || '');
-    if (textPreference.value !== 'concise') {
-        return title;
-    }
-    return title.length > 45 ? `${title.slice(0, 45)}...` : title;
-});
-const descriptionText = computed(() => {
-    const description = String(props.item?.description || 'No description available.');
-    if (textPreference.value !== 'concise') {
-        return description;
-    }
-    return description.length > 120 ? `${description.slice(0, 120)}...` : description;
-});
-const normalizeTagLabel = (value) => {
-    return String(value || '')
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9]+/g, ' ')
-        .replace(/\s+/g, ' ');
-};
-const normalizedActiveTags = computed(() => {
-    return [...new Set(
-        (props.activeTags || [])
-            .map((tag) => normalizeTagLabel(tag))
-            .filter((tag) => tag !== '')
-    )];
-});
-const reasonActors = computed(() => {
-    const actors = props.recommendationReasons?.actors;
-    return Array.isArray(actors) ? actors.filter((name) => String(name || '').trim() !== '') : [];
-});
-const reasonTags = computed(() => {
-    const tags = props.recommendationReasons?.tags;
-    return Array.isArray(tags) ? tags.filter((name) => String(name || '').trim() !== '') : [];
-});
-const hasRecommendationReasons = computed(() => {
-    return reasonActors.value.length > 0 || reasonTags.value.length > 0;
-});
-const reasonActorsToShow = computed(() => reasonActors.value.slice(0, 1));
-const reasonTagsToShow = computed(() => reasonTags.value.slice(0, 1));
-const movieActors = computed(() => (Array.isArray(props.item?.actors) ? props.item.actors : []));
-const movieTags = computed(() => (Array.isArray(props.item?.tags) ? props.item.tags : []));
-const visibleActors = computed(() => movieActors.value.slice(0, 4));
-const visibleTags = computed(() => movieTags.value.slice(0, 4));
-const extraActorCount = computed(() => Math.max(0, movieActors.value.length - visibleActors.value.length));
-const extraTagCount = computed(() => Math.max(0, movieTags.value.length - visibleTags.value.length));
-const activeTagSet = computed(() => {
-    return new Set(normalizedActiveTags.value);
-});
-const isActiveTag = (tag) => {
-    const normalizedTag = normalizeTagLabel(resolveName(tag));
-    if (!normalizedTag) {
-        return false;
-    }
-
-    if (activeTagSet.value.has(normalizedTag)) {
-        return true;
-    }
-
-    return normalizedActiveTags.value.some((selectedTag) => {
-        return normalizedTag.includes(selectedTag) || selectedTag.includes(normalizedTag);
-    });
+const normalizeArray = (list) => {
+    return (Array.isArray(list) ? list : [])
+        .map((entry) => resolveName(entry))
+        .filter((entry) => String(entry || '').trim() !== '');
 };
 
-const downloadRoute = computed(() => {
-    return route('jav.movies.download', props.item.uuid || props.item.id);
-});
-
-const detailRoute = computed(() => {
-    return route('jav.vue.movies.show', props.item.uuid || props.item.id);
-});
-
-const openDetail = (event) => {
-    const target = event.target;
-    if (target.closest('a') || target.closest('button')) {
-        return;
+const studioText = computed(() => {
+    const studio = props.item?.studio;
+    if (Array.isArray(studio)) {
+        return studio.filter((entry) => String(entry || '').trim() !== '').join(', ');
     }
 
-    router.visit(detailRoute.value);
-};
+    return studio || '';
+});
 
-const localIsLiked = ref(props.item.is_liked);
-const localInWatchlist = ref(props.item.in_watchlist);
-const localWatchlistId = ref(props.item.watchlist_id);
-const localUserRating = ref(props.item.user_rating || 0);
-const localUserRatingId = ref(props.item.user_rating_id);
+const averageRating = computed(() => {
+    const value = props.item?.average_rating ?? props.item?.ratings_avg_rating ?? props.item?.avg_rating ?? props.item?.averageRating;
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? Number(numeric.toFixed(1)) : 0;
+});
+
+const localIsLiked = ref(Boolean(props.item?.is_liked));
+const localInWatchlist = ref(Boolean(props.item?.in_watchlist));
+const localWatchlistId = ref(props.item?.watchlist_id || null);
+const localUserRating = ref(Number(props.item?.user_rating || 0));
+const localUserRatingId = ref(props.item?.user_rating_id || null);
+const localIsFeatured = ref(Boolean(props.item?.is_featured ?? props.item?.isFeatured));
 const isProcessing = ref(false);
 const isWatchlistProcessing = ref(false);
 const ratingProcessing = ref(false);
@@ -166,7 +90,6 @@ const toggleLike = async () => {
             );
         }
     } catch (error) {
-        console.error(error);
         uiStore.showToast('Failed to update favorite status', 'error');
     } finally {
         isProcessing.value = false;
@@ -255,234 +178,154 @@ const rate = async (rating) => {
         ratingProcessing.value = false;
     }
 };
+
+const defaultFeaturedGroup = 'recent';
+const featuredLoaded = ref(false);
+const featuredEntries = ref([]);
+
+const loadFeaturedEntries = async () => {
+    if (!isAdmin.value || featuredLoaded.value) {
+        return;
+    }
+
+    try {
+        const response = await axios.get(route('jav.api.admin.featured-items.lookup'), {
+            params: {
+                item_type: 'movie',
+                item_id: props.item.id,
+            },
+            headers: {
+                Accept: 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+            },
+        });
+
+        featuredEntries.value = response.data?.items || [];
+        featuredLoaded.value = true;
+        localIsFeatured.value = featuredEntries.value.length > 0;
+    } catch (error) {
+        uiStore.showToast(error.response?.data?.message || 'Failed to load featured status.', 'error');
+    }
+};
+
+const toggleFeatured = async (value) => {
+    if (!isAdmin.value) {
+        return;
+    }
+
+    if (!featuredLoaded.value) {
+        await loadFeaturedEntries();
+    }
+
+    const activeEntry = featuredEntries.value.find((entry) => entry.group === defaultFeaturedGroup) || featuredEntries.value[0];
+
+    try {
+        if (value) {
+            const payload = {
+                item_type: 'movie',
+                item_id: Number(props.item.id),
+                group: defaultFeaturedGroup,
+                rank: 0,
+                is_active: true,
+            };
+            const response = await axios.post(route('jav.api.admin.featured-items.store'), payload, {
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+
+            featuredEntries.value = [response.data, ...featuredEntries.value];
+            localIsFeatured.value = true;
+            uiStore.showToast('Added to featured group.', 'success');
+            return;
+        }
+
+        if (activeEntry?.id) {
+            await axios.delete(route('jav.api.admin.featured-items.destroy', activeEntry.id), {
+                headers: {
+                    Accept: 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+
+            featuredEntries.value = featuredEntries.value.filter((entry) => entry.id !== activeEntry.id);
+            localIsFeatured.value = featuredEntries.value.length > 0;
+            uiStore.showToast('Removed from featured group.', 'success');
+        }
+    } catch (error) {
+        uiStore.showToast(error.response?.data?.message || 'Failed to update featured status.', 'error');
+    }
+};
+
+const downloadRoute = computed(() => {
+    return route('jav.movies.download', props.item.uuid || props.item.id);
+});
+
+const detailRoute = computed(() => {
+    return route('jav.vue.movies.show', props.item.uuid || props.item.id);
+});
+
+const cardData = computed(() => {
+    return {
+        code: props.item?.formatted_code || props.item?.code || '',
+        title: props.item?.title || '',
+        releaseDate: formatDate(props.item?.date || props.item?.release_date || props.item?.releaseDate),
+        size: props.item?.size || null,
+        averageRating: averageRating.value,
+        userRating: localUserRating.value,
+        views: props.item?.views ?? 0,
+        downloads: props.item?.downloads ?? 0,
+        runtime: props.item?.runtime || '-',
+        studio: studioText.value || '-',
+        language: props.item?.language || '-',
+        isLiked: localIsLiked.value,
+        inWatchlist: localInWatchlist.value,
+        isFeatured: localIsFeatured.value,
+        cover: props.item?.cover || '',
+        description: props.item?.description || '',
+        actors: normalizeArray(props.item?.actors),
+        tags: normalizeArray(props.item?.tags),
+        reasons: [],
+    };
+});
+
+const handleDownload = () => {
+    window.location.href = downloadRoute.value;
+};
+
+const openDetail = () => {
+    router.visit(detailRoute.value);
+};
 </script>
 
 <template>
-    <div class="ui-col">
-        <div class="ui-card u-h-full u-shadow-sm movie-card u-cursor-pointer" :data-uuid="item.uuid" @click="openDetail">
-            <Link :href="detailRoute" class="u-relative u-block">
-                <img 
-                    :src="item.cover" 
-                    :alt="item.code" 
-                    @error="handleImageError"
-                    class="ui-card-img-top u-h-300 u-object-cover"
-                >
-                <div class="u-absolute u-top-0 u-left-0 u-text-white px-2 py-1 m-2 movie-card-date">
-                    <small><i class="fas fa-calendar-alt"></i> {{ formatDate(item.date) }}</small>
-                </div>
-                <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
-                    <small><i class="fas fa-eye"></i> <span>{{ item.views ?? 0 }}</span></small>
-                    <small class="ml-2"><i class="fas fa-download"></i> <span>{{ item.downloads ?? 0 }}</span></small>
-                </div>
-            </Link>
-
-            <div class="ui-card-body movie-card-body">
-                <div class="movie-card-content">
-                    <div class="movie-card-heading">
-                        <Link :href="detailRoute" class="u-no-underline">
-                            <h5 class="ui-card-title u-text-primary mb-1">{{ item.formatted_code || item.code }}</h5>
-                        </Link>
-                        <p class="ui-card-text movie-card-title-line" :title="item.title">{{ titleText }}</p>
-                    </div>
-
-                    <div class="movie-card-meta">
-                        <span v-if="item.size" class="ui-badge movie-card-badge movie-card-badge-meta">{{ item.size }} GB</span>
-                    </div>
-
-                    <div v-if="hasRecommendationReasons" class="movie-card-badge-row movie-card-reasons">
-                    <span
-                        v-for="actorName in reasonActorsToShow"
-                        :key="`reason-actor-${item.id}-${actorName}`"
-                        class="ui-badge movie-card-badge movie-card-badge-actor"
-                    >
-                        Because you liked actor: {{ actorName }}
-                    </span>
-                    <span
-                        v-for="tagName in reasonTagsToShow"
-                        :key="`reason-tag-${item.id}-${tagName}`"
-                        class="ui-badge movie-card-badge movie-card-badge-tag"
-                    >
-                        Because you liked tag: {{ tagName }}
-                    </span>
-                </div>
-
-                    <div class="movie-card-badge-row movie-card-actors">
-                    <Link 
-                        v-for="(actor, index) in visibleActors" 
-                        :key="index"
-                        :href="actorLink(actor)"
-                        class="ui-badge movie-card-badge movie-card-badge-actor u-no-underline u-z-2 u-relative"
-                    >
-                        {{ resolveName(actor) }}
-                    </Link>
-                    <span v-if="extraActorCount > 0" class="ui-badge movie-card-badge movie-card-badge-meta">+{{ extraActorCount }}</span>
-                </div>
-
-                    <div class="movie-card-badge-row movie-card-tags">
-                    <Link 
-                        v-for="(tag, index) in visibleTags" 
-                        :key="index"
-                        :href="route('jav.vue.dashboard', { tag: resolveName(tag) })"
-                        class="ui-badge movie-card-badge u-no-underline u-z-2 u-relative"
-                        :class="isActiveTag(tag) ? 'movie-card-badge-tag-active' : 'movie-card-badge-tag'"
-                    >
-                        {{ resolveName(tag) }}
-                    </Link>
-                    <span v-if="extraTagCount > 0" class="ui-badge movie-card-badge movie-card-badge-meta">+{{ extraTagCount }}</span>
-                </div>
-
-                    <div class="movie-card-actions">
-                        <div class="u-grid gap-2">
-                            <a :href="downloadRoute" class="ui-btn ui-btn-primary ui-btn-sm download-btn">
-                                <i class="fas fa-download"></i> Download
-                            </a>
-                        </div>
-
-                        <div v-if="hasAuthUser" class="mt-2 u-flex gap-2">
-                            <button
-                                type="button"
-                                class="ui-btn ui-btn-sm u-z-2 u-relative"
-                                :class="localIsLiked ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
-                                :disabled="isProcessing"
-                                title="Like"
-                                @click.prevent="toggleLike"
-                            >
-                                <i :class="localIsLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
-                            </button>
-                            <button
-                                type="button"
-                                class="ui-btn ui-btn-sm u-z-2 u-relative"
-                                :class="localInWatchlist ? 'ui-btn-warning' : 'ui-btn-outline-warning'"
-                                :disabled="isWatchlistProcessing"
-                                title="Watchlist"
-                                @click.prevent="toggleWatchlist"
-                            >
-                                <i :class="localInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-                            </button>
-                            <div class="quick-rating-group u-flex u-items-center ml-auto">
-                        <button
-                            v-for="star in 5"
-                            :key="`star-${item.id}-${star}`"
-                            type="button"
-                            class="ui-btn ui-btn-link ui-btn-sm p-0 mx-1 quick-rate-btn u-z-2 u-relative"
-                            :class="(localUserRating || 0) >= star ? 'u-text-warning' : 'u-text-secondary'"
-                            :title="`Rate ${star} star${star > 1 ? 's' : ''}`"
-                            @click.prevent="rate(star)"
-                        >
-                            <i class="fas fa-star"></i>
-                        </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="movie-card-description">
-                    <p class="movie-card-description-text" :title="descriptionText">{{ descriptionText }}</p>
-                </div>
-            </div>
-        </div>
+    <div class="ui-col" @mouseenter="loadFeaturedEntries">
+        <BaseCard
+            :card="cardData"
+            :show-cover="true"
+            :show-stats="true"
+            :show-views="true"
+            :show-downloads="true"
+            :show-code="true"
+            :show-release-date="true"
+            :show-description="true"
+            :show-actors="true"
+            :show-tags="true"
+            :show-details="true"
+            :show-details-toggle="true"
+            :show-download="true"
+            :show-like="true"
+            :show-watchlist="true"
+            :show-user-rating="true"
+            :show-average-rating="true"
+            :on-like="toggleLike"
+            :on-watchlist="toggleWatchlist"
+            :on-rate="rate"
+            :on-download="handleDownload"
+            :on-toggle-featured="toggleFeatured"
+            :on-cover-click="openDetail"
+            :show-featured-toggle="isAdmin"
+        />
     </div>
 </template>
-
-<style scoped>
-.movie-card {
-    display: flex;
-    flex-direction: column;
-    min-height: 635px;
-}
-
-.movie-card-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    min-height: 0;
-}
-
-.movie-card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    min-height: 0;
-}
-
-.movie-card-title-line {
-    margin-bottom: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    min-height: 2.6rem;
-}
-
-.movie-card-meta {
-    min-height: 1.7rem;
-}
-
-.movie-card-badge-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    align-items: flex-start;
-    min-height: 2rem;
-    max-height: 2rem;
-    overflow: hidden;
-}
-
-.movie-card-reasons {
-    min-height: 1.8rem;
-    max-height: 1.8rem;
-}
-
-.movie-card-actions {
-    min-height: 4.8rem;
-}
-
-.movie-card-description {
-    margin-top: auto;
-    padding-top: 0.65rem;
-    border-top: 1px solid var(--border);
-    min-height: 4.3rem;
-}
-
-.movie-card-description-text {
-    margin: 0;
-    color: var(--text-2);
-    font-size: 0.84rem;
-    line-height: 1.35;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.movie-card-badge {
-    border: 1px solid transparent;
-}
-
-.movie-card-badge-actor {
-    background: rgba(22, 163, 74, 0.22) !important;
-    border-color: rgba(34, 197, 94, 0.5) !important;
-    color: #dcfce7 !important;
-}
-
-.movie-card-badge-tag {
-    background: rgba(2, 132, 199, 0.22) !important;
-    border-color: rgba(56, 189, 248, 0.5) !important;
-    color: #e0f2fe !important;
-}
-
-.movie-card-badge-tag-active {
-    background: rgba(245, 158, 11, 0.9) !important;
-    border-color: rgba(251, 191, 36, 0.95) !important;
-    color: #1f2937 !important;
-}
-
-.movie-card-badge-meta {
-    background: rgba(148, 163, 184, 0.18) !important;
-    border-color: rgba(148, 163, 184, 0.4) !important;
-    color: #dbeafe !important;
-}
-
-.movie-card-date {
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
-}
-</style>

@@ -32,6 +32,14 @@ class LibraryController extends Controller
     {
         $user = auth()->user();
         $favorites = $this->dashboardReadRepository->favoritesForUser((int) $user->id, 30);
+        $favoriteMovies = collect($favorites->items())
+            ->map(static fn ($favorite) => $favorite->favoritable)
+            ->filter(static fn ($item) => $item instanceof \Modules\JAV\Models\Jav)
+            ->values();
+        $this->dashboardReadRepository->decorateJavsForUser($favoriteMovies, $user);
+        foreach ($favoriteMovies as $movie) {
+            $movie->is_liked = true;
+        }
 
         return Inertia::render('User/Favorites', [
             'favorites' => $favorites,
@@ -42,6 +50,10 @@ class LibraryController extends Controller
     {
         $user = auth()->user();
         $recommendations = $this->recommendationService->getRecommendationsWithReasons($user, 30);
+        $this->dashboardReadRepository->decorateJavsForUser(
+            collect($recommendations)->pluck('movie')->filter()->values(),
+            $user
+        );
 
         return Inertia::render('User/Recommendations', [
             'recommendations' => $recommendations,

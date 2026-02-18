@@ -4,8 +4,8 @@ namespace Modules\JAV\Tests\Unit\Models;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 use Tests\TestCase;
 
 class RatingTest extends TestCase
@@ -16,10 +16,10 @@ class RatingTest extends TestCase
     {
         $user = User::factory()->create();
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $jav->id,
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(4)
+            ->create(['user_id' => $user->id]);
 
         $this->assertInstanceOf(User::class, $rating->user);
         $this->assertEquals($user->id, $rating->user->id);
@@ -29,13 +29,13 @@ class RatingTest extends TestCase
     {
         $user = User::factory()->create();
         $jav = Jav::factory()->create();
-        $rating = Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $jav->id,
-        ]);
+        $rating = Interaction::factory()
+            ->forJav($jav)
+            ->rating(4)
+            ->create(['user_id' => $user->id]);
 
-        $this->assertInstanceOf(Jav::class, $rating->jav);
-        $this->assertEquals($jav->id, $rating->jav->id);
+        $this->assertInstanceOf(Jav::class, $rating->item);
+        $this->assertEquals($jav->id, $rating->item->id);
     }
 
     public function test_for_jav_scope_filters_by_movie(): void
@@ -44,22 +44,23 @@ class RatingTest extends TestCase
         $jav1 = Jav::factory()->create();
         $jav2 = Jav::factory()->create();
 
-        Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $jav1->id,
-        ]);
+        Interaction::factory()->forJav($jav1)->rating(3)->create(['user_id' => $user->id]);
+        Interaction::factory()->forJav($jav2)->rating(4)->create(['user_id' => $user->id]);
 
-        Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $jav2->id,
-        ]);
-
-        $jav1Ratings = Rating::forJav($jav1->id)->get();
-        $jav2Ratings = Rating::forJav($jav2->id)->get();
+        $jav1Ratings = Interaction::query()
+            ->where('item_type', Interaction::morphTypeFor(Jav::class))
+            ->where('action', Interaction::ACTION_RATING)
+            ->where('item_id', $jav1->id)
+            ->get();
+        $jav2Ratings = Interaction::query()
+            ->where('item_type', Interaction::morphTypeFor(Jav::class))
+            ->where('action', Interaction::ACTION_RATING)
+            ->where('item_id', $jav2->id)
+            ->get();
 
         $this->assertEquals(1, $jav1Ratings->count());
         $this->assertEquals(1, $jav2Ratings->count());
-        $this->assertEquals($jav1->id, $jav1Ratings->first()->jav_id);
+        $this->assertEquals($jav1->id, $jav1Ratings->first()->item_id);
     }
 
     public function test_by_user_scope_filters_by_user(): void
@@ -68,18 +69,17 @@ class RatingTest extends TestCase
         $user2 = User::factory()->create();
         $jav = Jav::factory()->create();
 
-        Rating::factory()->create([
-            'user_id' => $user1->id,
-            'jav_id' => $jav->id,
-        ]);
+        Interaction::factory()->forJav($jav)->rating(3)->create(['user_id' => $user1->id]);
+        Interaction::factory()->forJav($jav)->rating(4)->create(['user_id' => $user2->id]);
 
-        Rating::factory()->create([
-            'user_id' => $user2->id,
-            'jav_id' => $jav->id,
-        ]);
-
-        $user1Ratings = Rating::byUser($user1->id)->get();
-        $user2Ratings = Rating::byUser($user2->id)->get();
+        $user1Ratings = Interaction::query()
+            ->where('action', Interaction::ACTION_RATING)
+            ->where('user_id', $user1->id)
+            ->get();
+        $user2Ratings = Interaction::query()
+            ->where('action', Interaction::ACTION_RATING)
+            ->where('user_id', $user2->id)
+            ->get();
 
         $this->assertEquals(1, $user1Ratings->count());
         $this->assertEquals(1, $user2Ratings->count());
@@ -91,24 +91,21 @@ class RatingTest extends TestCase
         $user = User::factory()->create();
         $jav = Jav::factory()->create();
 
-        Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => $jav->id,
-            'rating' => 5,
-        ]);
+        Interaction::factory()->forJav($jav)->rating(5)->create(['user_id' => $user->id]);
+        Interaction::factory()->forJav(Jav::factory()->create())->rating(3)->create(['user_id' => $user->id]);
 
-        Rating::factory()->create([
-            'user_id' => $user->id,
-            'jav_id' => Jav::factory()->create()->id,
-            'rating' => 3,
-        ]);
-
-        $fiveStarRatings = Rating::withStars(5)->get();
-        $threeStarRatings = Rating::withStars(3)->get();
+        $fiveStarRatings = Interaction::query()
+            ->where('action', Interaction::ACTION_RATING)
+            ->where('value', 5)
+            ->get();
+        $threeStarRatings = Interaction::query()
+            ->where('action', Interaction::ACTION_RATING)
+            ->where('value', 3)
+            ->get();
 
         $this->assertEquals(1, $fiveStarRatings->count());
         $this->assertEquals(1, $threeStarRatings->count());
-        $this->assertEquals(5, $fiveStarRatings->first()->rating);
-        $this->assertEquals(3, $threeStarRatings->first()->rating);
+        $this->assertEquals(5, $fiveStarRatings->first()->value);
+        $this->assertEquals(3, $threeStarRatings->first()->value);
     }
 }

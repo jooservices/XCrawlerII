@@ -39,6 +39,7 @@ export const useUIStore = defineStore('ui', () => {
         }, 3000);
     };
 
+
     return {
         sidebarExpanded,
         mobileSidebarOpen,

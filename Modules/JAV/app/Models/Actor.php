@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use Modules\JAV\Services\ActorProfileResolver;
+use Modules\JAV\Models\Interaction;
 
 class Actor extends Model
 {
@@ -206,8 +207,13 @@ class Actor extends Model
         return $age >= 0 ? $age : null;
     }
 
+    public function interactions(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Interaction::class, 'item');
+    }
+
     public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
-        return $this->morphMany(Favorite::class, 'favoritable');
+        return $this->interactions()->where('action', Interaction::ACTION_FAVORITE);
     }
 }

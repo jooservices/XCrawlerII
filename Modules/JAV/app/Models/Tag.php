@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Laravel\Scout\Searchable;
+use Modules\JAV\Models\Interaction;
 
 class Tag extends Model
 {
@@ -48,8 +49,13 @@ class Tag extends Model
         return 'tags';
     }
 
+    public function interactions(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Interaction::class, 'item');
+    }
+
     public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
-        return $this->morphMany(Favorite::class, 'favoritable');
+        return $this->interactions()->where('action', Interaction::ACTION_FAVORITE);
     }
 }

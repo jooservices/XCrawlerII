@@ -17,4 +17,5 @@ Route::middleware(['auth', 'role:admin,moderator'])->prefix('admin')->name('admi
 
     // Role Management
     Route::resource('roles', RoleController::class);
+
 });

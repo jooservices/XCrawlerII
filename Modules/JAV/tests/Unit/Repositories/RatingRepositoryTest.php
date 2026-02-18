@@ -4,9 +4,9 @@ namespace Modules\JAV\Tests\Unit\Repositories;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
-use Modules\JAV\Repositories\RatingRepository;
+use Modules\JAV\Repositories\InteractionRepository;
 use Tests\TestCase;
 
 class RatingRepositoryTest extends TestCase
@@ -20,10 +20,16 @@ class RatingRepositoryTest extends TestCase
         $jav1 = Jav::factory()->create();
         $jav2 = Jav::factory()->create();
 
-        $rating1 = Rating::factory()->create(['user_id' => $user->id, 'jav_id' => $jav1->id]);
-        Rating::factory()->create(['user_id' => $otherUser->id, 'jav_id' => $jav2->id]);
+        $rating1 = Interaction::factory()
+            ->forJav($jav1)
+            ->rating(4)
+            ->create(['user_id' => $user->id]);
+        Interaction::factory()
+            ->forJav($jav2)
+            ->rating(3)
+            ->create(['user_id' => $otherUser->id]);
 
-        $result = app(RatingRepository::class)->keyedByJavIdForUserAndJavIds($user->id, collect([$jav1->id, $jav2->id]));
+        $result = app(InteractionRepository::class)->keyedRatingsForUserAndJavIds($user->id, collect([$jav1->id, $jav2->id]));
 
         $this->assertTrue($result->has($jav1->id));
         $this->assertFalse($result->has($jav2->id));

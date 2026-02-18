@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Modules\JAV\Models\Actor;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Mongo\AnalyticsSnapshot;
 use Modules\JAV\Models\Tag;
@@ -92,9 +93,9 @@ class AnalyticsSnapshotService
         $providerDailyCreated = $this->buildDailySourceCounts($days);
 
         $dailyEngagement = [
-            'favorites' => $this->buildDailyCounts('favorites', $days),
+            'favorites' => $this->buildDailyInteractionCounts(Interaction::ACTION_FAVORITE, $days),
             'watchlists' => $this->buildDailyCounts('watchlists', $days),
-            'ratings' => $this->buildDailyCounts('ratings', $days),
+            'ratings' => $this->buildDailyInteractionCounts(Interaction::ACTION_RATING, $days),
             'history' => $this->buildDailyCounts('user_jav_history', $days),
         ];
 
@@ -149,10 +150,10 @@ class AnalyticsSnapshotService
             ->all();
 
         $topRated = Jav::query()
-            ->withAvg('ratings', 'rating')
+            ->withAvg('ratings', 'value')
             ->withCount('ratings')
             ->having('ratings_count', '>', 0)
-            ->orderByDesc('ratings_avg_rating')
+            ->orderByDesc('ratings_avg_value')
             ->orderByDesc('ratings_count')
             ->take(10)
             ->get(['uuid', 'code', 'title'])
@@ -237,6 +238,38 @@ class AnalyticsSnapshotService
         $start = now()->subDays($days - 1)->startOfDay();
         $raw = DB::table($table)
             ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
+            ->where('created_at', '>=', $start)
+            ->groupBy('day')
+            ->orderBy('day')
+            ->pluck('total', 'day');
+
+        foreach ($labels as $idx => $day) {
+            $values[$idx] = (int) ($raw[$day] ?? 0);
+        }
+
+        return ['labels' => $labels, 'values' => $values];
+    }
+
+    /**
+     * @return array{labels: array<int, string>, values: array<int, int>}
+     */
+    private function buildDailyInteractionCounts(string $action, int $days): array
+    {
+        $labels = [];
+        $values = [];
+        for ($i = $days - 1; $i >= 0; $i--) {
+            $labels[] = now()->subDays($i)->toDateString();
+            $values[] = 0;
+        }
+
+        if (! Schema::hasTable('user_interactions')) {
+            return ['labels' => $labels, 'values' => $values];
+        }
+
+        $start = now()->subDays($days - 1)->startOfDay();
+        $raw = DB::table('user_interactions')
+            ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
+            ->where('action', $action)
             ->where('created_at', '>=', $start)
             ->groupBy('day')
             ->orderBy('day')

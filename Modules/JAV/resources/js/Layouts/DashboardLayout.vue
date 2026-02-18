@@ -9,6 +9,7 @@ import Sidebar from './Partials/Sidebar.vue';
 import Footer from './Partials/Footer.vue';
 
 const uiStore = useUIStore();
+
 const page = usePage();
 const toast = useToast();
 
@@ -117,7 +118,10 @@ onBeforeUnmount(() => {
                     <Sidebar />
                 </aside>
 
-                <main id="mainContentColumn" class="ui-col-12 ui-col-lg-9 ui-col-xl-10 main-content">
+                <main 
+                    id="mainContentColumn" 
+                    class="ui-col-12 ui-col-lg-9 ui-col-xl-10 main-content"
+                >
                     <slot />
                     <Footer />
                 </main>

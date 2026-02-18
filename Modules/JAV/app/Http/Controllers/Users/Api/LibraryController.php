@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Modules\JAV\Http\Controllers\Api\ApiController;
 use Modules\JAV\Http\Requests\ToggleLikeRequest;
 use Modules\JAV\Models\Actor;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Services\RecommendationService;
@@ -27,15 +28,26 @@ class LibraryController extends ApiController
             'actor' => Actor::class,
             'tag' => Tag::class,
         };
+        $itemType = Interaction::morphTypeFor($modelClass);
 
         $model = $modelClass::findOrFail($id);
-        $favorite = $model->favorites()->where('user_id', $user->id)->first();
+        $interaction = Interaction::query()
+            ->where('user_id', $user->id)
+            ->where('item_type', $itemType)
+            ->where('item_id', $model->id)
+            ->where('action', Interaction::ACTION_FAVORITE)
+            ->first();
 
-        if ($favorite) {
-            $favorite->delete();
+        if ($interaction) {
+            $interaction->delete();
             $liked = false;
         } else {
-            $model->favorites()->create(['user_id' => $user->id]);
+            Interaction::create([
+                'user_id' => $user->id,
+                'item_type' => $itemType,
+                'item_id' => $model->id,
+                'action' => Interaction::ACTION_FAVORITE,
+            ]);
             $liked = true;
         }
 

@@ -11,8 +11,8 @@ use Modules\JAV\Http\Controllers\Users\Api\RatingController as ApiRatingControll
 use Modules\JAV\Http\Requests\GetRatingsRequest;
 use Modules\JAV\Http\Requests\StoreRatingRequest;
 use Modules\JAV\Http\Requests\UpdateRatingRequest;
+use Modules\JAV\Models\Interaction;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Rating;
 
 class RatingController extends Controller
 {
@@ -21,28 +21,30 @@ class RatingController extends Controller
      */
     public function index(GetRatingsRequest $request): InertiaResponse|JsonResponse
     {
-        $query = Rating::with(['user', 'jav']);
+        $query = Interaction::with(['user', 'item'])
+            ->where('action', Interaction::ACTION_RATING)
+            ->where('item_type', Interaction::morphTypeFor(Jav::class));
 
         // Filter by movie if jav_id provided
         if ($request->filled('jav_id')) {
-            $query->forJav($request->jav_id);
+            $query->where('item_id', $request->jav_id);
         }
 
         // Filter by user if user_id provided
         if ($request->filled('user_id')) {
-            $query->byUser($request->user_id);
+            $query->where('user_id', $request->user_id);
         }
 
         // Filter by rating stars if provided
         if ($request->filled('rating')) {
-            $query->withStars($request->rating);
+            $query->where('value', $request->rating);
         }
 
         // Sort ratings
         $sort = $request->input('sort', 'recent');
         match ($sort) {
-            'highest' => $query->orderBy('rating', 'desc'),
-            'lowest' => $query->orderBy('rating', 'asc'),
+            'highest' => $query->orderBy('value', 'desc'),
+            'lowest' => $query->orderBy('value', 'asc'),
             default => $query->latest(),
         };
 
@@ -63,31 +65,33 @@ class RatingController extends Controller
 
     public function indexVue(GetRatingsRequest $request): InertiaResponse
     {
-        $query = Rating::with(['user', 'jav']);
+        $query = Interaction::with(['user', 'item'])
+            ->where('action', Interaction::ACTION_RATING)
+            ->where('item_type', Interaction::morphTypeFor(Jav::class));
 
         if ($request->filled('jav_id')) {
-            $query->forJav($request->jav_id);
+            $query->where('item_id', $request->jav_id);
         }
 
         if ($request->filled('user_id')) {
-            $query->byUser($request->user_id);
+            $query->where('user_id', $request->user_id);
         }
 
         if ($request->filled('rating')) {
-            $query->withStars($request->rating);
+            $query->where('value', $request->rating);
         }
 
         $sort = $request->input('sort', 'recent');
         match ($sort) {
-            'highest' => $query->orderBy('rating', 'desc'),
-            'lowest' => $query->orderBy('rating', 'asc'),
+            'highest' => $query->orderBy('value', 'desc'),
+            'lowest' => $query->orderBy('value', 'asc'),
             default => $query->latest(),
         };
 
         $perPage = $request->input('per_page', 15);
         $ratings = $query->paginate($perPage);
         $ratings->setCollection(
-            $ratings->getCollection()->map(function (Rating $rating) {
+            $ratings->getCollection()->map(function (Interaction $rating) {
                 $rating->created_at_human = $rating->created_at?->diffForHumans();
 
                 return $rating;
@@ -109,19 +113,26 @@ class RatingController extends Controller
         }
 
         // Check if user has already rated this movie
-        $existingRating = Rating::where('user_id', $request->user()->id)
-            ->where('jav_id', $request->jav_id)
+        $existingRating = Interaction::query()
+            ->where('user_id', $request->user()->id)
+            ->where('item_type', Interaction::morphTypeFor(Jav::class))
+            ->where('item_id', $request->jav_id)
+            ->where('action', Interaction::ACTION_RATING)
             ->first();
 
         if ($existingRating) {
             return back()->with('error', 'You have already rated this movie.');
         }
 
-        $rating = Rating::create([
+        $rating = Interaction::create([
             'user_id' => $request->user()->id,
-            'jav_id' => $request->jav_id,
-            'rating' => $request->rating,
-            'review' => $request->review,
+            'item_type' => Interaction::morphTypeFor(Jav::class),
+            'item_id' => $request->jav_id,
+            'action' => Interaction::ACTION_RATING,
+            'value' => $request->rating,
+            'meta' => [
+                'review' => $request->review,
+            ],
         ]);
 
         // Update movie's average rating
@@ -133,9 +144,9 @@ class RatingController extends Controller
     /**
      * Display the specified rating.
      */
-    public function show(Rating $rating): InertiaResponse|JsonResponse
+    public function show(Interaction $rating): InertiaResponse|JsonResponse
     {
-        $rating->load(['user', 'jav']);
+        $rating->load(['user', 'item']);
 
         if (request()->expectsJson()) {
             return response()->json([
@@ -149,9 +160,9 @@ class RatingController extends Controller
         ]);
     }
 
-    public function showVue(Rating $rating): InertiaResponse
+    public function showVue(Interaction $rating): InertiaResponse
     {
-        $rating->load(['user', 'jav']);
+        $rating->load(['user', 'item']);
 
         return Inertia::render('Ratings/Show', [
             'rating' => $rating,
@@ -161,19 +172,21 @@ class RatingController extends Controller
     /**
      * Update the specified rating.
      */
-    public function update(UpdateRatingRequest $request, Rating $rating): JsonResponse|RedirectResponse
+    public function update(UpdateRatingRequest $request, Interaction $rating): JsonResponse|RedirectResponse
     {
         if ($request->expectsJson()) {
             return app(ApiRatingController::class)->update($request, $rating);
         }
 
         $rating->update([
-            'rating' => $request->rating,
-            'review' => $request->review,
+            'value' => $request->rating,
+            'meta' => [
+                'review' => $request->review,
+            ],
         ]);
 
         // Update movie's average rating
-        $this->updateMovieAverageRating($rating->jav_id);
+        $this->updateMovieAverageRating((int) $rating->item_id);
 
         return back()->with('success', 'Rating updated successfully!');
     }
@@ -181,7 +194,7 @@ class RatingController extends Controller
     /**
      * Remove the specified rating.
      */
-    public function destroy(Rating $rating): JsonResponse|RedirectResponse
+    public function destroy(Interaction $rating): JsonResponse|RedirectResponse
     {
         if (request()->expectsJson()) {
             return app(ApiRatingController::class)->destroy($rating);
@@ -192,7 +205,7 @@ class RatingController extends Controller
             return back()->with('error', 'Unauthorized.');
         }
 
-        $javId = $rating->jav_id;
+        $javId = (int) $rating->item_id;
         $rating->delete();
 
         // Update movie's average rating
@@ -220,7 +233,11 @@ class RatingController extends Controller
             return;
         }
 
-        $averageRating = Rating::where('jav_id', $javId)->avg('rating');
+        $averageRating = Interaction::query()
+            ->where('item_type', Interaction::morphTypeFor(Jav::class))
+            ->where('item_id', $javId)
+            ->where('action', Interaction::ACTION_RATING)
+            ->avg('value');
 
         // Update the movie's average_rating field
         // Note: This requires adding average_rating column to jav table

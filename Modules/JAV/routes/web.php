@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\JAV\Http\Controllers\Admin\AnalyticsController;
 use Modules\JAV\Http\Controllers\Admin\Api\AnalyticsController as AdminApiAnalyticsController;
+use Modules\JAV\Http\Controllers\Admin\Api\FeaturedItemsController as AdminApiFeaturedItemsController;
 use Modules\JAV\Http\Controllers\Admin\Api\JobTelemetryController as AdminApiJobTelemetryController;
 use Modules\JAV\Http\Controllers\Admin\Api\SearchQualityController as AdminApiSearchQualityController;
 use Modules\JAV\Http\Controllers\Admin\Api\SyncController as AdminApiSyncController;
@@ -91,6 +92,15 @@ Route::middleware(['web', 'auth'])->prefix('jav/api')->name('jav.api.')->group(f
     Route::get(JAV_NOTIFICATIONS_PATH, [ApiNotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/read', [ApiNotificationController::class, 'markNotificationRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [ApiNotificationController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
+
+    Route::middleware(['role:admin'])->prefix('admin/featured-items')->name('admin.featured-items.')->group(function () {
+        Route::get('/search', [AdminApiFeaturedItemsController::class, 'search'])->name('search');
+        Route::get('/lookup', [AdminApiFeaturedItemsController::class, 'lookup'])->name('lookup');
+        Route::get('/', [AdminApiFeaturedItemsController::class, 'index'])->name('index');
+        Route::post('/', [AdminApiFeaturedItemsController::class, 'store'])->name('store');
+        Route::put('/{featuredItem}', [AdminApiFeaturedItemsController::class, 'update'])->name('update');
+        Route::delete('/{featuredItem}', [AdminApiFeaturedItemsController::class, 'destroy'])->name('destroy');
+    });
 });
 
 Route::prefix('jav')->name('jav.')->group(function () {
