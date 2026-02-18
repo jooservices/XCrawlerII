@@ -251,6 +251,16 @@ class DashboardController extends Controller
         ]);
     }
 
+    public function movieCardDemoVue(): InertiaResponse
+    {
+        return Inertia::render('UI/MovieCardDemo');
+    }
+
+    public function actorTagCardDemoVue(): InertiaResponse
+    {
+        return Inertia::render('UI/ActorTagCardDemo');
+    }
+
     public function notificationsVue(NotificationsRequest $request): InertiaResponse
     {
         $user = $request->user();

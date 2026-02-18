@@ -10,6 +10,7 @@ import ConfirmationService from 'primevue/confirmationservice';
 import DashboardLayout from '@jav/Layouts/DashboardLayout.vue';
 import '../css/dashboard-shared.css';
 import 'primeicons/primeicons.css';
+import './fontawesome.js';
 
 const queryClient = new QueryClient({
     defaultOptions: {

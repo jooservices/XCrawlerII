@@ -46,8 +46,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('javs/{jav}', [JAVController::class, 'destroy'])->name('jav.destroy');
 });
 
-Route::middleware(['web', 'auth'])->prefix('jav')->name('jav.vue.')->group(function () {
+Route::middleware(['web',])->prefix('jav')->name('jav.vue.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'indexVue'])->name('dashboard');
+    Route::get('/ui/movie-card-demo', [DashboardController::class, 'movieCardDemoVue'])->name('ui.movie-card-demo');
+    Route::get('/ui/actor-tag-card-demo', [DashboardController::class, 'actorTagCardDemoVue'])->name('ui.actor-tag-card-demo');
     Route::get('/movies/{jav}', [JAVController::class, 'showVue'])->name('movies.show');
     Route::get('/actors', [DashboardController::class, 'actorsVue'])->name('actors');
     Route::get('/actors/{actor}/bio', [DashboardController::class, 'actorBioVue'])->name('actors.bio');
