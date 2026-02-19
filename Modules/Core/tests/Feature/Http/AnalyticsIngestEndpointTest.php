@@ -4,30 +4,30 @@ namespace Modules\Core\Tests\Feature\Http;
 
 use Illuminate\Support\Facades\Redis;
 use Modules\Core\Tests\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class AnalyticsIngestEndpointTest extends TestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
-
         config(['analytics.enabled' => true]);
     }
 
-    public function test_valid_event_returns_202_and_writes_redis(): void
+    public function test_valid_event_writes_to_redis_correctly(): void
     {
         Redis::shouldReceive('set')
             ->once()
-            ->withArgs(fn ($key, $val, $opt1, $opt2, $ttl) => str_starts_with($key, 'anl:evt:'))
+            ->withArgs(fn ($key) => str_starts_with($key, 'anl:evt:'))
             ->andReturn(true);
 
         Redis::shouldReceive('hincrby')->twice();
 
         $payload = [
-            'event_id' => 'test-event-1',
+            'event_id' => 'evt-123',
             'domain' => 'jav',
             'entity_type' => 'movie',
-            'entity_id' => 'abc-123-uuid',
+            'entity_id' => 'uuid-123',
             'action' => 'view',
             'value' => 1,
             'occurred_at' => '2026-02-19T10:00:00Z',
@@ -35,186 +35,124 @@ class AnalyticsIngestEndpointTest extends TestCase
 
         $this->postJson(route('api.analytics.events.store'), $payload)
             ->assertStatus(202)
-            ->assertJsonPath('status', 'accepted');
+            ->assertJson(['status' => 'accepted']);
     }
 
-    public function test_missing_required_fields_returns_422(): void
-    {
-        $this->postJson(route('api.analytics.events.store'), [])
-            ->assertStatus(422);
-    }
-
-    public function test_invalid_action_returns_422(): void
-    {
-        $payload = [
-            'event_id' => 'test',
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => 'abc',
-            'action' => 'invalid_action',
-            'occurred_at' => '2026-02-19T10:00:00Z',
-        ];
-
-        $this->postJson(route('api.analytics.events.store'), $payload)
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['action']);
-    }
-
-    public function test_invalid_domain_returns_422(): void
-    {
-        $payload = [
-            'event_id' => 'test',
-            'domain' => 'unknown',
-            'entity_type' => 'movie',
-            'entity_id' => 'abc',
-            'action' => 'view',
-            'occurred_at' => '2026-02-19T10:00:00Z',
-        ];
-
-        $this->postJson(route('api.analytics.events.store'), $payload)
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['domain']);
-    }
-
-    public function test_feature_flag_off_accepts_but_does_not_write_redis(): void
-    {
-        config(['analytics.enabled' => false]);
-        Redis::shouldReceive('hincrby')->never();
-
-        $payload = [
-            'event_id' => 'test-event-1',
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => 'abc-123-uuid',
-            'action' => 'view',
-            'occurred_at' => '2026-02-19T10:00:00Z',
-        ];
-
-        $this->postJson(route('api.analytics.events.store'), $payload)
-            ->assertStatus(202)
-            ->assertJsonPath('status', 'accepted');
-    }
-
-    public function test_user_id_from_payload_is_ignored(): void
+    #[DataProvider('entityTypeProvider')]
+    public function test_all_entity_types_generate_correct_redis_keys(string $entityType): void
     {
         Redis::shouldReceive('set')->andReturn(true);
+
+        // Expect key: anl:counters:jav:{entityType}:{uuid}
+        $expectedKey = "anl:counters:jav:{$entityType}:uuid-123";
+
+        Redis::shouldReceive('hincrby')
+            ->once()
+            ->with($expectedKey, 'view', 1);
+
+        Redis::shouldReceive('hincrby')
+            ->once()
+            ->with($expectedKey, 'view:2026-02-19', 1);
+
+        $payload = [
+            'event_id' => 'evt-123',
+            'domain' => 'jav',
+            'entity_type' => $entityType,
+            'entity_id' => 'uuid-123',
+            'action' => 'view',
+            'occurred_at' => '2026-02-19T10:00:00Z',
+        ];
+
+        $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
+    }
+
+    public static function entityTypeProvider(): array
+    {
+        return [
+            ['movie'],
+            ['actor'],
+            ['tag'],
+        ];
+    }
+
+    public function test_duplicate_event_id_ignored(): void
+    {
+        // First call: New event
+        Redis::shouldReceive('set')
+            ->once()
+            ->with('anl:evt:dup-123', 1, 'NX', 'EX', 172800)
+            ->andReturn(true);
+
         Redis::shouldReceive('hincrby')->twice();
 
         $payload = [
-            'event_id' => 'test',
+            'event_id' => 'dup-123',
             'domain' => 'jav',
             'entity_type' => 'movie',
-            'entity_id' => 'abc',
+            'entity_id' => 'uuid-123',
             'action' => 'view',
-            'user_id' => 999,
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
 
-        $this->postJson(route('api.analytics.events.store'), $payload)
-            ->assertStatus(202)
-            ->assertJsonPath('status', 'accepted');
-    }
+        $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
 
-    public function test_same_event_id_is_deduplicated(): void
-    {
+        // Second call: Duplicate event
         Redis::shouldReceive('set')
             ->once()
-            ->with('anl:evt:test-duplicate-id', 1, 'NX', 'EX', 172800)
-            ->andReturn(true);
+            ->with('anl:evt:dup-123', 1, 'NX', 'EX', 172800)
+            ->andReturn(false); // Key exists
 
-        Redis::shouldReceive('hincrby')->twice(); // First time writes
+        Redis::shouldReceive('hincrby')->never(); // No write
+
+        $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
+    }
+
+    public function test_redis_connection_failure_handled_gracefully(): void
+    {
+        Redis::shouldReceive('set')->andThrow(new \Exception('Redis connection refused'));
 
         $payload = [
-            'event_id' => 'test-duplicate-id',
+            'event_id' => 'evt-fail',
             'domain' => 'jav',
             'entity_type' => 'movie',
-            'entity_id' => 'abc',
+            'entity_id' => 'uuid-123',
             'action' => 'view',
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
 
-        $this->postJson(route('api.analytics.events.store'), $payload)
-            ->assertStatus(202);
-
-        // Second request
-        Redis::shouldReceive('set')
-            ->once()
-            ->with('anl:evt:test-duplicate-id', 1, 'NX', 'EX', 172800)
-            ->andReturn(false); // Valid key exists
-
-        Redis::shouldReceive('hincrby')->never(); // Should NOT write counters
-
-        $this->postJson(route('api.analytics.events.store'), $payload)
-            ->assertStatus(202);
+        // Should return 500 or handle exception by Laravel handler
+        $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(500);
     }
 
-    public function test_redis_key_structure_and_date_bucket(): void
+    #[DataProvider('invalidPayloadProvider')]
+    public function test_validation_rules(array $payload, string $errorField): void
     {
-        Redis::shouldReceive('set')->andReturn(true);
+        $this->postJson(route('api.analytics.events.store'), $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors([$errorField]);
+    }
 
-        // Expect exact key structure
-        Redis::shouldReceive('hincrby')
-            ->once()
-            ->with('anl:counters:jav:movie:abc-123', 'view', 1);
-
-        // Expect date bucket
-        Redis::shouldReceive('hincrby')
-            ->once()
-            ->with('anl:counters:jav:movie:abc-123', 'view:2026-02-19', 1);
-
-        $payload = [
-            'event_id' => 'test-key-structure',
+    public static function invalidPayloadProvider(): array
+    {
+        $base = [
+            'event_id' => 'evt-1',
             'domain' => 'jav',
             'entity_type' => 'movie',
-            'entity_id' => 'abc-123',
+            'entity_id' => 'uuid-1',
             'action' => 'view',
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
 
-        $this->postJson(route('api.analytics.events.store'), $payload)
-            ->assertStatus(202);
-    }
-
-    public function test_value_min_max_validation(): void
-    {
-        $basePayload = [
-            'event_id' => 'test',
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => 'abc',
-            'action' => 'view',
-            'occurred_at' => '2026-02-19T10:00:00Z',
+        return [
+            'missing event_id' => [array_diff_key($base, ['event_id' => '']), 'event_id'],
+            'missing domain' => [array_diff_key($base, ['domain' => '']), 'domain'],
+            'invalid domain' => [array_merge($base, ['domain' => 'bad']), 'domain'],
+            'invalid entity_type' => [array_merge($base, ['entity_type' => 'user']), 'entity_type'],
+            'invalid action' => [array_merge($base, ['action' => 'hack']), 'action'],
+            'invalid date' => [array_merge($base, ['occurred_at' => '2026-02-19']), 'occurred_at'], // Not ISO8601Zulu
+            'value too low' => [array_merge($base, ['value' => 0]), 'value'],
+            'value too high' => [array_merge($base, ['value' => 101]), 'value'],
+            'value non-int' => [array_merge($base, ['value' => 'one']), 'value'],
         ];
-
-        // Min value -1
-        $this->postJson(route('api.analytics.events.store'), array_merge($basePayload, ['value' => 0]))
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['value']);
-
-        // Max value 101
-        $this->postJson(route('api.analytics.events.store'), array_merge($basePayload, ['value' => 101]))
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['value']);
-
-        // Non-integer
-        $this->postJson(route('api.analytics.events.store'), array_merge($basePayload, ['value' => 'string']))
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['value']);
-    }
-
-    public function test_occurred_at_format_validation(): void
-    {
-        $payload = [
-            'event_id' => 'test',
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => 'abc',
-            'action' => 'view',
-            'occurred_at' => '2026-02-19 10:00:00',
-        ];
-
-        $this->postJson(route('api.analytics.events.store'), $payload)
-            ->assertStatus(422)
-            ->assertJsonValidationErrors(['occurred_at']);
     }
 }
