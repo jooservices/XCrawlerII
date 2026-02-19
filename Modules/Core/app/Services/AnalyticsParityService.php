@@ -2,7 +2,8 @@
 
 namespace Modules\Core\Services;
 
-use Illuminate\Support\Facades\DB;
+use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityTotals;
+use Modules\JAV\Models\Jav;
 
 class AnalyticsParityService
 {
@@ -14,14 +15,13 @@ class AnalyticsParityService
         $rows = [];
         $checked = 0;
 
-        $movies = DB::table('jav')
+        $movies = Jav::query()
             ->orderByDesc('views')
             ->limit($limit)
             ->get(['uuid', 'code', 'views', 'downloads']);
 
         foreach ($movies as $movie) {
-            $mongo = DB::connection('mongodb')
-                ->collection('analytics_entity_totals')
+            $mongo = AnalyticsEntityTotals::query()
                 ->where('domain', 'jav')
                 ->where('entity_type', 'movie')
                 ->where('entity_id', (string) $movie->uuid)

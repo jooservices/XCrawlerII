@@ -10,10 +10,11 @@ class AnalyticsIngestServiceTest extends TestCase
 {
     public function test_ingest_writes_total_and_daily_counters(): void
     {
-        Redis::shouldReceive('set')
+        Redis::shouldReceive('setnx')
             ->once()
-            ->with('anl:evt:evt-1', 1, 'NX', 'EX', 172800)
+            ->with('anl:evt:evt-1', 1)
             ->andReturn(true);
+        Redis::shouldReceive('expire')->once()->with('anl:evt:evt-1', 172800);
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -36,10 +37,11 @@ class AnalyticsIngestServiceTest extends TestCase
 
     public function test_ingest_uses_custom_value(): void
     {
-        Redis::shouldReceive('set')
+        Redis::shouldReceive('setnx')
             ->once()
-            ->with('anl:evt:evt-2', 1, 'NX', 'EX', 172800)
+            ->with('anl:evt:evt-2', 1)
             ->andReturn(true);
+        Redis::shouldReceive('expire')->once()->with('anl:evt:evt-2', 172800);
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -62,10 +64,11 @@ class AnalyticsIngestServiceTest extends TestCase
 
     public function test_ingest_defaults_value_to_1(): void
     {
-        Redis::shouldReceive('set')
+        Redis::shouldReceive('setnx')
             ->once()
-            ->with('anl:evt:evt-3', 1, 'NX', 'EX', 172800)
+            ->with('anl:evt:evt-3', 1)
             ->andReturn(true);
+        Redis::shouldReceive('expire')->once()->with('anl:evt:evt-3', 172800);
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -89,10 +92,11 @@ class AnalyticsIngestServiceTest extends TestCase
     {
         config(['analytics.redis_prefix' => 'analytics:v2']);
 
-        Redis::shouldReceive('set')
+        Redis::shouldReceive('setnx')
             ->once()
-            ->with('anl:evt:evt-4', 1, 'NX', 'EX', 172800)
+            ->with('anl:evt:evt-4', 1)
             ->andReturn(true);
+        Redis::shouldReceive('expire')->once()->with('anl:evt:evt-4', 172800);
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -115,10 +119,11 @@ class AnalyticsIngestServiceTest extends TestCase
 
     public function test_ingest_skips_counter_writes_for_duplicate_event_id(): void
     {
-        Redis::shouldReceive('set')
+        Redis::shouldReceive('setnx')
             ->once()
-            ->with('anl:evt:evt-dup', 1, 'NX', 'EX', 172800)
+            ->with('anl:evt:evt-dup', 1)
             ->andReturn(false);
+        Redis::shouldReceive('expire')->never();
         Redis::shouldReceive('hincrby')->never();
 
         $service = new AnalyticsIngestService;

@@ -16,10 +16,11 @@ class AnalyticsIngestEndpointTest extends TestCase
 
     public function test_valid_event_writes_to_redis_correctly(): void
     {
-        Redis::shouldReceive('set')
+        Redis::shouldReceive('setnx')
             ->once()
             ->withArgs(fn ($key) => str_starts_with($key, 'anl:evt:'))
             ->andReturn(true);
+        Redis::shouldReceive('expire')->once();
 
         Redis::shouldReceive('hincrby')->twice();
 
@@ -41,7 +42,8 @@ class AnalyticsIngestEndpointTest extends TestCase
     #[DataProvider('entityTypeProvider')]
     public function test_all_entity_types_generate_correct_redis_keys(string $entityType): void
     {
-        Redis::shouldReceive('set')->andReturn(true);
+        Redis::shouldReceive('setnx')->andReturn(true);
+        Redis::shouldReceive('expire')->once();
 
         // Expect key: anl:counters:jav:{entityType}:{uuid}
         $expectedKey = "anl:counters:jav:{$entityType}:uuid-123";
@@ -78,10 +80,11 @@ class AnalyticsIngestEndpointTest extends TestCase
     public function test_duplicate_event_id_ignored(): void
     {
         // First call: New event
-        Redis::shouldReceive('set')
+        Redis::shouldReceive('setnx')
             ->once()
-            ->with('anl:evt:dup-123', 1, 'NX', 'EX', 172800)
+            ->with('anl:evt:dup-123', 1)
             ->andReturn(true);
+        Redis::shouldReceive('expire')->once()->with('anl:evt:dup-123', 172800);
 
         Redis::shouldReceive('hincrby')->twice();
 
@@ -97,11 +100,12 @@ class AnalyticsIngestEndpointTest extends TestCase
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
 
         // Second call: Duplicate event
-        Redis::shouldReceive('set')
+        Redis::shouldReceive('setnx')
             ->once()
-            ->with('anl:evt:dup-123', 1, 'NX', 'EX', 172800)
+            ->with('anl:evt:dup-123', 1)
             ->andReturn(false); // Key exists
 
+        Redis::shouldReceive('expire')->never();
         Redis::shouldReceive('hincrby')->never(); // No write
 
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
@@ -109,7 +113,7 @@ class AnalyticsIngestEndpointTest extends TestCase
 
     public function test_redis_connection_failure_handled_gracefully(): void
     {
-        Redis::shouldReceive('set')->andThrow(new \Exception('Redis connection refused'));
+        Redis::shouldReceive('setnx')->andThrow(new \Exception('Redis connection refused'));
 
         $payload = [
             'event_id' => 'evt-fail',

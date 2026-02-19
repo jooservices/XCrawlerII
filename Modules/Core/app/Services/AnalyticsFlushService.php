@@ -2,13 +2,20 @@
 
 namespace Modules\Core\Services;
 
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
+use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityDaily;
+use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityTotals;
+use Modules\JAV\Models\Jav;
 
 class AnalyticsFlushService
 {
+    /**
+     * @var array<int, string>
+     */
+    private const SUPPORTED_ACTIONS = ['view', 'download'];
+
     /**
      * @return array{keys_processed: int, errors: int}
      */
@@ -37,9 +44,16 @@ class AnalyticsFlushService
 
     private function flushKey(string $key, string $prefix): void
     {
-        $keyWithoutPrefix = str_replace("{$prefix}:", '', $key);
-        $parts = explode(':', $keyWithoutPrefix, 3);
+        $prefixMarker = "{$prefix}:";
+        $prefixPos = strpos($key, $prefixMarker);
+        if ($prefixPos === false) {
+            Log::warning('Analytics: malformed counter key', ['key' => $key]);
 
+            return;
+        }
+
+        $suffix = substr($key, $prefixPos + strlen($prefixMarker));
+        $parts = explode(':', (string) $suffix, 3);
         if (count($parts) !== 3) {
             Log::warning('Analytics: malformed counter key', ['key' => $key]);
 
@@ -47,11 +61,15 @@ class AnalyticsFlushService
         }
 
         [$domain, $entityType, $entityId] = $parts;
+        $canonicalKey = "{$prefix}:{$domain}:{$entityType}:{$entityId}";
         $tempKey = sprintf('anl:flushing:%s:%s:%s:%s', $domain, $entityType, $entityId, Str::random(8));
 
         try {
-            Redis::rename($key, $tempKey);
+            $renamed = Redis::rename($canonicalKey, $tempKey);
         } catch (\Throwable) {
+            return;
+        }
+        if (! $renamed) {
             return;
         }
 
@@ -73,18 +91,16 @@ class AnalyticsFlushService
 
             if (str_contains($fieldName, ':')) {
                 [$action, $date] = explode(':', $fieldName, 2);
-                DB::connection('mongodb')
-                    ->collection('analytics_entity_daily')
-                    ->updateOrInsert(
-                        [
-                            'domain' => $domain,
-                            'entity_type' => $entityType,
-                            'entity_id' => $entityId,
-                            'date' => $date,
-                        ],
-                        ['$inc' => [$action => $intValue]]
-                    );
+                if (! in_array($action, self::SUPPORTED_ACTIONS, true)) {
+                    continue;
+                }
 
+                $this->incrementDailyCounter($domain, $entityType, $entityId, $date, $action, $intValue);
+
+                continue;
+            }
+
+            if (! in_array($fieldName, self::SUPPORTED_ACTIONS, true)) {
                 continue;
             }
 
@@ -92,40 +108,79 @@ class AnalyticsFlushService
         }
 
         if ($totalIncrements !== []) {
-            DB::connection('mongodb')
-                ->collection('analytics_entity_totals')
-                ->updateOrInsert(
-                    [
-                        'domain' => $domain,
-                        'entity_type' => $entityType,
-                        'entity_id' => $entityId,
-                    ],
-                    ['$inc' => $totalIncrements]
-                );
+            $this->incrementTotalCounters($domain, $entityType, $entityId, $totalIncrements);
         }
 
         if ($domain === 'jav' && $entityType === 'movie') {
-            $this->syncToMySql($domain, $entityType, $entityId);
+            $this->syncToMySql($entityId);
         }
     }
 
-    private function syncToMySql(string $domain, string $entityType, string $entityId): void
+    private function incrementDailyCounter(
+        string $domain,
+        string $entityType,
+        string $entityId,
+        string $date,
+        string $action,
+        int $value
+    ): void {
+        $daily = AnalyticsEntityDaily::query()->firstOrCreate(
+            [
+                'domain' => $domain,
+                'entity_type' => $entityType,
+                'entity_id' => $entityId,
+                'date' => $date,
+            ],
+            [
+                'view' => 0,
+                'download' => 0,
+            ]
+        );
+
+        $daily->{$action} = (int) ($daily->{$action} ?? 0) + $value;
+        $daily->save();
+    }
+
+    /**
+     * @param  array<string, int>  $increments
+     */
+    private function incrementTotalCounters(string $domain, string $entityType, string $entityId, array $increments): void
     {
-        $totals = DB::connection('mongodb')
-            ->collection('analytics_entity_totals')
-            ->where('domain', $domain)
-            ->where('entity_type', $entityType)
+        $totals = AnalyticsEntityTotals::query()->firstOrCreate(
+            [
+                'domain' => $domain,
+                'entity_type' => $entityType,
+                'entity_id' => $entityId,
+            ],
+            [
+                'view' => 0,
+                'download' => 0,
+            ]
+        );
+
+        foreach ($increments as $action => $value) {
+            $totals->{$action} = (int) ($totals->{$action} ?? 0) + (int) $value;
+        }
+
+        $totals->save();
+    }
+
+    private function syncToMySql(string $entityId): void
+    {
+        $totals = AnalyticsEntityTotals::query()
+            ->where('domain', 'jav')
+            ->where('entity_type', 'movie')
             ->where('entity_id', $entityId)
             ->first();
 
-        if (! is_array($totals) && ! is_object($totals)) {
+        if ($totals === null) {
             return;
         }
 
         $views = (int) data_get($totals, 'view', 0);
         $downloads = (int) data_get($totals, 'download', 0);
 
-        DB::table('jav')
+        Jav::query()
             ->where('uuid', $entityId)
             ->update([
                 'views' => $views,

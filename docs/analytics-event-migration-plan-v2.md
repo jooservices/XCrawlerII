@@ -4089,18 +4089,36 @@ Status: `IN_PROGRESS`
 
 Completed in this step:
 - Created `Modules/Core/app/Services/AnalyticsParityService.php`
-  - Compares MySQL `jav.views/downloads` vs Mongo `analytics_entity_totals.view/download`
+  - Uses models (`Jav`, `AnalyticsEntityTotals`) to compare MySQL `jav.views/downloads` vs Mongo `analytics_entity_totals.view/download`
 - Created `Modules/Core/app/Console/AnalyticsParityCheckCommand.php`
   - Command: `analytics:parity-check {--limit=100}`
   - Exit code `0` when no mismatch, `1` when mismatch exists
 - Updated `Modules/Core/app/Providers/CoreServiceProvider.php`
   - Registered `AnalyticsParityCheckCommand`
-- Added tests:
-  - `Modules/Core/tests/Unit/Services/AnalyticsParityServiceTest.php`
+- Refactored `Modules/Core/app/Services/AnalyticsFlushService.php` to model-based writes/sync:
+  - Mongo rollups via `AnalyticsEntityDaily`, `AnalyticsEntityTotals`
+  - MySQL sync via `Jav` model
+- Hardened Redis handling in flush:
+  - normalized keys with Redis global prefix support
+  - explicit `rename()` result check
+- Updated ingest dedupe in `Modules/Core/app/Services/AnalyticsIngestService.php`:
+  - `setnx + expire` for stable duplicate suppression across Redis clients
+- Added/updated tests (analytics flow without mocks for parity/count integration):
+  - `Modules/Core/tests/Feature/Analytics/AnalyticsParityServiceIntegrationTest.php`
   - `Modules/Core/tests/Feature/Commands/AnalyticsParityCheckCommandTest.php`
+  - `Modules/Core/tests/Unit/Services/AnalyticsFlushServiceTest.php`
+  - Added edge-case coverage:
+    - timezone boundary daily buckets
+    - flush idempotency (double flush same key)
+    - large counter volume flush
+    - unsupported action fields ignored
+    - orphan Mongo totals excluded from parity scope
 
 Evidence:
-- `php artisan test --filter=AnalyticsParity` => pass (`4 passed`, `29 assertions`)
+- `php artisan test Modules/Core/tests/Unit/Enums/AnalyticsActionTest.php Modules/Core/tests/Unit/Services/AnalyticsIngestServiceTest.php Modules/Core/tests/Unit/Services/AnalyticsFlushServiceTest.php Modules/Core/tests/Feature/Http/AnalyticsIngestEndpointTest.php Modules/Core/tests/Feature/Analytics/AnalyticsParityServiceIntegrationTest.php Modules/Core/tests/Feature/Commands/AnalyticsParityCheckCommandTest.php Modules/Core/tests/Feature/Jobs/FlushAnalyticsCountersJobTest.php`
+  - Result: `39 passed` (`141 assertions`)
+- `./vendor/bin/pint --dirty`
+  - Result: PASS (`8 files`)
 - `php artisan list | rg "analytics:parity-check"` => command listed
 
 Pending for full P4 completion:

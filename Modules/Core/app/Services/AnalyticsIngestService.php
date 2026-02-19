@@ -15,10 +15,11 @@ class AnalyticsIngestService
         $dedupeKey = sprintf('anl:evt:%s', $event['event_id']);
 
         // Deduplicate: exact same event_id ignored for 48h
-        $isNew = Redis::set($dedupeKey, 1, 'NX', 'EX', 172800);
+        $isNew = (bool) Redis::setnx($dedupeKey, 1);
         if (! $isNew) {
             return;
         }
+        Redis::expire($dedupeKey, 172800);
 
         $key = implode(':', [
             $prefix,
