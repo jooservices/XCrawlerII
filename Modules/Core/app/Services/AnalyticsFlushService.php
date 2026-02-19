@@ -232,15 +232,26 @@ class AnalyticsFlushService
     private function incrementBucket(string $modelClass, array $keys, string $action, int $value): void
     {
         $modelClass::query()->raw(function ($collection) use ($keys, $action, $value) {
+            $setOnInsert = [
+                AnalyticsAction::View->value => 0,
+                AnalyticsAction::Download->value => 0,
+            ];
+
+            if (array_key_exists($action, $setOnInsert)) {
+                unset($setOnInsert[$action]);
+            }
+
+            $update = [
+                '$inc' => [$action => $value],
+            ];
+
+            if (! empty($setOnInsert)) {
+                $update['$setOnInsert'] = $setOnInsert;
+            }
+
             $collection->updateOne(
                 $keys,
-                [
-                    '$inc' => [$action => $value],
-                    '$setOnInsert' => [
-                        AnalyticsAction::View->value => 0,
-                        AnalyticsAction::Download->value => 0,
-                    ],
-                ],
+                $update,
                 ['upsert' => true]
             );
         });

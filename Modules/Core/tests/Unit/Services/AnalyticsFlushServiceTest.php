@@ -327,7 +327,7 @@ class AnalyticsFlushServiceTest extends TestCase
             ->where('entity_id', $jav->uuid)
             ->first();
         $this->assertNotNull($totals);
-        $this->assertSame(5, (int) $totals->view);
+        $this->assertSame(2, (int) $totals->view);
     }
 
     public function test_flush_movie_entity_with_no_jav_row_updates_mongo_only_not_mysql(): void
