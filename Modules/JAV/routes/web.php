@@ -13,7 +13,6 @@ use Modules\JAV\Http\Controllers\Guest\Auth\LoginController as GuestLoginControl
 use Modules\JAV\Http\Controllers\Guest\Auth\RegisterController as GuestRegisterController;
 use Modules\JAV\Http\Controllers\Users\Api\DashboardController as ApiDashboardController;
 use Modules\JAV\Http\Controllers\Users\Api\LibraryController as ApiLibraryController;
-use Modules\JAV\Http\Controllers\Users\Api\MovieController as ApiMovieController;
 use Modules\JAV\Http\Controllers\Users\Api\NotificationController as ApiNotificationController;
 use Modules\JAV\Http\Controllers\Users\Api\RatingController as ApiRatingController;
 use Modules\JAV\Http\Controllers\Users\Api\SearchSuggestController as ApiSearchSuggestController;
@@ -95,7 +94,6 @@ Route::middleware(['web', 'auth'])->prefix('jav/api')->name('jav.api.')->group(f
 
 Route::prefix('jav')->name('jav.')->group(function () {
     Route::get('/movies/{jav}/download', [MovieController::class, 'download'])->name('movies.download');
-    Route::post('/movies/{jav}/view', [ApiMovieController::class, 'view'])->name('movies.view');
 
     Route::middleware('auth')->group(function () {
         // Temporary legacy alias: keep route('jav.notifications') resolving to canonical Vue page.

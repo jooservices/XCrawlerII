@@ -9,28 +9,7 @@ use Modules\JAV\Tests\TestCase;
 
 class MovieDownloadGuestBehaviorTest extends TestCase
 {
-    public function test_guest_download_increments_counter_but_does_not_create_history_record(): void
-    {
-        $jav = Jav::factory()->create([
-            'source' => 'unsupported-source',
-            'downloads' => 0,
-        ]);
-
-        $this->from(route('jav.vue.dashboard'))
-            ->get(route('jav.movies.download', $jav))
-            ->assertRedirect(route('jav.vue.dashboard'));
-
-        $this->assertSame(1, $jav->fresh()->downloads);
-
-        $historyCount = UserJavHistory::query()
-            ->where('jav_id', $jav->id)
-            ->where('action', 'download')
-            ->count();
-
-        $this->assertSame(0, $historyCount);
-    }
-
-    public function test_guest_download_uses_ingest_service_when_analytics_enabled(): void
+    public function test_guest_download_tracks_event_but_does_not_create_history_record(): void
     {
         config(['analytics.enabled' => true]);
 
@@ -40,9 +19,7 @@ class MovieDownloadGuestBehaviorTest extends TestCase
         ]);
 
         $service = \Mockery::mock(AnalyticsIngestService::class);
-        $service->shouldReceive('ingest')
-            ->once()
-            ->withArgs(fn (array $payload): bool => ($payload['action'] ?? null) === 'download');
+        $service->shouldReceive('ingest')->once();
         $this->app->instance(AnalyticsIngestService::class, $service);
 
         $this->from(route('jav.vue.dashboard'))

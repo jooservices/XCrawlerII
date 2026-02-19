@@ -4,17 +4,18 @@ namespace Modules\JAV\Http\Controllers\Users;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
-use Modules\Core\Enums\AnalyticsAction;
-use Modules\Core\Services\AnalyticsIngestService;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\UserJavHistory;
 use Modules\JAV\Services\SearchService;
 
 class JAVController extends Controller
 {
+    public function __construct(
+        private readonly SearchService $searchService,
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -73,8 +74,6 @@ class JAVController extends Controller
 
     public function showVue(Jav $jav): InertiaResponse
     {
-        $this->trackView($jav);
-
         // Track history if user is authenticated
         if (auth()->check()) {
             UserJavHistory::firstOrCreate([
@@ -96,34 +95,14 @@ class JAVController extends Controller
         }
 
         // Get related movies
-        $searchService = app(SearchService::class);
-        $relatedByActors = $searchService->getRelatedByActors($jav, 10);
-        $relatedByTags = $searchService->getRelatedByTags($jav, 10);
+        $relatedByActors = $this->searchService->getRelatedByActors($jav, 10);
+        $relatedByTags = $this->searchService->getRelatedByTags($jav, 10);
 
         return Inertia::render('Movies/Show', [
             'jav' => $jav,
             'relatedByActors' => $relatedByActors,
             'relatedByTags' => $relatedByTags,
             'isLiked' => $isLiked,
-        ]);
-    }
-
-    private function trackView(Jav $jav): void
-    {
-        if (! (bool) config('analytics.enabled', false)) {
-            $jav->increment('views');
-
-            return;
-        }
-
-        app(AnalyticsIngestService::class)->ingest([
-            'event_id' => (string) Str::uuid(),
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => (string) $jav->uuid,
-            'action' => AnalyticsAction::View->value,
-            'value' => 1,
-            'occurred_at' => now('UTC')->format('Y-m-d\\TH:i:s\\Z'),
         ]);
     }
 

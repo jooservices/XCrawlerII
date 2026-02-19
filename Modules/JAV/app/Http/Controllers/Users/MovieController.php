@@ -7,17 +7,15 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use InvalidArgumentException;
 use JOOservices\Client\Client\ClientBuilder;
-use Modules\Core\Enums\AnalyticsAction;
-use Modules\Core\Services\AnalyticsIngestService;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\UserJavHistory;
 use Modules\JAV\Repositories\DashboardReadRepository;
 use Modules\JAV\Services\FfjavService;
+use Modules\JAV\Services\JavAnalyticsTrackerService;
 use Modules\JAV\Services\OneFourOneJavService;
 use Modules\JAV\Services\OnejavService;
 use Modules\JAV\Services\SearchService;
@@ -27,13 +25,11 @@ class MovieController extends Controller
     public function __construct(
         private readonly DashboardReadRepository $dashboardReadRepository,
         private readonly SearchService $searchService,
-        private readonly AnalyticsIngestService $analyticsIngestService,
+        private readonly JavAnalyticsTrackerService $analyticsTrackerService,
     ) {}
 
     public function show(Jav $jav): InertiaResponse
     {
-        $this->trackView($jav);
-
         if (auth()->check()) {
             UserJavHistory::firstOrCreate([
                 'user_id' => auth()->id(),
@@ -64,7 +60,7 @@ class MovieController extends Controller
 
     public function download(Jav $jav): Response|RedirectResponse
     {
-        $this->trackDownload($jav);
+        $this->analyticsTrackerService->trackDownload($jav);
 
         if (auth()->check()) {
             UserJavHistory::updateOrCreate([
@@ -124,43 +120,5 @@ class MovieController extends Controller
             'ffjav' => 'https://ffjav.com',
             default => '',
         };
-    }
-
-    private function trackView(Jav $jav): void
-    {
-        if (! (bool) config('analytics.enabled', false)) {
-            $jav->increment('views');
-
-            return;
-        }
-
-        $this->analyticsIngestService->ingest($this->eventPayload($jav, AnalyticsAction::View));
-    }
-
-    private function trackDownload(Jav $jav): void
-    {
-        if (! (bool) config('analytics.enabled', false)) {
-            $jav->increment('downloads');
-
-            return;
-        }
-
-        $this->analyticsIngestService->ingest($this->eventPayload($jav, AnalyticsAction::Download));
-    }
-
-    /**
-     * @return array<string, int|string>
-     */
-    private function eventPayload(Jav $jav, AnalyticsAction $action): array
-    {
-        return [
-            'event_id' => (string) Str::uuid(),
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => (string) $jav->uuid,
-            'action' => $action->value,
-            'value' => 1,
-            'occurred_at' => now('UTC')->format('Y-m-d\\TH:i:s\\Z'),
-        ];
     }
 }

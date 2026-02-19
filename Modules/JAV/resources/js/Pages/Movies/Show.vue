@@ -1,11 +1,12 @@
 <script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import axios from 'axios';
 import { useUIStore } from '@jav/Stores/ui';
 import PageShell from '@jav/Components/UI/PageShell.vue';
 import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 import MovieCard from '@jav/Components/MovieCard.vue';
+import { trackMovieView } from '@jav/Services/analyticsClient';
 
 const props = defineProps({
     jav: Object,
@@ -51,6 +52,14 @@ const handleFavorite = async () => {
         isProcessing.value = false;
     }
 };
+
+onMounted(async () => {
+    try {
+        await trackMovieView(props.jav?.uuid);
+    } catch {
+        // swallow analytics errors to avoid breaking page UX
+    }
+});
 </script>
 
 <template>

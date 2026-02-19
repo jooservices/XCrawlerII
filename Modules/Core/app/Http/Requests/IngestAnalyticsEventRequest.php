@@ -25,7 +25,7 @@ class IngestAnalyticsEventRequest extends FormRequest
             'entity_id' => ['required', 'string', 'max:255'],
             'action' => ['required', 'string', Rule::enum(AnalyticsAction::class)],
             'value' => ['nullable', 'integer', 'min:1', 'max:100'],
-            'occurred_at' => ['required', 'date_format:Y-m-d\\TH:i:s\\Z'],
+            'occurred_at' => ['required', 'date'],
         ];
     }
 }

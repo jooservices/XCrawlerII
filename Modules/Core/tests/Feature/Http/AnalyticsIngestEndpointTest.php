@@ -149,7 +149,7 @@ class AnalyticsIngestEndpointTest extends TestCase
             'invalid domain' => [array_merge($base, ['domain' => 'bad']), 'domain'],
             'invalid entity_type' => [array_merge($base, ['entity_type' => 'user']), 'entity_type'],
             'invalid action' => [array_merge($base, ['action' => 'hack']), 'action'],
-            'invalid date' => [array_merge($base, ['occurred_at' => '2026-02-19']), 'occurred_at'], // Not ISO8601Zulu
+            'invalid date' => [array_merge($base, ['occurred_at' => 'not-a-date']), 'occurred_at'],
             'value too low' => [array_merge($base, ['value' => 0]), 'value'],
             'value too high' => [array_merge($base, ['value' => 101]), 'value'],
             'value non-int' => [array_merge($base, ['value' => 'one']), 'value'],
