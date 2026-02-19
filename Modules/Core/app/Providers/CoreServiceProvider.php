@@ -65,6 +65,7 @@ class CoreServiceProvider extends ServiceProvider
             \Modules\Core\Console\AuthAuthorizeCommand::class,
             \Modules\Core\Console\ObsDependenciesHealthCommand::class,
             \Modules\Core\Console\FlushAnalyticsCommand::class,
+            \Modules\Core\Console\AnalyticsParityCheckCommand::class,
         ]);
     }
 

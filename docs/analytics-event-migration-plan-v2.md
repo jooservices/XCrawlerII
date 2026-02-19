@@ -4081,3 +4081,29 @@ Prerequisite check:
 
 Next execution target:
 - Start V5-I Phase 4 (Parity Verification window and evidence collection).
+
+## P4 Progress Update (Parity Tooling Implemented)
+
+Date updated: 2026-02-19
+Status: `IN_PROGRESS`
+
+Completed in this step:
+- Created `Modules/Core/app/Services/AnalyticsParityService.php`
+  - Compares MySQL `jav.views/downloads` vs Mongo `analytics_entity_totals.view/download`
+- Created `Modules/Core/app/Console/AnalyticsParityCheckCommand.php`
+  - Command: `analytics:parity-check {--limit=100}`
+  - Exit code `0` when no mismatch, `1` when mismatch exists
+- Updated `Modules/Core/app/Providers/CoreServiceProvider.php`
+  - Registered `AnalyticsParityCheckCommand`
+- Added tests:
+  - `Modules/Core/tests/Unit/Services/AnalyticsParityServiceTest.php`
+  - `Modules/Core/tests/Feature/Commands/AnalyticsParityCheckCommandTest.php`
+
+Evidence:
+- `php artisan test --filter=AnalyticsParity` => pass (`4 passed`, `29 assertions`)
+- `php artisan list | rg "analytics:parity-check"` => command listed
+
+Pending for full P4 completion:
+- Run parity command against real environments over monitoring window (7+ days as plan)
+- Collect daily artifacts/logs for mismatch = 0
+- Execute rollback drill checklist and archive evidence
