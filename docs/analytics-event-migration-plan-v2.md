@@ -3998,3 +3998,35 @@ Prerequisite check:
 
 Next execution target:
 - Start V5-H Phase 3 (Producer Migration).
+
+## P3 Progress Update (Backend Producer Migration)
+
+Date updated: 2026-02-19
+Status: `IN_PROGRESS`
+
+Completed in this step:
+- Updated `Modules/JAV/app/Http/Controllers/Users/JAVController.php`
+  - `showVue()` now uses feature-flag path:
+    - `analytics.enabled=false` => legacy `$jav->increment('views')`
+    - `analytics.enabled=true` => emit event to `AnalyticsIngestService`
+- Updated `Modules/JAV/app/Http/Controllers/Users/MovieController.php`
+  - `show()` migrated with same feature-flag behavior
+  - `download()` migrated with same feature-flag behavior
+- Updated `Modules/JAV/app/Http/Controllers/Users/Api/MovieController.php`
+  - `view()` migrated with same feature-flag behavior
+
+Tests updated and passing:
+- `Modules/JAV/tests/Feature/Controllers/Users/MovieShowControllerTest.php`
+- `Modules/JAV/tests/Feature/Controllers/Users/MovieControllerTest.php`
+- `Modules/JAV/tests/Feature/Controllers/Users/MovieDownloadGuestBehaviorTest.php`
+- `Modules/JAV/tests/Feature/Controllers/Users/Api/MovieControllerContractTest.php`
+
+Evidence:
+- Command:
+  - `php artisan test Modules/JAV/tests/Feature/Controllers/Users/MovieShowControllerTest.php Modules/JAV/tests/Feature/Controllers/Users/MovieControllerTest.php Modules/JAV/tests/Feature/Controllers/Users/MovieDownloadGuestBehaviorTest.php Modules/JAV/tests/Feature/Controllers/Users/Api/MovieControllerContractTest.php`
+- Result: `14 passed (42 assertions)`
+
+Remaining for full P3:
+- FE producer migration (`analyticsClient.js`, `Movies/Show.vue`)
+- Additional test updates listed in V5-H
+- Phase-level completion verification

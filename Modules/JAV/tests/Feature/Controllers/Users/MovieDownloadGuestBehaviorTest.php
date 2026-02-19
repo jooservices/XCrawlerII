@@ -2,6 +2,7 @@
 
 namespace Modules\JAV\Tests\Feature\Controllers\Users;
 
+use Modules\Core\Services\AnalyticsIngestService;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\UserJavHistory;
 use Modules\JAV\Tests\TestCase;
@@ -20,6 +21,35 @@ class MovieDownloadGuestBehaviorTest extends TestCase
             ->assertRedirect(route('jav.vue.dashboard'));
 
         $this->assertSame(1, $jav->fresh()->downloads);
+
+        $historyCount = UserJavHistory::query()
+            ->where('jav_id', $jav->id)
+            ->where('action', 'download')
+            ->count();
+
+        $this->assertSame(0, $historyCount);
+    }
+
+    public function test_guest_download_uses_ingest_service_when_analytics_enabled(): void
+    {
+        config(['analytics.enabled' => true]);
+
+        $jav = Jav::factory()->create([
+            'source' => 'unsupported-source',
+            'downloads' => 0,
+        ]);
+
+        $service = \Mockery::mock(AnalyticsIngestService::class);
+        $service->shouldReceive('ingest')
+            ->once()
+            ->withArgs(fn (array $payload): bool => ($payload['action'] ?? null) === 'download');
+        $this->app->instance(AnalyticsIngestService::class, $service);
+
+        $this->from(route('jav.vue.dashboard'))
+            ->get(route('jav.movies.download', $jav))
+            ->assertRedirect(route('jav.vue.dashboard'));
+
+        $this->assertSame(0, (int) $jav->fresh()->downloads);
 
         $historyCount = UserJavHistory::query()
             ->where('jav_id', $jav->id)

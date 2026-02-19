@@ -2,6 +2,7 @@
 
 namespace Modules\JAV\Tests\Feature\Controllers\Users\Api;
 
+use Modules\Core\Services\AnalyticsIngestService;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Tests\TestCase;
 
@@ -47,5 +48,27 @@ class MovieControllerContractTest extends TestCase
     public function test_movie_view_exploit_case_rejects_non_numeric_route_key_payload(): void
     {
         $this->postJson('/jav/movies/1%20OR%201=1/view')->assertNotFound();
+    }
+
+    public function test_movie_view_uses_ingest_service_when_analytics_enabled(): void
+    {
+        config(['analytics.enabled' => true]);
+
+        $jav = Jav::factory()->create(['views' => 2]);
+
+        $service = \Mockery::mock(AnalyticsIngestService::class);
+        $service->shouldReceive('ingest')
+            ->once()
+            ->withArgs(function (array $payload) use ($jav): bool {
+                return ($payload['entity_id'] ?? null) === $jav->uuid
+                    && ($payload['action'] ?? null) === 'view';
+            });
+        $this->app->instance(AnalyticsIngestService::class, $service);
+
+        $this->postJson(route('jav.movies.view', $jav))
+            ->assertOk()
+            ->assertJsonPath('views', 2);
+
+        $this->assertSame(2, (int) $jav->fresh()->views);
     }
 }
