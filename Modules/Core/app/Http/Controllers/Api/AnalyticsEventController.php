@@ -3,6 +3,7 @@
 namespace Modules\Core\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Modules\Core\Http\Requests\IngestAnalyticsEventRequest;
 use Modules\Core\Services\AnalyticsIngestService;
 
@@ -15,9 +16,10 @@ class AnalyticsEventController
 
     public function store(IngestAnalyticsEventRequest $request): JsonResponse
     {
-        /** @var array{domain: string, entity_type: string, entity_id: string, action: string, value?: int, occurred_at: string} $validated */
+        /** @var array{event_id: string, domain: string, entity_type: string, entity_id: string, action: string, value?: int, occurred_at: string} $validated */
         $validated = $request->validated();
-        $userId = auth()->id();
+        $id = Auth::id();
+        $userId = $id ? (int) $id : null;
 
         $this->ingestService->ingest($validated, $userId);
 

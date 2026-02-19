@@ -48,8 +48,9 @@ G --> F
 
 ## Glossary
 
-- Catalog: normalized data store for movies, actors, tags.
-- Source sync: scheduled/manual pipeline that imports provider data.
-- Telemetry event: queue lifecycle event (`started`, `completed`, `rate_limit_exceeded`).
-- Rollup: aggregated analytics buckets (daily/weekly/monthly/yearly).
-- Parity check: comparison between MySQL counters and Mongo analytics totals.
+- **Catalog:** Normalized data store for movies, actors, tags.
+- **Source sync:** Scheduled or manual pipeline that imports provider data.
+- **Telemetry event:** Queue lifecycle event (e.g. `started`, `completed`, `rate_limit_exceeded`) for operational monitoring.
+- **Rollup:** Aggregated analytics buckets (daily, weekly, monthly, yearly) stored in MongoDB.
+- **Parity check:** Comparison between MySQL catalog counters (`jav.views`/`jav.downloads`) and Mongo analytics totals to detect drift.
+- **Analytics (module):** Event ingest (view/download), Redis hot counters, flush to Mongo rollups, MySQL sync, and admin/telemetry dashboards. See [../analytics/README.md](../analytics/README.md) for full analytics documentation.

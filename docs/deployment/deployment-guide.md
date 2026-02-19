@@ -24,10 +24,12 @@
 
 ## Analytics Deployment Requirements
 
-- Ensure scheduler is running (`php artisan schedule:run` via cron).
-- Confirm `analytics:flush` schedule is active from `CoreServiceProvider`.
-- Confirm evidence generation schedule (`analytics:report:generate`) is enabled as needed.
-- Validate throttle value via `ANALYTICS_RATE_LIMIT`.
+- **Scheduler:** Ensure the Laravel scheduler runs (e.g. cron: `* * * * * php artisan schedule:run`). Without it, Redis counters are never flushed to Mongo/MySQL.
+- **Flush:** Confirm `analytics:flush` is scheduled in `CoreServiceProvider` (driven by `ANALYTICS_SCHEDULE_FLUSH` and `ANALYTICS_FLUSH_INTERVAL`).
+- **Evidence:** Enable `analytics:report:generate` schedule if you need daily evidence artifacts (`ANALYTICS_EVIDENCE_SCHEDULE_DAILY`, etc.).
+- **Throttle:** Set `ANALYTICS_RATE_LIMIT` appropriately for expected ingest traffic.
+
+For full analytics flow and CLI, see [Analytics documentation](../analytics/README.md) and [Usage (CLI)](../analytics/usage.md#cli-usage).
 
 ## Environment Variables (Analytics)
 

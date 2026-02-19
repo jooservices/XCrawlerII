@@ -16,7 +16,7 @@
 3. Extend flush support list in `Modules/Core/app/Services/AnalyticsFlushService.php`.
 4. Update FE allowed actions in `Modules/Core/resources/js/Services/analyticsService.js`.
 5. Add/adjust tests in `Modules/Core/tests/Feature/Analytics` and `Modules/Core/tests/Unit/Services`.
-6. Update `docs/analytics/*` and `docs/api/api-reference.md`.
+6. Update `docs/analytics/*` (see [Analytics documentation](../analytics/README.md)) and `docs/api/api-reference.md`.
 
 ## Implementation Steps for Admin Analytics Endpoint
 

@@ -21,17 +21,20 @@ class AnalyticsIngestService
      */
     public function ingest(array $event, ?int $userId = null): void
     {
-        $prefix = (string) config('analytics.redis_prefix', 'anl:counters');
+        /** @var string $prefix */
+        $prefix = config('analytics.redis_prefix', 'anl:counters');
         $domain = AnalyticsDomain::from((string) $event['domain']);
         $entityType = AnalyticsEntityType::from((string) $event['entity_type']);
         $action = AnalyticsAction::from((string) $event['action']);
         $dedupeKey = self::DEDUPE_PREFIX.(string) $event['event_id'];
 
         // Deduplicate: exact same event_id ignored for 48h
+        /** @phpstan-ignore-next-line */
         $isNew = (bool) Redis::setnx($dedupeKey, 1);
         if (! $isNew) {
             return;
         }
+        /** @phpstan-ignore-next-line */
         Redis::expire($dedupeKey, self::DEDUPE_TTL_SECONDS);
 
         $key = implode(':', [
@@ -45,7 +48,9 @@ class AnalyticsIngestService
         $actionName = $action->value;
         $date = mb_substr((string) $event['occurred_at'], 0, 10);
 
+        /** @phpstan-ignore-next-line */
         Redis::hincrby($key, $actionName, $value);
+        /** @phpstan-ignore-next-line */
         Redis::hincrby($key, sprintf('%s:%s', $actionName, $date), $value);
     }
 }

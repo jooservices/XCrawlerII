@@ -42,14 +42,29 @@ Status: `202 Accepted`
 
 ## Admin Analytics APIs (Selected)
 
-- `GET /jav/admin/analytics/overview-data`
-- `GET /jav/admin/analytics/distribution-data`
-- `GET /jav/admin/analytics/association-data`
-- `GET /jav/admin/analytics/trends-data`
-- `POST /jav/admin/analytics/predict`
-- `GET /jav/admin/analytics/actor-insights`
-- `GET /jav/admin/analytics/quality-data`
-- `GET /jav/admin/analytics/suggest`
+All require `auth` and `role:admin`. Query/body parameters are validated by `AnalyticsApiRequest`. See [Analytics usage](../analytics/usage.md#advanced-admin-api-charts-segments-insights) for usage context.
+
+| Method | Path | Purpose |
+|--------|------|---------|
+| GET | `/jav/admin/analytics/overview-data` | Overview payload; optional `size` (default 8). |
+| GET | `/jav/admin/analytics/distribution-data` | Distribution by dimension (e.g. `age_bucket`) for a genre; requires `genre`; optional `dimension`, `size`. |
+| GET | `/jav/admin/analytics/association-data` | Association rules for a segment; requires `segment_value`; optional `segment_type`, `size`, `min_support`. |
+| GET | `/jav/admin/analytics/trends-data` | Trends by dimension/genre/interval; optional `dimension`, `genre`, `interval` (week|month), `size`. |
+| POST | `/jav/admin/analytics/predict` | Genre prediction; body params per `ActorAnalyticsService::predictGenres`; optional `size`. |
+| GET | `/jav/admin/analytics/actor-insights` | Insights for one actor; requires `actor_uuid`; optional `size`. Returns 404 if actor not found. |
+| GET | `/jav/admin/analytics/quality-data` | Quality metrics (no required params). |
+| GET | `/jav/admin/analytics/suggest` | Suggestions; optional `type` (actor|genre|birthplace|blood_type), `q`, `size`. |
+
+**Example request (overview):**
+
+```http
+GET /jav/admin/analytics/overview-data?size=8
+Cookie: <session>
+```
+
+**Example response (200):** JSON object; structure depends on endpoint (overview returns aggregated counts/segments for dashboard charts).
+
+**Error responses:** `401` (unauthenticated), `403` (not admin), `422` (validation, e.g. missing `genre` or `actor_uuid`), `503` (e.g. Elasticsearch unavailable), `500` (unexpected).
 
 ## Telemetry API (Admin)
 

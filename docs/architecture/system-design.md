@@ -16,6 +16,7 @@ class AnalyticsEventController
 class IngestAnalyticsEventRequest
 class AnalyticsIngestService
 class AnalyticsFlushService
+class FlushAnalyticsCommand
 class FlushAnalyticsCountersJob
 class ActorAnalyticsService
 class AnalyticsReadService
@@ -25,7 +26,8 @@ class AnalyticsVuePage
 
 AnalyticsEventController --> IngestAnalyticsEventRequest
 AnalyticsEventController --> AnalyticsIngestService
-AnalyticsFlushService --> FlushAnalyticsCountersJob
+FlushAnalyticsCommand --> AnalyticsFlushService
+FlushAnalyticsCountersJob --> AnalyticsFlushService
 AdminAnalyticsController --> ActorAnalyticsService
 AdminAnalyticsController --> AnalyticsReadService
 JavAnalyticsTrackerService --> AnalyticsIngestService

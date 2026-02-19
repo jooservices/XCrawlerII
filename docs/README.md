@@ -12,10 +12,12 @@ docs/
 │   ├── data-model.md
 │   └── request-lifecycle.md
 ├── analytics/
-│   ├── overview.md
-│   ├── usage.md
-│   ├── code-structure.md
-│   └── request-lifecycle.md
+│   ├── README.md           (analytics index and reading order)
+│   ├── overview.md         (what, why, how, glossary, KPIs)
+│   ├── usage.md            (FE / BE / admin / CLI usage)
+│   ├── code-structure.md   (classes, files, logic)
+│   ├── request-lifecycle.md (request flow and diagrams)
+│   └── data-model.md       (Redis, Mongo, MySQL for analytics)
 ├── guides/
 │   ├── getting-started.md
 │   ├── implementation-guide.md
@@ -36,16 +38,18 @@ docs/
 2. `architecture/system-design.md`
 3. `architecture/data-model.md`
 4. `architecture/request-lifecycle.md`
-5. `analytics/overview.md`
-6. `analytics/usage.md`
-7. `analytics/code-structure.md`
-8. `analytics/request-lifecycle.md`
-9. `guides/getting-started.md`
-10. `guides/implementation-guide.md`
-11. `api/api-reference.md`
-12. `testing/testing-strategy.md`
-13. `deployment/deployment-guide.md`
-14. `troubleshooting/faq.md`
+5. `analytics/README.md` (then analytics sub-docs as needed)
+6. `analytics/overview.md`
+7. `analytics/usage.md`
+8. `analytics/code-structure.md`
+9. `analytics/request-lifecycle.md`
+10. `analytics/data-model.md` (when working with analytics storage)
+11. `guides/getting-started.md`
+12. `guides/implementation-guide.md`
+13. `api/api-reference.md`
+14. `testing/testing-strategy.md`
+15. `deployment/deployment-guide.md`
+16. `troubleshooting/faq.md`
 
 ## Validation Checklist
 
