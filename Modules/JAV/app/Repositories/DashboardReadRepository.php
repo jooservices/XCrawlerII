@@ -123,6 +123,31 @@ class DashboardReadRepository
         $this->curationReadService->decorateMoviesWithFeaturedState($pageItems);
     }
 
+    public function decorateTagsForUser(LengthAwarePaginator $tags, ?Authenticatable $user): void
+    {
+        $pageItems = $tags->items();
+        $ids = collect($pageItems)
+            ->map(static fn ($item) => $item->id ?? null)
+            ->filter(static fn ($id) => $id !== null)
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return;
+        }
+
+        if ($user !== null) {
+            $userId = (int) $user->getAuthIdentifier();
+            $likedIds = $this->favoriteRepository->likedTagIdsForUserAndTagIds($userId, $ids);
+
+            foreach ($pageItems as $item) {
+                $itemId = $item->id ?? null;
+                $item->is_liked = $itemId !== null && $likedIds->has($itemId);
+            }
+        }
+
+        $this->curationReadService->decorateTagsWithFeaturedState($pageItems);
+    }
+
     /**
      * @return Collection<int, mixed>
      */

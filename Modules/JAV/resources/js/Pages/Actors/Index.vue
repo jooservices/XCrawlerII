@@ -1,13 +1,12 @@
 <script setup>
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import axios from 'axios';
 import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
 import AdvancedSearchForm from '@jav/Components/Search/AdvancedSearchForm.vue';
 import PageShell from '@jav/Components/UI/PageShell.vue';
 import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 import EmptyState from '@jav/Components/UI/EmptyState.vue';
-import { useUIStore } from '@jav/Stores/ui';
+import ActorCard from '@jav/Components/ActorCard.vue';
 
 const props = defineProps({
     actors: Object,
@@ -21,7 +20,6 @@ const props = defineProps({
     bioValueSuggestions: Object,
 });
 const page = usePage();
-const uiStore = useUIStore();
 const hasAuthUser = computed(() => Boolean(page.props.auth?.user));
 
 const visibleActors = ref([...(props.actors?.data || [])]);
@@ -66,12 +64,6 @@ const normalizedTags = computed(() => {
 const filteredBioFilters = computed(() => {
     return bioFilters.value.filter((row) => row.key || row.value);
 });
-const likedActorMap = ref({});
-const likeProcessingMap = ref({});
-const formatCount = (value) => {
-    const number = Number(value || 0);
-    return Number.isFinite(number) ? number.toLocaleString() : '0';
-};
 const resolveActorRate = (actor) => {
     const directRate = Number(actor?.rate);
     if (Number.isFinite(directRate) && directRate > 0) {
@@ -100,64 +92,6 @@ const actorStarCount = (actor) => {
     }
 
     return Math.max(0, Math.min(5, Math.round(Number(rate))));
-};
-const isActorLiked = (actor) => {
-    const actorId = actor?.id;
-    if (actorId === null || actorId === undefined) {
-        return false;
-    }
-
-    if (Object.prototype.hasOwnProperty.call(likedActorMap.value, actorId)) {
-        return Boolean(likedActorMap.value[actorId]);
-    }
-
-    return Boolean(actor?.is_liked);
-};
-const isLikeProcessing = (actor) => {
-    const actorId = actor?.id;
-    if (actorId === null || actorId === undefined) {
-        return false;
-    }
-
-    return Boolean(likeProcessingMap.value[actorId]);
-};
-const toggleActorLike = async (actor) => {
-    const actorId = actor?.id;
-    if (!hasAuthUser.value || actorId === null || actorId === undefined || isLikeProcessing(actor)) {
-        return;
-    }
-
-    likeProcessingMap.value = {
-        ...likeProcessingMap.value,
-        [actorId]: true,
-    };
-
-    try {
-        const response = await axios.post(route('jav.api.toggle-like'), {
-            id: actorId,
-            type: 'actor',
-        });
-
-        if (response.data?.success) {
-            const liked = Boolean(response.data?.liked);
-            likedActorMap.value = {
-                ...likedActorMap.value,
-                [actorId]: liked,
-            };
-
-            uiStore.showToast(
-                liked ? 'Added actor to favorites' : 'Removed actor from favorites',
-                'success'
-            );
-        }
-    } catch (error) {
-        uiStore.showToast('Failed to update actor favorite status', 'error');
-    } finally {
-        likeProcessingMap.value = {
-            ...likeProcessingMap.value,
-            [actorId]: false,
-        };
-    }
 };
 const resolveActorAge = (actor) => {
     const directAge = Number(actor?.age);
@@ -380,67 +314,19 @@ watch(
             @remove-bio-filter="removeBioFilter"
         />
 
-        <div class="ui-row ui-row-cols-2 ui-row-cols-md-4 ui-row-cols-lg-6 ui-g-4">
-            <div v-for="actor in visibleActors" :key="actor.id" class="ui-col">
-                <div class="ui-card u-h-full u-shadow-sm hover-shadow">
-                    <div class="u-relative">
-                        <Link :href="route('jav.vue.actors.bio', actor.uuid || actor.id)">
-                            <img
-                                :src="actor.cover"
-                                class="ui-card-img-top"
-                                :alt="actor.name"
-                                @error="(e) => { e.target.src = 'https://placehold.co/300x400?text=No+Image'; }"
-                            >
-                        </Link>
-                        <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
-                            <small><i class="fas fa-heart"></i> {{ formatCount(actor.favorites_count) }}</small>
-                            <small class="ml-2"><i class="fas fa-eye"></i> {{ formatCount(actor.jav_views) }}</small>
-                            <small v-if="resolveActorRate(actor) !== null" class="ml-2"><i class="fas fa-star"></i> {{ formatRate(resolveActorRate(actor)) }}</small>
-                        </div>
-                        <button
-                            v-if="resolveActorAge(actor) !== null"
-                            type="button"
-                            class="u-btn-reset u-absolute u-top-0 u-left-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded actor-age-chip"
-                            :class="{ 'actor-age-chip-active': isAgeFilterActive(resolveActorAge(actor)) }"
-                            title="Filter by this age"
-                            @click.stop="filterByAge(resolveActorAge(actor))"
-                        >
-                            <small><i class="fas fa-user-clock"></i> {{ resolveActorAge(actor) }}</small>
-                        </button>
-                    </div>
-                    <div class="ui-card-body u-text-center">
-                        <h5 class="ui-card-title u-truncate" :title="actor.name">{{ actor.name }}</h5>
-                        <span class="ui-badge u-bg-secondary">{{ actor.javs_count || 0 }} JAVs</span>
-                        <div class="mt-2 u-flex gap-2 actor-actions">
-                            <button
-                                v-if="hasAuthUser"
-                                type="button"
-                                class="ui-btn ui-btn-sm u-z-2 u-relative"
-                                :class="isActorLiked(actor) ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
-                                :disabled="isLikeProcessing(actor)"
-                                title="Like actor"
-                                @click.prevent="toggleActorLike(actor)"
-                            >
-                                <i :class="isActorLiked(actor) ? 'fas fa-heart' : 'far fa-heart'"></i>
-                            </button>
-                            <div class="quick-rating-group u-flex u-items-center ml-auto">
-                                <button
-                                    v-for="star in 5"
-                                    :key="`actor-rate-${actor.id}-${star}`"
-                                    type="button"
-                                    class="ui-btn ui-btn-link ui-btn-sm p-0 mx-1 quick-rate-btn u-z-2 u-relative"
-                                    :class="actorStarCount(actor) >= star ? 'u-text-warning' : 'u-text-secondary'"
-                                    :title="`Actor rate ${star}`"
-                                    tabindex="-1"
-                                >
-                                    <i class="fas fa-star"></i>
-                                </button>
-                                <small v-if="resolveActorRate(actor) !== null" class="ml-1 u-text-muted">{{ formatRate(resolveActorRate(actor)) }}/5</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="movie-masonry-grid">
+            <ActorCard
+                v-for="actor in visibleActors"
+                :key="actor.id"
+                :actor="actor"
+                :has-auth-user="hasAuthUser"
+                :liked="Boolean(actor.is_liked)"
+                :actor-age="resolveActorAge(actor)"
+                :age-filter-active="isAgeFilterActive(resolveActorAge(actor))"
+                :actor-rate="formatRate(resolveActorRate(actor))"
+                :actor-star-count="actorStarCount(actor)"
+                @filter-age="filterByAge"
+            />
 
             <div v-if="visibleActors.length === 0" class="ui-col-12">
                 <EmptyState tone="warning" icon="fas fa-users" message="No actors found." />
@@ -457,23 +343,30 @@ watch(
 </template>
 
 <style scoped>
-.hover-shadow {
-    transition: box-shadow 0.2s ease-in-out;
+.movie-masonry-grid {
+    column-count: 1;
+    column-gap: 1rem;
 }
 
-.hover-shadow:hover {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+.movie-masonry-grid > .ui-col,
+.movie-masonry-grid > .ui-col-12 {
+    break-inside: avoid;
+    margin-bottom: 1rem;
 }
 
-.actor-age-chip {
-    cursor: pointer;
+.movie-masonry-grid > .ui-col-12 {
+    column-span: all;
 }
 
-.actor-age-chip-active {
-    background-color: var(--primary-strong) !important;
+@media (min-width: 768px) {
+    .movie-masonry-grid {
+        column-count: 4;
+    }
 }
 
-.actor-actions .quick-rate-btn {
-    pointer-events: none;
+@media (min-width: 1200px) {
+    .movie-masonry-grid {
+        column-count: 4;
+    }
 }
 </style>

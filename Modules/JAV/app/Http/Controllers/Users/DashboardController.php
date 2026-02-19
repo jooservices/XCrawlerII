@@ -159,6 +159,7 @@ class DashboardController extends Controller
     {
         $query = (string) $request->input('q', '');
         $actors = $this->dashboardReadRepository->searchActors($query);
+        $this->curationReadService->decorateActorsWithFeaturedState($actors->items());
 
         return Inertia::render('Actors/Index', [
             'actors' => $actors,
@@ -172,6 +173,7 @@ class DashboardController extends Controller
         $sort = (string) $request->input('sort', 'javs_count');
         $direction = (string) $request->input('direction', 'desc');
         $tags = $this->dashboardReadRepository->searchTags($query, $sort, $direction);
+        $this->dashboardReadRepository->decorateTagsForUser($tags, Auth::user());
 
         return Inertia::render('Tags/Index', [
             'tags' => $tags,

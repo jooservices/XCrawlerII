@@ -10,6 +10,7 @@ use Modules\JAV\Models\Actor;
 use Modules\JAV\Repositories\DashboardReadRepository;
 use Modules\JAV\Services\ActorAnalyticsService;
 use Modules\JAV\Services\ActorProfileResolver;
+use Modules\JAV\Services\CurationReadService;
 use Modules\JAV\Services\DashboardPreferencesService;
 
 class ActorController extends Controller
@@ -19,6 +20,7 @@ class ActorController extends Controller
         private readonly ActorProfileResolver $actorProfileResolver,
         private readonly DashboardPreferencesService $dashboardPreferencesService,
         private readonly ActorAnalyticsService $actorAnalyticsService,
+        private readonly CurationReadService $curationReadService,
     ) {}
 
     public function index(GetActorsRequest $request): InertiaResponse
@@ -44,6 +46,7 @@ class ActorController extends Controller
         $sort = (string) $request->input('sort', 'javs_count');
         $direction = (string) $request->input('direction', 'desc');
         $actors = $this->dashboardReadRepository->searchActors($query, $filters, 60, $sort, $direction);
+        $this->curationReadService->decorateActorsWithFeaturedState($actors->items());
 
         $filters['tags'] = $this->dashboardPreferencesService->normalizeTagValues(array_merge(
             $filters['tags'],
@@ -70,6 +73,7 @@ class ActorController extends Controller
     public function bio(Actor $actor): InertiaResponse
     {
         $actor->loadCount('javs')->load(['profileAttributes', 'profileSources']);
+        $this->curationReadService->decorateActorsWithFeaturedState([$actor]);
 
         $movies = $this->dashboardReadRepository->actorMovies($actor, 30);
 

@@ -23,7 +23,20 @@ class StoreRatingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'jav_id' => ['required', 'integer', 'exists:jav,id'],
+            'jav_id' => [
+                'nullable',
+                'integer',
+                'exists:jav,id',
+                'required_without:tag_id',
+                fn ($attribute, $value, $fail) => $this->filled('tag_id') && $fail('Provide only one rating target: movie or tag.'),
+            ],
+            'tag_id' => [
+                'nullable',
+                'integer',
+                'exists:tags,id',
+                'required_without:jav_id',
+                fn ($attribute, $value, $fail) => $this->filled('jav_id') && $fail('Provide only one rating target: movie or tag.'),
+            ],
             'rating' => ['required', 'integer', 'min:1', 'max:5'],
             'review' => ['nullable', 'string', 'max:1000'],
         ];
@@ -35,8 +48,12 @@ class StoreRatingRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'jav_id.required' => 'Movie ID is required.',
+            'jav_id.required_without' => 'Movie ID is required when tag ID is not provided.',
             'jav_id.exists' => 'The selected movie does not exist.',
+            'jav_id.prohibited_with' => 'Provide only one rating target: movie or tag.',
+            'tag_id.required_without' => 'Tag ID is required when movie ID is not provided.',
+            'tag_id.exists' => 'The selected tag does not exist.',
+            'tag_id.prohibited_with' => 'Provide only one rating target: movie or tag.',
             'rating.required' => 'Rating is required.',
             'rating.min' => 'Rating must be at least 1 star.',
             'rating.max' => 'Rating cannot exceed 5 stars.',

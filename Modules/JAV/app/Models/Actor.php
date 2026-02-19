@@ -19,7 +19,7 @@ class Actor extends Model
 
     protected $table = 'actors';
 
-    protected $appends = ['age', 'cover'];
+    protected $appends = ['age', 'cover', 'is_featured', 'featured_curation_uuid'];
 
     protected $touches = ['javs'];
 
@@ -204,6 +204,24 @@ class Actor extends Model
         $age = $birthDate->age;
 
         return $age >= 0 ? $age : null;
+    }
+
+    /**
+     * Whether this actor is in the featured curation (set by CurationReadService).
+     */
+    public function getIsFeaturedAttribute(): bool
+    {
+        return (bool) ($this->attributes['is_featured'] ?? false);
+    }
+
+    /**
+     * UUID of the featured curation entry if any (set by CurationReadService).
+     */
+    public function getFeaturedCurationUuidAttribute(): ?string
+    {
+        $value = $this->attributes['featured_curation_uuid'] ?? null;
+
+        return $value !== null && $value !== '' ? (string) $value : null;
     }
 
     public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany

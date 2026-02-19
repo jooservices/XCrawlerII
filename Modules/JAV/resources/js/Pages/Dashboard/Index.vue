@@ -536,7 +536,7 @@ onBeforeUnmount(() => {
 
 @media (min-width: 768px) {
     .movie-masonry-grid {
-        column-count: 3;
+        column-count: 4;
     }
 }
 

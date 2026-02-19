@@ -53,6 +53,20 @@ class FavoriteRepository
     }
 
     /**
+     * @param  Collection<int, int|string>  $tagIds
+     * @return Collection<int|string, int|string>
+     */
+    public function likedTagIdsForUserAndTagIds(int $userId, Collection $tagIds): Collection
+    {
+        return Favorite::query()
+            ->where('user_id', $userId)
+            ->where('favoritable_type', Tag::class)
+            ->whereIn('favoritable_id', $tagIds)
+            ->pluck('favoritable_id')
+            ->flip();
+    }
+
+    /**
      * @return Collection<int, string>
      */
     public function preferredTagNamesForUser(int $userId): Collection

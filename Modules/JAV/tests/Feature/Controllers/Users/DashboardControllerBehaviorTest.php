@@ -3,10 +3,13 @@
 namespace Modules\JAV\Tests\Feature\Controllers\Users;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Testing\AssertableInertia as Assert;
+use Modules\Core\Models\CuratedItem;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Favorite;
 use Modules\JAV\Models\Jav;
+use Modules\JAV\Models\Tag;
 use Modules\JAV\Tests\TestCase;
 
 class DashboardControllerBehaviorTest extends TestCase
@@ -75,6 +78,100 @@ class DashboardControllerBehaviorTest extends TestCase
             );
 
         $this->assertNotSame($likedActor->id, $otherActor->id);
+    }
+
+    public function test_actors_page_includes_is_featured_and_featured_curation_uuid_from_curation(): void
+    {
+        config(['scout.driver' => 'collection']);
+
+        $user = User::factory()->create();
+        $featuredActor = Actor::factory()->create(['name' => 'Featured Actor']);
+        $normalActor = Actor::factory()->create(['name' => 'Normal Actor']);
+
+        $curation = CuratedItem::query()->create([
+            'item_type' => 'actor',
+            'item_id' => $featuredActor->id,
+            'curation_type' => 'featured',
+            'user_id' => $user->id,
+        ]);
+
+        Cache::flush();
+
+        $response = $this->actingAs($user)
+            ->get(route('jav.vue.actors', [
+                'sort' => 'name',
+                'direction' => 'asc',
+            ]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Actors/Index', false)
+                ->has('actors.data', 2)
+            );
+
+        $page = $response->viewData('page');
+        if (is_string($page)) {
+            $page = json_decode($page, true, 512, JSON_THROW_ON_ERROR);
+        }
+        $data = $page['props']['actors']['data'] ?? [];
+        $featuredInData = collect($data)->firstWhere('id', $featuredActor->id);
+        $normalInData = collect($data)->firstWhere('id', $normalActor->id);
+
+        $this->assertNotNull($featuredInData, 'Featured actor must be in actors list');
+        $this->assertNotNull($normalInData, 'Normal actor must be in actors list');
+        $this->assertTrue((bool) ($featuredInData['is_featured'] ?? false), 'Featured actor must have is_featured true in Inertia props (reload evidence)');
+        $this->assertSame($curation->uuid, $featuredInData['featured_curation_uuid'] ?? null);
+        $this->assertFalse((bool) ($normalInData['is_featured'] ?? true), 'Normal actor must have is_featured false');
+    }
+
+    public function test_tags_page_includes_is_liked_and_featured_fields(): void
+    {
+        config(['scout.driver' => 'collection']);
+
+        $user = User::factory()->create();
+        $likedFeaturedTag = Tag::factory()->create(['name' => 'Featured Tag']);
+        $normalTag = Tag::factory()->create(['name' => 'Normal Tag']);
+
+        Favorite::query()->create([
+            'user_id' => $user->id,
+            'favoritable_type' => Tag::class,
+            'favoritable_id' => $likedFeaturedTag->id,
+        ]);
+
+        $curation = CuratedItem::query()->create([
+            'item_type' => 'tag',
+            'item_id' => $likedFeaturedTag->id,
+            'curation_type' => 'featured',
+            'user_id' => $user->id,
+        ]);
+
+        Cache::flush();
+
+        $response = $this->actingAs($user)
+            ->get(route('jav.vue.tags', [
+                'sort' => 'name',
+                'direction' => 'asc',
+            ]))
+            ->assertOk()
+            ->assertInertia(fn (Assert $page): Assert => $page
+                ->component('Tags/Index', false)
+                ->has('tags.data', 2)
+            );
+
+        $page = $response->viewData('page');
+        if (is_string($page)) {
+            $page = json_decode($page, true, 512, JSON_THROW_ON_ERROR);
+        }
+        $data = $page['props']['tags']['data'] ?? [];
+        $featuredInData = collect($data)->firstWhere('id', $likedFeaturedTag->id);
+        $normalInData = collect($data)->firstWhere('id', $normalTag->id);
+
+        $this->assertNotNull($featuredInData, 'Featured tag must be in tags list');
+        $this->assertNotNull($normalInData, 'Normal tag must be in tags list');
+        $this->assertTrue((bool) ($featuredInData['is_liked'] ?? false), 'Featured tag must have is_liked true in Inertia props');
+        $this->assertTrue((bool) ($featuredInData['is_featured'] ?? false), 'Featured tag must have is_featured true in Inertia props');
+        $this->assertSame($curation->uuid, $featuredInData['featured_curation_uuid'] ?? null);
+        $this->assertFalse((bool) ($normalInData['is_liked'] ?? true), 'Normal tag must have is_liked false');
+        $this->assertFalse((bool) ($normalInData['is_featured'] ?? true), 'Normal tag must have is_featured false');
     }
 
     public function test_dashboard_uses_env_show_cover_when_user_preference_is_missing(): void

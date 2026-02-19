@@ -1,5 +1,5 @@
 <script setup>
-import { Link, router, usePage } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import axios from 'axios';
 import { useUIStore } from '@jav/Stores/ui';
@@ -113,10 +113,8 @@ const reasonActorsToShow = computed(() => reasonActors.value.slice(0, 1));
 const reasonTagsToShow = computed(() => reasonTags.value.slice(0, 1));
 const movieActors = computed(() => (Array.isArray(props.item?.actors) ? props.item.actors : []));
 const movieTags = computed(() => (Array.isArray(props.item?.tags) ? props.item.tags : []));
-const visibleActors = computed(() => movieActors.value.slice(0, 4));
-const visibleTags = computed(() => movieTags.value.slice(0, 4));
-const extraActorCount = computed(() => Math.max(0, movieActors.value.length - visibleActors.value.length));
-const extraTagCount = computed(() => Math.max(0, movieTags.value.length - visibleTags.value.length));
+const visibleActors = computed(() => movieActors.value);
+const visibleTags = computed(() => movieTags.value);
 const activeTagSet = computed(() => {
     return new Set(normalizedActiveTags.value);
 });
@@ -142,15 +140,6 @@ const downloadRoute = computed(() => {
 const detailRoute = computed(() => {
     return route('jav.vue.movies.show', props.item.uuid || props.item.id);
 });
-
-const openDetail = (event) => {
-    const target = event.target;
-    if (target.closest('a') || target.closest('button')) {
-        return;
-    }
-
-    router.visit(detailRoute.value);
-};
 
 const localIsLiked = ref(props.item.is_liked);
 const localInWatchlist = ref(props.item.in_watchlist);
@@ -345,351 +334,192 @@ const toggleFeatured = async () => {
         featuredProcessing.value = false;
     }
 };
+
+const cover = computed(() => {
+    return {
+        src: props.item?.cover || '',
+        alt: props.item?.code || '',
+        href: detailRoute.value,
+        className: 'ui-card-img-top u-h-300 u-object-cover',
+        onError: handleImageError,
+    };
+});
+
+const cornerEnd = computed(() => {
+    const views = Number(props.item?.views ?? 0);
+    const downloads = Number(props.item?.downloads ?? 0);
+
+    return [
+        {
+            key: `views-${props.item?.id || 'movie'}`,
+            icon: 'fas fa-eye',
+            text: String(views),
+            tooltip: `Views: ${views}`,
+        },
+        {
+            key: `downloads-${props.item?.id || 'movie'}`,
+            icon: 'fas fa-download',
+            text: String(downloads),
+            tooltip: `Downloads: ${downloads}`,
+        },
+    ];
+});
+
+const heading = computed(() => {
+    const dateText = props.item?.date ? formatDate(props.item.date) : '';
+
+    return {
+        code: props.item?.formatted_code || props.item?.code || '',
+        codeHref: detailRoute.value,
+        date: dateText,
+        dateTitle: dateText ? `Release date: ${dateText}` : '',
+        title: titleText.value,
+    };
+});
+
+const meta = computed(() => {
+    if (!props.item?.size) {
+        return [];
+    }
+
+    return [
+        {
+            key: `size-${props.item?.id || 'movie'}`,
+            text: `${props.item.size} GB`,
+            className: 'base-card-tone-muted',
+        },
+    ];
+});
+
+const groupTop = computed(() => {
+    const actorItems = reasonActorsToShow.value.map((actorName) => ({
+        key: `reason-actor-${props.item?.id || 'movie'}-${actorName}`,
+        text: `Because you liked actor: ${actorName}`,
+        className: 'base-card-tone-positive',
+    }));
+    const tagItems = reasonTagsToShow.value.map((tagName) => ({
+        key: `reason-tag-${props.item?.id || 'movie'}-${tagName}`,
+        text: `Because you liked tag: ${tagName}`,
+        className: 'base-card-tone-info',
+    }));
+
+    return [...actorItems, ...tagItems];
+});
+
+const groupA = computed(() => {
+    return visibleActors.value.map((actor, index) => ({
+        key: `actor-${props.item?.id || 'movie'}-${index}`,
+        text: resolveName(actor),
+        href: actorLink(actor),
+        className: 'base-card-tone-positive',
+    }));
+});
+
+const groupB = computed(() => {
+    return visibleTags.value.map((tag, index) => ({
+        key: `tag-${props.item?.id || 'movie'}-${index}`,
+        text: resolveName(tag),
+        href: route('jav.vue.dashboard', { tag: resolveName(tag) }),
+        className: isActiveTag(tag) ? 'base-card-tone-active' : 'base-card-tone-info',
+    }));
+});
+
+const primaryAction = computed(() => {
+    if (hasAuthUser.value) {
+        return {
+            href: downloadRoute.value,
+            label: props.item?.size ? `Download (${props.item.size} GB)` : 'Download',
+            icon: 'fas fa-download',
+            title: props.item?.size ? `Download torrent (${props.item.size} GB)` : 'Download torrent',
+            className: 'ui-btn-primary download-btn',
+            native: true,
+        };
+    }
+
+    return {
+        href: route('jav.vue.login'),
+        label: 'Login to Download',
+        icon: 'fas fa-right-to-bracket',
+        title: 'Login is required before downloading',
+        className: 'ui-btn-outline-secondary download-btn',
+        native: false,
+    };
+});
+
+const tools = computed(() => {
+    if (!hasAuthUser.value) {
+        return [];
+    }
+
+    const result = [
+        {
+            key: `like-${props.item?.id || 'movie'}`,
+            className: localIsLiked.value ? 'ui-btn-danger' : 'ui-btn-outline-danger',
+            iconClass: localIsLiked.value ? 'fas fa-heart' : 'far fa-heart',
+            disabled: isProcessing.value,
+            title: localIsLiked.value ? 'Remove from favorites' : 'Add to favorites',
+            onClick: toggleLike,
+        },
+        {
+            key: `watchlist-${props.item?.id || 'movie'}`,
+            className: localInWatchlist.value ? 'ui-btn-warning' : 'ui-btn-outline-warning',
+            iconClass: localInWatchlist.value ? 'fas fa-bookmark' : 'far fa-bookmark',
+            disabled: isWatchlistProcessing.value,
+            title: localInWatchlist.value ? 'Remove from watchlist' : 'Add to watchlist',
+            onClick: toggleWatchlist,
+        },
+    ];
+
+    if (canManageCurations.value) {
+        result.push({
+            key: `featured-${props.item?.id || 'movie'}`,
+            className: localIsFeatured.value ? 'ui-btn-primary' : 'ui-btn-outline-primary',
+            iconClass: localIsFeatured.value ? 'fas fa-star' : 'far fa-star',
+            disabled: featuredProcessing.value,
+            title: localIsFeatured.value ? 'Remove from featured list' : 'Add to featured list',
+            onClick: toggleFeatured,
+        });
+    }
+
+    result.push({
+        key: `rating-${props.item?.id || 'movie'}`,
+        kind: 'rating',
+        value: Number(localUserRating.value || 0),
+        max: 5,
+        disabled: ratingProcessing.value,
+        title: `Current rating: ${localUserRating.value || 0} of 5`,
+        onRate: rate,
+    });
+
+    return result;
+});
+
+const summary = computed(() => {
+    return {
+        showDivider: true,
+        text: descriptionText.value,
+    };
+});
 </script>
 
 <template>
     <div class="ui-col">
         <BaseCard
-            card-class="u-shadow-sm movie-card u-cursor-pointer"
+            mode="structured"
+            card-class="u-shadow-sm movie-card"
             body-class="movie-card-body"
             :data-uuid="item.uuid"
-            @click="openDetail"
-        >
-            <Link :href="detailRoute" class="u-relative u-block">
-                <img
-                    :src="item.cover"
-                    :alt="item.code"
-                    @error="handleImageError"
-                    class="ui-card-img-top u-h-300 u-object-cover"
-                >
-                <div class="u-absolute u-top-0 u-right-0 u-bg-dark u-bg-opacity-75 u-text-white px-2 py-1 m-2 u-rounded">
-                    <small
-                        class="movie-tooltip-target movie-tooltip-target-bottom"
-                        :aria-label="`Views: ${item.views ?? 0}`"
-                        :data-tooltip="`Views: ${item.views ?? 0}`"
-                    >
-                        <i class="fas fa-eye"></i> <span>{{ item.views ?? 0 }}</span>
-                    </small>
-                    <small
-                        class="ml-2 movie-tooltip-target movie-tooltip-target-bottom"
-                        :aria-label="`Downloads: ${item.downloads ?? 0}`"
-                        :data-tooltip="`Downloads: ${item.downloads ?? 0}`"
-                    >
-                        <i class="fas fa-download"></i> <span>{{ item.downloads ?? 0 }}</span>
-                    </small>
-                </div>
-            </Link>
-
-            <div class="movie-card-content">
-                <div class="movie-card-heading">
-                    <div class="movie-card-code-row">
-                        <Link :href="detailRoute" class="u-no-underline">
-                            <h5 class="ui-card-title u-text-primary mb-1">{{ item.formatted_code || item.code }}</h5>
-                        </Link>
-                        <small
-                            v-if="item.date"
-                            class="movie-card-inline-date"
-                            :title="`Release date: ${formatDate(item.date)}`"
-                        >
-                            <i class="fas fa-calendar-alt"></i> {{ formatDate(item.date) }}
-                        </small>
-                    </div>
-                    <p class="ui-card-text movie-card-title-line" :title="item.title">{{ titleText }}</p>
-                </div>
-
-                <div class="movie-card-meta">
-                    <span v-if="item.size" class="ui-badge movie-card-badge movie-card-badge-meta">{{ item.size }} GB</span>
-                </div>
-
-                <div v-if="hasRecommendationReasons" class="movie-card-badge-row movie-card-reasons">
-                    <span
-                        v-for="actorName in reasonActorsToShow"
-                        :key="`reason-actor-${item.id}-${actorName}`"
-                        class="ui-badge movie-card-badge movie-card-badge-actor"
-                    >
-                        Because you liked actor: {{ actorName }}
-                    </span>
-                    <span
-                        v-for="tagName in reasonTagsToShow"
-                        :key="`reason-tag-${item.id}-${tagName}`"
-                        class="ui-badge movie-card-badge movie-card-badge-tag"
-                    >
-                        Because you liked tag: {{ tagName }}
-                    </span>
-                </div>
-
-                <div class="movie-card-badge-row movie-card-actors">
-                    <Link
-                        v-for="(actor, index) in visibleActors"
-                        :key="index"
-                        :href="actorLink(actor)"
-                        class="ui-badge movie-card-badge movie-card-badge-actor u-no-underline u-z-2 u-relative"
-                    >
-                        {{ resolveName(actor) }}
-                    </Link>
-                    <span v-if="extraActorCount > 0" class="ui-badge movie-card-badge movie-card-badge-meta">+{{ extraActorCount }}</span>
-                </div>
-
-                <div class="movie-card-badge-row movie-card-tags">
-                    <Link
-                        v-for="(tag, index) in visibleTags"
-                        :key="index"
-                        :href="route('jav.vue.dashboard', { tag: resolveName(tag) })"
-                        class="ui-badge movie-card-badge u-no-underline u-z-2 u-relative"
-                        :class="isActiveTag(tag) ? 'movie-card-badge-tag-active' : 'movie-card-badge-tag'"
-                    >
-                        {{ resolveName(tag) }}
-                    </Link>
-                    <span v-if="extraTagCount > 0" class="ui-badge movie-card-badge movie-card-badge-meta">+{{ extraTagCount }}</span>
-                </div>
-
-                <div class="movie-card-actions">
-                    <div class="u-grid gap-2">
-                        <a
-                            v-if="hasAuthUser"
-                            :href="downloadRoute"
-                            class="ui-btn ui-btn-primary ui-btn-sm download-btn"
-                            :title="item.size ? `Download torrent (${item.size} GB)` : 'Download torrent'"
-                        >
-                            <i class="fas fa-download"></i> Download<span v-if="item.size"> ({{ item.size }} GB)</span>
-                        </a>
-                        <Link
-                            v-else
-                            :href="route('jav.vue.login')"
-                            class="ui-btn ui-btn-outline-secondary ui-btn-sm download-btn"
-                            title="Login is required before downloading"
-                        >
-                            <i class="fas fa-right-to-bracket"></i> Login to Download
-                        </Link>
-                    </div>
-
-                    <div v-if="hasAuthUser" class="mt-2 u-flex gap-2">
-                        <button
-                            type="button"
-                            class="ui-btn ui-btn-sm u-z-2 u-relative movie-tooltip-target"
-                            :class="localIsLiked ? 'ui-btn-danger' : 'ui-btn-outline-danger'"
-                            :disabled="isProcessing"
-                            :aria-label="localIsLiked ? 'Remove from favorites' : 'Add to favorites'"
-                            :data-tooltip="localIsLiked ? 'Remove from favorites' : 'Add to favorites'"
-                            @click.prevent="toggleLike"
-                        >
-                            <i :class="localIsLiked ? 'fas fa-heart' : 'far fa-heart'"></i>
-                        </button>
-                        <button
-                            type="button"
-                            class="ui-btn ui-btn-sm u-z-2 u-relative movie-tooltip-target"
-                            :class="localInWatchlist ? 'ui-btn-warning' : 'ui-btn-outline-warning'"
-                            :disabled="isWatchlistProcessing"
-                            :aria-label="localInWatchlist ? 'Remove from watchlist' : 'Add to watchlist'"
-                            :data-tooltip="localInWatchlist ? 'Remove from watchlist' : 'Add to watchlist'"
-                            @click.prevent="toggleWatchlist"
-                        >
-                            <i :class="localInWatchlist ? 'fas fa-bookmark' : 'far fa-bookmark'"></i>
-                        </button>
-                        <button
-                            v-if="canManageCurations"
-                            type="button"
-                            class="ui-btn ui-btn-sm u-z-2 u-relative movie-tooltip-target"
-                            :class="localIsFeatured ? 'ui-btn-primary' : 'ui-btn-outline-primary'"
-                            :disabled="featuredProcessing"
-                            :aria-label="localIsFeatured ? 'Remove from featured list' : 'Add to featured list'"
-                            :data-tooltip="localIsFeatured ? 'Remove from featured list' : 'Add to featured list'"
-                            @click.prevent="toggleFeatured"
-                        >
-                            <i :class="localIsFeatured ? 'fas fa-star' : 'far fa-star'"></i>
-                        </button>
-                        <div class="quick-rating-group u-flex u-items-center ml-auto" :title="`Current rating: ${localUserRating || 0} of 5`">
-                            <button
-                                v-for="star in 5"
-                                :key="`star-${item.id}-${star}`"
-                                type="button"
-                                class="ui-btn ui-btn-link ui-btn-sm p-0 mx-1 quick-rate-btn u-z-2 u-relative movie-tooltip-target"
-                                :class="(localUserRating || 0) >= star ? 'u-text-warning' : 'u-text-secondary'"
-                                :aria-label="`Set rating to ${star} star${star > 1 ? 's' : ''}`"
-                                :data-tooltip="`Set rating to ${star} star${star > 1 ? 's' : ''}`"
-                                @click.prevent="rate(star)"
-                            >
-                                <i class="fas fa-star"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="movie-card-description">
-                <p class="movie-card-description-text" :title="descriptionText">{{ descriptionText }}</p>
-            </div>
-        </BaseCard>
+            :cover="cover"
+            :corner-end="cornerEnd"
+            :heading="heading"
+            :group-top="groupTop"
+            :meta="meta"
+            :group-a="groupA"
+            :group-b="groupB"
+            :primary-action="primaryAction"
+            :tools="tools"
+            :summary="summary"
+        />
     </div>
 </template>
 
-<style scoped>
-.movie-card {
-    display: flex;
-    flex-direction: column;
-}
-
-.movie-card-body {
-    display: flex;
-    flex-direction: column;
-    gap: 0.7rem;
-    min-height: 0;
-}
-
-.movie-card-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.55rem;
-    min-height: 0;
-}
-
-.movie-card-code-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.5rem;
-}
-
-.movie-card-inline-date {
-    color: var(--text-2);
-    font-size: 0.75rem;
-    white-space: nowrap;
-    margin-top: 0.1rem;
-}
-
-.movie-tooltip-target {
-    position: relative;
-}
-
-@media (hover: hover) {
-    .movie-tooltip-target::after {
-        content: attr(data-tooltip);
-        position: absolute;
-        left: 50%;
-        bottom: calc(100% + 8px);
-        transform: translateX(-50%) translateY(3px);
-        background: rgba(15, 23, 42, 0.96);
-        color: #f8fafc;
-        border: 1px solid rgba(148, 163, 184, 0.45);
-        border-radius: 6px;
-        padding: 0.25rem 0.45rem;
-        font-size: 0.72rem;
-        line-height: 1.2;
-        white-space: nowrap;
-        z-index: 40;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.16s ease, transform 0.16s ease;
-    }
-
-    .movie-tooltip-target::before {
-        content: '';
-        position: absolute;
-        left: 50%;
-        bottom: calc(100% + 3px);
-        transform: translateX(-50%);
-        border-width: 5px 5px 0 5px;
-        border-style: solid;
-        border-color: rgba(15, 23, 42, 0.96) transparent transparent transparent;
-        z-index: 39;
-        opacity: 0;
-        transition: opacity 0.16s ease;
-        pointer-events: none;
-    }
-
-    .movie-tooltip-target.movie-tooltip-target-bottom::after {
-        top: calc(100% + 8px);
-        bottom: auto;
-        transform: translateX(-50%) translateY(-3px);
-    }
-
-    .movie-tooltip-target.movie-tooltip-target-bottom::before {
-        top: calc(100% + 3px);
-        bottom: auto;
-        border-width: 0 5px 5px 5px;
-        border-color: transparent transparent rgba(15, 23, 42, 0.96) transparent;
-    }
-
-    .movie-tooltip-target:hover::after,
-    .movie-tooltip-target:hover::before,
-    .movie-tooltip-target:focus-visible::after,
-    .movie-tooltip-target:focus-visible::before {
-        opacity: 1;
-    }
-
-    .movie-tooltip-target:hover::after,
-    .movie-tooltip-target:focus-visible::after {
-        transform: translateX(-50%) translateY(0);
-    }
-
-    .movie-tooltip-target.movie-tooltip-target-bottom:hover::after,
-    .movie-tooltip-target.movie-tooltip-target-bottom:focus-visible::after {
-        transform: translateX(-50%) translateY(0);
-    }
-}
-
-.movie-card-title-line {
-    margin-bottom: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.movie-card-badge-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-    align-items: flex-start;
-}
-
-.movie-card-actions {
-    margin-bottom: 0.45rem;
-}
-
-.movie-card-description {
-    margin-top: 0.2rem;
-    padding-top: 0.65rem;
-    border-top: 1px solid var(--border);
-}
-
-.movie-card-description-text {
-    margin: 0;
-    color: var(--text-2);
-    font-size: 0.84rem;
-    line-height: 1.35;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-.movie-card-badge {
-    border: 1px solid transparent;
-}
-
-.movie-card-badge-actor {
-    background: rgba(22, 163, 74, 0.22) !important;
-    border-color: rgba(34, 197, 94, 0.5) !important;
-    color: #dcfce7 !important;
-}
-
-.movie-card-badge-tag {
-    background: rgba(2, 132, 199, 0.22) !important;
-    border-color: rgba(56, 189, 248, 0.5) !important;
-    color: #e0f2fe !important;
-}
-
-.movie-card-badge-tag-active {
-    background: rgba(245, 158, 11, 0.9) !important;
-    border-color: rgba(251, 191, 36, 0.95) !important;
-    color: #1f2937 !important;
-}
-
-.movie-card-badge-meta {
-    background: rgba(148, 163, 184, 0.18) !important;
-    border-color: rgba(148, 163, 184, 0.4) !important;
-    color: #dbeafe !important;
-}
-
-</style>

@@ -117,13 +117,13 @@ const props = defineProps({
 
 @media (min-width: 768px) {
     .movie-masonry-grid {
-        column-count: 3;
+        column-count: 4;
     }
 }
 
 @media (min-width: 1200px) {
     .movie-masonry-grid {
-        column-count: 5;
+        column-count: 4;
     }
 }
 </style>

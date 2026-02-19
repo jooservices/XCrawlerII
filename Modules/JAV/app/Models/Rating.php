@@ -14,6 +14,7 @@ class Rating extends Model
     protected $fillable = [
         'user_id',
         'jav_id',
+        'tag_id',
         'rating',
         'review',
     ];
@@ -47,11 +48,27 @@ class Rating extends Model
     }
 
     /**
+     * Get the tag that was rated.
+     */
+    public function tag(): BelongsTo
+    {
+        return $this->belongsTo(Tag::class);
+    }
+
+    /**
      * Scope a query to only include ratings for a specific movie.
      */
     public function scopeForJav($query, int $javId)
     {
         return $query->where('jav_id', $javId);
+    }
+
+    /**
+     * Scope a query to only include ratings for a specific tag.
+     */
+    public function scopeForTag($query, int $tagId)
+    {
+        return $query->where('tag_id', $tagId);
     }
 
     /**

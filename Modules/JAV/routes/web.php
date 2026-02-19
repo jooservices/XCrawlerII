@@ -87,6 +87,7 @@ Route::middleware(['web', 'auth'])->prefix('jav/api')->name('jav.api.')->group(f
     Route::put(JAV_RATINGS_RATING_PATH, [ApiRatingController::class, 'update'])->name('ratings.update');
     Route::delete(JAV_RATINGS_RATING_PATH, [ApiRatingController::class, 'destroy'])->name('ratings.destroy');
     Route::get('/ratings/check/{javId}', [ApiRatingController::class, 'check'])->name('ratings.check');
+    Route::get('/ratings/check/tag/{tagId}', [ApiRatingController::class, 'checkTag'])->name('ratings.check-tag');
     Route::get(JAV_NOTIFICATIONS_PATH, [ApiNotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/read', [ApiNotificationController::class, 'markNotificationRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [ApiNotificationController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
