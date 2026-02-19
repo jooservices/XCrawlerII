@@ -4030,3 +4030,54 @@ Remaining for full P3:
 - FE producer migration (`analyticsClient.js`, `Movies/Show.vue`)
 - Additional test updates listed in V5-H
 - Phase-level completion verification
+
+## P3 Completion Update (Final Validation)
+
+Date completed: 2026-02-19
+Status: `COMPLETED`
+
+Final scope delivered (P3):
+- Movie view analytics now uses Core API contract from FE (`POST /api/v1/analytics/events`).
+- Legacy JAV movie view endpoint removed:
+  - route `POST /jav/movies/{jav}/view` removed
+  - `Modules/JAV/app/Http/Controllers/Users/Api/MovieController.php` removed
+- FE tracking added:
+  - `Modules/JAV/resources/js/Services/analyticsClient.js` created
+  - `Modules/JAV/resources/js/Pages/Movies/Show.vue` tracks view on mount with client-side dedupe
+- Download analytics remains BE-origin via service:
+  - `Modules/JAV/app/Services/JavAnalyticsTrackerService.php`
+  - `Modules/JAV/app/Http/Controllers/Users/MovieController.php` keeps `trackDownload()` usage
+- `occurred_at` validation updated to app-default date parsing (no forced UTC format):
+  - `Modules/Core/app/Http/Requests/IngestAnalyticsEventRequest.php`
+
+Evidence (final round):
+- Formatting:
+  - `vendor/bin/pint --test`
+  - Result: PASS (`461 files`)
+- Full automated tests:
+  - `php artisan test`
+  - Result: `566 passed`, `1 skipped` (`2454 assertions`)
+- Route verification:
+  - `php artisan route:list --path="jav/movies"`
+  - Result: only `GET /jav/movies/{jav}` and `GET /jav/movies/{jav}/download`
+  - `php artisan route:list --path="api/v1/analytics/events"`
+  - Result: `POST /api/v1/analytics/events`
+
+Issue notes during P3 finalization:
+1. Initial pre-commit failed due Pint style issues in 3 files.
+- Resolution: formatted with Pint and recommitted successfully.
+
+No unresolved blocker remains for P3.
+
+## P4 Status Update
+
+Status: `READY_TO_START`
+
+Prerequisite check:
+- P0: completed
+- P1: completed
+- P2: completed
+- P3: completed (final validation done)
+
+Next execution target:
+- Start V5-I Phase 4 (Parity Verification window and evidence collection).
