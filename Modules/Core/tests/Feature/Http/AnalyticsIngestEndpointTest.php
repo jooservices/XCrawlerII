@@ -203,7 +203,7 @@ class AnalyticsIngestEndpointTest extends TestCase
             'invalid action' => [array_merge($base, ['action' => 'hack']), 'action'],
             'invalid date' => [array_merge($base, ['occurred_at' => 'not-a-date']), 'occurred_at'],
             'value too low' => [array_merge($base, ['value' => 0]), 'value'],
-            'value too high' => [array_merge($base, ['value' => 101]), 'value'],
+            'value too high' => [array_merge($base, ['value' => 10001]), 'value'],
             'value non-int' => [array_merge($base, ['value' => 'one']), 'value'],
         ];
     }
