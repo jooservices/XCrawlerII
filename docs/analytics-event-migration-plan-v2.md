@@ -3903,6 +3903,7 @@ No unresolved blocker remains for P0.
 ## P1 Completion Update (Implemented)
 
 Date completed: 2026-02-19
+Status: `COMPLETED`
 
 Scope implemented (V5-F Phase 1):
 - Created `Modules/Core/app/Http/Requests/IngestAnalyticsEventRequest.php`
@@ -3912,16 +3913,24 @@ Scope implemented (V5-F Phase 1):
 - Created `Modules/Core/tests/Feature/Http/AnalyticsIngestEndpointTest.php`
 - Created `Modules/Core/tests/Unit/Services/AnalyticsIngestServiceTest.php`
 
+P1 checklist:
+- [x] 1.1 `IngestAnalyticsEventRequest.php`
+- [x] 1.2 `AnalyticsIngestService.php`
+- [x] 1.3 `AnalyticsEventController.php`
+- [x] 1.4 Core API route `POST /api/v1/analytics/events` + `throttle:analytics`
+- [x] 1.5 Feature tests for ingest endpoint
+- [x] 1.6 Unit tests for ingest service
+
 Evidence (non-assumption):
 - Route registration:
   - Command: `php artisan route:list --path=analytics`
   - Result includes: `POST api/v1/analytics/events` with name `api.analytics.events.store`
 - Phase tests:
   - Command: `php artisan test --filter=AnalyticsIngest`
-  - Result: `11 passed (27 assertions)`
+  - Result: `20 passed (61 assertions)`
 - Core regression:
   - Command: `php artisan test Modules/Core/tests`
-  - Result: `53 passed (120 assertions)`
+  - Result: `62 passed (154 assertions)`
 
 Behavior confirmed:
 - Valid payload returns `202 {"status":"accepted"}`
@@ -3930,4 +3939,18 @@ Behavior confirmed:
 - Ingest writes both total counter (`view`/`download`) and daily bucket (`view:YYYY-MM-DD`/`download:YYYY-MM-DD`)
 
 Issue notes during P1 and resolution:
-- No unresolved blocker remains for P1.
+1. A false-negative occurred when two PHPUnit commands were run in parallel, causing MySQL migration collisions in the shared testing DB.
+- Resolution: rerun tests sequentially (single command), all P1 tests passed.
+
+No unresolved blocker remains for P1.
+
+## P2 Status Update
+
+Status: `READY_TO_START`
+
+Prerequisite check:
+- P0: completed
+- P1: completed and re-validated with sequential test execution
+
+Next execution target:
+- Start V5-G Phase 2 (Flush Pipeline) implementation.
