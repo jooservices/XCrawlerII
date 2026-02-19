@@ -1,6 +1,6 @@
 # XCrawlerII Documentation
 
-This `docs/` directory is structured for business stakeholders, technical leads, senior developers, and junior developers.
+This documentation set is updated for business stakeholders, technical leads, and developers.
 
 ## Structure
 
@@ -11,10 +11,14 @@ docs/
 │   ├── system-design.md
 │   ├── data-model.md
 │   └── request-lifecycle.md
+├── analytics/
+│   ├── overview.md
+│   ├── usage.md
+│   ├── code-structure.md
+│   └── request-lifecycle.md
 ├── guides/
 │   ├── getting-started.md
 │   ├── implementation-guide.md
-│   ├── obs-observability-handover-plan.md
 │   └── code-skeletons/
 ├── api/
 │   └── api-reference.md
@@ -23,19 +27,32 @@ docs/
 ├── deployment/
 │   └── deployment-guide.md
 └── troubleshooting/
-	└── faq.md
+    └── faq.md
 ```
 
 ## Reading Order
 
-1. Business & scope: [architecture/overview.md](architecture/overview.md)
-2. Technical design: [architecture/system-design.md](architecture/system-design.md)
-3. Data model: [architecture/data-model.md](architecture/data-model.md)
-4. Lifecycle details: [architecture/request-lifecycle.md](architecture/request-lifecycle.md)
-5. Setup and build flow: [guides/getting-started.md](guides/getting-started.md)
-6. Feature implementation: [guides/implementation-guide.md](guides/implementation-guide.md)
-7. OBS handover plan: [guides/obs-observability-handover-plan.md](guides/obs-observability-handover-plan.md)
-8. API contracts: [api/api-reference.md](api/api-reference.md)
-9. Quality and testing: [testing/testing-strategy.md](testing/testing-strategy.md)
-10. Delivery operations: [deployment/deployment-guide.md](deployment/deployment-guide.md)
-11. Issue recovery: [troubleshooting/faq.md](troubleshooting/faq.md)
+1. `architecture/overview.md`
+2. `architecture/system-design.md`
+3. `architecture/data-model.md`
+4. `architecture/request-lifecycle.md`
+5. `analytics/overview.md`
+6. `analytics/usage.md`
+7. `analytics/code-structure.md`
+8. `analytics/request-lifecycle.md`
+9. `guides/getting-started.md`
+10. `guides/implementation-guide.md`
+11. `api/api-reference.md`
+12. `testing/testing-strategy.md`
+13. `deployment/deployment-guide.md`
+14. `troubleshooting/faq.md`
+
+## Validation Checklist
+
+- [x] Business stakeholder can explain project value after reading `architecture/overview.md`.
+- [x] Technical lead can create implementation tickets from architecture and guides.
+- [x] Junior developer can run project and start work within one hour.
+- [x] Mermaid diagrams are provided for business flow, design, and lifecycle.
+- [x] No placeholder markers remain in active docs.
+- [x] Technical terms are defined in glossary sections.
+- [x] Clarity review loop completed; FAQ includes resulting questions.

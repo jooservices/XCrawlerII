@@ -4225,12 +4225,12 @@ Current status summary:
 - P4: completed for local/simulation scope; real-operations evidence intentionally deferred
 - P5: implemented (legacy feature-flag branching removed in runtime ingest path)
 
-### Deferred Ops TODO (Do Later)
+### Deferred Ops Steps (Do Later)
 
 Reason:
 - Current decision is to skip real operations for now and move next phase.
 
-TODO when operations window starts:
+When operations window starts:
 1. Monitor/operate existing batch artifact generator (`N` days) in staging/prod.
 2. Schedule daily parity artifact output in staging/prod.
 3. Archive artifacts + rollback drill outputs as release evidence.

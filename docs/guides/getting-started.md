@@ -1,15 +1,16 @@
-# Getting Started (Developer)
+# Getting Started
 
 ## Prerequisites
 
-- PHP 8.5
+- PHP `^8.5`
 - Composer 2.x
-- Node.js 20+ and npm
-- Redis
+- Node.js 22 LTS (or compatible modern Node)
 - MySQL/MariaDB
-- Optional: MongoDB (telemetry), Elasticsearch (search)
+- Redis
+- MongoDB (required for analytics rollups/telemetry)
+- Elasticsearch (required for advanced admin analytics)
 
-## 5-Minute Local Run Target
+## Run Locally
 
 ```bash
 composer setup
@@ -17,29 +18,24 @@ composer hooks:install
 composer dev
 ```
 
-This installs dependencies, initializes environment, runs migrations, and starts local services.
+## Minimum Environment Variables
 
-## Environment Variables
+- `APP_URL`, `APP_KEY`
+- `DB_*`
+- `REDIS_*`
+- `MONGODB_*`
+- `SCOUT_DRIVER`, `ELASTICSEARCH_HOST`
+- `ANALYTICS_REDIS_PREFIX`, `ANALYTICS_FLUSH_INTERVAL`, `ANALYTICS_RATE_LIMIT`
 
-Minimum keys to verify:
-
-- `APP_ENV`, `APP_URL`, `APP_KEY`
-- `DB_*` (database connection)
-- `REDIS_*` (queue/cache)
-- `SCOUT_DRIVER`, `ELASTICSEARCH_*` (search)
-- `JOB_TELEMETRY_*` (telemetry controls)
-
-## Validation Commands
+## Quick Verification
 
 ```bash
-composer format
-composer quality
+php artisan route:list --path="analytics"
+php artisan analytics:flush
 composer test
 ```
 
-## Expected Local Outcome
-
-- App pages load at local server URL.
-- Queue worker receives jobs.
-- Dashboard queries return results.
-- Admin telemetry page returns summary data.
+Expected:
+- Analytics ingest endpoint exists.
+- Flush command completes.
+- Test suite runs without critical failures.

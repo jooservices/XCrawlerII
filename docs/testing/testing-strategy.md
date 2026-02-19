@@ -2,48 +2,40 @@
 
 ## Test Layers
 
-- Unit tests: service, repository, model, and utility behavior.
-- Feature tests: request validation, auth guards, endpoint contracts.
-- Contract tests: JSON shape and critical route behavior.
+- Unit tests: enums and services (`AnalyticsIngestService`, flush logic, helper services).
+- Feature tests: ingest endpoint, admin analytics endpoints, middleware behavior.
+- Integration tests: parity checks and operational simulations.
+- Frontend unit tests: `Modules/Core/resources/js/Services/__tests__/*.test.js`.
 
-## Unit Testing Guidance (Given/When/Then)
+## Unit Test Examples (Given/When/Then)
 
-### Example 1: Search suggestions
-- Given valid query and seeded data
-- When client calls suggest endpoint/service
-- Then response contains mixed typed suggestions and stable shape
+### Analytics dedupe
+- Given an event with existing `event_id`
+- When ingest is called again
+- Then counters remain unchanged
 
-### Example 2: Telemetry aggregation
-- Given telemetry events in time window
-- When summary service computes metrics
-- Then p50/p95/failure rate and throughput are correct
+### Flush rollups
+- Given hot Redis counters for one movie
+- When flush runs
+- Then totals and period buckets are created in Mongo and MySQL counters sync
 
 ## What to Mock
 
-- External provider clients (`jooservices/client` wrappers).
-- Network-bound crawler adapters.
-- Queue dispatch side effects for unit scope.
+- External provider/crawler clients.
+- Elasticsearch client for unit-level analytics logic.
+- Queue dispatch side effects for isolated unit tests.
 
-## Integration Cases
+## Critical Integration Cases
 
-- Auth and role middleware behavior.
-- Dashboard filtered search with DB + index interaction.
-- Watchlist/rating ownership constraints.
-- Admin sync dispatch and telemetry page contracts.
-
-## Test Data Requirements
-
-- Factories for `Jav`, `Actor`, `Tag`, `User`, `Rating`, `Watchlist`.
-- Seed representative combinations:
-  - high/low popularity items
-  - cross-tag overlap
-  - actor profile completeness variance
+- `POST /api/v1/analytics/events` accepts valid payload and rejects invalid payload.
+- `analytics:flush` handles malformed keys without aborting batch.
+- `analytics:parity-check` detects mismatches.
+- Admin analytics endpoints require admin role.
 
 ## Execution Commands
 
 ```bash
 composer test
-composer quality:full
+php artisan test Modules/Core/tests/Feature/Analytics
+npm run test:fe
 ```
-
-Use `quality:full` as pre-merge and pre-release gate.

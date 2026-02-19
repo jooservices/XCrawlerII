@@ -1,42 +1,36 @@
 # Implementation Guide
 
-## Implementation Workflow (Zero Ambiguity)
+## Feature Workflow
 
-1. Define route contract (web/API, auth, role middleware).
-2. Add/adjust Request validation rules.
-3. Implement service/repository behavior.
-4. Expose response via controller (JSON or Inertia props).
-5. Add or update tests:
-   - unit tests for service/repository logic
-   - feature tests for endpoint behavior and security
-6. Run quality gate:
-   - `composer format`
-   - `composer quality:full`
+1. Define route contract and middleware.
+2. Add/update request validation.
+3. Implement service logic in module service class.
+4. Keep controllers thin and return stable contracts.
+5. Add unit + feature tests.
+6. Update docs for API/lifecycle changes.
 
-## Feature Build Steps Example: New Admin Analytics Endpoint
+## Example: Add a New Analytics Action
 
-1. Add endpoint in `Modules/JAV/routes/web.php` under admin auth/role group.
-2. Add request validation in `Modules/JAV/app/Http/Requests`.
-3. Add service method in `ActorAnalyticsService` or dedicated service.
-4. Add controller action returning stable JSON contract.
-5. Add feature tests for:
-   - auth guard
-   - valid payload
-   - invalid payload
-   - empty dataset behavior
-6. Update docs in `docs/api/api-reference.md`.
+1. Extend enum in `Modules/Core/app/Enums/AnalyticsAction.php`.
+2. Update validation rules in `Modules/Core/app/Http/Requests/IngestAnalyticsEventRequest.php`.
+3. Extend flush support list in `Modules/Core/app/Services/AnalyticsFlushService.php`.
+4. Update FE allowed actions in `Modules/Core/resources/js/Services/analyticsService.js`.
+5. Add/adjust tests in `Modules/Core/tests/Feature/Analytics` and `Modules/Core/tests/Unit/Services`.
+6. Update `docs/analytics/*` and `docs/api/api-reference.md`.
 
-## Coding Rules to Follow
+## Implementation Steps for Admin Analytics Endpoint
 
-- Keep request validation strict at boundaries.
-- Keep controller thin; move domain logic to services/repositories.
-- Preserve route naming conventions (`jav.*`, `jav.api.*`, `jav.vue.*`, `admin.*`).
-- Prefer explicit return shapes for API contracts.
+1. Add endpoint in `Modules/JAV/routes/web.php` under admin middleware.
+2. Extend `AnalyticsApiRequest` for payload constraints.
+3. Add service method in `Modules/JAV/app/Services/ActorAnalyticsService.php`.
+4. Implement controller action in `Modules/JAV/app/Http/Controllers/Admin/Api/AnalyticsController.php`.
+5. Use endpoint from `Modules/JAV/resources/js/Pages/Admin/Analytics.vue`.
+6. Add feature tests for auth, validation, success, and error paths.
 
-## Quality Gate Ordering
+## Quality Gate
 
-1. `composer format`
-2. `composer quality`
-3. `composer test`
-
-Use `composer quality:full` before merge/release.
+```bash
+composer format
+composer quality
+composer test
+```

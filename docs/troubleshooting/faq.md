@@ -1,63 +1,50 @@
 # Troubleshooting / FAQ
 
-## Phase 3 Clarity Review Summary
-
-The documentation set was reviewed in 3 simulated junior/fresher passes.
+## Clarity Review Loop (3 Iterations)
 
 ### Iteration 1 Questions
-- "Where do I start: business docs or coding docs?"
-- "What is the exact command order before commit?"
+- "Where do I start if I am new?"
+- "Which doc explains business value vs implementation?"
 
 Resolution:
-- Added reading order to `docs/README.md`.
-- Added explicit command sequence in `guides/getting-started.md` and `guides/implementation-guide.md`.
+- Added explicit reading order and scope in `docs/README.md`.
 
 ### Iteration 2 Questions
-- "How does an authenticated request move through middleware and services?"
-- "Which endpoints are admin-only?"
+- "How does analytics data move from FE request to persistent storage?"
+- "Which layer validates payload and handles rate limits?"
 
 Resolution:
-- Added full request lifecycle sequence in `architecture/request-lifecycle.md`.
-- Added grouped endpoint sections in `api/api-reference.md`.
+- Added full lifecycle docs in `docs/architecture/request-lifecycle.md` and `docs/analytics/request-lifecycle.md`.
 
 ### Iteration 3 Questions
-- "How do I write new code without breaking architecture style?"
-- "What should be mocked in tests?"
+- "How do FE and BE integrate analytics without duplicate events?"
+- "Where are classes/routes to modify for analytics features?"
 
 Resolution:
-- Added code skeleton patterns under `guides/code-skeletons/`.
-- Added mock/data guidance in `testing/testing-strategy.md`.
+- Added FE/BE usage and structure docs in `docs/analytics/usage.md` and `docs/analytics/code-structure.md`.
 
-No remaining unresolved clarity questions.
+No remaining unresolved questions.
 
 ## Common Pitfalls
 
-1. **Quality command fails after new rule changes**
-   - Run `composer format` then `composer quality`.
-   - If PHPStan fails on known legacy issues, refresh baseline intentionally and review diff.
+1. Analytics endpoint returns `429`
+- Reduce event burst frequency or increase `ANALYTICS_RATE_LIMIT` carefully.
 
-2. **Pre-push blocks push unexpectedly**
-   - Hook runs `composer test`.
-   - Fix failing tests locally; do not bypass by default.
+2. Counters appear in Redis but not Mongo
+- Check scheduler/worker health and run `php artisan analytics:flush` manually.
 
-3. **Sync jobs dispatched but no data appears**
-   - Check queue worker/Horizon status.
-   - Check admin sync and telemetry pages for failures/timeouts.
+3. Admin analytics page is empty
+- Verify Elasticsearch and dataset availability.
 
-4. **Search results are stale**
-   - Validate Elasticsearch connectivity and index sync job completion.
+4. `actor-insights` returns `404`
+- Ensure `actor_uuid` exists in the current environment.
 
-5. **Need emergency root admin access (server SSH only)**
-    - Reset root admin password without current password:
-       - `php artisan auth:authorize --new-password='YourNewStrongPass123'`
-    - Test access with a password:
-       - `php artisan auth:authorize --test-access --password='YourNewStrongPass123'`
-    - If root admin email differs from default (`admin@xcrawler.local`), include:
-       - `--email='root@yourdomain.com'`
+5. Telemetry charts show no points
+- Validate `job_telemetry_events` ingestion and selected time window.
 
-## Error-to-Action Quick Table
+## Error-to-Action
 
-- `401 Unauthorized` → login/session issue; authenticate first.
-- `403 Forbidden` → role/permission mismatch; verify account role.
-- `422 Validation` → inspect field-level errors and request payload.
-- `500 Internal Server Error` → inspect logs and telemetry for root cause.
+- `422`: fix payload shape or value range.
+- `429`: throttle exceeded; retry with backoff.
+- `503`: dependency unavailable (often Elasticsearch); check service health.
+- `500`: inspect logs and retry after root-cause fix.

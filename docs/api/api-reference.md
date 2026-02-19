@@ -2,81 +2,72 @@
 
 ## Authentication
 
-- User APIs require authenticated session (`auth` middleware).
-- Admin APIs require both `auth` and `role:admin`.
+- User web APIs: `auth` middleware.
+- Admin analytics APIs: `auth` + `role:admin`.
+- Public analytics ingest: route-level throttle, no session required.
 
-## Core Endpoints
+## Analytics Ingest API
 
-### Dashboard Items
-- Method: `GET`
-- Path: `/jav/api/dashboard/items`
-- Purpose: return paginated dashboard items with filters/sort.
+### `POST /api/v1/analytics/events`
 
-Example request:
+Purpose: ingest one event into Redis hot counters.
 
-```http
-GET /jav/api/dashboard/items?sort=created_at&direction=desc
-```
+Middleware:
+- `api`
+- `throttle:analytics`
 
-Example response:
+Request body example:
 
 ```json
 {
-  "data": [],
-  "current_page": 1,
-  "last_page": 1
+  "event_id": "4f6c1a5d-2a69-4ce6-a436-8fc2a4c1135b",
+  "domain": "jav",
+  "entity_type": "movie",
+  "entity_id": "f6f7163c-4c8c-4ce8-bfe5-7dbd7574d273",
+  "action": "view",
+  "value": 1,
+  "occurred_at": "2026-02-19T10:34:01Z"
 }
 ```
 
-### Search Suggestions
-- Method: `GET`
-- Path: `/jav/api/search/suggest`
-- Purpose: mixed suggestions for movie/actor/tag by query.
-
-Example request:
-
-```http
-GET /jav/api/search/suggest?q=alpha&limit=8
-```
-
-Example response:
+Success response:
 
 ```json
 {
-  "query": "alpha",
-  "suggestions": [
-    {"type": "movie", "label": "ABP-123 Alpha", "href": "/jav/movies/..."}
-  ]
+  "status": "accepted"
 }
 ```
 
-### Watchlist
-- `POST /jav/api/watchlist`
-- `PUT /jav/api/watchlist/{watchlist}`
-- `DELETE /jav/api/watchlist/{watchlist}`
-- `GET /jav/api/watchlist/check/{javId}`
+Status: `202 Accepted`
 
-### Ratings
-- `POST /jav/api/ratings`
-- `PUT /jav/api/ratings/{rating}`
-- `DELETE /jav/api/ratings/{rating}`
-- `GET /jav/api/ratings/check/{javId}`
+## Admin Analytics APIs (Selected)
 
-### Notifications
-- `GET /jav/api/notifications`
-- `POST /jav/api/notifications/{notification}/read`
-- `POST /jav/api/notifications/read-all`
+- `GET /jav/admin/analytics/overview-data`
+- `GET /jav/admin/analytics/distribution-data`
+- `GET /jav/admin/analytics/association-data`
+- `GET /jav/admin/analytics/trends-data`
+- `POST /jav/admin/analytics/predict`
+- `GET /jav/admin/analytics/actor-insights`
+- `GET /jav/admin/analytics/quality-data`
+- `GET /jav/admin/analytics/suggest`
 
-## Admin Endpoints (Selected)
+## Telemetry API (Admin)
 
 - `GET /admin/job-telemetry/summary-data`
-- `GET /jav/admin/analytics/*`
-- `POST /jav/admin/provider-sync/dispatch`
 
-## Error Catalog
+## Core User APIs (Selected)
 
-- `401 Unauthorized`: unauthenticated access.
-- `403 Forbidden`: insufficient role/permission.
-- `404 Not Found`: missing resource.
-- `422 Unprocessable Entity`: validation failure.
-- `500 Internal Server Error`: unexpected server-side failure.
+- `GET /jav/api/dashboard/items`
+- `GET /jav/api/search/suggest`
+- `POST /jav/api/watchlist`
+- `POST /jav/api/ratings`
+
+## Error Code Catalog
+
+- `401 Unauthorized`: session/auth missing.
+- `403 Forbidden`: role/permission denied.
+- `404 Not Found`: entity or route resource not found.
+- `422 Unprocessable Entity`: request validation failed.
+- `429 Too Many Requests`: analytics throttle exceeded.
+- `500 Internal Server Error`: unexpected server-side error.
+- `503 Service Unavailable`: analytics backend dependency unavailable.

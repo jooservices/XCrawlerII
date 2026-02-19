@@ -5,43 +5,46 @@
 
 declare(strict_types=1);
 
-namespace Modules\JAV\Http\Controllers\Users\Api;
+namespace Modules\JAV\Http\Controllers\Admin\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
-use Modules\JAV\Http\Requests\ExampleRequest;
-use Modules\JAV\Services\ExampleDomainService;
+use Modules\JAV\Http\Requests\AnalyticsApiRequest;
+use Modules\JAV\Services\ActorAnalyticsService;
 
-final class ExampleController
+final class AnalyticsControllerSkeleton extends Controller
 {
-    public function __construct(private readonly ExampleDomainService $service)
+    public function __construct(private readonly ActorAnalyticsService $service)
     {
     }
 
     /**
-     * Return a validated and stable JSON contract.
+     * Return distribution analytics for a validated segment query.
      *
-     * Why: API consumers depend on fixed shape and error semantics.
+     * Why: Keep HTTP layer predictable and delegate domain logic to service layer.
      */
-    public function index(ExampleRequest $request): JsonResponse
+    public function distribution(AnalyticsApiRequest $request): JsonResponse
     {
-        $payload = $this->service->buildPayload($request->validated());
+        $payload = $request->validated();
 
-        return response()->json($payload);
+        // Complex branching (dimension/genre constraints) belongs in service.
+        $result = $this->service->distribution(
+            (string) ($payload['dimension'] ?? 'age_bucket'),
+            (string) ($payload['genre'] ?? ''),
+            (int) ($payload['size'] ?? 10),
+        );
+
+        return response()->json($result);
     }
 }
 ```
 
-## Pseudo-code (Failure Handling Pattern)
+## Pseudo-code Pattern
 
 ```text
-try:
-  payload = service.buildPayload(validatedInput)
-  return 200(payload)
-catch DomainValidationError:
-  return 422(errors)
-catch AuthorizationError:
-  return 403(message)
-catch Throwable:
-  log(exception)
-  return 500(generic_message)
+validate request
+normalize small controller-level defaults
+call one service method
+map exceptions to stable HTTP errors
+return strict JSON contract
 ```
