@@ -231,13 +231,19 @@ class AnalyticsFlushService
      */
     private function incrementBucket(string $modelClass, array $keys, string $action, int $value): void
     {
-        $model = $modelClass::query()->firstOrCreate($keys, [
-            AnalyticsAction::View->value => 0,
-            AnalyticsAction::Download->value => 0,
-        ]);
-
-        $model->{$action} = (int) ($model->{$action} ?? 0) + $value;
-        $model->save();
+        $modelClass::query()->raw(function ($collection) use ($keys, $action, $value) {
+            $collection->updateOne(
+                $keys,
+                [
+                    '$inc' => [$action => $value],
+                    '$setOnInsert' => [
+                        AnalyticsAction::View->value => 0,
+                        AnalyticsAction::Download->value => 0,
+                    ],
+                ],
+                ['upsert' => true]
+            );
+        });
     }
 
     private function syncToMySql(string $entityId): void

@@ -66,6 +66,12 @@ class AnalyticsReportVerifyCommand extends Command
                 continue;
             }
 
+            if (str_contains($entry, '..') || str_starts_with($entry, '/') || str_contains($entry, '\\')) {
+                $this->warn("Skipping potentially malicious entry: {$entry}");
+
+                continue;
+            }
+
             $target = "{$tempDir}/{$entry}";
             File::ensureDirectoryExists(dirname($target));
             $content = $zip->getFromIndex($i);

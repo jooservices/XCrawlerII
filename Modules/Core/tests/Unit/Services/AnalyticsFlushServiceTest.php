@@ -302,6 +302,60 @@ class AnalyticsFlushServiceTest extends TestCase
         $this->assertArrayNotHasKey('favorite', $totals->toArray());
     }
 
+    public function test_malformed_date_in_daily_field_does_not_crash_flush(): void
+    {
+        $jav = Jav::factory()->create([
+            'views' => 0,
+            'downloads' => 0,
+            'source' => 'onejav',
+        ]);
+
+        $counterKey = "{$this->prefix}:".AnalyticsDomain::Jav->value.':'.AnalyticsEntityType::Movie->value.":{$jav->uuid}";
+        $validDate = now()->toDateString();
+
+        Redis::hset($counterKey, AnalyticsAction::View->value, 2);
+        Redis::hset($counterKey, AnalyticsAction::View->value.":{$validDate}", 2);
+        Redis::hset($counterKey, AnalyticsAction::View->value.':not-a-valid-date', 3);
+
+        $service = new AnalyticsFlushService;
+        $result = $service->flush();
+
+        $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
+        $totals = AnalyticsEntityTotals::query()
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
+            ->where('entity_id', $jav->uuid)
+            ->first();
+        $this->assertNotNull($totals);
+        $this->assertSame(5, (int) $totals->view);
+    }
+
+    public function test_flush_movie_entity_with_no_jav_row_updates_mongo_only_not_mysql(): void
+    {
+        $nonExistentUuid = $this->faker->uuid();
+        $counterKey = "{$this->prefix}:".AnalyticsDomain::Jav->value.':'.AnalyticsEntityType::Movie->value.":{$nonExistentUuid}";
+        $date = now()->toDateString();
+
+        Redis::hset($counterKey, AnalyticsAction::View->value, 10);
+        Redis::hset($counterKey, AnalyticsAction::View->value.":{$date}", 10);
+
+        $service = new AnalyticsFlushService;
+        $result = $service->flush();
+
+        $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
+
+        $totals = AnalyticsEntityTotals::query()
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
+            ->where('entity_id', $nonExistentUuid)
+            ->first();
+        $this->assertNotNull($totals);
+        $this->assertSame(10, (int) $totals->view);
+
+        $javRow = Jav::query()->where('uuid', $nonExistentUuid)->first();
+        $this->assertNull($javRow);
+    }
+
     private function requireAnalyticsInfra(): void
     {
         try {

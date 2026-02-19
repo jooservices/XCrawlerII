@@ -46,11 +46,13 @@ class DailySyncJob implements ShouldBeUnique, ShouldQueue
                 ? $this->queue
                 : $this->defaultQueueForSource();
 
-            Bus::dispatch((new self(
+            $job = new self(
                 source: $this->source,
                 date: $this->resolvedDate(),
                 page: $items->nextPage
-            ))->onQueue($nextQueue));
+            );
+
+            Bus::dispatch($job->onQueue($nextQueue));
         }
     }
 

@@ -31,6 +31,18 @@ class IngestAnalyticsEventRequest extends FormRequest
             'action' => ['required', 'string', Rule::enum(AnalyticsAction::class)],
             'value' => ['nullable', 'integer', 'min:1', 'max:100'],
             'occurred_at' => ['required', 'date'],
+            'user_id' => ['nullable', 'integer'],
         ];
+    }
+
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            $providedUserId = $this->input('user_id');
+            // If client sends user_id, it MUST match the auth user
+            if ($providedUserId !== null && (int) $providedUserId !== (int) auth()->id()) {
+                $validator->errors()->add('user_id', 'User ID mismatch.');
+            }
+        });
     }
 }

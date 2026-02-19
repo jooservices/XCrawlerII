@@ -57,3 +57,35 @@ test('JAV FE code has no hardcoded analytics endpoint calls', () => {
 
     assert.deepEqual(offenders, []);
 });
+
+test('FE analytics payload shape matches BE IngestAnalyticsEventRequest (contract)', async () => {
+    const { AnalyticsService } = await import('../analyticsService.js');
+    let capturedPayload = null;
+    const httpClient = {
+        post: (_url, payload) => {
+            capturedPayload = payload;
+            return Promise.resolve({ data: {} });
+        }
+    };
+    const service = new AnalyticsService({ httpClient, storage: null });
+
+    await service.track('view', 'movie', 'contract-entity-id', {
+        userId: 1,
+        eventId: 'evt-contract',
+        occurredAt: '2026-02-19T00:00:00.000Z'
+    });
+
+    assert.ok(capturedPayload, 'payload should be sent');
+    assert.strictEqual(capturedPayload.event_id, 'evt-contract');
+    assert.strictEqual(capturedPayload.domain, 'jav');
+    assert.strictEqual(capturedPayload.entity_type, 'movie');
+    assert.strictEqual(capturedPayload.entity_id, 'contract-entity-id');
+    assert.strictEqual(capturedPayload.action, 'view');
+    assert.strictEqual(capturedPayload.value, 1);
+    assert.strictEqual(capturedPayload.occurred_at, '2026-02-19T00:00:00.000Z');
+    assert.strictEqual(capturedPayload.user_id, 1);
+    const requiredKeys = ['event_id', 'domain', 'entity_type', 'entity_id', 'action', 'value', 'occurred_at'];
+    for (const key of requiredKeys) {
+        assert.ok(key in capturedPayload, `payload must include ${key}`);
+    }
+});

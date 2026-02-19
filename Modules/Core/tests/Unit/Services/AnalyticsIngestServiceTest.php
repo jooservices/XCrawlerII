@@ -150,4 +150,24 @@ class AnalyticsIngestServiceTest extends TestCase
             'occurred_at' => '2026-02-19T10:00:00Z',
         ]);
     }
+
+    public function test_dedupe_ttl_is_48_hours(): void
+    {
+        $eventId = $this->faker->uuid();
+        $entityId = $this->faker->uuid();
+        $ttlSeconds = 48 * 60 * 60; // 172800
+        Redis::shouldReceive('setnx')->andReturn(true);
+        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", $ttlSeconds);
+        Redis::shouldReceive('hincrby')->twice();
+
+        $service = new AnalyticsIngestService;
+        $service->ingest([
+            'event_id' => $eventId,
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $entityId,
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => '2026-02-19T10:00:00Z',
+        ]);
+    }
 }

@@ -19,10 +19,10 @@ class JavAnalyticsTrackerService
 
     public function trackDownload(Jav $jav): void
     {
-        $this->ingest($jav, AnalyticsAction::Download);
+        $this->ingest($jav, AnalyticsAction::Download, auth()->id());
     }
 
-    private function ingest(Jav $jav, AnalyticsAction $action): void
+    private function ingest(Jav $jav, AnalyticsAction $action, ?int $userId = null): void
     {
         $this->ingestService->ingest([
             'event_id' => (string) Str::uuid(),
@@ -32,6 +32,6 @@ class JavAnalyticsTrackerService
             'action' => $action->value,
             'value' => 1,
             'occurred_at' => Carbon::now()->toIso8601String(),
-        ]);
+        ], $userId);
     }
 }
