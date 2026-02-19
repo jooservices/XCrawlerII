@@ -5,42 +5,41 @@
 
 declare(strict_types=1);
 
-namespace Modules\JAV\Services;
+namespace Modules\Core\Services;
 
-final class ExampleDomainService
+final class AnalyticsIngestServiceSkeleton
 {
     /**
-     * Build a filtered payload used by controllers.
+     * Ingest one validated analytics event into hot counters.
      *
-     * Why: keep controller thin and isolate business rules in one testable unit.
+     * Why: absorb high write volume without directly stressing persistent stores.
      *
-     * @param array<string, mixed> $filters
-     * @return array<string, mixed>
+     * @param array<string,mixed> $event
      */
-    public function buildPayload(array $filters): array
+    public function ingest(array $event, ?int $userId = null): void
     {
-        // 1) Normalize filters and enforce defaults.
-        // 2) Query repositories/search providers.
-        // 3) Merge and transform to API/UI contract.
-        // 4) Return deterministic structure.
+        // Build dedupe key from event_id.
+        // Reject duplicate events in active dedupe window.
+        // Compute Redis counter key from domain/entity_type/entity_id.
+        // Increment total action counter and date-scoped action counter.
+    }
 
-        return [
-            'items' => [],
-            'meta' => [
-                'total' => 0,
-            ],
-        ];
+    /**
+     * Build deterministic Redis key for one entity counter bucket.
+     */
+    public function buildCounterKey(string $prefix, string $domain, string $entityType, string $entityId): string
+    {
+        return sprintf('%s:%s:%s:%s', $prefix, $domain, $entityType, $entityId);
     }
 }
 ```
 
-## Pseudo-code (Critical Function Pattern)
+## Critical Function Pseudo-code
 
 ```text
-function buildPayload(filters):
-  normalized = normalize(filters)
-  guard(normalized)
-  base = repository.search(normalized)
-  enriched = decorateWithUserContext(base)
-  return responseShape(enriched)
+if dedupe_key already exists -> return
+set dedupe_key with ttl
+counter_key = prefix + domain + entity_type + entity_id
+increment hash[action] by value
+increment hash[action:YYYY-MM-DD] by value
 ```

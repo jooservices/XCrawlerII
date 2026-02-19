@@ -2,15 +2,12 @@
 
 namespace Modules\Core\Tests\Unit;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Modules\Core\Models\Config;
 use Modules\Core\Services\ConfigService;
-use Tests\TestCase;
+use Modules\Core\Tests\TestCase;
 
 class ConfigServiceTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function test_can_set_and_get_config_value()
     {
         $service = new ConfigService;

@@ -1,72 +1,44 @@
 # Request Lifecycle
 
-## End-to-End Path (Authenticated API Example)
+## HTTP Lifecycle (Example: Analytics Event Ingest)
 
-Example route: `GET /jav/api/dashboard/items`
-
-1. Request enters Laravel kernel.
-2. Middleware chain executes:
-   - `web` bootstraps session/cookies/csrf context.
-   - `auth` ensures authenticated identity.
-3. Controller method validates/filter inputs.
-4. Repository/service builds query and applies business rules.
-5. Data fetched from DB and/or search engine.
-6. Domain decoration layer enriches items (liked, watchlist, rating state).
-7. Response transformed to JSON contract.
-8. Errors mapped to HTTP status with validation/error payloads.
+1. Client sends `POST /api/v1/analytics/events`.
+2. Route middleware chain applies: `api` then `throttle:analytics`.
+3. `IngestAnalyticsEventRequest` validates enum/type/date constraints.
+4. `AnalyticsEventController@store` forwards validated payload to `AnalyticsIngestService`.
+5. Service deduplicates by `event_id`, then increments Redis hashes (total + daily).
+6. API returns `202 Accepted`.
+7. Scheduled `analytics:flush` moves Redis counters to Mongo rollups.
+8. Flush syncs movie totals back to MySQL and logs flush errors.
 
 ## Lifecycle Diagram
 
 ```mermaid
 sequenceDiagram
-participant Client
-participant Router
-participant Middleware
-participant Controller
-participant ServiceRepo as Service/Repository
-participant DB
-participant Search as Elasticsearch
-participant Response
+participant FE as Frontend/Producer
+participant API as Analytics API
+participant MW as Middleware + Validator
+participant Redis
+participant Scheduler
+participant Flush as AnalyticsFlushService
+participant Mongo
+participant MySQL
 
-Client->>Router: GET /jav/api/dashboard/items
-Router->>Middleware: route middleware pipeline
-Middleware->>Controller: authorized request
-Controller->>ServiceRepo: validate + request filters
-ServiceRepo->>DB: relational reads
-ServiceRepo->>Search: search/aggregation queries (as needed)
-DB-->>ServiceRepo: records
-Search-->>ServiceRepo: search hits
-ServiceRepo-->>Controller: normalized result DTO
-Controller->>Response: JSON transform
-Response-->>Client: 200 / 4xx / 5xx
+FE->>API: POST /api/v1/analytics/events
+API->>MW: throttle + validate
+MW->>Redis: setnx dedupe + hincrby counters
+Redis-->>API: accepted
+API-->>FE: 202 Accepted
+Scheduler->>Flush: analytics:flush
+Flush->>Redis: rename/read/delete hot keys
+Flush->>Mongo: upsert totals + daily/weekly/monthly/yearly
+Flush->>MySQL: update jav.views/downloads
+Flush-->>Scheduler: keys_processed/errors
 ```
 
 ## Transaction and Error Boundaries
 
-- Read-only endpoints avoid DB transactions unless explicitly needed.
-- Write endpoints (`store`, `update`, `destroy`) should keep business updates atomic.
-- Validation errors return 422 with field-level messages.
-- Authorization errors return 401/403.
-- Not-found resources return 404.
-- Unexpected failures are logged and surfaced as safe 500 responses.
-
-## Queue-Driven Lifecycle (Sync)
-
-```mermaid
-sequenceDiagram
-participant AdminUI
-participant SyncAPI
-participant Queue
-participant Worker
-participant Telemetry
-participant Catalog
-
-AdminUI->>SyncAPI: dispatch sync
-SyncAPI->>Queue: enqueue jobs
-Queue-->>Worker: deliver job
-Worker->>Telemetry: started
-Worker->>Catalog: parse + persist
-Worker->>Telemetry: completed/failed
-```
-
-This flow isolates long-running source operations from HTTP response time.
+- Ingest is non-transactional, idempotent by dedupe key.
+- Validation failures return `422`.
+- Rate-limited requests return `429`.
+- Flush catches per-key exceptions and records warnings without halting full batch.

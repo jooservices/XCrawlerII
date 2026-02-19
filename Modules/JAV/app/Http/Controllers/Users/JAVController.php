@@ -12,6 +12,10 @@ use Modules\JAV\Services\SearchService;
 
 class JAVController extends Controller
 {
+    public function __construct(
+        private readonly SearchService $searchService,
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -70,9 +74,6 @@ class JAVController extends Controller
 
     public function showVue(Jav $jav): InertiaResponse
     {
-        // Increment view count
-        $jav->increment('views');
-
         // Track history if user is authenticated
         if (auth()->check()) {
             UserJavHistory::firstOrCreate([
@@ -94,9 +95,8 @@ class JAVController extends Controller
         }
 
         // Get related movies
-        $searchService = app(SearchService::class);
-        $relatedByActors = $searchService->getRelatedByActors($jav, 10);
-        $relatedByTags = $searchService->getRelatedByTags($jav, 10);
+        $relatedByActors = $this->searchService->getRelatedByActors($jav, 10);
+        $relatedByTags = $this->searchService->getRelatedByTags($jav, 10);
 
         return Inertia::render('Movies/Show', [
             'jav' => $jav,

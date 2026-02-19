@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 
+/**
+ * @property int $id
+ * @property string $uuid
+ * @property string|null $code
+ * @property int|null $views
+ * @property int|null $downloads
+ */
 class Jav extends Model
 {
     use HasFactory, Searchable;

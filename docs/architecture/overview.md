@@ -2,55 +2,55 @@
 
 ## Project Goal
 
-XCrawlerII helps teams collect and manage JAV metadata at scale with reliable ingestion, searchable content, and user-facing discovery features.
+XCrawlerII provides a single, reliable platform to ingest JAV metadata from multiple providers, normalize it, and deliver searchable/discoverable content for end-users and operators.
 
-## Why This Product Exists
+## Why This Exists
 
-- Multiple source sites provide inconsistent metadata formats.
-- Manual curation is too slow for daily updates.
-- Users need one place to search, rate, track, and discover content.
-- Operations teams need observability for crawler and queue reliability.
+- Source sites are inconsistent and change frequently.
+- Manual metadata curation does not scale.
+- Product teams need stable catalog quality and analytics visibility.
+- Operations teams need measurable queue health and ingest reliability.
 
-## What the Product Delivers
+## What It Delivers
 
-- Automated source sync from multiple providers.
-- Normalized catalog of movies, actors, and tags.
-- Personalized features (favorites, watchlist, ratings, history, notifications).
-- Admin controls for sync, analytics, and telemetry.
+- Automated ingest and normalization pipeline.
+- Unified catalog for movies, actors, and tags.
+- User engagement features: favorites, watchlist, ratings, history.
+- Admin analytics and telemetry pages for operational decisions.
 
-## Core User Stories
+## User Stories / Use Cases
 
-1. As a viewer, I want to search by keyword/actor/tag so I can find content quickly.
-2. As a viewer, I want to save watchlist states so I can continue later.
-3. As a viewer, I want rating and history so recommendations become relevant.
-4. As an admin, I want to trigger source sync safely and monitor progress.
-5. As an admin, I want queue telemetry so I can detect failures and bottlenecks fast.
+1. As a viewer, I search by keyword/actor/tag and quickly find relevant content.
+2. As a viewer, I track content with watchlist and ratings.
+3. As an admin, I run provider sync and verify data quality.
+4. As an admin, I use analytics and telemetry to identify performance or data issues.
 
-## Business Flow (Non-Technical)
+## Business Flow Diagram
 
 ```mermaid
 flowchart LR
-A[Source Websites] --> B[Ingestion Jobs]
+A[Provider Sources] --> B[Ingestion + Normalization]
 B --> C[Unified Catalog]
-C --> D[Search and Browse]
-D --> E[User Actions: watchlist/rating/favorites]
-E --> F[Insights and Recommendations]
-G[Admin Console] --> B
-G --> H[Telemetry and Analytics]
+C --> D[User Search and Browsing]
+D --> E[User Actions: Like Watchlist Rating]
+E --> F[Analytics + Insights]
+G[Admin] --> B
+G --> F
 ```
 
 ## KPIs / Success Metrics
 
-- Ingestion freshness: new source items reflected in catalog within target window.
-- Search success rate: users find target item in first page/session.
-- User engagement: watchlist, rating, favorites conversion.
-- Queue reliability: failed jobs %, retry recovery %, p95 job duration.
-- Data quality: completeness of actor/tag metadata and duplicate rate.
+- Catalog freshness within target ingest window.
+- Search success in first page/session.
+- Engagement growth in watchlist/ratings/favorites.
+- Queue stability (failure rate, p95 duration, timeout rate).
+- Metadata quality (missing actor/tag/image/date ratios).
 
 ## Glossary
 
-- Catalog: unified normalized content store for movies/actors/tags.
-- Source sync: scheduled or manual fetch-and-normalize process.
-- Telemetry event: queue lifecycle record (`started`, `completed`, `rate_limit_exceeded`).
-- Preset: saved set of search/filter options for dashboard reuse.
-- Quality gate: automated checks (format, lint, static analysis, tests).
+- **Catalog:** Normalized data store for movies, actors, tags.
+- **Source sync:** Scheduled or manual pipeline that imports provider data.
+- **Telemetry event:** Queue lifecycle event (e.g. `started`, `completed`, `rate_limit_exceeded`) for operational monitoring.
+- **Rollup:** Aggregated analytics buckets (daily, weekly, monthly, yearly) stored in MongoDB.
+- **Parity check:** Comparison between MySQL catalog counters (`jav.views`/`jav.downloads`) and Mongo analytics totals to detect drift.
+- **Analytics (module):** Event ingest (view/download), Redis hot counters, flush to Mongo rollups, MySQL sync, and admin/telemetry dashboards. See [../analytics/README.md](../analytics/README.md) for full analytics documentation.

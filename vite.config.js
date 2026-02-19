@@ -70,6 +70,7 @@ export default defineConfig({
         alias: {
             '@': '/resources/js',
             '@jav': '/Modules/JAV/resources/js',
+            '@core': '/Modules/Core/resources/js',
         },
     },
 });

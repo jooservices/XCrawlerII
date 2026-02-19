@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Modules\JAV\Models\Actor;
-use Modules\JAV\Services\AnalyticsSnapshotService;
+use Modules\JAV\Services\AnalyticsReadService;
 use Modules\JAV\Services\JobTelemetryAnalyticsService;
 
 class JavAnalyticsReportCommand extends Command
@@ -19,7 +19,7 @@ class JavAnalyticsReportCommand extends Command
 
     protected $description = 'Show comprehensive JAV analytics in CLI (providers, XCity, quality, engagement, tops, queue telemetry).';
 
-    public function handle(AnalyticsSnapshotService $snapshotService, JobTelemetryAnalyticsService $telemetryService): int
+    public function handle(AnalyticsReadService $analyticsReadService, JobTelemetryAnalyticsService $telemetryService): int
     {
         $days = (int) $this->option('days');
         $limit = (int) $this->option('limit');
@@ -33,7 +33,7 @@ class JavAnalyticsReportCommand extends Command
         }
 
         try {
-            $snapshot = $snapshotService->getSnapshot($days);
+            $snapshot = $analyticsReadService->getSnapshot($days);
         } catch (\Throwable $exception) {
             $this->error('Failed loading analytics snapshot: '.$exception->getMessage());
 

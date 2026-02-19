@@ -9,9 +9,11 @@ use Modules\JAV\Tests\TestCase;
 
 class MovieShowControllerTest extends TestCase
 {
-    public function test_show_movie_page_increments_views_and_tracks_history_for_authenticated_user(): void
+    public function test_show_movie_page_tracks_history_for_authenticated_user(): void
     {
-        config(['scout.driver' => 'collection']);
+        config([
+            'scout.driver' => 'collection',
+        ]);
 
         $user = User::factory()->create();
         $jav = Jav::factory()->create(['views' => 3]);
@@ -19,8 +21,6 @@ class MovieShowControllerTest extends TestCase
         $this->actingAs($user)
             ->get(route('jav.vue.movies.show', $jav))
             ->assertOk();
-
-        $this->assertSame(4, $jav->fresh()->views);
 
         $history = UserJavHistory::query()
             ->where('user_id', $user->id)

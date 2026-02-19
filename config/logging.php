@@ -1,10 +1,10 @@
 <?php
 
+use Modules\Core\Logging\ObsMonologHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
-use Modules\Core\Logging\ObsMonologHandler;
 
 $defaultLogPath = storage_path('logs/laravel.log');
 

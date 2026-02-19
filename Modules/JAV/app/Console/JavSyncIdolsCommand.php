@@ -3,6 +3,7 @@
 namespace Modules\JAV\Console;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 use Modules\JAV\Jobs\XcityKanaSyncJob;
 use Modules\JAV\Services\XcityIdolService;
 
@@ -44,7 +45,7 @@ class JavSyncIdolsCommand extends Command
         }
 
         foreach ($selected as $seed) {
-            XcityKanaSyncJob::dispatch($seed['seed_key'], $seed['seed_url'])->onQueue($queue);
+            Bus::dispatch((new XcityKanaSyncJob($seed['seed_key'], $seed['seed_url']))->onQueue($queue));
         }
 
         $this->info("Dispatched {$selected->count()} XCITY kana sync jobs to queue '{$queue}'.");

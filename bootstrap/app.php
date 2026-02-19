@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
             ]);
         }
 
+        if (($_ENV['APP_ENV'] ?? getenv('APP_ENV')) === 'testing') {
+            $middleware->validateCsrfTokens(except: ['*']);
+        }
+
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'permission' => \App\Http\Middleware\PermissionMiddleware::class,

@@ -86,7 +86,6 @@ class JAVServiceProvider extends ServiceProvider
             \Modules\JAV\Console\JavSyncContentCommand::class,
             \Modules\JAV\Console\JavSyncSearchCommand::class,
             \Modules\JAV\Console\JavSyncIdolsCommand::class,
-            \Modules\JAV\Console\JavSyncAnalyticsCommand::class,
             \Modules\JAV\Console\JavSyncRecommendationsCommand::class,
         ]);
     }
@@ -115,7 +114,6 @@ class JAVServiceProvider extends ServiceProvider
             $schedule->command('jav:sync:content ffjav --type=tags')->weeklyOn(0, '00:00')->runInBackground();
 
             $schedule->command('jav:sync:idols --concurrency=3')->everyMinute()->runInBackground();
-            $schedule->command('jav:sync:analytics')->hourly()->runInBackground();
             $schedule->command('jav:sync:recommendations')->twiceDaily(0, 12)->runInBackground();
             $schedule->command('jav:sync:search')->dailyAt('00:30')->runInBackground();
         });

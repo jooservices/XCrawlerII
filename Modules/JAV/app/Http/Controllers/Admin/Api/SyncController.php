@@ -5,6 +5,7 @@ namespace Modules\JAV\Http\Controllers\Admin\Api;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -41,29 +42,29 @@ class SyncController extends Controller
 
         $dispatched = match ($type) {
             'new' => match ($source) {
-                'onejav' => OnejavJob::dispatch('new')->onQueue((string) config('jav.content_queues.onejav', 'onejav')),
-                '141jav' => OneFourOneJavJob::dispatch('new')->onQueue((string) config('jav.content_queues.141jav', '141')),
-                'ffjav' => FfjavJob::dispatch('new')->onQueue('jav'),
+                'onejav' => Bus::dispatch((new OnejavJob('new'))->onQueue((string) config('jav.content_queues.onejav', 'onejav'))),
+                '141jav' => Bus::dispatch((new OneFourOneJavJob('new'))->onQueue((string) config('jav.content_queues.141jav', '141'))),
+                'ffjav' => Bus::dispatch((new FfjavJob('new'))->onQueue('jav')),
             },
             'popular' => match ($source) {
-                'onejav' => OnejavJob::dispatch('popular')->onQueue((string) config('jav.content_queues.onejav', 'onejav')),
-                '141jav' => OneFourOneJavJob::dispatch('popular')->onQueue((string) config('jav.content_queues.141jav', '141')),
-                'ffjav' => FfjavJob::dispatch('popular')->onQueue('jav'),
+                'onejav' => Bus::dispatch((new OnejavJob('popular'))->onQueue((string) config('jav.content_queues.onejav', 'onejav'))),
+                '141jav' => Bus::dispatch((new OneFourOneJavJob('popular'))->onQueue((string) config('jav.content_queues.141jav', '141'))),
+                'ffjav' => Bus::dispatch((new FfjavJob('popular'))->onQueue('jav')),
             },
-            'daily' => DailySyncJob::dispatch(
+            'daily' => Bus::dispatch((new DailySyncJob(
                 $source,
                 is_string($date) && $date !== '' ? Carbon::parse($date)->toDateString() : now()->toDateString(),
                 1
-            )->onQueue(match ($source) {
+            ))->onQueue(match ($source) {
                 'onejav' => (string) config('jav.content_queues.onejav', 'onejav'),
                 '141jav' => (string) config('jav.content_queues.141jav', '141'),
                 default => (string) config('jav.content_queues.ffjav', 'jav'),
-            }),
-            'tags' => TagsSyncJob::dispatch($source)->onQueue(match ($source) {
+            })),
+            'tags' => Bus::dispatch((new TagsSyncJob($source))->onQueue(match ($source) {
                 'onejav' => (string) config('jav.content_queues.onejav', 'onejav'),
                 '141jav' => (string) config('jav.content_queues.141jav', '141'),
                 default => (string) config('jav.content_queues.ffjav', 'jav'),
-            }),
+            })),
             'idols' => $this->dispatchXcityIdolJobs($xcityIdolService),
         };
 
@@ -212,7 +213,7 @@ class SyncController extends Controller
 
         $selected = $xcityIdolService->pickSeedsForDispatch($seeds, 2);
         foreach ($selected as $seed) {
-            XcityKanaSyncJob::dispatch($seed['seed_key'], $seed['seed_url'])->onQueue($idolQueue);
+            Bus::dispatch((new XcityKanaSyncJob($seed['seed_key'], $seed['seed_url']))->onQueue($idolQueue));
         }
 
         return $selected->count();

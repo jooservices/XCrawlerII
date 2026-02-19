@@ -1,103 +1,102 @@
 # System Design
 
-## Module and Directory Boundaries
+## Directory and Module Boundaries
 
-- `app/`: platform-level Laravel concerns (auth, middleware, providers).
-- `Modules/Core`: cross-cutting infrastructure (telemetry listeners/services).
-- `Modules/JAV`: domain logic (crawl, search, user features, admin features).
-- `resources/` + `Modules/JAV/resources/`: Inertia/Vue pages and components.
-- `database/` + `Modules/JAV/database/`: migrations, factories, seeders.
+- `app/`: framework-level concerns and shared middleware aliases.
+- `Modules/Core`: cross-cutting infrastructure (analytics ingest/flush/reporting, observability).
+- `Modules/JAV`: domain logic (catalog, user features, admin analytics UI/APIs).
+- `Modules/*/routes`: module-owned web/api route definitions.
+- `Modules/JAV/resources/js`: Inertia/Vue frontend pages and components.
 
-## Class Relationship Snapshot
+## Class Structure (Snapshot)
 
 ```mermaid
 classDiagram
-class DashboardController
-class SearchService
-class DashboardReadRepository
-class Jav
-class Actor
-class Tag
-class JobTelemetryService
-class JobTelemetryAnalyticsService
-class JobTelemetryEvent
+class AnalyticsEventController
+class IngestAnalyticsEventRequest
+class AnalyticsIngestService
+class AnalyticsFlushService
+class FlushAnalyticsCommand
+class FlushAnalyticsCountersJob
+class ActorAnalyticsService
+class AnalyticsReadService
+class JavAnalyticsTrackerService
+class AdminAnalyticsController
+class AnalyticsVuePage
 
-DashboardController --> DashboardReadRepository
-DashboardReadRepository --> SearchService
-DashboardReadRepository --> Jav
-DashboardReadRepository --> Actor
-DashboardReadRepository --> Tag
-JobTelemetryService --> JobTelemetryEvent
-JobTelemetryAnalyticsService --> JobTelemetryEvent
+AnalyticsEventController --> IngestAnalyticsEventRequest
+AnalyticsEventController --> AnalyticsIngestService
+FlushAnalyticsCommand --> AnalyticsFlushService
+FlushAnalyticsCountersJob --> AnalyticsFlushService
+AdminAnalyticsController --> ActorAnalyticsService
+AdminAnalyticsController --> AnalyticsReadService
+JavAnalyticsTrackerService --> AnalyticsIngestService
+AnalyticsVuePage --> AdminAnalyticsController
 ```
 
-## Architecture Decision Records (ADRs)
+## ADRs
 
-### ADR-001: Modular Monolith
-- Decision: keep one deployable Laravel app with bounded modules (`Core`, `JAV`).
-- Why: lower operational complexity than microservices while preserving boundaries.
-- Tradeoff: stronger discipline required to prevent module coupling.
+### ADR-001 Modular Monolith
+- Decision: Keep one Laravel deployable with strict module boundaries (`Core`, `JAV`).
+- Why: Faster delivery than microservices while preserving separation of concerns.
 
-### ADR-002: Redis + Horizon for Queues
-- Decision: execute crawler/sync workloads through Redis queues with Horizon.
-- Why: queue-level isolation, retries, visibility, and simpler scaling.
-- Tradeoff: requires queue tuning and worker profile management.
+### ADR-002 Redis Hot Counters + Mongo Rollups
+- Decision: Write analytics events to Redis first, then flush to Mongo rollups.
+- Why: Fast write path for high event volume and efficient read models by window.
 
-### ADR-003: Elasticsearch for Search
-- Decision: use Scout + Elasticsearch for catalog search and aggregation.
-- Why: better relevance, filter performance, and analytics-style query capability.
-- Tradeoff: index lifecycle and sync consistency management required.
+### ADR-003 MySQL Counter Parity
+- Decision: Sync movie totals (`views`, `downloads`) back to MySQL from Mongo totals.
+- Why: Keep user-facing catalog counters fast and query-friendly.
 
-### ADR-004: MongoDB for Telemetry Events
-- Decision: record high-volume queue telemetry in Mongo.
-- Why: document model fits event data, TTL index enables retention control.
-- Tradeoff: dual-database operational overhead.
+### ADR-004 Admin Insights on Elasticsearch + MySQL
+- Decision: Use Elasticsearch for segment analytics and MySQL for platform snapshot metrics.
+- Why: Elasticsearch fits aggregations; MySQL fits transactional/reporting counts.
 
-## NFRs (Security, Performance, Scalability)
+## NFRs
 
 ### Security
-- Auth required on user APIs and admin routes.
-- Role middleware (`admin`) gates privileged operations.
-- Request validation at boundaries (Form Requests + controller validation).
-- No secrets in repository; environment variables per environment.
+- Public analytics ingest endpoint throttled by `throttle:analytics`.
+- Admin analytics endpoints protected by `auth` + `role:admin`.
+- Request validation via form requests before service execution.
 
 ### Performance
-- Queue processing for heavy sync workloads.
-- Search queries backed by Elasticsearch indices.
-- Caching used for high-frequency suggestions and dashboard helpers.
-- Quality telemetry used to track p95/p99 and timeout trends.
+- Analytics writes are O(1) Redis increments.
+- Flush jobs scheduled every configurable minute interval.
+- Aggregated admin queries avoid scanning raw event streams.
 
 ### Scalability
-- Horizontal worker scaling via Horizon supervisors.
-- Queue separation for crawler classes reduces contention.
-- Telemetry retention and index strategy prevent unbounded growth.
+- Flush runs from scheduler and can be horizontally scaled via workers.
+- Rollups split by day/week/month/year for predictable query surfaces.
+- Rate limiting protects ingest from abuse and accidental spikes.
 
-## Architectural Skeleton (High-Level Interfaces)
+## Architectural Skeleton (Interfaces)
 
 ```php
-interface SourceIngestionService
+<?php
+
+interface AnalyticsEventIngestor
 {
-	/** @return array<int, array<string, mixed>> */
-	public function fetchBatch(string $source, int $page): array;
+    /**
+     * Accept one validated analytics event and write to hot counters.
+     */
+    public function ingest(array $event, ?int $userId = null): void;
 }
 
-interface CatalogNormalizationService
+interface AnalyticsRollupFlusher
 {
-	/** @param array<int, array<string, mixed>> $raw */
-	public function normalize(array $raw): array;
+    /**
+     * Move Redis counters into persistent rollups and return run metrics.
+     *
+     * @return array{keys_processed:int, errors:int}
+     */
+    public function flush(): array;
 }
 
-interface CatalogWriteRepository
+interface AdminAnalyticsReader
 {
-	/** @param array<string, mixed> $item */
-	public function upsertMovie(array $item): void;
-}
-
-interface TelemetryRecorder
-{
-	/** @param array<string, mixed> $event */
-	public function record(array $event): void;
+    /**
+     * Build dashboard-ready analytics snapshot for a selected day window.
+     */
+    public function getSnapshot(int $days): array;
 }
 ```
-
-These contracts illustrate responsibility boundaries: ingestion, normalization, persistence, and observability remain independently testable.

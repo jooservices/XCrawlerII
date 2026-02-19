@@ -7,60 +7,24 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
-use Inertia\Inertia;
-use Inertia\Response as InertiaResponse;
 use InvalidArgumentException;
 use JOOservices\Client\Client\ClientBuilder;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\UserJavHistory;
-use Modules\JAV\Repositories\DashboardReadRepository;
 use Modules\JAV\Services\FfjavService;
+use Modules\JAV\Services\JavAnalyticsTrackerService;
 use Modules\JAV\Services\OneFourOneJavService;
 use Modules\JAV\Services\OnejavService;
-use Modules\JAV\Services\SearchService;
 
 class MovieController extends Controller
 {
     public function __construct(
-        private readonly DashboardReadRepository $dashboardReadRepository,
-        private readonly SearchService $searchService,
+        private readonly JavAnalyticsTrackerService $analyticsTrackerService,
     ) {}
-
-    public function show(Jav $jav): InertiaResponse
-    {
-        $jav->increment('views');
-
-        if (auth()->check()) {
-            UserJavHistory::firstOrCreate([
-                'user_id' => auth()->id(),
-                'jav_id' => $jav->id,
-                'action' => 'view',
-            ], [
-                'updated_at' => now(),
-            ]);
-        }
-
-        $this->dashboardReadRepository->loadJavRelations($jav);
-
-        $isLiked = false;
-        if (auth()->check()) {
-            $isLiked = $this->dashboardReadRepository->isJavLikedByUser($jav, (int) auth()->id());
-        }
-
-        $relatedByActors = $this->searchService->getRelatedByActors($jav, 10);
-        $relatedByTags = $this->searchService->getRelatedByTags($jav, 10);
-
-        return Inertia::render('Movies/Show', [
-            'jav' => $jav,
-            'relatedByActors' => $relatedByActors,
-            'relatedByTags' => $relatedByTags,
-            'isLiked' => $isLiked,
-        ]);
-    }
 
     public function download(Jav $jav): Response|RedirectResponse
     {
-        $jav->increment('downloads');
+        $this->analyticsTrackerService->trackDownload($jav);
 
         if (auth()->check()) {
             UserJavHistory::updateOrCreate([

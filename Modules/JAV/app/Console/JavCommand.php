@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 class JavCommand extends Command
 {
     protected $signature = 'jav:sync
-                            {--only=* : content|idols|search|analytics|recommendations}
+                            {--only=* : content|idols|search|recommendations}
                             {--provider=* : onejav|141jav|ffjav (content only)}
                             {--type=* : new|popular|daily|tags (content only)}
                             {--date= : YYYY-MM-DD for daily type (content only)}
@@ -16,7 +16,6 @@ class JavCommand extends Command
                             {--concurrency=3 : Idol sync concurrency}
                             {--search-mode=sync : sync|reset}
                             {--confirm-reset : Required when search mode is reset}
-                            {--days=* : Analytics windows (7,14,30,90)}
                             {--user-id=* : Recommendation user IDs}
                             {--limit=30 : Recommendation limit per user}';
 
@@ -26,12 +25,12 @@ class JavCommand extends Command
     {
         $componentsOption = (array) $this->option('only');
         $components = $componentsOption === []
-            ? ['content', 'idols', 'search', 'analytics', 'recommendations']
+            ? ['content', 'idols', 'search', 'recommendations']
             : array_values(array_unique($componentsOption));
 
         foreach ($components as $component) {
-            if (! in_array($component, ['content', 'idols', 'search', 'analytics', 'recommendations'], true)) {
-                $this->error('Invalid component in --only. Supported: content, idols, search, analytics, recommendations');
+            if (! in_array($component, ['content', 'idols', 'search', 'recommendations'], true)) {
+                $this->error('Invalid component in --only. Supported: content, idols, search, recommendations');
 
                 return self::INVALID;
             }
@@ -86,17 +85,6 @@ class JavCommand extends Command
             $exitCode = Artisan::call('jav:sync:search', [
                 '--mode' => $searchMode,
             ], $this->output);
-            $hasFailure = $hasFailure || $exitCode !== self::SUCCESS;
-        }
-
-        if (in_array('analytics', $components, true)) {
-            $payload = [];
-            $days = (array) $this->option('days');
-            if ($days !== []) {
-                $payload['--days'] = $days;
-            }
-
-            $exitCode = Artisan::call('jav:sync:analytics', $payload, $this->output);
             $hasFailure = $hasFailure || $exitCode !== self::SUCCESS;
         }
 
