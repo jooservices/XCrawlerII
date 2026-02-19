@@ -3899,3 +3899,35 @@ Issue notes during P0 and resolution:
 
 No unresolved blocker remains for P0.
 
+
+## P1 Completion Update (Implemented)
+
+Date completed: 2026-02-19
+
+Scope implemented (V5-F Phase 1):
+- Created `Modules/Core/app/Http/Requests/IngestAnalyticsEventRequest.php`
+- Created `Modules/Core/app/Services/AnalyticsIngestService.php`
+- Created `Modules/Core/app/Http/Controllers/Api/AnalyticsEventController.php`
+- Updated `Modules/Core/routes/api.php` with `POST /api/v1/analytics/events` (`throttle:analytics`)
+- Created `Modules/Core/tests/Feature/Http/AnalyticsIngestEndpointTest.php`
+- Created `Modules/Core/tests/Unit/Services/AnalyticsIngestServiceTest.php`
+
+Evidence (non-assumption):
+- Route registration:
+  - Command: `php artisan route:list --path=analytics`
+  - Result includes: `POST api/v1/analytics/events` with name `api.analytics.events.store`
+- Phase tests:
+  - Command: `php artisan test --filter=AnalyticsIngest`
+  - Result: `11 passed (27 assertions)`
+- Core regression:
+  - Command: `php artisan test Modules/Core/tests`
+  - Result: `53 passed (120 assertions)`
+
+Behavior confirmed:
+- Valid payload returns `202 {"status":"accepted"}`
+- Invalid payload returns `422` with validation errors
+- Feature flag off (`analytics.enabled=false`) still returns `202` and does not write Redis
+- Ingest writes both total counter (`view`/`download`) and daily bucket (`view:YYYY-MM-DD`/`download:YYYY-MM-DD`)
+
+Issue notes during P1 and resolution:
+- No unresolved blocker remains for P1.
