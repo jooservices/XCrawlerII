@@ -64,6 +64,7 @@ class CoreServiceProvider extends ServiceProvider
         $this->commands([
             \Modules\Core\Console\AuthAuthorizeCommand::class,
             \Modules\Core\Console\ObsDependenciesHealthCommand::class,
+            \Modules\Core\Console\FlushAnalyticsCommand::class,
         ]);
     }
 
@@ -73,17 +74,22 @@ class CoreServiceProvider extends ServiceProvider
     protected function registerCommandSchedules(): void
     {
         $this->app->booted(function (): void {
-            if (! (bool) config('services.obs.dependency_health.schedule_enabled', false)) {
-                return;
-            }
-
             /** @var Schedule $schedule */
             $schedule = $this->app->make(Schedule::class);
 
-            $schedule->command('obs:dependencies-health')
-                ->cron((string) config('services.obs.dependency_health.schedule_cron', '*/5 * * * *'))
-                ->withoutOverlapping()
-                ->onOneServer();
+            if ((bool) config('services.obs.dependency_health.schedule_enabled', false)) {
+                $schedule->command('obs:dependencies-health')
+                    ->cron((string) config('services.obs.dependency_health.schedule_cron', '*/5 * * * *'))
+                    ->withoutOverlapping()
+                    ->onOneServer();
+            }
+
+            if ((bool) config('analytics.enabled', false)) {
+                $schedule->command('analytics:flush')
+                    ->everyMinute()
+                    ->withoutOverlapping()
+                    ->onOneServer();
+            }
         });
     }
 
