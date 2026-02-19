@@ -137,6 +137,40 @@ class AnalyticsIngestEndpointTest extends TestCase
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(500);
     }
 
+    public function test_rate_limiting(): void
+    {
+        // Set low limit for testing
+        config(['analytics.rate_limit_per_minute' => 2]);
+
+        // Re-register the limiter to pick up config change
+        \Illuminate\Support\Facades\RateLimiter::for('analytics', function ($request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute(config('analytics.rate_limit_per_minute'))->by($request->ip());
+        });
+
+        $payload = [
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $this->faker->uuid(),
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => now()->toIso8601String(),
+        ];
+
+        // Mock Redis for success path
+        Redis::shouldReceive('setnx')->andReturn(true);
+        Redis::shouldReceive('expire')->andReturn(true);
+        Redis::shouldReceive('hincrby')->andReturn(1);
+
+        // 1st request: OK
+        $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
+
+        // 2nd request: OK
+        $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
+
+        // 3rd request: 429
+        $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(429);
+    }
+
     #[DataProvider('invalidPayloadProvider')]
     public function test_validation_rules(array $payload, string $errorField): void
     {

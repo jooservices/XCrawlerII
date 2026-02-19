@@ -1877,7 +1877,21 @@ const DEDUPE_TTL_MS = 30_000;
 export function trackEvent(domain, entityType, entityId, action, value = 1) {
     const key = `${domain}:${entityType}:${entityId}:${action}`;
     const now = Date.now();
-    if (dedupeMap.has(key) && (now - dedupeMap.get(key)) < DEDUPE_TTL_MS) return;
+    
+    // Check in-memory cache with TTL
+    if (dedupeMap.has(key)) {
+        const lastFired = dedupeMap.get(key);
+        if ((now - lastFired) < DEDUPE_TTL_MS) return;
+        dedupeMap.delete(key);
+    }
+    
+    // Lazy eviction check (simplified for docs)
+    if (dedupeMap.size > 500) {
+        for (const [k, ts] of dedupeMap) {
+            if ((now - ts) >= DEDUPE_TTL_MS) dedupeMap.delete(k);
+        }
+    }
+    
     dedupeMap.set(key, now);
 
     const eventId = `${key}:${now}:${Math.random().toString(36).slice(2, 10)}`;

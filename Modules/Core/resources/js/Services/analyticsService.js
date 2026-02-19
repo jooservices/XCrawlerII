@@ -3,6 +3,7 @@ import axios from 'axios';
 const ALLOWED_ACTIONS = new Set(['view', 'download']);
 const ALLOWED_ENTITY_TYPES = new Set(['movie', 'actor', 'tag']);
 const SESSION_PREFIX = 'anl:track:v1:';
+const DEDUPE_TTL_MS = 60 * 60 * 1000; // 1 hour in-memory cache TTL
 
 function fallbackRandomId() {
     return `evt-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
@@ -23,7 +24,7 @@ export class AnalyticsService {
         this.defaultDomain = defaultDomain;
         this.uuidFactory = uuidFactory;
         this.nowFactory = nowFactory;
-        this.inMemory = new Set();
+        this.inMemory = new Map();
     }
 
     makeTrackKey(action, entityType, entityId) {
@@ -31,18 +32,24 @@ export class AnalyticsService {
     }
 
     hasTracked(trackKey) {
+        const now = this.nowFactory().getTime();
+
         if (this.inMemory.has(trackKey)) {
-            return true;
+            const timestamp = this.inMemory.get(trackKey);
+            if (now - timestamp < DEDUPE_TTL_MS) {
+                return true;
+            }
+            this.inMemory.delete(trackKey);
         }
 
-        if (! this.storage) {
+        if (!this.storage) {
             return false;
         }
 
         try {
             const stored = this.storage.getItem(trackKey) === '1';
             if (stored) {
-                this.inMemory.add(trackKey);
+                this.cacheInMemory(trackKey, now);
             }
 
             return stored;
@@ -52,9 +59,9 @@ export class AnalyticsService {
     }
 
     markTracked(trackKey) {
-        this.inMemory.add(trackKey);
+        this.cacheInMemory(trackKey, this.nowFactory().getTime());
 
-        if (! this.storage) {
+        if (!this.storage) {
             return;
         }
 
@@ -65,6 +72,24 @@ export class AnalyticsService {
         }
     }
 
+    cacheInMemory(key, timestamp) {
+        // Prevent unbounded growth: clear expired keys if map gets too large
+        if (this.inMemory.size >= 500) {
+            const now = this.nowFactory().getTime();
+            for (const [k, ts] of this.inMemory) {
+                if (now - ts >= DEDUPE_TTL_MS) {
+                    this.inMemory.delete(k);
+                }
+            }
+            // Hard limit safety
+            if (this.inMemory.size > 600) {
+                const firstKey = this.inMemory.keys().next().value;
+                if (firstKey) this.inMemory.delete(firstKey);
+            }
+        }
+        this.inMemory.set(key, timestamp);
+    }
+
     /**
      * @param {string} action
      * @param {string} entityType
@@ -73,11 +98,11 @@ export class AnalyticsService {
      * @returns {Promise<boolean>}
      */
     async track(action, entityType, entityId, options = {}) {
-        if (! ALLOWED_ACTIONS.has(action)) {
+        if (!ALLOWED_ACTIONS.has(action)) {
             return false;
         }
 
-        if (! ALLOWED_ENTITY_TYPES.has(entityType) || ! entityId) {
+        if (!ALLOWED_ENTITY_TYPES.has(entityType) || !entityId) {
             return false;
         }
 
