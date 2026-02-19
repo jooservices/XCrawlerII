@@ -68,6 +68,7 @@ class CoreServiceProvider extends ServiceProvider
             \Modules\Core\Console\AnalyticsParityCheckCommand::class,
             \Modules\Core\Console\AnalyticsReportGenerateCommand::class,
             \Modules\Core\Console\AnalyticsReportVerifyCommand::class,
+            \Modules\Core\Console\Tests\AnalyticsBenchmarkCommand::class,
         ]);
     }
 

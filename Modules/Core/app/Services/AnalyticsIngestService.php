@@ -2,6 +2,7 @@
 
 namespace Modules\Core\Services;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redis;
 use Modules\Core\Enums\AnalyticsAction;
 use Modules\Core\Enums\AnalyticsDomain;
@@ -46,7 +47,7 @@ class AnalyticsIngestService
 
         $value = (int) ($event['value'] ?? 1);
         $actionName = $action->value;
-        $date = mb_substr((string) $event['occurred_at'], 0, 10);
+        $date = Carbon::parse((string) $event['occurred_at'])->toDateString();
 
         /** @phpstan-ignore-next-line */
         Redis::hincrby($key, $actionName, $value);

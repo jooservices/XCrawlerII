@@ -571,7 +571,7 @@ class AnalyticsService
     private const DEDUPE_TTL     = 172800; // 48h
 
     // ── WRITE ────────────────────────────────────────────
-    public function ingest(array $event): bool
+    public function ingest(array $event, ?int $userId = null): bool
     {
         // 1. Dedupe via Redis SET NX
         $isNew = Redis::set(self::DEDUPE_PREFIX . $event['event_id'], 1, 'NX', 'EX', self::DEDUPE_TTL);
@@ -658,6 +658,12 @@ class IngestAnalyticsEventRequest extends FormRequest
             $action = AnalyticsAction::tryFrom($this->input('action'));
             if ($action && $action->isFixedValue() && (int) $this->input('value') !== 1) {
                 $v->errors()->add('value', "value must be 1 for action={$action->value}");
+            }
+
+            // Spoofing check
+            $providedUserId = $this->input('user_id');
+            if ($providedUserId !== null && (int) $providedUserId !== (int) auth()->id()) {
+                $v->errors()->add('user_id', 'User ID mismatch.');
             }
         });
     }
@@ -806,6 +812,7 @@ const VALUE_RULES = {
 
 class AnalyticsService {
     #firedEvents = new Map();
+    #TTL_MS = 2000; // 2 seconds
 
     /**
      * Track any analytics action. Extensible — pass any valid action type string.
@@ -817,8 +824,21 @@ class AnalyticsService {
      */
     track(action, entityType, entityId, userId = null, opts = {}) {
         const key = `${entityType}:${entityId}:${action}`;
-        if (this.#firedEvents.has(key)) return Promise.resolve();
-        this.#firedEvents.set(key, true);
+        const now = Date.now();
+
+        if (this.#firedEvents.has(key)) {
+            const lastFired = this.#firedEvents.get(key);
+            if (now - lastFired < this.#TTL_MS) return Promise.resolve();
+        }
+        
+        // Eviction if too large
+        if (this.#firedEvents.size > 500) {
+            for (const [k, ts] of this.#firedEvents) {
+                if (now - ts > this.#TTL_MS) this.#firedEvents.delete(k);
+            }
+        }
+        
+        this.#firedEvents.set(key, now);
 
         const domain = opts.domain || 'jav';
         const rawValue = opts.value ?? VALUE_RULES[action] ?? 1;

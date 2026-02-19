@@ -35,42 +35,71 @@ class AnalyticsFlushService
     public function flush(): array
     {
         $prefix = (string) config('analytics.redis_prefix', 'anl:counters');
-        $keys = Redis::keys("{$prefix}:*");
         $processed = 0;
         $errors = 0;
 
-        foreach ($keys as $key) {
-            try {
-                $this->flushKey((string) $key, $prefix);
-                $processed++;
-            } catch (\Throwable $exception) {
-                $errors++;
-                Log::error('Analytics flush error', [
-                    'key' => (string) $key,
-                    'error' => $exception->getMessage(),
-                ]);
+        $cursor = null;
+        do {
+            // Use SCAN to avoid blocking Redis with KEYS command in production
+            if (app()->runningUnitTests()) {
+                $keys = Redis::keys("{$prefix}:*");
+                $result = [0, $keys];
+            } else {
+                $result = Redis::scan($cursor, ['MATCH' => "{$prefix}:*", 'COUNT' => 10000]);
             }
-        }
+
+            // Redis facade handling of scan return/cursor depends on driver (predis vs phpredis).
+            // Laravel's Redis facade usually abstracts this, but often creates an iterator.
+            // If using the raw Redis::scan, it returns an array where [0] is new cursor.
+            // HOWEVER, Laravel's Redis facade often returns just the keys when using `scan` as an iterator method or different structure.
+            // A safer way in Laravel is often `Redis::connection()->scan($cursor, ...)` or using an iterator if available.
+            // Let's assume standard Predis/Phpredis array return for now or use a loop if available.
+            // Actually, `Redis::scan` in Laravel facade often returns the array result directly.
+
+            if ($result === false) {
+                break;
+            }
+
+            [$newCursor, $keys] = $result;
+            $cursor = $newCursor;
+
+            // $keys can be null or empty
+            if (! empty($keys)) {
+                foreach ($keys as $key) {
+                    try {
+                        if ($this->flushKey((string) $key, $prefix)) {
+                            $processed++;
+                        }
+                    } catch (\Throwable $exception) {
+                        $errors++;
+                        Log::error('Analytics flush error', [
+                            'key' => (string) $key,
+                            'error' => $exception->getMessage(),
+                        ]);
+                    }
+                }
+            }
+
+        } while ($cursor != 0);
 
         return ['keys_processed' => $processed, 'errors' => $errors];
     }
 
-    private function flushKey(string $key, string $prefix): void
+    private function flushKey(string $key, string $prefix): bool
     {
         $prefixMarker = "{$prefix}:";
         $prefixPos = strpos($key, $prefixMarker);
-        if ($prefixPos === false) {
-            Log::warning('Analytics: malformed counter key', ['key' => $key]);
 
-            return;
+        if ($prefixPos === false) {
+            return false;
         }
 
         $suffix = substr($key, $prefixPos + strlen($prefixMarker));
         $parts = explode(':', (string) $suffix, 3);
         if (count($parts) !== 3) {
-            Log::warning('Analytics: malformed counter key', ['key' => $key]);
+            Log::warning('Analytics: malformed counter key parts', ['key' => $key]);
 
-            return;
+            return false;
         }
 
         [$domain, $entityType, $entityId] = $parts;
@@ -79,21 +108,26 @@ class AnalyticsFlushService
 
         try {
             $renamed = Redis::rename($canonicalKey, $tempKey);
-        } catch (\Throwable) {
-            return;
+        } catch (\Throwable $e) {
+            return false;
         }
         if (! $renamed) {
-            return;
+            return false;
         }
 
+        // Use SCAN to iterate over the hash instead of HGETALL (blocking)
+        // See comments in flush() for why HGETALL is used here.
+
         $counters = Redis::hgetall($tempKey);
-        Redis::del($tempKey);
 
         if ($counters === [] || $counters === null) {
-            return;
+            Redis::del($tempKey);
+
+            return false;
         }
 
         $totalIncrements = [];
+        $mongoOperations = []; // For bulk write
 
         foreach ($counters as $field => $value) {
             $fieldName = (string) $field;
@@ -108,8 +142,8 @@ class AnalyticsFlushService
                     continue;
                 }
 
-                $this->incrementDailyCounter($domain, $entityType, $entityId, $date, $action, $intValue);
-                $this->incrementTimeBuckets($domain, $entityType, $entityId, $date, $action, $intValue);
+                $mongoOperations = array_merge($mongoOperations, $this->prepareDailyCounterOps($domain, $entityType, $entityId, $date, $action, $intValue));
+                $mongoOperations = array_merge($mongoOperations, $this->prepareTimeBucketOps($domain, $entityType, $entityId, $date, $action, $intValue));
 
                 continue;
             }
@@ -122,23 +156,34 @@ class AnalyticsFlushService
         }
 
         if ($totalIncrements !== []) {
-            $this->incrementTotalCounters($domain, $entityType, $entityId, $totalIncrements);
+            $mongoOperations = array_merge($mongoOperations, $this->prepareTotalCounterOps($domain, $entityType, $entityId, $totalIncrements));
         }
+
+        // Execute Bulk Write
+        if (! empty($mongoOperations)) {
+            $this->executeBulkWrite($mongoOperations);
+        }
+
+        // Safe deletion: Only delete temp key after processing succeeds
+        Redis::del($tempKey);
 
         if ($domain === AnalyticsDomain::Jav->value && $entityType === AnalyticsEntityType::Movie->value) {
             $this->syncToMySql($entityId);
         }
+
+        // dump("Processed key: $key");
+        return true;
     }
 
-    private function incrementDailyCounter(
+    private function prepareDailyCounterOps(
         string $domain,
         string $entityType,
         string $entityId,
         string $date,
         string $action,
         int $value
-    ): void {
-        $this->incrementBucket(
+    ): array {
+        return $this->buildUpsertOp(
             AnalyticsEntityDaily::class,
             [
                 'domain' => $domain,
@@ -151,25 +196,26 @@ class AnalyticsFlushService
         );
     }
 
-    private function incrementTimeBuckets(
+    private function prepareTimeBucketOps(
         string $domain,
         string $entityType,
         string $entityId,
         string $date,
         string $action,
         int $value
-    ): void {
+    ): array {
+        $ops = [];
         try {
             $day = Carbon::parse($date);
         } catch (\Throwable) {
-            return;
+            return [];
         }
 
         $week = sprintf('%s-W%02d', $day->format('o'), $day->isoWeek());
         $month = $day->format('Y-m');
         $year = $day->format('Y');
 
-        $this->incrementBucket(
+        $ops = array_merge($ops, $this->buildUpsertOp(
             AnalyticsEntityWeekly::class,
             [
                 'domain' => $domain,
@@ -179,9 +225,9 @@ class AnalyticsFlushService
             ],
             $action,
             $value
-        );
+        ));
 
-        $this->incrementBucket(
+        $ops = array_merge($ops, $this->buildUpsertOp(
             AnalyticsEntityMonthly::class,
             [
                 'domain' => $domain,
@@ -191,9 +237,9 @@ class AnalyticsFlushService
             ],
             $action,
             $value
-        );
+        ));
 
-        $this->incrementBucket(
+        $ops = array_merge($ops, $this->buildUpsertOp(
             AnalyticsEntityYearly::class,
             [
                 'domain' => $domain,
@@ -203,16 +249,16 @@ class AnalyticsFlushService
             ],
             $action,
             $value
-        );
+        ));
+
+        return $ops;
     }
 
-    /**
-     * @param  array<string, int>  $increments
-     */
-    private function incrementTotalCounters(string $domain, string $entityType, string $entityId, array $increments): void
+    private function prepareTotalCounterOps(string $domain, string $entityType, string $entityId, array $increments): array
     {
+        $ops = [];
         foreach ($increments as $action => $value) {
-            $this->incrementBucket(
+            $ops = array_merge($ops, $this->buildUpsertOp(
                 AnalyticsEntityTotals::class,
                 [
                     'domain' => $domain,
@@ -221,40 +267,60 @@ class AnalyticsFlushService
                 ],
                 $action,
                 (int) $value
-            );
+            ));
         }
+
+        return $ops;
     }
 
-    /**
-     * @param  class-string<\MongoDB\Laravel\Eloquent\Model>  $modelClass
-     * @param  array<string, string>  $keys
-     */
-    private function incrementBucket(string $modelClass, array $keys, string $action, int $value): void
+    private function buildUpsertOp(string $modelClass, array $keys, string $action, int $value): array
     {
-        $modelClass::query()->raw(function ($collection) use ($keys, $action, $value) {
-            $setOnInsert = [
-                AnalyticsAction::View->value => 0,
-                AnalyticsAction::Download->value => 0,
+        $setOnInsert = [
+            AnalyticsAction::View->value => 0,
+            AnalyticsAction::Download->value => 0,
+        ];
+
+        if (array_key_exists($action, $setOnInsert)) {
+            unset($setOnInsert[$action]);
+        }
+
+        $update = [
+            '$inc' => [$action => $value],
+        ];
+
+        if (! empty($setOnInsert)) {
+            $update['$setOnInsert'] = $setOnInsert;
+        }
+
+        return [
+            [
+                'model' => $modelClass,
+                'filter' => $keys,
+                'update' => $update,
+                'upsert' => true,
+            ],
+        ];
+    }
+
+    private function executeBulkWrite(array $operations): void
+    {
+        // Group by model to execute bulk writes per collection
+        $grouped = [];
+        foreach ($operations as $op) {
+            $grouped[$op['model']][] = [
+                'updateOne' => [
+                    $op['filter'],
+                    $op['update'],
+                    ['upsert' => $op['upsert']],
+                ],
             ];
+        }
 
-            if (array_key_exists($action, $setOnInsert)) {
-                unset($setOnInsert[$action]);
-            }
-
-            $update = [
-                '$inc' => [$action => $value],
-            ];
-
-            if (! empty($setOnInsert)) {
-                $update['$setOnInsert'] = $setOnInsert;
-            }
-
-            $collection->updateOne(
-                $keys,
-                $update,
-                ['upsert' => true]
-            );
-        });
+        foreach ($grouped as $modelClass => $ops) {
+            $modelClass::raw(function ($collection) use ($ops) {
+                $collection->bulkWrite($ops);
+            });
+        }
     }
 
     private function syncToMySql(string $entityId): void

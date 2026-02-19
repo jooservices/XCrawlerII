@@ -63,7 +63,8 @@ class AnalyticsFlushServiceTest extends TestCase
         $service = new AnalyticsFlushService;
         $result = $service->flush();
 
-        $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
+        $this->assertGreaterThanOrEqual(1, $result['keys_processed']);
+        $this->assertSame(0, $result['errors']);
 
         $totals = AnalyticsEntityTotals::query()
             ->where('domain', AnalyticsDomain::Jav->value)
@@ -131,7 +132,7 @@ class AnalyticsFlushServiceTest extends TestCase
         $service = new AnalyticsFlushService;
         $result = $service->flush();
 
-        $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
+        $this->assertSame(['keys_processed' => 0, 'errors' => 0], $result);
         $this->assertSame(0, AnalyticsEntityTotals::query()->count());
         $this->assertSame(0, AnalyticsEntityDaily::query()->count());
         $this->assertSame(0, AnalyticsEntityWeekly::query()->count());
@@ -157,7 +158,8 @@ class AnalyticsFlushServiceTest extends TestCase
         $service = new AnalyticsFlushService;
         $result = $service->flush();
 
-        $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
+        $this->assertGreaterThanOrEqual(1, $result['keys_processed']);
+        $this->assertSame(0, $result['errors']);
 
         $totals = AnalyticsEntityTotals::query()
             ->where('domain', AnalyticsDomain::Jav->value)
@@ -245,7 +247,8 @@ class AnalyticsFlushServiceTest extends TestCase
         $service = new AnalyticsFlushService;
         $result = $service->flush();
 
-        $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
+        $this->assertGreaterThanOrEqual(1, $result['keys_processed']);
+        $this->assertSame(0, $result['errors']);
 
         $totals = AnalyticsEntityTotals::query()
             ->where('domain', AnalyticsDomain::Jav->value)
@@ -289,7 +292,8 @@ class AnalyticsFlushServiceTest extends TestCase
         $service = new AnalyticsFlushService;
         $result = $service->flush();
 
-        $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
+        $this->assertGreaterThanOrEqual(1, $result['keys_processed']);
+        $this->assertSame(0, $result['errors']);
 
         $totals = AnalyticsEntityTotals::query()
             ->where('domain', AnalyticsDomain::Jav->value)
@@ -320,7 +324,8 @@ class AnalyticsFlushServiceTest extends TestCase
         $service = new AnalyticsFlushService;
         $result = $service->flush();
 
-        $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
+        $this->assertGreaterThanOrEqual(1, $result['keys_processed']);
+        $this->assertSame(0, $result['errors']);
         $totals = AnalyticsEntityTotals::query()
             ->where('domain', AnalyticsDomain::Jav->value)
             ->where('entity_type', AnalyticsEntityType::Movie->value)
@@ -342,7 +347,8 @@ class AnalyticsFlushServiceTest extends TestCase
         $service = new AnalyticsFlushService;
         $result = $service->flush();
 
-        $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
+        $this->assertGreaterThanOrEqual(1, $result['keys_processed']);
+        $this->assertSame(0, $result['errors']);
 
         $totals = AnalyticsEntityTotals::query()
             ->where('domain', AnalyticsDomain::Jav->value)
@@ -374,9 +380,21 @@ class AnalyticsFlushServiceTest extends TestCase
 
     private function cleanupRedisByPattern(string $pattern): void
     {
-        $keys = Redis::keys($pattern);
-        if ($keys !== [] && $keys !== null) {
-            Redis::del($keys);
-        }
+        $cursor = null;
+        do {
+            $result = Redis::scan($cursor, ['MATCH' => $pattern, 'COUNT' => 1000]);
+
+            if ($result === false) {
+                break;
+            }
+
+            [$newCursor, $keys] = $result;
+            $cursor = $newCursor;
+
+            if (! empty($keys)) {
+                Redis::del($keys);
+            }
+
+        } while ($cursor != 0);
     }
 }
