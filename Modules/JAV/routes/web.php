@@ -93,9 +93,9 @@ Route::middleware(['web', 'auth'])->prefix('jav/api')->name('jav.api.')->group(f
 });
 
 Route::prefix('jav')->name('jav.')->group(function () {
-    Route::get('/movies/{jav}/download', [MovieController::class, 'download'])->name('movies.download');
-
     Route::middleware('auth')->group(function () {
+        Route::get('/movies/{jav}/download', [MovieController::class, 'download'])->name('movies.download');
+
         // Temporary legacy alias: keep route('jav.notifications') resolving to canonical Vue page.
         Route::get(JAV_NOTIFICATIONS_PATH, [DashboardController::class, 'notificationsVue'])->name('notifications');
         Route::post('/like', [ApiLibraryController::class, 'toggleLike'])->name('toggle-like');

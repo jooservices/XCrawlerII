@@ -28,7 +28,7 @@ const props = defineProps({
             message="No recommendations yet. Like some movies, actors, or tags to get personalized suggestions!"
         />
 
-        <div v-else class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-4 ui-g-4">
+        <div v-else class="movie-masonry-grid">
             <MovieCard
                 v-for="(recommendation, index) in recommendations"
                 :key="recommendation.movie?.id || index"
@@ -38,3 +38,27 @@ const props = defineProps({
         </div>
     </PageShell>
 </template>
+
+<style scoped>
+.movie-masonry-grid {
+    column-count: 1;
+    column-gap: 1rem;
+}
+
+.movie-masonry-grid > .ui-col {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .movie-masonry-grid {
+        column-count: 3;
+    }
+}
+
+@media (min-width: 1200px) {
+    .movie-masonry-grid {
+        column-count: 4;
+    }
+}
+</style>

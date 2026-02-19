@@ -432,7 +432,7 @@ onBeforeUnmount(() => {
             </Swiper>
         </div>
 
-        <div id="lazy-container" class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-4 ui-g-4">
+        <div id="lazy-container" class="movie-masonry-grid">
             <div v-if="hasItemsQueryError" class="ui-col-12">
                 <div class="ui-alert ui-alert-danger u-flex u-justify-between u-items-center mb-0">
                     <span>{{ itemsQueryErrorMessage }}</span>
@@ -517,6 +517,33 @@ onBeforeUnmount(() => {
 .continue-watching-swiper .ui-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--card-hover-shadow);
+}
+
+.movie-masonry-grid {
+    column-count: 1;
+    column-gap: 1rem;
+}
+
+.movie-masonry-grid > .ui-col,
+.movie-masonry-grid > .ui-col-12 {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+}
+
+.movie-masonry-grid > .ui-col-12 {
+    column-span: all;
+}
+
+@media (min-width: 768px) {
+    .movie-masonry-grid {
+        column-count: 3;
+    }
+}
+
+@media (min-width: 1200px) {
+    .movie-masonry-grid {
+        column-count: 4;
+    }
 }
 
 @media (max-width: 575.98px) {

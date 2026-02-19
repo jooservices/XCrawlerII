@@ -1,4 +1,3 @@
-
 # Laravel
 /vendor
 /node_modules
@@ -11,23 +10,29 @@
 /storage/pail/
 /storage/phpstan
 /storage/phpunit/
+/bootstrap/cache/*.php
+
+# Build & tool output
 phpmd_output.txt
 phpstan_errors.txt
+.phpunit.result.cache
+/.phpunit.cache
+/coverage/
+.php-cs-fixer.cache
+
+# Secrets & auth
 .env
 .env.*
 !.env.example
 /auth.json
-.phpunit.result.cache
-/.phpunit.cache
-/bootstrap/cache/*.php
 
-# Modules
+# Modules (deps & build)
 /Modules/*/node_modules
 /Modules/*/public/build
 /Modules/*/public/hot
 /Modules/*/vendor
 
-# Editor/IDE
+# Editor / IDE
 /.idea
 /.vscode
 /.fleet
@@ -39,10 +44,24 @@ phpstan_errors.txt
 .DS_Store
 Thumbs.db
 
-# Local
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm
+.yarn-integrity
+.pnpm-debug.log*
+
+# Local / runtime
 Homestead.json
 Homestead.yaml
-
-# Runtime logs
+/tmp/
+/temp/
 /logs/
 /public/logs/
+
+# SQLite (local DBs)
+*.sqlite
+*.sqlite-journal
+*.db

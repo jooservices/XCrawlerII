@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
+use Modules\JAV\Services\CurationReadService;
 use Modules\JAV\Services\SearchService;
 
 class DashboardReadRepository
@@ -27,6 +28,7 @@ class DashboardReadRepository
         private readonly WatchlistRepository $watchlistRepository,
         private readonly RatingRepository $ratingRepository,
         private readonly UserLikeNotificationRepository $notificationRepository,
+        private readonly CurationReadService $curationReadService,
     ) {}
 
     public function searchWithPreset(
@@ -117,6 +119,8 @@ class DashboardReadRepository
             $item->user_rating = $itemId !== null ? optional($ratings->get($itemId))->rating : null;
             $item->user_rating_id = $itemId !== null ? optional($ratings->get($itemId))->id : null;
         }
+
+        $this->curationReadService->decorateMoviesWithFeaturedState($pageItems);
     }
 
     /**

@@ -46,7 +46,7 @@ const toMovieItem = (favorite) => {
         />
 
         <template v-else>
-            <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
+            <div class="movie-masonry-grid">
                 <template v-for="favorite in favorites.data" :key="favorite.id">
                     <MovieCard
                         v-if="isMovieFavorite(favorite)"
@@ -96,3 +96,27 @@ const toMovieItem = (favorite) => {
         </template>
     </PageShell>
 </template>
+
+<style scoped>
+.movie-masonry-grid {
+    column-count: 1;
+    column-gap: 1rem;
+}
+
+.movie-masonry-grid > .ui-col {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .movie-masonry-grid {
+        column-count: 3;
+    }
+}
+
+@media (min-width: 1200px) {
+    .movie-masonry-grid {
+        column-count: 5;
+    }
+}
+</style>

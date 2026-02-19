@@ -3,6 +3,7 @@
 namespace Modules\JAV\Tests\Feature\Controllers\Users\Api;
 
 use App\Models\User;
+use Modules\Core\Models\CuratedItem;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Tests\TestCase;
 
@@ -63,5 +64,36 @@ class DashboardControllerContractTest extends TestCase
             ]))
             ->assertStatus(422)
             ->assertJsonValidationErrors(['tags_mode']);
+    }
+
+    public function test_dashboard_items_include_featured_projection_fields(): void
+    {
+        $user = User::factory()->create();
+        $featuredMovie = Jav::factory()->create();
+        $normalMovie = Jav::factory()->create();
+
+        CuratedItem::query()->create([
+            'item_type' => 'jav',
+            'item_id' => $featuredMovie->id,
+            'curation_type' => 'featured',
+            'user_id' => $user->id,
+        ]);
+
+        $response = $this->actingAs($user)
+            ->getJson(route('jav.api.dashboard.items'))
+            ->assertOk();
+
+        $featured = collect($response->json('data'))
+            ->first(fn ($item): bool => (int) ($item['id'] ?? 0) === (int) $featuredMovie->id);
+
+        $normal = collect($response->json('data'))
+            ->first(fn ($item): bool => (int) ($item['id'] ?? 0) === (int) $normalMovie->id);
+
+        $this->assertNotNull($featured);
+        $this->assertNotNull($normal);
+        $this->assertTrue((bool) ($featured['is_featured'] ?? false));
+        $this->assertNotEmpty($featured['featured_curation_uuid'] ?? null);
+        $this->assertFalse((bool) ($normal['is_featured'] ?? true));
+        $this->assertNull($normal['featured_curation_uuid'] ?? null);
     }
 }
