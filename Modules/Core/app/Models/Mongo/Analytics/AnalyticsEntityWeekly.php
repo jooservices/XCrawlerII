@@ -8,19 +8,21 @@ use MongoDB\Laravel\Eloquent\Model;
  * @property string $domain
  * @property string $entity_type
  * @property string $entity_id
+ * @property string $week
  * @property int $view
  * @property int $download
  */
-class AnalyticsEntityTotals extends Model
+class AnalyticsEntityWeekly extends Model
 {
     protected $connection = 'mongodb';
 
-    protected $collection = 'analytics_entity_totals';
+    protected $collection = 'analytics_entity_weekly';
 
     protected $fillable = [
         'domain',
         'entity_type',
         'entity_id',
+        'week',
         'view',
         'download',
     ];
@@ -28,5 +30,6 @@ class AnalyticsEntityTotals extends Model
     protected $casts = [
         'view' => 'integer',
         'download' => 'integer',
+        'week' => 'string',
     ];
 }

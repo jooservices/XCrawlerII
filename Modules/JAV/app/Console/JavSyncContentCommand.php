@@ -5,6 +5,7 @@ namespace Modules\JAV\Console;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 use Modules\JAV\Jobs\DailySyncJob;
 use Modules\JAV\Jobs\FfjavJob;
 use Modules\JAV\Jobs\OneFourOneJavJob;
@@ -73,9 +74,9 @@ class JavSyncContentCommand extends Command
         $this->info("Starting {$provider} {$type} sync.");
 
         match ($provider) {
-            'onejav' => OnejavJob::dispatch($type)->onQueue($queue),
-            '141jav' => OneFourOneJavJob::dispatch($type)->onQueue($queue),
-            'ffjav' => FfjavJob::dispatch($type)->onQueue($queue),
+            'onejav' => Bus::dispatch((new OnejavJob($type))->onQueue($queue)),
+            '141jav' => Bus::dispatch((new OneFourOneJavJob($type))->onQueue($queue)),
+            'ffjav' => Bus::dispatch((new FfjavJob($type))->onQueue($queue)),
         };
 
         $this->info("Dispatched {$provider} {$type} job to queue '{$queue}'.");
@@ -99,7 +100,7 @@ class JavSyncContentCommand extends Command
 
         $queue = $this->resolveQueue($provider);
 
-        DailySyncJob::dispatch($provider, $resolvedDate, 1)->onQueue($queue);
+        Bus::dispatch((new DailySyncJob($provider, $resolvedDate, 1))->onQueue($queue));
 
         $this->info("Dispatched {$provider} daily sync ({$resolvedDate}) page 1.");
 
@@ -109,7 +110,7 @@ class JavSyncContentCommand extends Command
     private function syncTags(string $provider): int
     {
         $queue = $this->resolveQueue($provider);
-        TagsSyncJob::dispatch($provider)->onQueue($queue);
+        Bus::dispatch((new TagsSyncJob($provider))->onQueue($queue));
 
         $this->info("Dispatched {$provider} tags sync job to queue '{$queue}'.");
 

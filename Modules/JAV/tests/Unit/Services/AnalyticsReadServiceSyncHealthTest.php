@@ -4,10 +4,10 @@ namespace Modules\JAV\Tests\Unit\Services;
 
 use Illuminate\Support\Facades\DB;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Services\AnalyticsSnapshotService;
+use Modules\JAV\Services\AnalyticsReadService;
 use Modules\JAV\Tests\TestCase;
 
-class AnalyticsSnapshotServiceSyncHealthTest extends TestCase
+class AnalyticsReadServiceSyncHealthTest extends TestCase
 {
     public function test_snapshot_sync_health_reflects_jobs_and_failed_jobs_tables(): void
     {
@@ -30,8 +30,8 @@ class AnalyticsSnapshotServiceSyncHealthTest extends TestCase
             'failed_at' => now(),
         ]);
 
-        $service = app(AnalyticsSnapshotService::class);
-        $payload = $service->getSnapshot(7, true);
+        $service = app(AnalyticsReadService::class);
+        $payload = $service->getSnapshot(7);
 
         $this->assertSame(1, $payload['syncHealth']['pending_jobs']);
         $this->assertSame(1, $payload['syncHealth']['failed_jobs_24h']);

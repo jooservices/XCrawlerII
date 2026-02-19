@@ -2,9 +2,16 @@
 
 namespace Modules\Core\Tests\Unit\Services;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Redis;
+use Modules\Core\Enums\AnalyticsAction;
+use Modules\Core\Enums\AnalyticsDomain;
+use Modules\Core\Enums\AnalyticsEntityType;
 use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityDaily;
+use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityMonthly;
 use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityTotals;
+use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityWeekly;
+use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityYearly;
 use Modules\Core\Services\AnalyticsFlushService;
 use Modules\Core\Tests\TestCase;
 use Modules\JAV\Models\Jav;
@@ -18,12 +25,15 @@ class AnalyticsFlushServiceTest extends TestCase
         parent::setUp();
 
         $this->requireAnalyticsInfra();
-        $this->prefix = 'anl:counters:test:flush:'.uniqid();
+        $this->prefix = 'anl:counters:test:flush:'.$this->faker->uuid();
         config(['analytics.redis_prefix' => $this->prefix]);
 
         $this->cleanupRedisByPattern("{$this->prefix}:*");
         AnalyticsEntityTotals::query()->delete();
         AnalyticsEntityDaily::query()->delete();
+        AnalyticsEntityWeekly::query()->delete();
+        AnalyticsEntityMonthly::query()->delete();
+        AnalyticsEntityYearly::query()->delete();
     }
 
     public function test_flush_is_noop_when_no_redis_keys(): void
@@ -42,13 +52,13 @@ class AnalyticsFlushServiceTest extends TestCase
             'source' => 'onejav',
         ]);
 
-        $counterKey = "{$this->prefix}:jav:movie:{$jav->uuid}";
+        $counterKey = "{$this->prefix}:".AnalyticsDomain::Jav->value.':'.AnalyticsEntityType::Movie->value.":{$jav->uuid}";
         $date = now()->toDateString();
 
-        Redis::hset($counterKey, 'view', 5);
-        Redis::hset($counterKey, 'download', 2);
-        Redis::hset($counterKey, "view:{$date}", 5);
-        Redis::hset($counterKey, "download:{$date}", 2);
+        Redis::hset($counterKey, AnalyticsAction::View->value, 5);
+        Redis::hset($counterKey, AnalyticsAction::Download->value, 2);
+        Redis::hset($counterKey, AnalyticsAction::View->value.":{$date}", 5);
+        Redis::hset($counterKey, AnalyticsAction::Download->value.":{$date}", 2);
 
         $service = new AnalyticsFlushService;
         $result = $service->flush();
@@ -56,8 +66,8 @@ class AnalyticsFlushServiceTest extends TestCase
         $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
 
         $totals = AnalyticsEntityTotals::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $jav->uuid)
             ->first();
         $this->assertNotNull($totals);
@@ -65,14 +75,49 @@ class AnalyticsFlushServiceTest extends TestCase
         $this->assertSame(2, (int) $totals->download);
 
         $daily = AnalyticsEntityDaily::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $jav->uuid)
             ->where('date', $date)
             ->first();
         $this->assertNotNull($daily);
         $this->assertSame(5, (int) $daily->view);
         $this->assertSame(2, (int) $daily->download);
+
+        $day = Carbon::parse($date);
+        $week = sprintf('%s-W%02d', $day->format('o'), $day->isoWeek());
+        $month = $day->format('Y-m');
+        $year = $day->format('Y');
+
+        $weekly = AnalyticsEntityWeekly::query()
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
+            ->where('entity_id', $jav->uuid)
+            ->where('week', $week)
+            ->first();
+        $this->assertNotNull($weekly);
+        $this->assertSame(5, (int) $weekly->view);
+        $this->assertSame(2, (int) $weekly->download);
+
+        $monthly = AnalyticsEntityMonthly::query()
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
+            ->where('entity_id', $jav->uuid)
+            ->where('month', $month)
+            ->first();
+        $this->assertNotNull($monthly);
+        $this->assertSame(5, (int) $monthly->view);
+        $this->assertSame(2, (int) $monthly->download);
+
+        $yearly = AnalyticsEntityYearly::query()
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
+            ->where('entity_id', $jav->uuid)
+            ->where('year', $year)
+            ->first();
+        $this->assertNotNull($yearly);
+        $this->assertSame(5, (int) $yearly->view);
+        $this->assertSame(2, (int) $yearly->download);
 
         $jav->refresh();
         $this->assertSame(5, (int) $jav->views);
@@ -89,6 +134,9 @@ class AnalyticsFlushServiceTest extends TestCase
         $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
         $this->assertSame(0, AnalyticsEntityTotals::query()->count());
         $this->assertSame(0, AnalyticsEntityDaily::query()->count());
+        $this->assertSame(0, AnalyticsEntityWeekly::query()->count());
+        $this->assertSame(0, AnalyticsEntityMonthly::query()->count());
+        $this->assertSame(0, AnalyticsEntityYearly::query()->count());
     }
 
     public function test_non_movie_entity_updates_mongo_but_does_not_sync_mysql_movie_row(): void
@@ -99,11 +147,12 @@ class AnalyticsFlushServiceTest extends TestCase
             'source' => 'onejav',
         ]);
 
-        $counterKey = "{$this->prefix}:jav:actor:actor-1";
+        $actorId = $this->faker->uuid();
+        $counterKey = "{$this->prefix}:".AnalyticsDomain::Jav->value.':'.AnalyticsEntityType::Actor->value.":{$actorId}";
         $date = now()->toDateString();
 
-        Redis::hset($counterKey, 'view', 4);
-        Redis::hset($counterKey, "view:{$date}", 4);
+        Redis::hset($counterKey, AnalyticsAction::View->value, 4);
+        Redis::hset($counterKey, AnalyticsAction::View->value.":{$date}", 4);
 
         $service = new AnalyticsFlushService;
         $result = $service->flush();
@@ -111,12 +160,33 @@ class AnalyticsFlushServiceTest extends TestCase
         $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
 
         $totals = AnalyticsEntityTotals::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'actor')
-            ->where('entity_id', 'actor-1')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Actor->value)
+            ->where('entity_id', $actorId)
             ->first();
         $this->assertNotNull($totals);
         $this->assertSame(4, (int) $totals->view);
+
+        $day = Carbon::parse($date);
+        $week = sprintf('%s-W%02d', $day->format('o'), $day->isoWeek());
+        $month = $day->format('Y-m');
+        $year = $day->format('Y');
+
+        $this->assertNotNull(AnalyticsEntityWeekly::query()
+            ->where('entity_type', AnalyticsEntityType::Actor->value)
+            ->where('entity_id', $actorId)
+            ->where('week', $week)
+            ->first());
+        $this->assertNotNull(AnalyticsEntityMonthly::query()
+            ->where('entity_type', AnalyticsEntityType::Actor->value)
+            ->where('entity_id', $actorId)
+            ->where('month', $month)
+            ->first());
+        $this->assertNotNull(AnalyticsEntityYearly::query()
+            ->where('entity_type', AnalyticsEntityType::Actor->value)
+            ->where('entity_id', $actorId)
+            ->where('year', $year)
+            ->first());
 
         $jav->refresh();
         $this->assertSame(77, (int) $jav->views);
@@ -131,11 +201,11 @@ class AnalyticsFlushServiceTest extends TestCase
             'source' => 'onejav',
         ]);
 
-        $counterKey = "{$this->prefix}:jav:movie:{$jav->uuid}";
+        $counterKey = "{$this->prefix}:".AnalyticsDomain::Jav->value.':'.AnalyticsEntityType::Movie->value.":{$jav->uuid}";
         $date = now()->toDateString();
 
-        Redis::hset($counterKey, 'view', 7);
-        Redis::hset($counterKey, "view:{$date}", 7);
+        Redis::hset($counterKey, AnalyticsAction::View->value, 7);
+        Redis::hset($counterKey, AnalyticsAction::View->value.":{$date}", 7);
 
         $service = new AnalyticsFlushService;
         $first = $service->flush();
@@ -145,8 +215,8 @@ class AnalyticsFlushServiceTest extends TestCase
         $this->assertSame(['keys_processed' => 0, 'errors' => 0], $second);
 
         $totals = AnalyticsEntityTotals::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $jav->uuid)
             ->first();
         $this->assertNotNull($totals);
@@ -164,12 +234,12 @@ class AnalyticsFlushServiceTest extends TestCase
             'source' => 'onejav',
         ]);
 
-        $counterKey = "{$this->prefix}:jav:movie:{$jav->uuid}";
+        $counterKey = "{$this->prefix}:".AnalyticsDomain::Jav->value.':'.AnalyticsEntityType::Movie->value.":{$jav->uuid}";
         $date = now()->toDateString();
 
         for ($i = 0; $i < 200; $i++) {
-            Redis::hincrby($counterKey, 'view', 100);
-            Redis::hincrby($counterKey, "view:{$date}", 100);
+            Redis::hincrby($counterKey, AnalyticsAction::View->value, 100);
+            Redis::hincrby($counterKey, AnalyticsAction::View->value.":{$date}", 100);
         }
 
         $service = new AnalyticsFlushService;
@@ -178,16 +248,16 @@ class AnalyticsFlushServiceTest extends TestCase
         $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
 
         $totals = AnalyticsEntityTotals::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $jav->uuid)
             ->first();
         $this->assertNotNull($totals);
         $this->assertSame(20000, (int) $totals->view);
 
         $daily = AnalyticsEntityDaily::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $jav->uuid)
             ->where('date', $date)
             ->first();
@@ -206,15 +276,15 @@ class AnalyticsFlushServiceTest extends TestCase
             'source' => 'onejav',
         ]);
 
-        $counterKey = "{$this->prefix}:jav:movie:{$jav->uuid}";
+        $counterKey = "{$this->prefix}:".AnalyticsDomain::Jav->value.':'.AnalyticsEntityType::Movie->value.":{$jav->uuid}";
         $date = now()->toDateString();
 
-        Redis::hset($counterKey, 'view', 4);
-        Redis::hset($counterKey, "view:{$date}", 4);
+        Redis::hset($counterKey, AnalyticsAction::View->value, 4);
+        Redis::hset($counterKey, AnalyticsAction::View->value.":{$date}", 4);
         Redis::hset($counterKey, 'favorite', 999);
         Redis::hset($counterKey, "favorite:{$date}", 999);
-        Redis::hset($counterKey, 'download', 1);
-        Redis::hset($counterKey, "download:{$date}", 1);
+        Redis::hset($counterKey, AnalyticsAction::Download->value, 1);
+        Redis::hset($counterKey, AnalyticsAction::Download->value.":{$date}", 1);
 
         $service = new AnalyticsFlushService;
         $result = $service->flush();
@@ -222,8 +292,8 @@ class AnalyticsFlushServiceTest extends TestCase
         $this->assertSame(['keys_processed' => 1, 'errors' => 0], $result);
 
         $totals = AnalyticsEntityTotals::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $jav->uuid)
             ->first();
         $this->assertNotNull($totals);

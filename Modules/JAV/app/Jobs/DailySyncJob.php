@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Modules\JAV\Services\FfjavService;
 use Modules\JAV\Services\OneFourOneJavService;
@@ -45,11 +46,11 @@ class DailySyncJob implements ShouldBeUnique, ShouldQueue
                 ? $this->queue
                 : $this->defaultQueueForSource();
 
-            self::dispatch(
+            Bus::dispatch((new self(
                 source: $this->source,
                 date: $this->resolvedDate(),
                 page: $items->nextPage
-            )->onQueue($nextQueue);
+            ))->onQueue($nextQueue));
         }
     }
 

@@ -3,36 +3,49 @@
 namespace Modules\Core\Services;
 
 use Illuminate\Support\Facades\Redis;
+use Modules\Core\Enums\AnalyticsAction;
+use Modules\Core\Enums\AnalyticsDomain;
+use Modules\Core\Enums\AnalyticsEntityType;
 
+/**
+ * Writes validated analytics events into Redis hot counters with dedupe keys.
+ */
 class AnalyticsIngestService
 {
+    private const DEDUPE_PREFIX = 'anl:evt:';
+
+    private const DEDUPE_TTL_SECONDS = 172800;
+
     /**
-     * @param  array{domain: string, entity_type: string, entity_id: string, action: string, value?: int, occurred_at: string}  $event
+     * @param  array{event_id: string, domain: string, entity_type: string, entity_id: string, action: string, value?: int, occurred_at: string}  $event
      */
     public function ingest(array $event, ?int $userId = null): void
     {
         $prefix = (string) config('analytics.redis_prefix', 'anl:counters');
-        $dedupeKey = sprintf('anl:evt:%s', $event['event_id']);
+        $domain = AnalyticsDomain::from((string) $event['domain']);
+        $entityType = AnalyticsEntityType::from((string) $event['entity_type']);
+        $action = AnalyticsAction::from((string) $event['action']);
+        $dedupeKey = self::DEDUPE_PREFIX.(string) $event['event_id'];
 
         // Deduplicate: exact same event_id ignored for 48h
         $isNew = (bool) Redis::setnx($dedupeKey, 1);
         if (! $isNew) {
             return;
         }
-        Redis::expire($dedupeKey, 172800);
+        Redis::expire($dedupeKey, self::DEDUPE_TTL_SECONDS);
 
         $key = implode(':', [
             $prefix,
-            $event['domain'],
-            $event['entity_type'],
+            $domain->value,
+            $entityType->value,
             $event['entity_id'],
         ]);
 
         $value = (int) ($event['value'] ?? 1);
-        $action = (string) $event['action'];
+        $actionName = $action->value;
         $date = mb_substr((string) $event['occurred_at'], 0, 10);
 
-        Redis::hincrby($key, $action, $value);
-        Redis::hincrby($key, sprintf('%s:%s', $action, $date), $value);
+        Redis::hincrby($key, $actionName, $value);
+        Redis::hincrby($key, sprintf('%s:%s', $actionName, $date), $value);
     }
 }

@@ -2,19 +2,32 @@
 
 namespace Modules\Core\Services;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
+use Modules\Core\Enums\AnalyticsAction;
+use Modules\Core\Enums\AnalyticsDomain;
+use Modules\Core\Enums\AnalyticsEntityType;
 use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityDaily;
+use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityMonthly;
 use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityTotals;
+use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityWeekly;
+use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityYearly;
 use Modules\JAV\Models\Jav;
 
+/**
+ * Flushes Redis analytics counters into Mongo rollups and MySQL replicas.
+ */
 class AnalyticsFlushService
 {
     /**
      * @var array<int, string>
      */
-    private const SUPPORTED_ACTIONS = ['view', 'download'];
+    private const SUPPORTED_ACTIONS = [
+        AnalyticsAction::View->value,
+        AnalyticsAction::Download->value,
+    ];
 
     /**
      * @return array{keys_processed: int, errors: int}
@@ -96,6 +109,7 @@ class AnalyticsFlushService
                 }
 
                 $this->incrementDailyCounter($domain, $entityType, $entityId, $date, $action, $intValue);
+                $this->incrementTimeBuckets($domain, $entityType, $entityId, $date, $action, $intValue);
 
                 continue;
             }
@@ -111,7 +125,7 @@ class AnalyticsFlushService
             $this->incrementTotalCounters($domain, $entityType, $entityId, $totalIncrements);
         }
 
-        if ($domain === 'jav' && $entityType === 'movie') {
+        if ($domain === AnalyticsDomain::Jav->value && $entityType === AnalyticsEntityType::Movie->value) {
             $this->syncToMySql($entityId);
         }
     }
@@ -124,21 +138,72 @@ class AnalyticsFlushService
         string $action,
         int $value
     ): void {
-        $daily = AnalyticsEntityDaily::query()->firstOrCreate(
+        $this->incrementBucket(
+            AnalyticsEntityDaily::class,
             [
                 'domain' => $domain,
                 'entity_type' => $entityType,
                 'entity_id' => $entityId,
                 'date' => $date,
             ],
+            $action,
+            $value
+        );
+    }
+
+    private function incrementTimeBuckets(
+        string $domain,
+        string $entityType,
+        string $entityId,
+        string $date,
+        string $action,
+        int $value
+    ): void {
+        try {
+            $day = Carbon::parse($date);
+        } catch (\Throwable) {
+            return;
+        }
+
+        $week = sprintf('%s-W%02d', $day->format('o'), $day->isoWeek());
+        $month = $day->format('Y-m');
+        $year = $day->format('Y');
+
+        $this->incrementBucket(
+            AnalyticsEntityWeekly::class,
             [
-                'view' => 0,
-                'download' => 0,
-            ]
+                'domain' => $domain,
+                'entity_type' => $entityType,
+                'entity_id' => $entityId,
+                'week' => $week,
+            ],
+            $action,
+            $value
         );
 
-        $daily->{$action} = (int) ($daily->{$action} ?? 0) + $value;
-        $daily->save();
+        $this->incrementBucket(
+            AnalyticsEntityMonthly::class,
+            [
+                'domain' => $domain,
+                'entity_type' => $entityType,
+                'entity_id' => $entityId,
+                'month' => $month,
+            ],
+            $action,
+            $value
+        );
+
+        $this->incrementBucket(
+            AnalyticsEntityYearly::class,
+            [
+                'domain' => $domain,
+                'entity_type' => $entityType,
+                'entity_id' => $entityId,
+                'year' => $year,
+            ],
+            $action,
+            $value
+        );
     }
 
     /**
@@ -146,30 +211,40 @@ class AnalyticsFlushService
      */
     private function incrementTotalCounters(string $domain, string $entityType, string $entityId, array $increments): void
     {
-        $totals = AnalyticsEntityTotals::query()->firstOrCreate(
-            [
-                'domain' => $domain,
-                'entity_type' => $entityType,
-                'entity_id' => $entityId,
-            ],
-            [
-                'view' => 0,
-                'download' => 0,
-            ]
-        );
-
         foreach ($increments as $action => $value) {
-            $totals->{$action} = (int) ($totals->{$action} ?? 0) + (int) $value;
+            $this->incrementBucket(
+                AnalyticsEntityTotals::class,
+                [
+                    'domain' => $domain,
+                    'entity_type' => $entityType,
+                    'entity_id' => $entityId,
+                ],
+                $action,
+                (int) $value
+            );
         }
+    }
 
-        $totals->save();
+    /**
+     * @param  class-string<\MongoDB\Laravel\Eloquent\Model>  $modelClass
+     * @param  array<string, string>  $keys
+     */
+    private function incrementBucket(string $modelClass, array $keys, string $action, int $value): void
+    {
+        $model = $modelClass::query()->firstOrCreate($keys, [
+            AnalyticsAction::View->value => 0,
+            AnalyticsAction::Download->value => 0,
+        ]);
+
+        $model->{$action} = (int) ($model->{$action} ?? 0) + $value;
+        $model->save();
     }
 
     private function syncToMySql(string $entityId): void
     {
         $totals = AnalyticsEntityTotals::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $entityId)
             ->first();
 
@@ -177,8 +252,8 @@ class AnalyticsFlushService
             return;
         }
 
-        $views = (int) data_get($totals, 'view', 0);
-        $downloads = (int) data_get($totals, 'download', 0);
+        $views = (int) data_get($totals, AnalyticsAction::View->value, 0);
+        $downloads = (int) data_get($totals, AnalyticsAction::Download->value, 0);
 
         Jav::query()
             ->where('uuid', $entityId)

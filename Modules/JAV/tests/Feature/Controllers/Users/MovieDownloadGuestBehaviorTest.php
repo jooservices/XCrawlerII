@@ -11,8 +11,6 @@ class MovieDownloadGuestBehaviorTest extends TestCase
 {
     public function test_guest_download_tracks_event_but_does_not_create_history_record(): void
     {
-        config(['analytics.enabled' => true]);
-
         $jav = Jav::factory()->create([
             'source' => 'unsupported-source',
             'downloads' => 0,

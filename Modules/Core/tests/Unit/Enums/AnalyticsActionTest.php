@@ -11,6 +11,7 @@ class AnalyticsActionTest extends TestCase
     {
         $this->assertSame('view', AnalyticsAction::View->value);
         $this->assertSame('download', AnalyticsAction::Download->value);
+        $this->assertSame(['view', 'download'], AnalyticsAction::values());
     }
 
     public function test_from_valid_string(): void

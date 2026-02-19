@@ -19,6 +19,12 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
+        // Keep test execution deterministic regardless of .env.testing overrides.
+        config([
+            'queue.default' => 'sync',
+            'cache.default' => 'array',
+        ]);
+
         $this->setUpFaker();
 
         if ($this->usesRefreshDatabase) {

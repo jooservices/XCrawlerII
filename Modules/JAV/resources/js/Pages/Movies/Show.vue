@@ -6,7 +6,7 @@ import { useUIStore } from '@jav/Stores/ui';
 import PageShell from '@jav/Components/UI/PageShell.vue';
 import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 import MovieCard from '@jav/Components/MovieCard.vue';
-import { trackMovieView } from '@jav/Services/analyticsClient';
+import analyticsService from '@core/Services/analyticsService';
 
 const props = defineProps({
     jav: Object,
@@ -55,7 +55,7 @@ const handleFavorite = async () => {
 
 onMounted(async () => {
     try {
-        await trackMovieView(props.jav?.uuid);
+        await analyticsService.track('view', 'movie', props.jav?.uuid);
     } catch {
         // swallow analytics errors to avoid breaking page UX
     }

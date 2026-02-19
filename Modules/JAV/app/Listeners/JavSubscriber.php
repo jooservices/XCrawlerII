@@ -7,7 +7,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Modules\JAV\Events\ItemParsed;
-use Modules\JAV\Jobs\RefreshAnalyticsSnapshotsJob;
 use Modules\JAV\Jobs\SyncRecommendationSnapshotsJob;
 use Modules\JAV\Services\JavManager;
 use Modules\JAV\Services\UserLikeNotificationService;
@@ -39,13 +38,6 @@ class JavSubscriber implements ShouldQueue
             ]);
 
             $jav = $this->javManager->store($item, $source);
-
-            // Debounce analytics rebuilds when ingestion is high-volume.
-            if (Cache::add('jav:analytics:refresh:lock', 1, now()->addMinutes(5))) {
-                RefreshAnalyticsSnapshotsJob::dispatch()
-                    ->delay(now()->addSeconds(30))
-                    ->onQueue('jav');
-            }
 
             if (Cache::add("jav:recommendations:refresh:{$jav->id}", 1, now()->addMinutes(15))) {
                 SyncRecommendationSnapshotsJob::dispatch((int) $jav->id, 30)

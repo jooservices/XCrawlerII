@@ -5,6 +5,9 @@ namespace Modules\Core\Console;
 use Illuminate\Console\Command;
 use Modules\Core\Services\AnalyticsFlushService;
 
+/**
+ * CLI entrypoint to flush Redis analytics counters into persistent rollups.
+ */
 class FlushAnalyticsCommand extends Command
 {
     protected $signature = 'analytics:flush';

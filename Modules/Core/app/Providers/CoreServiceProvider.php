@@ -66,6 +66,8 @@ class CoreServiceProvider extends ServiceProvider
             \Modules\Core\Console\ObsDependenciesHealthCommand::class,
             \Modules\Core\Console\FlushAnalyticsCommand::class,
             \Modules\Core\Console\AnalyticsParityCheckCommand::class,
+            \Modules\Core\Console\AnalyticsReportGenerateCommand::class,
+            \Modules\Core\Console\AnalyticsReportVerifyCommand::class,
         ]);
     }
 
@@ -85,9 +87,27 @@ class CoreServiceProvider extends ServiceProvider
                     ->onOneServer();
             }
 
-            if ((bool) config('analytics.enabled', false)) {
+            if ((bool) config('analytics.schedule_flush', true)) {
+                $flushIntervalMinutes = max(1, min(59, (int) config('analytics.flush_interval_minutes', 1)));
                 $schedule->command('analytics:flush')
-                    ->everyMinute()
+                    ->cron(sprintf('*/%d * * * *', $flushIntervalMinutes))
+                    ->withoutOverlapping()
+                    ->onOneServer();
+            }
+
+            if ((bool) config('analytics.evidence.schedule_daily', true)) {
+                $dailyAt = (string) config('analytics.evidence.daily_at', '00:10');
+                $days = max(1, (int) config('analytics.evidence.days', 7));
+                $limit = max(1, (int) config('analytics.evidence.limit', 500));
+                $outputDir = (string) config('analytics.evidence.output_dir', 'logs/analytics/evidence');
+                $schedule->command('analytics:report:generate', [
+                    '--days' => $days,
+                    '--limit' => $limit,
+                    '--dir' => storage_path($outputDir),
+                    '--archive' => (bool) config('analytics.evidence.archive', true),
+                    '--rollback' => (bool) config('analytics.evidence.rollback', true),
+                ])
+                    ->dailyAt($dailyAt)
                     ->withoutOverlapping()
                     ->onOneServer();
             }

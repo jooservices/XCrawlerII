@@ -70,14 +70,6 @@ class JavCommandTest extends TestCase
         Queue::assertPushed(\Modules\JAV\Jobs\XcityKanaSyncJob::class, 2);
     }
 
-    public function test_command_returns_failure_when_analytics_component_receives_invalid_days(): void
-    {
-        $this->artisan('jav:sync', [
-            '--only' => ['analytics'],
-            '--days' => [2],
-        ])->assertExitCode(1);
-    }
-
     public function test_command_can_run_recommendations_component_for_specific_users(): void
     {
         $user = \App\Models\User::factory()->create();

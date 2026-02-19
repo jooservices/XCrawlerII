@@ -10,10 +10,10 @@ use Modules\JAV\Models\Rating;
 use Modules\JAV\Models\Tag;
 use Modules\JAV\Models\UserJavHistory;
 use Modules\JAV\Models\Watchlist;
-use Modules\JAV\Services\AnalyticsSnapshotService;
+use Modules\JAV\Services\AnalyticsReadService;
 use Modules\JAV\Tests\TestCase;
 
-class AnalyticsSnapshotServiceTest extends TestCase
+class AnalyticsReadServiceTest extends TestCase
 {
     public function test_get_snapshot_returns_expected_metrics_payload_shape_and_counts(): void
     {
@@ -35,7 +35,7 @@ class AnalyticsSnapshotServiceTest extends TestCase
         $completeJav->actors()->attach($linkedActor->id);
         $completeJav->tags()->attach($linkedTag->id);
 
-        $incompleteJav = Jav::factory()->create([
+        Jav::factory()->create([
             'source' => '',
             'image' => '',
             'date' => null,
@@ -76,8 +76,8 @@ class AnalyticsSnapshotServiceTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        $service = app(AnalyticsSnapshotService::class);
-        $payload = $service->getSnapshot(7, true);
+        $service = app(AnalyticsReadService::class);
+        $payload = $service->getSnapshot(7);
 
         $this->assertSame(7, $payload['days']);
         $this->assertSame(2, $payload['totals']['jav']);
@@ -108,7 +108,7 @@ class AnalyticsSnapshotServiceTest extends TestCase
     {
         Jav::factory()->count(2)->create();
 
-        $service = app(AnalyticsSnapshotService::class);
+        $service = app(AnalyticsReadService::class);
         $synced = $service->syncSnapshots([7, 14]);
 
         $this->assertArrayHasKey(7, $synced);

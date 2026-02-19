@@ -3,12 +3,11 @@
 namespace Modules\Core\Enums;
 
 /**
- * Supported ingest actions and redis/mongo counter fields.
+ * Canonical analytics domains accepted by ingest and rollup pipelines.
  */
-enum AnalyticsAction: string
+enum AnalyticsDomain: string
 {
-    case View = 'view';
-    case Download = 'download';
+    case Jav = 'jav';
 
     /**
      * @return array<int, string>
@@ -16,7 +15,7 @@ enum AnalyticsAction: string
     public static function values(): array
     {
         return array_map(
-            static fn (self $action): string => $action->value,
+            static fn (self $domain): string => $domain->value,
             self::cases()
         );
     }

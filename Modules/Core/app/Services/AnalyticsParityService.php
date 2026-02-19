@@ -2,9 +2,15 @@
 
 namespace Modules\Core\Services;
 
+use Modules\Core\Enums\AnalyticsAction;
+use Modules\Core\Enums\AnalyticsDomain;
+use Modules\Core\Enums\AnalyticsEntityType;
 use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityTotals;
 use Modules\JAV\Models\Jav;
 
+/**
+ * Compares MySQL replica counters and Mongo totals for parity checks.
+ */
 class AnalyticsParityService
 {
     /**
@@ -22,13 +28,13 @@ class AnalyticsParityService
 
         foreach ($movies as $movie) {
             $mongo = AnalyticsEntityTotals::query()
-                ->where('domain', 'jav')
-                ->where('entity_type', 'movie')
+                ->where('domain', AnalyticsDomain::Jav->value)
+                ->where('entity_type', AnalyticsEntityType::Movie->value)
                 ->where('entity_id', (string) $movie->uuid)
                 ->first();
 
-            $mongoViews = (int) data_get($mongo, 'view', 0);
-            $mongoDownloads = (int) data_get($mongo, 'download', 0);
+            $mongoViews = (int) data_get($mongo, AnalyticsAction::View->value, 0);
+            $mongoDownloads = (int) data_get($mongo, AnalyticsAction::Download->value, 0);
             $mysqlViews = (int) ($movie->views ?? 0);
             $mysqlDownloads = (int) ($movie->downloads ?? 0);
 

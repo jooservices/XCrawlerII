@@ -4085,14 +4085,17 @@ Next execution target:
 ## P4 Progress Update (Parity Tooling Implemented)
 
 Date updated: 2026-02-19
-Status: `IN_PROGRESS`
+Status: `COMPLETED (LOCAL_SCOPE)`
 
 Completed in this step:
 - Created `Modules/Core/app/Services/AnalyticsParityService.php`
   - Uses models (`Jav`, `AnalyticsEntityTotals`) to compare MySQL `jav.views/downloads` vs Mongo `analytics_entity_totals.view/download`
 - Created `Modules/Core/app/Console/AnalyticsParityCheckCommand.php`
-  - Command: `analytics:parity-check {--limit=100}`
+  - Command: `analytics:parity-check {--limit=100} {--print-json} {--output=}`
   - Exit code `0` when no mismatch, `1` when mismatch exists
+  - Added artifact export for operational evidence collection:
+    - `--print-json`: print machine-readable payload to stdout
+    - `--output=/path/file.json`: persist daily parity artifact to file
 - Updated `Modules/Core/app/Providers/CoreServiceProvider.php`
   - Registered `AnalyticsParityCheckCommand`
 - Refactored `Modules/Core/app/Services/AnalyticsFlushService.php` to model-based writes/sync:
@@ -4115,13 +4118,347 @@ Completed in this step:
     - orphan Mongo totals excluded from parity scope
 
 Evidence:
+- `php artisan test Modules/Core/tests/Feature/Commands/AnalyticsParityCheckCommandTest.php`
+  - Result: `4 passed` (`16 assertions`)
 - `php artisan test Modules/Core/tests/Unit/Enums/AnalyticsActionTest.php Modules/Core/tests/Unit/Services/AnalyticsIngestServiceTest.php Modules/Core/tests/Unit/Services/AnalyticsFlushServiceTest.php Modules/Core/tests/Feature/Http/AnalyticsIngestEndpointTest.php Modules/Core/tests/Feature/Analytics/AnalyticsParityServiceIntegrationTest.php Modules/Core/tests/Feature/Commands/AnalyticsParityCheckCommandTest.php Modules/Core/tests/Feature/Jobs/FlushAnalyticsCountersJobTest.php`
-  - Result: `39 passed` (`141 assertions`)
+  - Result: `41 passed` (`152 assertions`)
 - `./vendor/bin/pint --dirty`
-  - Result: PASS (`8 files`)
+  - Result: PASS (`2 files`)
 - `php artisan list | rg "analytics:parity-check"` => command listed
 
-Pending for full P4 completion:
-- Run parity command against real environments over monitoring window (7+ days as plan)
-- Collect daily artifacts/logs for mismatch = 0
-- Execute rollback drill checklist and archive evidence
+Deferred (post-local, for real operations later):
+- Run parity command in real environments over monitoring window (7+ days).
+- Collect/Archive daily artifacts and rollback drill evidence in ops runbook.
+- Add batch artifact generator command/script (N-day) for staging/prod automation.
+
+## P1-P4 Strict Reconciliation Update (Checklist + Handover Guard)
+
+Date updated: 2026-02-19  
+Scope: analytics only (no unrelated refactor)
+
+### P1 Checklist (Ingest Pipeline)
+
+- [x] `IngestAnalyticsEventRequest` exists and is used by Core ingest endpoint.
+- [x] Core route is `POST /api/v1/analytics/events` and FE uses this route.
+- [x] `AnalyticsIngestService` dedupe uses `setnx + expire` (stable behavior).
+- [x] Validation and endpoint tests pass.
+- [ ] Extended action taxonomy (`favorite/watchlist/rating`) is intentionally deferred; current P1 scope remains `view/download` only.
+
+### P2 Checklist (Flush Pipeline)
+
+- [x] Flush command exists and is scheduled in `CoreServiceProvider`.
+- [x] Schedule now respects `analytics.flush_interval_minutes` (cron derived from config).
+- [x] Flush service writes **all rollup buckets**: totals, daily, weekly, monthly, yearly.
+- [x] Flush service syncs MySQL replica columns (`jav.views`, `jav.downloads`) from totals.
+- [x] Redis global-prefix key normalization + `rename()` result guard implemented.
+- [x] Flush job test is integration-style (real Redis/Mongo/MySQL), no service mock.
+
+### P3 Checklist (Producer Migration)
+
+- [x] FE movie detail (`Movies/Show.vue`) sends view analytics to Core API.
+- [x] Legacy endpoint `/jav/movies/{jav}/view` is unavailable (deprecation test exists).
+- [x] Download analytics produced server-side via `JavAnalyticsTrackerService::trackDownload`.
+- [x] Dead/outdated analytics path cleanup:
+  - [x] removed unused `MovieController::show()` path (route not used).
+  - [x] removed unused `JavAnalyticsTrackerService::trackView()`.
+- [x] FE/BE route contract verified:
+  - `/api/v1/analytics/events` exists
+  - `jav/movies` only has show + download routes
+
+### P4 Checklist (Parity + Evidence)
+
+- [x] `analytics:parity-check` command exists.
+- [x] Command supports artifact output (`--output`) and machine-readable payload (`--print-json`).
+- [x] Integration tests cover parity happy path + mismatch + duplicate event + timezone boundary + orphan Mongo rows.
+- [x] Edge-case integration coverage expanded:
+  - [x] flush idempotency
+  - [x] large counter volume
+  - [x] unsupported action fields ignored
+  - [x] weekly/monthly/yearly rollup writes
+- [ ] Operational window evidence (7+ days artifacts) deferred to real operations phase.
+- [ ] Rollback drill artifact set deferred to real operations phase.
+- [x] Batch artifact generator command implemented for staging/prod automation.
+
+### Mandatory Edge-Case Requirement (Handover Rule)
+
+This requirement is mandatory for any follow-up AI/developer:
+
+- Do not close analytics phases unless edge-case coverage is explicitly updated and evidenced.
+- Minimum mandatory edge set:
+  1. dedupe duplicate event id
+  2. timezone/date boundary bucketing
+  3. flush idempotency / no double-count
+  4. malformed/unsupported fields safety
+  5. high-volume counter flush
+  6. parity mismatch detection
+  7. orphan rollup behavior
+  8. weekly/monthly/yearly bucket correctness
+- Evidence must be visible via commands/artifacts, not tests only.
+
+### Strict Verification Round 1 (Code/Test)
+
+- `php artisan test Modules/Core/tests/Feature/Analytics/AnalyticsOperationalEvidenceSimulationTest.php`
+  - Result: `2 passed` (`55 assertions`)
+  - Covers local simulator evidence:
+    - 7-day parity artifact generation (`--output` per day)
+    - daily/weekly/monthly/yearly rollup consistency
+    - rollback simulation (`analytics.enabled=false` accepts request without Redis counter write)
+- `php artisan test Modules/Core/tests/Unit/Services/AnalyticsFlushServiceTest.php Modules/Core/tests/Feature/Jobs/FlushAnalyticsCountersJobTest.php Modules/Core/tests/Feature/Analytics/AnalyticsParityServiceIntegrationTest.php Modules/Core/tests/Feature/Commands/AnalyticsParityCheckCommandTest.php Modules/Core/tests/Feature/Http/AnalyticsIngestEndpointTest.php Modules/Core/tests/Unit/Services/AnalyticsIngestServiceTest.php Modules/Core/tests/Unit/Enums/AnalyticsActionTest.php`
+  - Result: `41 passed` (`169 assertions`)
+- `php artisan test Modules/JAV/tests/Feature/Controllers/Users/MovieControllerTest.php Modules/JAV/tests/Feature/Controllers/Users/MovieDownloadGuestBehaviorTest.php Modules/JAV/tests/Feature/Controllers/Users/MovieShowControllerTest.php Modules/JAV/tests/Feature/Controllers/Users/VuePageControllerTest.php`
+  - Result: `7 passed` (`128 assertions`)
+- `./vendor/bin/pint --dirty`
+  - Result: PASS (`11 files`)
+
+### Strict Verification Round 2 (Contract/Route/Dead Path Audit)
+
+- `php artisan route:list --path="api/v1/analytics/events"` => 1 route (`POST`)
+- `php artisan route:list --path="jav/movies"` => only show + download
+- Dead/legacy grep checks:
+  - no active `jav.movies.view` route consumer in FE
+  - deprecated endpoint guarded by test `MovieViewEndpointDeprecationTest`
+
+Current status summary:
+- P1: implemented with scoped actions (`view/download`)
+- P2: implemented with full time buckets
+- P3: implemented and dead analytics paths trimmed
+- P4: completed for local/simulation scope; real-operations evidence intentionally deferred
+- P5: implemented (legacy feature-flag branching removed in runtime ingest path)
+
+### Deferred Ops TODO (Do Later)
+
+Reason:
+- Current decision is to skip real operations for now and move next phase.
+
+TODO when operations window starts:
+1. Monitor/operate existing batch artifact generator (`N` days) in staging/prod.
+2. Schedule daily parity artifact output in staging/prod.
+3. Archive artifacts + rollback drill outputs as release evidence.
+
+## P5 Completion Update (Implemented)
+
+Date completed: 2026-02-19  
+Status: `COMPLETED`
+
+Completed in this step:
+- Created `Modules/Core/app/Console/AnalyticsReportGenerateCommand.php`
+  - Command: `analytics:report:generate`
+  - Supports:
+    - batch parity artifacts (`--days`, `--limit`, `--dir`)
+    - rollback artifact output (`--rollback`)
+    - archive output (`--archive`, zip)
+- Created `Modules/Core/app/Console/AnalyticsReportVerifyCommand.php`
+  - Command: `analytics:report:verify`
+  - CI-oriented integrity checks:
+    - directory verification (`--dir`)
+    - archive verification (`--archive`)
+    - strict mode (`--strict`) for failing empty/malformed artifact sets
+- Created `Modules/Core/app/Services/AnalyticsArtifactSchemaService.php`
+  - Versioned artifact contract: `analytics-artifact.v1`
+  - Shared payload builders + schema validation for `parity` and `rollback` artifact types
+- Updated `Modules/Core/app/Providers/CoreServiceProvider.php`
+  - Registered `AnalyticsReportGenerateCommand`
+  - Registered `AnalyticsReportVerifyCommand`
+  - Added daily schedule for evidence generation (config-driven)
+  - Flush schedule now uses `analytics.schedule_flush` + `analytics.flush_interval_minutes`
+- Updated `config/analytics.php`
+  - Added evidence automation config block (`evidence.*`)
+  - Removed legacy `enabled` runtime toggle
+- Removed runtime feature-flag branching from ingest endpoint:
+  - `Modules/Core/app/Http/Controllers/Api/AnalyticsEventController.php`
+  - Event ingest now always executes
+- Updated simulation and command tests:
+  - `Modules/Core/tests/Feature/Analytics/AnalyticsOperationalEvidenceSimulationTest.php`
+  - `Modules/Core/tests/Feature/Commands/AnalyticsReportGenerateCommandTest.php`
+  - `Modules/Core/tests/Feature/Commands/AnalyticsReportVerifyCommandTest.php`
+  - Updated `Modules/Core/tests/Feature/Commands/AnalyticsParityCheckCommandTest.php` for versioned schema assertions
+
+Evidence:
+- `php artisan test Modules/Core/tests/Feature/Commands/AnalyticsReportGenerateCommandTest.php Modules/Core/tests/Feature/Commands/AnalyticsReportVerifyCommandTest.php Modules/Core/tests/Feature/Analytics/AnalyticsOperationalEvidenceSimulationTest.php Modules/Core/tests/Feature/Commands/AnalyticsParityCheckCommandTest.php Modules/Core/tests/Feature/Analytics/AnalyticsParityServiceIntegrationTest.php Modules/Core/tests/Unit/Services/AnalyticsFlushServiceTest.php Modules/Core/tests/Feature/Jobs/FlushAnalyticsCountersJobTest.php Modules/Core/tests/Feature/Http/AnalyticsIngestEndpointTest.php Modules/Core/tests/Unit/Services/AnalyticsIngestServiceTest.php Modules/Core/tests/Unit/Enums/AnalyticsActionTest.php`
+  - Result: `48 passed` (`265 assertions`)
+- `php artisan list | rg "analytics:report:generate|analytics:report:verify|analytics:parity-check|analytics:flush"`
+  - Result: all 4 commands listed
+
+Operational note:
+- `php artisan schedule:list` cannot be fully verified in this sandbox due Redis connection permission (`RedisException: Operation not permitted`).
+
+## Final Reconciliation Update (Done/Missing)
+
+Date updated: 2026-02-19  
+Scope: analytics migration plan status normalization for handover
+
+### Phase Status Matrix
+
+| Phase | Status | Notes |
+|---|---|---|
+| P0 | DONE | Base enum/models/tests/schedule scaffolding completed and validated. |
+| P1 | DONE (Scoped) | Ingest pipeline stable for current action scope (`view`, `download`). |
+| P2 | DONE | Flush pipeline covers totals/daily/weekly/monthly/yearly and MySQL sync path. |
+| P3 | DONE | Producer migration completed; legacy view endpoint deprecated and guarded by test. |
+| P4 | DONE (Local) | Parity/evidence tooling completed with simulation artifacts. |
+| P5 | DONE (Code) | Report generate/verify commands + versioned artifact schema implemented. |
+| Ops Run Window | MISSING/DEFERRED | Real 7+ day production artifact trail and rollback drill evidence intentionally deferred. |
+
+### Confirmed Done (Code + Evidence)
+
+- Core analytics APIs and command surface are active:
+  - `POST /api/v1/analytics/events`
+  - `analytics:flush`
+  - `analytics:parity-check`
+  - `analytics:report:generate`
+  - `analytics:report:verify`
+- Rollup coverage includes `daily/weekly/monthly/yearly` models and flush writes.
+- P5 command tests and simulation tests are present and passing locally.
+- Runtime ingest no longer depends on legacy feature flag branch.
+
+### Missing / Deferred / Scope Gaps (Must Stay Visible)
+
+- Real operations evidence is not complete in local:
+  - daily parity artifact collection for 7+ consecutive real days
+  - archived rollback drill output from real environment
+- Extended action taxonomy (`favorite`, `rating`, `watchlist`) remains deferred in ingest contract and producer migration scope.
+- `php artisan schedule:list` full verification remains blocked in this sandbox due Redis permission constraints.
+
+### Handover Guard (Do Not Mark Fully Closed Until)
+
+1. Real ops artifact chain is generated and archived in staging/prod (7+ days).  
+2. Extended action scope decision is finalized: implement now or explicitly out-of-scope with signed approval.
+
+## FE Shared Service Completion Update
+
+Date updated: 2026-02-19  
+Status: `COMPLETED`
+
+Completed:
+- Added Core shared FE analytics service:
+  - `Modules/Core/resources/js/Services/analyticsService.js`
+- Migrated movie detail usage to Core shared service:
+  - `Modules/JAV/resources/js/Pages/Movies/Show.vue`
+- Removed legacy module-local analytics client:
+  - deleted `Modules/JAV/resources/js/Services/analyticsClient.js`
+- Added Vite alias for Core FE imports:
+  - `vite.config.js` (`@core` -> `/Modules/Core/resources/js`)
+- Added FE test suite (Node test runner) for analytics service:
+  - `Modules/Core/resources/js/Services/__tests__/AnalyticsService.test.js`
+  - `Modules/Core/resources/js/Services/__tests__/AnalyticsServiceContract.test.js`
+  - `Modules/Core/resources/js/Services/__tests__/AnalyticsServiceSingleton.test.js`
+  - cases include happy, dedupe, invalid action/entity, empty entity id, domain guard, dedupe off, HTTP failure retry behavior, storage failure tolerance
+  - contract guards include:
+    - Movie page must import Core shared analytics service
+    - legacy `analyticsClient.js` must remain removed
+    - no hardcoded `/api/v1/analytics/events` in JAV FE sources
+  - runtime singleton guards include:
+    - singleton sends API request on first track
+    - singleton dedupes repeated calls
+    - singleton returns false on API failure path
+
+Evidence:
+- `npm run test:fe`
+  - Result: `29 passed`, `0 failed`
+- `npm run build`
+  - Result: PASS (Vite build successful)
+
+Environment note:
+- Requested `vitest + @vue/test-utils` setup is blocked in this execution environment due package registry DNS/network restriction (`ENOTFOUND registry.npmjs.org`), so FE test expansion is implemented with current available Node test runner and runtime contract coverage.
+
+## Analytics Strictness Update (Enums/Docblocks/Faker/Prod-Sim)
+
+Date updated: 2026-02-19  
+Status: `COMPLETED (CODE + TEST EVIDENCE)`
+
+Completed in this step:
+- Removed analytics hardcoded dimension literals in BE ingest/flush/parity/tracker paths by introducing and using enums:
+  - `Modules/Core/app/Enums/AnalyticsDomain.php`
+  - `Modules/Core/app/Enums/AnalyticsEntityType.php`
+  - `Modules/Core/app/Enums/AnalyticsAction.php` (`values()` helper added)
+- Updated analytics request validation to enum-based rules:
+  - `Modules/Core/app/Http/Requests/IngestAnalyticsEventRequest.php`
+- Updated analytics services/controllers to use enum values instead of ad-hoc literals:
+  - `Modules/Core/app/Services/AnalyticsIngestService.php`
+  - `Modules/Core/app/Services/AnalyticsFlushService.php`
+  - `Modules/Core/app/Services/AnalyticsParityService.php`
+  - `Modules/JAV/app/Services/JavAnalyticsTrackerService.php`
+- Added/expanded model + class docblocks (analytics scope) for IDE/static analysis:
+  - all Mongo analytics models under `Modules/Core/app/Models/Mongo/Analytics/`
+  - analytics commands/services/request/controller touched in Core
+  - `Modules/JAV/app/Models/Jav.php` includes key properties (`uuid/views/downloads`)
+- Standardized analytics tests to faker/randomized IDs (removed brittle literals like `evt-123`, `uuid-123` in analytics test suite).
+- Added production-like BE integration test (no analytics service mock) covering:
+  - FE-like ingest (`POST /api/v1/analytics/events`) for views
+  - user like flow (`POST /jav/like`)
+  - movie download flow (`GET /jav/movies/{jav}/download`) with server-side analytics tracking
+  - flush to daily/weekly/monthly/yearly + MySQL replica sync
+  - file: `Modules/Core/tests/Feature/Analytics/AnalyticsProductionSimulationFeatureTest.php`
+- Added enum unit coverage:
+  - `Modules/Core/tests/Unit/Enums/AnalyticsDimensionsTest.php`
+
+Evidence:
+- BE analytics suite:
+  - `php artisan test Modules/Core/tests/Unit/Enums/AnalyticsActionTest.php Modules/Core/tests/Unit/Enums/AnalyticsDimensionsTest.php Modules/Core/tests/Unit/Services/AnalyticsIngestServiceTest.php Modules/Core/tests/Feature/Http/AnalyticsIngestEndpointTest.php Modules/Core/tests/Unit/Services/AnalyticsFlushServiceTest.php Modules/Core/tests/Feature/Jobs/FlushAnalyticsCountersJobTest.php Modules/Core/tests/Feature/Analytics/AnalyticsParityServiceIntegrationTest.php Modules/Core/tests/Feature/Analytics/AnalyticsOperationalEvidenceSimulationTest.php Modules/Core/tests/Feature/Analytics/AnalyticsProductionSimulationFeatureTest.php Modules/Core/tests/Feature/Commands/AnalyticsParityCheckCommandTest.php Modules/Core/tests/Feature/Commands/AnalyticsReportGenerateCommandTest.php Modules/Core/tests/Feature/Commands/AnalyticsReportVerifyCommandTest.php`
+  - Result: `51 passed` (`294 assertions`)
+- FE analytics suite:
+  - `npm run test:fe`
+  - Result: `29 passed`, `0 failed`
+- FE build:
+  - `npm run build`
+  - Result: PASS
+
+Architecture reference:
+- `docs/analytics-architecture-v2.md` (updated structure, APIs, lifecycle, and diagrams)
+
+## Legacy Snapshot Sync Removal Update
+
+Date updated: 2026-02-19  
+Status: `COMPLETED (EXECUTION PATH REMOVED)`
+
+Removed in code:
+- Removed command registration for `jav:sync:analytics`:
+  - `Modules/JAV/app/Providers/JAVServiceProvider.php`
+- Removed hourly scheduler for `jav:sync:analytics`:
+  - `Modules/JAV/app/Providers/JAVServiceProvider.php`
+- Removed AIO `jav:sync --only=analytics` path:
+  - `Modules/JAV/app/Console/JavCommand.php`
+- Removed `JavSyncAnalyticsCommand` implementation:
+  - deleted `Modules/JAV/app/Console/JavSyncAnalyticsCommand.php`
+- Removed event-driven snapshot refresh job dispatch:
+  - `Modules/JAV/app/Listeners/JavSubscriber.php`
+- Removed refresh job implementation:
+  - deleted `Modules/JAV/app/Jobs/RefreshAnalyticsSnapshotsJob.php`
+- Removed legacy tests tied to removed execution path:
+  - deleted `Modules/JAV/tests/Feature/Commands/JavSyncAnalyticsCommandTest.php`
+  - deleted `Modules/JAV/tests/Unit/Jobs/RefreshAnalyticsSnapshotsJobTest.php`
+
+Evidence:
+- `php artisan list | rg "jav:sync:analytics|jav:sync|analytics:flush|analytics:parity-check|analytics:report:generate|analytics:report:verify"`
+  - Result: no `jav:sync:analytics` command listed
+- `Modules/JAV/tests/Feature/Commands/JavCommandTest.php`
+  - analytics component case removed and suite passes
+
+Note:
+- Legacy **snapshot read path** (`AnalyticsSnapshotService`, admin analytics controller/report command) is still present in module codebase and is not auto-synced anymore by removed legacy scheduler/command path.
+
+## Legacy Snapshot Read Path Removal Update
+
+Date updated: 2026-02-19  
+Status: `COMPLETED (ANALYTICS LEGACY READ CACHE REMOVED)`
+
+Changes:
+- Replaced legacy `AnalyticsSnapshotService` with `AnalyticsReadService`:
+  - added `Modules/JAV/app/Services/AnalyticsReadService.php`
+  - removed `Modules/JAV/app/Services/AnalyticsSnapshotService.php`
+- Updated admin analytics controller to use read service:
+  - `Modules/JAV/app/Http/Controllers/Admin/AnalyticsController.php`
+- Updated analytics report CLI to use read service:
+  - `Modules/JAV/app/Console/JavAnalyticsReportCommand.php`
+- Removed legacy analytics snapshot storage artifacts:
+  - deleted `Modules/JAV/app/Models/Mongo/AnalyticsSnapshot.php`
+  - deleted `database/factories/AnalyticsSnapshotFactory.php`
+  - deleted legacy snapshot unit tests and replaced with read-service tests:
+    - added `Modules/JAV/tests/Unit/Services/AnalyticsReadServiceTest.php`
+    - added `Modules/JAV/tests/Unit/Services/AnalyticsReadServiceSyncHealthTest.php`
+    - deleted `Modules/JAV/tests/Unit/Services/AnalyticsSnapshotServiceTest.php`
+    - deleted `Modules/JAV/tests/Unit/Services/AnalyticsSnapshotServiceSyncHealthTest.php`
+    - deleted `Modules/JAV/tests/Unit/Models/Mongo/AnalyticsSnapshotTest.php`
+
+Safety rationale:
+- Admin payload contract keys are preserved (`totals`, `dailyCreated`, `dailyEngagement`, `topViewed`, `topDownloaded`, `topRated`, `quality`, `syncHealth`), so FE admin analytics page and CLI report behavior remains compatible.

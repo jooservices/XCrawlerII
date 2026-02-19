@@ -2,7 +2,11 @@
 
 namespace Modules\Core\Tests\Feature\Http;
 
+use Faker\Factory as FakerFactory;
 use Illuminate\Support\Facades\Redis;
+use Modules\Core\Enums\AnalyticsAction;
+use Modules\Core\Enums\AnalyticsDomain;
+use Modules\Core\Enums\AnalyticsEntityType;
 use Modules\Core\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -11,11 +15,12 @@ class AnalyticsIngestEndpointTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        config(['analytics.enabled' => true]);
     }
 
     public function test_valid_event_writes_to_redis_correctly(): void
     {
+        $eventId = $this->faker->uuid();
+        $entityId = $this->faker->uuid();
         Redis::shouldReceive('setnx')
             ->once()
             ->withArgs(fn ($key) => str_starts_with($key, 'anl:evt:'))
@@ -25,11 +30,11 @@ class AnalyticsIngestEndpointTest extends TestCase
         Redis::shouldReceive('hincrby')->twice();
 
         $payload = [
-            'event_id' => 'evt-123',
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => 'uuid-123',
-            'action' => 'view',
+            'event_id' => $eventId,
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $entityId,
+            'action' => AnalyticsAction::View->value,
             'value' => 1,
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
@@ -42,26 +47,28 @@ class AnalyticsIngestEndpointTest extends TestCase
     #[DataProvider('entityTypeProvider')]
     public function test_all_entity_types_generate_correct_redis_keys(string $entityType): void
     {
+        $eventId = $this->faker->uuid();
+        $entityId = $this->faker->uuid();
         Redis::shouldReceive('setnx')->andReturn(true);
         Redis::shouldReceive('expire')->once();
 
         // Expect key: anl:counters:jav:{entityType}:{uuid}
-        $expectedKey = "anl:counters:jav:{$entityType}:uuid-123";
+        $expectedKey = 'anl:counters:'.AnalyticsDomain::Jav->value.":{$entityType}:{$entityId}";
 
         Redis::shouldReceive('hincrby')
             ->once()
-            ->with($expectedKey, 'view', 1);
+            ->with($expectedKey, AnalyticsAction::View->value, 1);
 
         Redis::shouldReceive('hincrby')
             ->once()
-            ->with($expectedKey, 'view:2026-02-19', 1);
+            ->with($expectedKey, AnalyticsAction::View->value.':2026-02-19', 1);
 
         $payload = [
-            'event_id' => 'evt-123',
-            'domain' => 'jav',
+            'event_id' => $eventId,
+            'domain' => AnalyticsDomain::Jav->value,
             'entity_type' => $entityType,
-            'entity_id' => 'uuid-123',
-            'action' => 'view',
+            'entity_id' => $entityId,
+            'action' => AnalyticsAction::View->value,
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
 
@@ -71,29 +78,31 @@ class AnalyticsIngestEndpointTest extends TestCase
     public static function entityTypeProvider(): array
     {
         return [
-            ['movie'],
-            ['actor'],
-            ['tag'],
+            [AnalyticsEntityType::Movie->value],
+            [AnalyticsEntityType::Actor->value],
+            [AnalyticsEntityType::Tag->value],
         ];
     }
 
     public function test_duplicate_event_id_ignored(): void
     {
+        $eventId = $this->faker->uuid();
+        $entityId = $this->faker->uuid();
         // First call: New event
         Redis::shouldReceive('setnx')
             ->once()
-            ->with('anl:evt:dup-123', 1)
+            ->with("anl:evt:{$eventId}", 1)
             ->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with('anl:evt:dup-123', 172800);
+        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", 172800);
 
         Redis::shouldReceive('hincrby')->twice();
 
         $payload = [
-            'event_id' => 'dup-123',
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => 'uuid-123',
-            'action' => 'view',
+            'event_id' => $eventId,
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $entityId,
+            'action' => AnalyticsAction::View->value,
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
 
@@ -102,7 +111,7 @@ class AnalyticsIngestEndpointTest extends TestCase
         // Second call: Duplicate event
         Redis::shouldReceive('setnx')
             ->once()
-            ->with('anl:evt:dup-123', 1)
+            ->with("anl:evt:{$eventId}", 1)
             ->andReturn(false); // Key exists
 
         Redis::shouldReceive('expire')->never();
@@ -116,11 +125,11 @@ class AnalyticsIngestEndpointTest extends TestCase
         Redis::shouldReceive('setnx')->andThrow(new \Exception('Redis connection refused'));
 
         $payload = [
-            'event_id' => 'evt-fail',
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => 'uuid-123',
-            'action' => 'view',
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $this->faker->uuid(),
+            'action' => AnalyticsAction::View->value,
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
 
@@ -138,12 +147,13 @@ class AnalyticsIngestEndpointTest extends TestCase
 
     public static function invalidPayloadProvider(): array
     {
+        $faker = FakerFactory::create();
         $base = [
-            'event_id' => 'evt-1',
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => 'uuid-1',
-            'action' => 'view',
+            'event_id' => $faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $faker->uuid(),
+            'action' => AnalyticsAction::View->value,
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
 

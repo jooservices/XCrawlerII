@@ -3,53 +3,22 @@
 namespace Modules\JAV\Services;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
-use Modules\JAV\Models\Mongo\AnalyticsSnapshot;
 use Modules\JAV\Models\Tag;
 
-class AnalyticsSnapshotService
+/**
+ * Read-only analytics aggregation service for admin/report payloads.
+ */
+class AnalyticsReadService
 {
     /**
      * @return array<string, mixed>
      */
-    public function getSnapshot(int $days, bool $forceRefresh = false, bool $allowMySqlFallback = true): array
+    public function getSnapshot(int $days): array
     {
-        try {
-            $snapshot = AnalyticsSnapshot::query()->where('days', $days)->first();
-            $isStale = ! $snapshot
-                || ! $snapshot->generated_at
-                || $snapshot->generated_at->lt(now()->subMinutes(30));
-
-            if (! $forceRefresh && ! $isStale && is_array($snapshot->payload)) {
-                return $snapshot->payload;
-            }
-
-            $payload = $this->buildFromMySql($days);
-
-            AnalyticsSnapshot::query()->updateOrCreate(
-                ['days' => $days],
-                [
-                    'generated_at' => now(),
-                    'payload' => $payload,
-                ]
-            );
-
-            return $payload;
-        } catch (\Throwable $exception) {
-            if (! $allowMySqlFallback) {
-                throw $exception;
-            }
-
-            Log::warning('Mongo analytics unavailable, falling back to MySQL aggregation.', [
-                'days' => $days,
-                'error' => $exception->getMessage(),
-            ]);
-
-            return $this->buildFromMySql($days);
-        }
+        return $this->buildFromMySql($days);
     }
 
     /**
@@ -60,7 +29,7 @@ class AnalyticsSnapshotService
     {
         $synced = [];
         foreach ($daysList as $days) {
-            $synced[$days] = $this->getSnapshot($days, true);
+            $synced[$days] = $this->getSnapshot($days);
         }
 
         return $synced;

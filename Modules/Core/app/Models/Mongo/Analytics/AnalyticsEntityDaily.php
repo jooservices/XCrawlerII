@@ -4,6 +4,14 @@ namespace Modules\Core\Models\Mongo\Analytics;
 
 use MongoDB\Laravel\Eloquent\Model;
 
+/**
+ * @property string $domain
+ * @property string $entity_type
+ * @property string $entity_id
+ * @property string $date
+ * @property int $view
+ * @property int $download
+ */
 class AnalyticsEntityDaily extends Model
 {
     protected $connection = 'mongodb';

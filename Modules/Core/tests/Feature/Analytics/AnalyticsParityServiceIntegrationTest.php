@@ -3,6 +3,9 @@
 namespace Modules\Core\Tests\Feature\Analytics;
 
 use Illuminate\Support\Facades\Redis;
+use Modules\Core\Enums\AnalyticsAction;
+use Modules\Core\Enums\AnalyticsDomain;
+use Modules\Core\Enums\AnalyticsEntityType;
 use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityDaily;
 use Modules\Core\Models\Mongo\Analytics\AnalyticsEntityTotals;
 use Modules\Core\Services\AnalyticsFlushService;
@@ -13,11 +16,14 @@ use Modules\JAV\Models\Jav;
 
 class AnalyticsParityServiceIntegrationTest extends TestCase
 {
+    private string $prefix;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        config(['analytics.redis_prefix' => 'anl:counters:test']);
+        $this->prefix = 'anl:counters:test:parity:'.$this->faker->uuid();
+        config(['analytics.redis_prefix' => $this->prefix]);
         $this->requireAnalyticsInfra();
         $this->cleanupRedis();
         AnalyticsEntityTotals::query()->delete();
@@ -36,11 +42,11 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
 
         for ($i = 0; $i < 50; $i++) {
             $ingest->ingest([
-                'event_id' => sprintf('it-view-%s-%d', $jav->uuid, $i),
-                'domain' => 'jav',
-                'entity_type' => 'movie',
+                'event_id' => $this->faker->uuid(),
+                'domain' => AnalyticsDomain::Jav->value,
+                'entity_type' => AnalyticsEntityType::Movie->value,
                 'entity_id' => $jav->uuid,
-                'action' => 'view',
+                'action' => AnalyticsAction::View->value,
                 'value' => 1,
                 'occurred_at' => now()->toIso8601String(),
             ]);
@@ -48,11 +54,11 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
 
         for ($i = 0; $i < 12; $i++) {
             $ingest->ingest([
-                'event_id' => sprintf('it-download-%s-%d', $jav->uuid, $i),
-                'domain' => 'jav',
-                'entity_type' => 'movie',
+                'event_id' => $this->faker->uuid(),
+                'domain' => AnalyticsDomain::Jav->value,
+                'entity_type' => AnalyticsEntityType::Movie->value,
                 'entity_id' => $jav->uuid,
-                'action' => 'download',
+                'action' => AnalyticsAction::Download->value,
                 'value' => 1,
                 'occurred_at' => now()->toIso8601String(),
             ]);
@@ -61,8 +67,8 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
         app(AnalyticsFlushService::class)->flush();
 
         $mongo = AnalyticsEntityTotals::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $jav->uuid)
             ->first();
 
@@ -88,11 +94,11 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
         ]);
 
         $payload = [
-            'event_id' => sprintf('it-dup-%s', $jav->uuid),
-            'domain' => 'jav',
-            'entity_type' => 'movie',
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
             'entity_id' => $jav->uuid,
-            'action' => 'view',
+            'action' => AnalyticsAction::View->value,
             'value' => 1,
             'occurred_at' => now()->toIso8601String(),
         ];
@@ -118,11 +124,11 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
         ]);
 
         app(AnalyticsIngestService::class)->ingest([
-            'event_id' => sprintf('it-mismatch-%s', $jav->uuid),
-            'domain' => 'jav',
-            'entity_type' => 'movie',
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
             'entity_id' => $jav->uuid,
-            'action' => 'view',
+            'action' => AnalyticsAction::View->value,
             'value' => 3,
             'occurred_at' => now()->toIso8601String(),
         ]);
@@ -149,20 +155,20 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
 
         $ingest = app(AnalyticsIngestService::class);
         $ingest->ingest([
-            'event_id' => sprintf('it-tz-%s-1', $jav->uuid),
-            'domain' => 'jav',
-            'entity_type' => 'movie',
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
             'entity_id' => $jav->uuid,
-            'action' => 'view',
+            'action' => AnalyticsAction::View->value,
             'value' => 1,
             'occurred_at' => '2026-02-19T23:59:59-05:00',
         ]);
         $ingest->ingest([
-            'event_id' => sprintf('it-tz-%s-2', $jav->uuid),
-            'domain' => 'jav',
-            'entity_type' => 'movie',
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
             'entity_id' => $jav->uuid,
-            'action' => 'view',
+            'action' => AnalyticsAction::View->value,
             'value' => 1,
             'occurred_at' => '2026-02-20T00:00:01+07:00',
         ]);
@@ -170,8 +176,8 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
         app(AnalyticsFlushService::class)->flush();
 
         $dayOne = AnalyticsEntityDaily::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $jav->uuid)
             ->where('date', '2026-02-19')
             ->first();
@@ -179,8 +185,8 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
         $this->assertSame(1, (int) $dayOne->view);
 
         $dayTwo = AnalyticsEntityDaily::query()
-            ->where('domain', 'jav')
-            ->where('entity_type', 'movie')
+            ->where('domain', AnalyticsDomain::Jav->value)
+            ->where('entity_type', AnalyticsEntityType::Movie->value)
             ->where('entity_id', $jav->uuid)
             ->where('date', '2026-02-20')
             ->first();
@@ -191,9 +197,9 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
     public function test_parity_ignores_orphan_mongo_totals_without_mysql_row(): void
     {
         AnalyticsEntityTotals::query()->create([
-            'domain' => 'jav',
-            'entity_type' => 'movie',
-            'entity_id' => 'orphan-movie-uuid',
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $this->faker->uuid(),
             'view' => 321,
             'download' => 12,
         ]);
@@ -223,13 +229,12 @@ class AnalyticsParityServiceIntegrationTest extends TestCase
 
     private function cleanupRedis(): void
     {
-        $prefix = (string) config('analytics.redis_prefix', 'anl:counters:test');
-        $counterKeys = Redis::keys("{$prefix}:*");
+        $counterKeys = Redis::keys("{$this->prefix}:*");
         if ($counterKeys !== [] && $counterKeys !== null) {
             Redis::del($counterKeys);
         }
 
-        $dedupeKeys = Redis::keys('anl:evt:it-*');
+        $dedupeKeys = Redis::keys('anl:evt:*');
         if ($dedupeKeys !== [] && $dedupeKeys !== null) {
             Redis::del($dedupeKeys);
         }

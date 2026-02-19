@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Modules\JAV\Http\Requests\AnalyticsRequest;
-use Modules\JAV\Services\AnalyticsSnapshotService;
+use Modules\JAV\Services\AnalyticsReadService;
 
 class AnalyticsController extends Controller
 {
-    public function __construct(private readonly AnalyticsSnapshotService $analyticsSnapshotService) {}
+    public function __construct(private readonly AnalyticsReadService $analyticsReadService) {}
 
     public function index(AnalyticsRequest $request): InertiaResponse
     {
@@ -28,7 +28,7 @@ class AnalyticsController extends Controller
     private function buildPayload(AnalyticsRequest $request): array
     {
         $days = (int) $request->validated('days', 14);
-        $analytics = $this->analyticsSnapshotService->getSnapshot($days);
+        $analytics = $this->analyticsReadService->getSnapshot($days);
         $totals = $analytics['totals'] ?? ['jav' => 0, 'actors' => 0, 'tags' => 0];
         $todayCreated = $analytics['todayCreated'] ?? ['jav' => 0, 'actors' => 0, 'tags' => 0];
         $dailyCreated = $analytics['dailyCreated'] ?? [
