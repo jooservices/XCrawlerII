@@ -2,8 +2,10 @@
 
 namespace Modules\Core\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Modules\Core\Observability\Contracts\ObservabilityClientInterface;
 use Modules\Core\Observability\Contracts\TelemetryEmitterInterface;
@@ -28,6 +30,7 @@ class CoreServiceProvider extends ServiceProvider
     {
         $this->registerCommands();
         $this->registerCommandSchedules();
+        $this->registerAnalyticsRateLimiter();
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
@@ -81,6 +84,16 @@ class CoreServiceProvider extends ServiceProvider
                 ->cron((string) config('services.obs.dependency_health.schedule_cron', '*/5 * * * *'))
                 ->withoutOverlapping()
                 ->onOneServer();
+        });
+    }
+
+    private function registerAnalyticsRateLimiter(): void
+    {
+        $this->app->booted(function (): void {
+            RateLimiter::for('analytics', function ($request) {
+                return Limit::perMinute((int) config('analytics.rate_limit_per_minute', 60))
+                    ->by($request->ip());
+            });
         });
     }
 
