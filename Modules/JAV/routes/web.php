@@ -87,15 +87,16 @@ Route::middleware(['web', 'auth'])->prefix('jav/api')->name('jav.api.')->group(f
     Route::put(JAV_RATINGS_RATING_PATH, [ApiRatingController::class, 'update'])->name('ratings.update');
     Route::delete(JAV_RATINGS_RATING_PATH, [ApiRatingController::class, 'destroy'])->name('ratings.destroy');
     Route::get('/ratings/check/{javId}', [ApiRatingController::class, 'check'])->name('ratings.check');
+    Route::get('/ratings/check/tag/{tagId}', [ApiRatingController::class, 'checkTag'])->name('ratings.check-tag');
     Route::get(JAV_NOTIFICATIONS_PATH, [ApiNotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{notification}/read', [ApiNotificationController::class, 'markNotificationRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [ApiNotificationController::class, 'markAllNotificationsRead'])->name('notifications.read-all');
 });
 
 Route::prefix('jav')->name('jav.')->group(function () {
-    Route::get('/movies/{jav}/download', [MovieController::class, 'download'])->name('movies.download');
-
     Route::middleware('auth')->group(function () {
+        Route::get('/movies/{jav}/download', [MovieController::class, 'download'])->name('movies.download');
+
         // Temporary legacy alias: keep route('jav.notifications') resolving to canonical Vue page.
         Route::get(JAV_NOTIFICATIONS_PATH, [DashboardController::class, 'notificationsVue'])->name('notifications');
         Route::post('/like', [ApiLibraryController::class, 'toggleLike'])->name('toggle-like');

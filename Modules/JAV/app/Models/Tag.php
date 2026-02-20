@@ -13,6 +13,8 @@ class Tag extends Model
 
     protected $table = 'tags';
 
+    protected $appends = ['is_featured', 'featured_curation_uuid'];
+
     protected static function newFactory()
     {
         return \Database\Factories\TagFactory::new();
@@ -46,6 +48,24 @@ class Tag extends Model
     public function searchableAs(): string
     {
         return 'tags';
+    }
+
+    /**
+     * Whether this tag is in the featured curation (set by CurationReadService).
+     */
+    public function getIsFeaturedAttribute(): bool
+    {
+        return (bool) ($this->attributes['is_featured'] ?? false);
+    }
+
+    /**
+     * UUID of the featured curation entry if any (set by CurationReadService).
+     */
+    public function getFeaturedCurationUuidAttribute(): ?string
+    {
+        $value = $this->attributes['featured_curation_uuid'] ?? null;
+
+        return $value !== null && $value !== '' ? (string) $value : null;
     }
 
     public function favorites(): \Illuminate\Database\Eloquent\Relations\MorphMany

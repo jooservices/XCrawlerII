@@ -1,10 +1,11 @@
 <script setup>
-import { Head, Link, router } from '@inertiajs/vue3';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import OrderingBar from '@jav/Components/Search/OrderingBar.vue';
 import PageShell from '@jav/Components/UI/PageShell.vue';
 import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
 import EmptyState from '@jav/Components/UI/EmptyState.vue';
+import TagCard from '@jav/Components/TagCard.vue';
 
 const props = defineProps({
     tags: Object,
@@ -12,6 +13,9 @@ const props = defineProps({
     sort: String,
     direction: String,
 });
+
+const page = usePage();
+const hasAuthUser = computed(() => Boolean(page.props.auth?.user));
 
 const visibleTags = ref([...(props.tags?.data || [])]);
 const nextPageUrl = ref(props.tags?.next_page_url || null);
@@ -30,6 +34,33 @@ const sortOptions = [
     { label: 'Oldest', sort: 'created_at', direction: 'asc' },
 ];
 let observer = null;
+
+const resolveTagRate = (tag) => {
+    const directRate = Number(tag?.rate);
+    if (Number.isFinite(directRate) && directRate > 0) {
+        return directRate;
+    }
+
+    return null;
+};
+
+const formatRate = (value) => {
+    const number = Number(value);
+    if (!Number.isFinite(number) || number <= 0) {
+        return null;
+    }
+
+    return Number.isInteger(number) ? String(number) : number.toFixed(1);
+};
+
+const tagStarCount = (tag) => {
+    const rate = resolveTagRate(tag);
+    if (rate === null) {
+        return 0;
+    }
+
+    return Math.max(0, Math.min(5, Math.round(Number(rate))));
+};
 
 const parseUrlParams = (url) => {
     try {
@@ -182,18 +213,16 @@ watch(
                 </div>
             </div>
 
-        <div class="ui-row ui-row-cols-2 ui-row-cols-md-4 ui-row-cols-lg-6 ui-g-4">
-            <div v-for="tag in visibleTags" :key="tag.id" class="ui-col">
-                <Link :href="route('jav.vue.dashboard', { tag: tag.name })" class="u-no-underline u-text-dark">
-                    <div class="ui-card ui-interactive-card u-h-full u-shadow-sm hover-shadow">
-                        <div class="ui-card-body u-text-center">
-                            <i class="fas fa-tag fa-2x u-text-info mb-3"></i>
-                            <h5 class="ui-card-title u-truncate" :title="tag.name">{{ tag.name }}</h5>
-                            <span class="ui-badge u-bg-secondary">{{ tag.javs_count || 0 }} JAVs</span>
-                        </div>
-                    </div>
-                </Link>
-            </div>
+        <div class="tag-masonry-grid">
+            <TagCard
+                v-for="tag in visibleTags"
+                :key="tag.id"
+                :tag="tag"
+                :has-auth-user="hasAuthUser"
+                :liked="Boolean(tag.is_liked)"
+                :tag-rate="formatRate(resolveTagRate(tag))"
+                :tag-star-count="tagStarCount(tag)"
+            />
             <div v-if="visibleTags.length === 0" class="ui-col-12">
                 <EmptyState tone="warning" icon="fas fa-tags" message="No tags found." />
             </div>
@@ -209,11 +238,30 @@ watch(
 </template>
 
 <style scoped>
-.hover-shadow {
-    transition: box-shadow 0.2s ease-in-out;
+.tag-masonry-grid {
+    column-count: 2;
+    column-gap: 0.75rem;
 }
 
-.hover-shadow:hover {
-    box-shadow: var(--card-hover-shadow);
+.tag-masonry-grid > .ui-col,
+.tag-masonry-grid > .ui-col-12 {
+    break-inside: avoid;
+    margin-bottom: 0.75rem;
+}
+
+.tag-masonry-grid > .ui-col-12 {
+    column-span: all;
+}
+
+@media (min-width: 768px) {
+    .tag-masonry-grid {
+        column-count: 6;
+    }
+}
+
+@media (min-width: 1200px) {
+    .tag-masonry-grid {
+        column-count: 6;
+    }
 }
 </style>

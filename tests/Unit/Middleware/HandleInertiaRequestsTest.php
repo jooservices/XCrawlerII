@@ -62,8 +62,8 @@ class HandleInertiaRequestsTest extends TestCase
 
         $authUser = $shared['auth']['user'];
         $this->assertSame($user->id, $authUser['id']);
-        $this->assertContains('admin', $authUser['roles']->all());
-        $this->assertContains('view-users', $authUser['permissions']->all());
+        $this->assertContains('admin', $authUser['roles']);
+        $this->assertContains('view-users', $authUser['permissions']);
 
         $this->assertSame(1, $shared['notifications']['count']());
         $items = $shared['notifications']['items']();

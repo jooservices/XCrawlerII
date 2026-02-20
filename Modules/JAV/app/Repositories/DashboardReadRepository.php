@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Jav;
+use Modules\JAV\Services\CurationReadService;
 use Modules\JAV\Services\SearchService;
 
 class DashboardReadRepository
@@ -27,6 +28,7 @@ class DashboardReadRepository
         private readonly WatchlistRepository $watchlistRepository,
         private readonly RatingRepository $ratingRepository,
         private readonly UserLikeNotificationRepository $notificationRepository,
+        private readonly CurationReadService $curationReadService,
     ) {}
 
     public function searchWithPreset(
@@ -117,6 +119,33 @@ class DashboardReadRepository
             $item->user_rating = $itemId !== null ? optional($ratings->get($itemId))->rating : null;
             $item->user_rating_id = $itemId !== null ? optional($ratings->get($itemId))->id : null;
         }
+
+        $this->curationReadService->decorateMoviesWithFeaturedState($pageItems);
+    }
+
+    public function decorateTagsForUser(LengthAwarePaginator $tags, ?Authenticatable $user): void
+    {
+        $pageItems = $tags->items();
+        $ids = collect($pageItems)
+            ->map(static fn ($item) => $item->id ?? null)
+            ->filter(static fn ($id) => $id !== null)
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return;
+        }
+
+        if ($user !== null) {
+            $userId = (int) $user->getAuthIdentifier();
+            $likedIds = $this->favoriteRepository->likedTagIdsForUserAndTagIds($userId, $ids);
+
+            foreach ($pageItems as $item) {
+                $itemId = $item->id ?? null;
+                $item->is_liked = $itemId !== null && $likedIds->has($itemId);
+            }
+        }
+
+        $this->curationReadService->decorateTagsWithFeaturedState($pageItems);
     }
 
     /**

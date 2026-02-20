@@ -153,7 +153,7 @@ onMounted(async () => {
                         <h3><i class="fas fa-users"></i> Related Movies by Actors</h3>
                     </div>
                 </div>
-                <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4 mb-5">
+                <div class="movie-masonry-grid mb-5">
                     <MovieCard v-for="item in relatedByActors" :key="`actor-related-${item.id}`" :item="item" />
                 </div>
             </template>
@@ -164,9 +164,33 @@ onMounted(async () => {
                         <h3><i class="fas fa-tags"></i> Related Movies by Tags</h3>
                     </div>
                 </div>
-                <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
+                <div class="movie-masonry-grid">
                     <MovieCard v-for="item in relatedByTags" :key="`tag-related-${item.id}`" :item="item" />
                 </div>
             </template>
     </PageShell>
 </template>
+
+<style scoped>
+.movie-masonry-grid {
+    column-count: 1;
+    column-gap: 1rem;
+}
+
+.movie-masonry-grid > .ui-col {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+    .movie-masonry-grid {
+        column-count: 4;
+    }
+}
+
+@media (min-width: 1200px) {
+    .movie-masonry-grid {
+        column-count: 4;
+    }
+}
+</style>

@@ -36,9 +36,9 @@ class HandleInertiaRequests extends Middleware
                     'avatar_path' => $request->user()->avatar_path,
                     'avatar_url' => $request->user()->avatar_url,
                     'preferences' => $request->user()->preferences,
-                    // Frontend checks role/permission slugs (e.g. "admin", "view-users").
-                    'roles' => $request->user()->roles->pluck('slug')->values(),
-                    'permissions' => $request->user()->getAllPermissions()->pluck('slug')->values(),
+                    // Frontend checks role/permission slugs (e.g. "admin", "view-users"). Use values() and toArray() so JS always gets a plain array.
+                    'roles' => $request->user()->roles->pluck('slug')->values()->toArray(),
+                    'permissions' => $request->user()->getAllPermissions()->pluck('slug')->values()->toArray(),
                 ] : null,
             ],
             'notifications' => [

@@ -17,6 +17,7 @@ use Modules\JAV\Models\Actor;
 use Modules\JAV\Repositories\DashboardReadRepository;
 use Modules\JAV\Services\ActorAnalyticsService;
 use Modules\JAV\Services\ActorProfileResolver;
+use Modules\JAV\Services\CurationReadService;
 use Modules\JAV\Services\DashboardPreferencesService;
 use Modules\JAV\Services\RecommendationService;
 
@@ -28,6 +29,7 @@ class DashboardController extends Controller
         private readonly DashboardPreferencesService $dashboardPreferencesService,
         private readonly ActorProfileResolver $actorProfileResolver,
         private readonly ActorAnalyticsService $actorAnalyticsService,
+        private readonly CurationReadService $curationReadService,
     ) {}
 
     public function index(GetJavRequest $request): InertiaResponse
@@ -157,6 +159,7 @@ class DashboardController extends Controller
     {
         $query = (string) $request->input('q', '');
         $actors = $this->dashboardReadRepository->searchActors($query);
+        $this->curationReadService->decorateActorsWithFeaturedState($actors->items());
 
         return Inertia::render('Actors/Index', [
             'actors' => $actors,
@@ -170,6 +173,7 @@ class DashboardController extends Controller
         $sort = (string) $request->input('sort', 'javs_count');
         $direction = (string) $request->input('direction', 'desc');
         $tags = $this->dashboardReadRepository->searchTags($query, $sort, $direction);
+        $this->dashboardReadRepository->decorateTagsForUser($tags, Auth::user());
 
         return Inertia::render('Tags/Index', [
             'tags' => $tags,
@@ -184,6 +188,7 @@ class DashboardController extends Controller
         $actor->loadCount('javs')->load(['profileAttributes', 'profileSources']);
 
         $movies = $this->dashboardReadRepository->actorMovies($actor, 30);
+        $this->curationReadService->decorateMoviesWithFeaturedState($movies->items());
 
         $bioProfile = $this->actorProfileResolver->toDisplayMap($actor);
         $resolved = $this->actorProfileResolver->resolve($actor);
@@ -227,6 +232,13 @@ class DashboardController extends Controller
             $favorite->created_at_human = $favorite->created_at?->diffForHumans();
         }
 
+        $favoriteMovies = collect($favorites->items())
+            ->filter(fn ($favorite): bool => (string) ($favorite->favoritable_type ?? '') === \Modules\JAV\Models\Jav::class)
+            ->map(fn ($favorite) => $favorite->favoritable)
+            ->filter();
+
+        $this->curationReadService->decorateMoviesWithFeaturedState($favoriteMovies);
+
         return Inertia::render('User/Favorites', [
             'favorites' => $favorites,
         ]);
@@ -236,6 +248,12 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $recommendations = $this->recommendationService->getRecommendationsWithReasons($user, 30);
+        $this->curationReadService->decorateMoviesWithFeaturedState(
+            $recommendations
+                ->map(fn ($entry) => $entry['movie'] ?? null)
+                ->filter()
+                ->values()
+        );
 
         return Inertia::render('User/Recommendations', [
             'recommendations' => $recommendations,

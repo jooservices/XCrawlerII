@@ -2,6 +2,7 @@
 
 namespace Modules\JAV\Tests\Feature\Controllers\Users;
 
+use App\Models\User;
 use Modules\Core\Services\AnalyticsIngestService;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Tests\TestCase;
@@ -10,6 +11,7 @@ class MovieControllerTest extends TestCase
 {
     public function test_download_returns_back_with_error_for_unsupported_source_and_tracks_event(): void
     {
+        $user = User::factory()->create();
         $jav = Jav::factory()->create([
             'source' => 'unsupported-source',
             'downloads' => 3,
@@ -20,7 +22,8 @@ class MovieControllerTest extends TestCase
         $service->shouldReceive('ingest')->once();
         $this->app->instance(AnalyticsIngestService::class, $service);
 
-        $response = $this->from(route('jav.vue.dashboard'))
+        $response = $this->actingAs($user)
+            ->from(route('jav.vue.dashboard'))
             ->get(route('jav.movies.download', $jav));
 
         $response

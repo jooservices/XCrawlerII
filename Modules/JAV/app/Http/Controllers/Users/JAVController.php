@@ -8,12 +8,14 @@ use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\UserJavHistory;
+use Modules\JAV\Services\CurationReadService;
 use Modules\JAV\Services\SearchService;
 
 class JAVController extends Controller
 {
     public function __construct(
         private readonly SearchService $searchService,
+        private readonly CurationReadService $curationReadService,
     ) {}
 
     /**
@@ -97,6 +99,10 @@ class JAVController extends Controller
         // Get related movies
         $relatedByActors = $this->searchService->getRelatedByActors($jav, 10);
         $relatedByTags = $this->searchService->getRelatedByTags($jav, 10);
+
+        $this->curationReadService->decorateMoviesWithFeaturedState([$jav]);
+        $this->curationReadService->decorateMoviesWithFeaturedState($relatedByActors);
+        $this->curationReadService->decorateMoviesWithFeaturedState($relatedByTags);
 
         return Inertia::render('Movies/Show', [
             'jav' => $jav,

@@ -79,7 +79,7 @@ const props = defineProps({
                     <h4>JAVs</h4>
                 </div>
             </div>
-            <div class="ui-row ui-row-cols-1 ui-row-cols-md-3 ui-row-cols-lg-5 ui-g-4">
+            <div class="movie-masonry-grid">
                 <MovieCard v-for="item in movies.data" :key="item.id" :item="item" />
                 <div v-if="movies.data.length === 0" class="ui-col-12">
                     <EmptyState tone="warning" icon="fas fa-film" message="No JAVs found for this actor." />
@@ -98,3 +98,32 @@ const props = defineProps({
             </div>
     </PageShell>
 </template>
+
+<style scoped>
+.movie-masonry-grid {
+    column-count: 1;
+    column-gap: 1rem;
+}
+
+.movie-masonry-grid > .ui-col,
+.movie-masonry-grid > .ui-col-12 {
+    break-inside: avoid;
+    margin-bottom: 1rem;
+}
+
+.movie-masonry-grid > .ui-col-12 {
+    column-span: all;
+}
+
+@media (min-width: 768px) {
+    .movie-masonry-grid {
+        column-count: 4;
+    }
+}
+
+@media (min-width: 1200px) {
+    .movie-masonry-grid {
+        column-count: 4;
+    }
+}
+</style>

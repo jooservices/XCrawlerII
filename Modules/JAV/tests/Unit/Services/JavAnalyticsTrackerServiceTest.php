@@ -26,21 +26,24 @@ class JavAnalyticsTrackerServiceTest extends TestCase
             'source' => 'onejav',
         ]);
 
-        $ingestService = Mockery::mock(AnalyticsIngestService::class);
-        $ingestService->shouldReceive('ingest')
-            ->once()
-            ->withArgs(function (array $event, $userId): bool {
-                return $event['domain'] === AnalyticsDomain::Jav->value
-                    && $event['entity_type'] === AnalyticsEntityType::Movie->value
-                    && $event['entity_id'] === '550e8400-e29b-41d4-a716-446655440000'
-                    && $event['action'] === AnalyticsAction::Download->value
-                    && $event['value'] === 1
-                    && isset($event['event_id'])
-                    && isset($event['occurred_at']);
-            });
+        $ingestService = Mockery::spy(AnalyticsIngestService::class);
 
         $tracker = new JavAnalyticsTrackerService($ingestService);
         $tracker->trackDownload($jav);
+
+        $ingestService->shouldHaveReceived('ingest')
+            ->once()
+            ->withArgs(function (array $event, $userId): bool {
+                $this->assertEquals(AnalyticsDomain::Jav->value, $event['domain']);
+                $this->assertEquals(AnalyticsEntityType::Movie->value, $event['entity_type']);
+                $this->assertEquals('550e8400-e29b-41d4-a716-446655440000', $event['entity_id']);
+                $this->assertEquals(AnalyticsAction::Download->value, $event['action']);
+                $this->assertEquals(1, $event['value']);
+                $this->assertArrayHasKey('event_id', $event);
+                $this->assertArrayHasKey('occurred_at', $event);
+
+                return true;
+            });
     }
 
     public function test_track_download_passes_jav_uuid_as_entity_id(): void
@@ -50,14 +53,17 @@ class JavAnalyticsTrackerServiceTest extends TestCase
             'source' => 'onejav',
         ]);
 
-        $ingestService = Mockery::mock(AnalyticsIngestService::class);
-        $ingestService->shouldReceive('ingest')
-            ->once()
-            ->withArgs(function (array $event) use ($jav): bool {
-                return $event['entity_id'] === (string) $jav->uuid;
-            });
+        $ingestService = Mockery::spy(AnalyticsIngestService::class);
 
         $tracker = new JavAnalyticsTrackerService($ingestService);
         $tracker->trackDownload($jav);
+
+        $ingestService->shouldHaveReceived('ingest')
+            ->once()
+            ->withArgs(function (array $event, $userId) use ($jav): bool {
+                $this->assertEquals((string) $jav->uuid, $event['entity_id']);
+
+                return true;
+            });
     }
 }
