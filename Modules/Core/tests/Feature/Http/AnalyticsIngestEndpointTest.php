@@ -21,11 +21,16 @@ class AnalyticsIngestEndpointTest extends TestCase
     {
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->withArgs(fn ($key) => str_starts_with($key, 'anl:evt:'))
-            ->andReturn(true);
-        Redis::shouldReceive('expire')->once();
+            ->withArgs(function ($key, $value, $exKeyword, $ttl, $nxKeyword) {
+                return str_starts_with($key, 'anl:evt:')
+                    && $value === '1'
+                    && $exKeyword === 'EX'
+                    && $ttl === 172800
+                    && $nxKeyword === 'NX';
+            })
+            ->andReturn('OK');
 
         Redis::shouldReceive('hincrby')->twice();
 
@@ -49,8 +54,7 @@ class AnalyticsIngestEndpointTest extends TestCase
     {
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')->andReturn(true);
-        Redis::shouldReceive('expire')->once();
+        Redis::shouldReceive('set')->andReturn('OK');
 
         // Expect key: anl:counters:jav:{entityType}:{uuid}
         $expectedKey = 'anl:counters:'.AnalyticsDomain::Jav->value.":{$entityType}:{$entityId}";
@@ -89,11 +93,10 @@ class AnalyticsIngestEndpointTest extends TestCase
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
         // First call: New event
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
-            ->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", 172800);
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
+            ->andReturn('OK');
 
         Redis::shouldReceive('hincrby')->twice();
 
@@ -109,12 +112,11 @@ class AnalyticsIngestEndpointTest extends TestCase
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
 
         // Second call: Duplicate event
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
-            ->andReturn(false); // Key exists
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
+            ->andReturn(null); // Key exists
 
-        Redis::shouldReceive('expire')->never();
         Redis::shouldReceive('hincrby')->never(); // No write
 
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
@@ -122,7 +124,7 @@ class AnalyticsIngestEndpointTest extends TestCase
 
     public function test_redis_connection_failure_handled_gracefully(): void
     {
-        Redis::shouldReceive('setnx')->andThrow(new \Exception('Redis connection refused'));
+        Redis::shouldReceive('set')->andThrow(new \Exception('Redis connection refused'));
 
         $payload = [
             'event_id' => $this->faker->uuid(),
@@ -157,8 +159,7 @@ class AnalyticsIngestEndpointTest extends TestCase
         ];
 
         // Mock Redis for success path
-        Redis::shouldReceive('setnx')->andReturn(true);
-        Redis::shouldReceive('expire')->andReturn(true);
+        Redis::shouldReceive('set')->andReturn('OK');
         Redis::shouldReceive('hincrby')->andReturn(1);
 
         // 1st request: OK
@@ -213,8 +214,7 @@ class AnalyticsIngestEndpointTest extends TestCase
         foreach ([1, 100] as $value) {
             $eventId = $this->faker->uuid();
             $entityId = $this->faker->uuid();
-            Redis::shouldReceive('setnx')->andReturn(true);
-            Redis::shouldReceive('expire')->once();
+            Redis::shouldReceive('set')->andReturn('OK');
             Redis::shouldReceive('hincrby')->twice();
 
             $payload = [
@@ -246,20 +246,18 @@ class AnalyticsIngestEndpointTest extends TestCase
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
 
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
-            ->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", 172800);
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
+            ->andReturn('OK');
         Redis::shouldReceive('hincrby')->twice();
 
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
 
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
-            ->andReturn(false);
-        Redis::shouldReceive('expire')->never();
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
+            ->andReturn(null);
         Redis::shouldReceive('hincrby')->never();
 
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
@@ -270,8 +268,7 @@ class AnalyticsIngestEndpointTest extends TestCase
         $this->assertGuest();
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')->andReturn(true);
-        Redis::shouldReceive('expire')->once();
+        Redis::shouldReceive('set')->andReturn('OK');
         Redis::shouldReceive('hincrby')->twice();
 
         $payload = [
@@ -292,8 +289,7 @@ class AnalyticsIngestEndpointTest extends TestCase
         $this->actingAs($user);
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')->andReturn(true);
-        Redis::shouldReceive('expire')->once();
+        Redis::shouldReceive('set')->andReturn('OK');
         Redis::shouldReceive('hincrby')->twice();
 
         $payload = [
@@ -306,5 +302,143 @@ class AnalyticsIngestEndpointTest extends TestCase
         ];
 
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
+    }
+
+    // ──────────────────────────────────────────
+    // user_id validation (withValidator)
+    // ──────────────────────────────────────────
+
+    public function test_user_id_mismatch_returns_422(): void
+    {
+        $user = \App\Models\User::factory()->create();
+        $otherUser = \App\Models\User::factory()->create();
+        $this->actingAs($user);
+
+        $payload = [
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $this->faker->uuid(),
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => '2026-02-19T10:00:00Z',
+            'user_id' => $otherUser->id, // mismatch!
+        ];
+
+        $this->postJson(route('api.analytics.events.store'), $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['user_id']);
+    }
+
+    public function test_user_id_matching_auth_user_passes(): void
+    {
+        $user = \App\Models\User::factory()->create();
+        $this->actingAs($user);
+
+        Redis::shouldReceive('set')->andReturn('OK');
+        Redis::shouldReceive('hincrby')->twice();
+
+        $payload = [
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $this->faker->uuid(),
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => '2026-02-19T10:00:00Z',
+            'user_id' => $user->id, // matches auth user
+        ];
+
+        $this->postJson(route('api.analytics.events.store'), $payload)
+            ->assertStatus(202);
+    }
+
+    // ──────────────────────────────────────────
+    // Security: injection / XSS payloads
+    // ──────────────────────────────────────────
+
+    public function test_sql_injection_in_entity_id_passes_validation(): void
+    {
+        // entity_id is just a string — no SQL query uses it directly
+        Redis::shouldReceive('set')->andReturn('OK');
+        Redis::shouldReceive('hincrby')->twice();
+
+        $payload = [
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => "1' OR '1'='1",
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => '2026-02-19T10:00:00Z',
+        ];
+
+        $this->postJson(route('api.analytics.events.store'), $payload)
+            ->assertStatus(202);
+    }
+
+    public function test_xss_payload_in_event_id_passes_validation(): void
+    {
+        // event_id is never rendered as HTML — stored as Redis key
+        Redis::shouldReceive('set')->andReturn('OK');
+        Redis::shouldReceive('hincrby')->twice();
+
+        $payload = [
+            'event_id' => '<script>alert(1)</script>',
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $this->faker->uuid(),
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => '2026-02-19T10:00:00Z',
+        ];
+
+        $this->postJson(route('api.analytics.events.store'), $payload)
+            ->assertStatus(202);
+    }
+
+    // ──────────────────────────────────────────
+    // Individual missing required fields
+    // ──────────────────────────────────────────
+
+    public function test_missing_action_returns_422(): void
+    {
+        $payload = [
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $this->faker->uuid(),
+            'occurred_at' => '2026-02-19T10:00:00Z',
+        ];
+
+        $this->postJson(route('api.analytics.events.store'), $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['action']);
+    }
+
+    public function test_missing_entity_type_returns_422(): void
+    {
+        $payload = [
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_id' => $this->faker->uuid(),
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => '2026-02-19T10:00:00Z',
+        ];
+
+        $this->postJson(route('api.analytics.events.store'), $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['entity_type']);
+    }
+
+    public function test_missing_occurred_at_returns_422(): void
+    {
+        $payload = [
+            'event_id' => $this->faker->uuid(),
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $this->faker->uuid(),
+            'action' => AnalyticsAction::View->value,
+        ];
+
+        $this->postJson(route('api.analytics.events.store'), $payload)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['occurred_at']);
     }
 }
