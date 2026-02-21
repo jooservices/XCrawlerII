@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -24,6 +25,8 @@ abstract class TestCase extends BaseTestCase
             'queue.default' => 'sync',
             'cache.default' => 'array',
         ]);
+
+        $this->withoutMiddleware(VerifyCsrfToken::class);
 
         $this->setUpFaker();
 

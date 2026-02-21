@@ -31,12 +31,10 @@ class AnalyticsIngestService
 
         // Deduplicate: exact same event_id ignored for 48h
         /** @phpstan-ignore-next-line */
-        $isNew = (bool) Redis::setnx($dedupeKey, 1);
-        if (! $isNew) {
+        $isNew = Redis::set($dedupeKey, '1', 'EX', self::DEDUPE_TTL_SECONDS, 'NX');
+        if ($isNew !== true && $isNew !== 'OK') {
             return;
         }
-        /** @phpstan-ignore-next-line */
-        Redis::expire($dedupeKey, self::DEDUPE_TTL_SECONDS);
 
         $key = implode(':', [
             $prefix,

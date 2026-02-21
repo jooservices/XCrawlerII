@@ -29,9 +29,21 @@ class AnalyticsBenchmarkCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(AnalyticsFlushService $service): void
+    public function handle(AnalyticsFlushService $service): int
     {
+        if (app()->isProduction()) {
+            $this->error('This command must not be run in production.');
+
+            return self::FAILURE;
+        }
+
         $count = (int) $this->option('count');
+        if ($count <= 0) {
+            $this->error('--count must be a positive integer.');
+
+            return self::FAILURE;
+        }
+
         $this->info("Benchmarking with {$count} keys...");
 
         // 1. Seed
@@ -65,5 +77,7 @@ class AnalyticsBenchmarkCommand extends Command
         if ($duration > 0) {
             $this->info('Throughput: '.number_format($result['keys_processed'] / $duration, 2).' keys/sec');
         }
+
+        return self::SUCCESS;
     }
 }

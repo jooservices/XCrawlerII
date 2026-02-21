@@ -38,81 +38,83 @@ class AnalyticsFlushService
         $processed = 0;
         $errors = 0;
 
-        $cursor = null;
-        do {
-            // Use SCAN to avoid blocking Redis with KEYS command in production
-            if (app()->runningUnitTests()) {
-                $keys = Redis::keys("{$prefix}:*");
-                $result = [0, $keys];
-            } else {
-                $result = Redis::scan($cursor, ['MATCH' => "{$prefix}:*", 'COUNT' => 10000]);
-            }
+        foreach (["{$prefix}:*", 'anl:flushing:*'] as $pattern) {
+            $cursor = null;
+            do {
+                if (app()->runningUnitTests()) {
+                    $keys = Redis::keys($pattern);
+                    $result = [0, $keys];
+                } else {
+                    $result = Redis::scan($cursor, ['MATCH' => $pattern, 'COUNT' => 10000]);
+                }
 
-            // Redis facade handling of scan return/cursor depends on driver (predis vs phpredis).
-            // Laravel's Redis facade usually abstracts this, but often creates an iterator.
-            // If using the raw Redis::scan, it returns an array where [0] is new cursor.
-            // HOWEVER, Laravel's Redis facade often returns just the keys when using `scan` as an iterator method or different structure.
-            // A safer way in Laravel is often `Redis::connection()->scan($cursor, ...)` or using an iterator if available.
-            // Let's assume standard Predis/Phpredis array return for now or use a loop if available.
-            // Actually, `Redis::scan` in Laravel facade often returns the array result directly.
+                if ($result === false) {
+                    break;
+                }
 
-            if ($result === false) {
-                break;
-            }
+                [$newCursor, $keys] = $result;
+                $cursor = $newCursor;
 
-            [$newCursor, $keys] = $result;
-            $cursor = $newCursor;
-
-            // $keys can be null or empty
-            if (! empty($keys)) {
-                foreach ($keys as $key) {
-                    try {
-                        if ($this->flushKey((string) $key, $prefix)) {
-                            $processed++;
+                if (! empty($keys)) {
+                    foreach ($keys as $key) {
+                        try {
+                            if ($this->flushKey((string) $key, $prefix)) {
+                                $processed++;
+                            }
+                        } catch (\Throwable $exception) {
+                            $errors++;
+                            Log::error('Analytics flush error', [
+                                'key' => (string) $key,
+                                'error' => $exception->getMessage(),
+                            ]);
                         }
-                    } catch (\Throwable $exception) {
-                        $errors++;
-                        Log::error('Analytics flush error', [
-                            'key' => (string) $key,
-                            'error' => $exception->getMessage(),
-                        ]);
                     }
                 }
-            }
-
-        } while ($cursor != 0);
+            } while ($cursor != 0);
+        }
 
         return ['keys_processed' => $processed, 'errors' => $errors];
     }
 
     private function flushKey(string $key, string $prefix): bool
     {
-        $prefixMarker = "{$prefix}:";
-        $prefixPos = strpos($key, $prefixMarker);
+        $tempKey = $key;
+        if (str_starts_with($key, 'anl:flushing:')) {
+            $parts = explode(':', $key, 6);
+            if (count($parts) < 6) {
+                Log::warning('Analytics: malformed flushing key parts', ['key' => $key]);
 
-        if ($prefixPos === false) {
-            return false;
-        }
+                return false;
+            }
+            [, , $domain, $entityType, $entityId] = $parts;
+        } else {
+            $prefixMarker = "{$prefix}:";
+            $prefixPos = strpos($key, $prefixMarker);
 
-        $suffix = substr($key, $prefixPos + strlen($prefixMarker));
-        $parts = explode(':', (string) $suffix, 3);
-        if (count($parts) !== 3) {
-            Log::warning('Analytics: malformed counter key parts', ['key' => $key]);
+            if ($prefixPos === false) {
+                return false;
+            }
 
-            return false;
-        }
+            $suffix = substr($key, $prefixPos + strlen($prefixMarker));
+            $parts = explode(':', (string) $suffix, 3);
+            if (count($parts) !== 3) {
+                Log::warning('Analytics: malformed counter key parts', ['key' => $key]);
 
-        [$domain, $entityType, $entityId] = $parts;
-        $canonicalKey = "{$prefix}:{$domain}:{$entityType}:{$entityId}";
-        $tempKey = sprintf('anl:flushing:%s:%s:%s:%s', $domain, $entityType, $entityId, Str::random(8));
+                return false;
+            }
 
-        try {
-            $renamed = Redis::rename($canonicalKey, $tempKey);
-        } catch (\Throwable $e) {
-            return false;
-        }
-        if (! $renamed) {
-            return false;
+            [$domain, $entityType, $entityId] = $parts;
+            $canonicalKey = "{$prefix}:{$domain}:{$entityType}:{$entityId}";
+            $tempKey = sprintf('anl:flushing:%s:%s:%s:%s', $domain, $entityType, $entityId, Str::random(8));
+
+            try {
+                $renamed = Redis::rename($canonicalKey, $tempKey);
+            } catch (\Throwable) {
+                return false;
+            }
+            if (! $renamed) {
+                return false;
+            }
         }
 
         // Use SCAN to iterate over the hash instead of HGETALL (blocking)
@@ -159,9 +161,17 @@ class AnalyticsFlushService
             $mongoOperations = array_merge($mongoOperations, $this->prepareTotalCounterOps($domain, $entityType, $entityId, $totalIncrements));
         }
 
-        // Execute Bulk Write
-        if (! empty($mongoOperations)) {
-            $this->executeBulkWrite($mongoOperations);
+        try {
+            if (! empty($mongoOperations)) {
+                $this->executeBulkWrite($mongoOperations);
+            }
+        } catch (\Throwable $exception) {
+            Log::error('Analytics: bulk write failed; preserving temp key for retry', [
+                'temp_key' => $tempKey,
+                'error' => $exception->getMessage(),
+            ]);
+
+            throw $exception;
         }
 
         // Safe deletion: Only delete temp key after processing succeeds
@@ -171,7 +181,6 @@ class AnalyticsFlushService
             $this->syncToMySql($entityId);
         }
 
-        // dump("Processed key: $key");
         return true;
     }
 
@@ -317,9 +326,18 @@ class AnalyticsFlushService
         }
 
         foreach ($grouped as $modelClass => $ops) {
-            $modelClass::raw(function ($collection) use ($ops) {
-                $collection->bulkWrite($ops);
-            });
+            try {
+                $modelClass::raw(function ($collection) use ($ops) {
+                    $collection->bulkWrite($ops);
+                });
+            } catch (\Throwable $exception) {
+                Log::error('Analytics: collection bulk write failed', [
+                    'model' => $modelClass,
+                    'error' => $exception->getMessage(),
+                ]);
+
+                throw $exception;
+            }
         }
     }
 

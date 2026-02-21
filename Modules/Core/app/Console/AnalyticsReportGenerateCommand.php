@@ -77,7 +77,7 @@ class AnalyticsReportGenerateCommand extends Command
         File::ensureDirectoryExists($rollbackDir);
         $now = Carbon::now();
 
-        $hasIngestRoute = Route::has('api.analytics.events.store');
+        $hasIngestRoute = Route::has('analytics.events.store');
         $legacyViewRouteExists = collect(Route::getRoutes()->getRoutes())
             ->contains(fn ($route): bool => $route->uri() === 'jav/movies/{jav}/view');
 

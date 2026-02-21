@@ -61,15 +61,20 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        $this->commands([
+        $commands = [
             \Modules\Core\Console\AuthAuthorizeCommand::class,
             \Modules\Core\Console\ObsDependenciesHealthCommand::class,
             \Modules\Core\Console\FlushAnalyticsCommand::class,
             \Modules\Core\Console\AnalyticsParityCheckCommand::class,
             \Modules\Core\Console\AnalyticsReportGenerateCommand::class,
             \Modules\Core\Console\AnalyticsReportVerifyCommand::class,
-            \Modules\Core\Console\Tests\AnalyticsBenchmarkCommand::class,
-        ]);
+        ];
+
+        if (! app()->isProduction()) {
+            $commands[] = \Modules\Core\Console\Tests\AnalyticsBenchmarkCommand::class;
+        }
+
+        $this->commands($commands);
     }
 
     /**
