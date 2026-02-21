@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 import { usePage, Link, router } from '@inertiajs/vue3';
-import { useUIStore } from '@jav/Stores/ui';
+import { useUIStore } from '@core/Stores/ui';
 import axios from 'axios';
 
 const uiStore = useUIStore();

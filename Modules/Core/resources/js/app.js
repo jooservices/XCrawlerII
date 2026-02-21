@@ -7,6 +7,7 @@ import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
 import ToastService from 'primevue/toastservice';
 import ConfirmationService from 'primevue/confirmationservice';
+// Core layout mapping for pages
 import DashboardLayout from '@core/Layouts/DashboardLayout.vue';
 import '@core/../css/dashboard-shared.css';
 import 'primeicons/primeicons.css';
@@ -23,9 +24,36 @@ const queryClient = new QueryClient({
 });
 
 createInertiaApp({
-    resolve: name => {
-        const pages = import.meta.glob('./Pages/**/*.vue', { eager: true });
-        const page = pages[`./Pages/${name}.vue`];
+    resolve: async (name) => {
+        // name example: 'JAV/Pages/Dashboard/Index' or 'Core/Pages/Admin/Analytics'
+        let match = name.match(/^([A-Z]+)\/Pages\/(.*)$/);
+        if (!match) {
+            console.error(`Page name [${name}] does not match the expected module format (e.g. 'JAV/Pages/...'). Attempting to load as fallback.`);
+            // fallback behavior for legacy paths still missing prefixes during transition
+            const legacyPages = import.meta.glob('../../../JAV/resources/js/Pages/**/*.vue');
+            const legacyMatch = legacyPages[`../../../JAV/resources/js/Pages/${name}.vue`];
+            if (!legacyMatch) throw new Error(`Page not found: ${name}`);
+            const page = await legacyMatch();
+            if (!Object.prototype.hasOwnProperty.call(page.default, 'layout')) {
+                page.default.layout = DashboardLayout;
+            }
+            return page;
+        }
+
+        const moduleName = match[1]; // 'JAV' or 'Core'
+        const pagePath = match[2];   // 'Dashboard/Index'
+
+        // Glob import all potential pages from modules (eager: false for chunking, or eager: true if desired)
+        const pages = import.meta.glob('../../../*/resources/js/Pages/**/*.vue');
+
+        // Find the exact file
+        const targetFile = `../../../${moduleName}/resources/js/Pages/${pagePath}.vue`;
+
+        if (!pages[targetFile]) {
+            throw new Error(`Page not found: ${targetFile} for ${name}`);
+        }
+
+        const page = await pages[targetFile]();
 
         // Apply a shared shell by default, but allow pages to explicitly opt out.
         if (!Object.prototype.hasOwnProperty.call(page.default, 'layout')) {

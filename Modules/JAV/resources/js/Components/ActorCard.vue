@@ -2,7 +2,7 @@
 import { usePage } from '@inertiajs/vue3';
 import { computed, ref, watch } from 'vue';
 import axios from 'axios';
-import { useUIStore } from '@jav/Stores/ui';
+import { useUIStore } from '@core/Stores/ui';
 import BaseCard from '@jav/Components/BaseCard.vue';
 
 const emit = defineEmits(['filter-age']);

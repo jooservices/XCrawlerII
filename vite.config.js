@@ -46,7 +46,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'Modules/JAV/resources/css/dashboard-shared.css',
+                'Modules/Core/resources/css/dashboard-shared.css',
+                'Modules/Core/resources/js/app.js',
                 'Modules/JAV/resources/js/app.js',
             ],
             refresh: true,

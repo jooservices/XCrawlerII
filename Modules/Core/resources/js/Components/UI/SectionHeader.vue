@@ -13,12 +13,13 @@ defineProps({
 
 <template>
     <div class="ui-section-header">
-        <div>
+        <div class="ui-section-header-left">
             <h2 class="ui-page-title">{{ title }}</h2>
             <p v-if="subtitle" class="ui-page-subtitle">{{ subtitle }}</p>
         </div>
-        <div v-if="$slots.actions" class="u-flex gap-2">
-            <slot name="actions" />
+        <div v-if="$slots.actions || $slots.right" class="ui-section-header-right u-flex gap-2">
+            <slot name="actions"></slot>
+            <slot name="right"></slot>
         </div>
     </div>
 </template>

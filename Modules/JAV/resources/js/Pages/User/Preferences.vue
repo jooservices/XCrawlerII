@@ -1,9 +1,9 @@
 <script setup>
 import { computed } from 'vue';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
-import { useUIStore } from '@jav/Stores/ui';
-import PageShell from '@jav/Components/UI/PageShell.vue';
-import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import { useUIStore } from '@core/Stores/ui';
+import PageShell from '@core/Components/UI/PageShell.vue';
+import SectionHeader from '@core/Components/UI/SectionHeader.vue';
 
 const props = defineProps({
     preferences: Object,

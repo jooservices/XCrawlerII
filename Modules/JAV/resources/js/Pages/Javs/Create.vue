@@ -1,7 +1,7 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
-import PageShell from '@jav/Components/UI/PageShell.vue';
-import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import PageShell from '@core/Components/UI/PageShell.vue';
+import SectionHeader from '@core/Components/UI/SectionHeader.vue';
 </script>
 
 <template>

@@ -4,8 +4,8 @@ import { computed, ref, watch } from 'vue';
 import axios from 'axios';
 import VueApexCharts from 'vue3-apexcharts';
 import ActorInsightsPanel from '@jav/Components/ActorInsightsPanel.vue';
-import PageShell from '@jav/Components/UI/PageShell.vue';
-import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import PageShell from '@core/Components/UI/PageShell.vue';
+import SectionHeader from '@core/Components/UI/SectionHeader.vue';
 
 const props = defineProps({
     days: Number,

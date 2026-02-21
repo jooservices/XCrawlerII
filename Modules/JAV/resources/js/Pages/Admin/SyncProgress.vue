@@ -2,9 +2,9 @@
 import { Head } from '@inertiajs/vue3';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import axios from 'axios';
-import { useUIStore } from '@jav/Stores/ui';
-import PageShell from '@jav/Components/UI/PageShell.vue';
-import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import { useUIStore } from '@core/Stores/ui';
+import PageShell from '@core/Components/UI/PageShell.vue';
+import SectionHeader from '@core/Components/UI/SectionHeader.vue';
 import StatCard from '@jav/Components/UI/StatCard.vue';
 import DataTableShell from '@jav/Components/UI/DataTableShell.vue';
 

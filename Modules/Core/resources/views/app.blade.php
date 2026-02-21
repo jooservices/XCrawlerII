@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,13 +17,15 @@
     <!-- Scripts -->
     @routes
     @viteReactRefresh
-    @vite(['Modules/JAV/resources/js/app.js'])
+    @vite(['Modules/Core/resources/js/app.js'])
     @inertiaHead
 </head>
+
 <body class="app-dark dark">
     @inertia
 
     <!-- Bootstrap 5 Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

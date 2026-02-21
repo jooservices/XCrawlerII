@@ -3,8 +3,8 @@ import { Head } from '@inertiajs/vue3';
 import { computed, onMounted, ref } from 'vue';
 import axios from 'axios';
 import VueApexCharts from 'vue3-apexcharts';
-import PageShell from '@jav/Components/UI/PageShell.vue';
-import SectionHeader from '@jav/Components/UI/SectionHeader.vue';
+import PageShell from '@core/Components/UI/PageShell.vue';
+import SectionHeader from '@core/Components/UI/SectionHeader.vue';
 import StatCard from '@jav/Components/UI/StatCard.vue';
 
 const loading = ref(false);

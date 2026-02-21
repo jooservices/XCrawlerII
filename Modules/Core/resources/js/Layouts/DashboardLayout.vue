@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, computed, watch } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
-import { useUIStore } from '@jav/Stores/ui';
+import { useUIStore } from '@core/Stores/ui';
 import Navbar from './Partials/Navbar.vue';
 import Sidebar from './Partials/Sidebar.vue';
 import Footer from './Partials/Footer.vue';
@@ -119,9 +119,10 @@ onBeforeUnmount(() => {
 
                 <main id="mainContentColumn" class="ui-col-12 ui-col-lg-9 ui-col-xl-10 main-content">
                     <slot />
-                    <Footer />
                 </main>
             </div>
+            <!-- FOOTER MOVED OUTSIDE the .ui-row, spans full width -->
+            <Footer />
         </div>
     </div>
 </template>
