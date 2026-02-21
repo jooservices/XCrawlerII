@@ -314,7 +314,7 @@ watch(
             @remove-bio-filter="removeBioFilter"
         />
 
-        <div class="movie-masonry-grid">
+        <div class="actor-masonry-grid">
             <ActorCard
                 v-for="actor in visibleActors"
                 :key="actor.id"
@@ -343,29 +343,23 @@ watch(
 </template>
 
 <style scoped>
-.movie-masonry-grid {
+.actor-masonry-grid {
     column-count: 1;
     column-gap: 1rem;
 }
 
-.movie-masonry-grid > .ui-col,
-.movie-masonry-grid > .ui-col-12 {
+.actor-masonry-grid > .ui-col,
+.actor-masonry-grid > .ui-col-12 {
     break-inside: avoid;
     margin-bottom: 1rem;
 }
 
-.movie-masonry-grid > .ui-col-12 {
+.actor-masonry-grid > .ui-col-12 {
     column-span: all;
 }
 
 @media (min-width: 768px) {
-    .movie-masonry-grid {
-        column-count: 4;
-    }
-}
-
-@media (min-width: 1200px) {
-    .movie-masonry-grid {
+    .actor-masonry-grid {
         column-count: 4;
     }
 }
