@@ -18,7 +18,7 @@ class AnalyticsIngestServiceTest extends TestCase
         Redis::shouldReceive('set')
             ->once()
             ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
-            ->andReturn(true);
+            ->andReturn('OK');
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -46,7 +46,7 @@ class AnalyticsIngestServiceTest extends TestCase
         Redis::shouldReceive('set')
             ->once()
             ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
-            ->andReturn(true);
+            ->andReturn('OK');
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -74,7 +74,7 @@ class AnalyticsIngestServiceTest extends TestCase
         Redis::shouldReceive('set')
             ->once()
             ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
-            ->andReturn(true);
+            ->andReturn('OK');
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -103,7 +103,7 @@ class AnalyticsIngestServiceTest extends TestCase
         Redis::shouldReceive('set')
             ->once()
             ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
-            ->andReturn(true);
+            ->andReturn('OK');
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -131,7 +131,7 @@ class AnalyticsIngestServiceTest extends TestCase
         Redis::shouldReceive('set')
             ->once()
             ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
-            ->andReturn(false);
+            ->andReturn(null);
         Redis::shouldReceive('hincrby')->never();
 
         $service = new AnalyticsIngestService;
@@ -154,8 +154,118 @@ class AnalyticsIngestServiceTest extends TestCase
         Redis::shouldReceive('set')
             ->once()
             ->with("anl:evt:{$eventId}", '1', 'EX', $ttlSeconds, 'NX')
-            ->andReturn(true);
+            ->andReturn('OK');
         Redis::shouldReceive('hincrby')->twice();
+
+        $service = new AnalyticsIngestService;
+        $service->ingest([
+            'event_id' => $eventId,
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $entityId,
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => '2026-02-19T10:00:00Z',
+        ]);
+    }
+
+    public function test_ingest_uses_frozen_time_for_daily_counter_key(): void
+    {
+        \Illuminate\Support\Carbon::setTestNow('2026-03-15 08:30:00');
+
+        $eventId = $this->faker->uuid();
+        $entityId = $this->faker->uuid();
+        Redis::shouldReceive('set')->andReturn('OK');
+
+        Redis::shouldReceive('hincrby')
+            ->once()
+            ->with(\Mockery::type('string'), AnalyticsAction::View->value, 1);
+        Redis::shouldReceive('hincrby')
+            ->once()
+            ->with(\Mockery::type('string'), AnalyticsAction::View->value.':2026-03-15', 1);
+
+        $service = new AnalyticsIngestService;
+        $service->ingest([
+            'event_id' => $eventId,
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $entityId,
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => '2026-03-15T08:30:00Z',
+        ]);
+    }
+
+    public function test_ingest_accepts_boolean_true_from_redis_set(): void
+    {
+        $eventId = $this->faker->uuid();
+        $entityId = $this->faker->uuid();
+        // Some Redis clients return boolean true instead of string 'OK'
+        Redis::shouldReceive('set')->andReturn(true);
+        Redis::shouldReceive('hincrby')->twice();
+
+        $service = new AnalyticsIngestService;
+        $service->ingest([
+            'event_id' => $eventId,
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => AnalyticsEntityType::Movie->value,
+            'entity_id' => $entityId,
+            'action' => AnalyticsAction::View->value,
+            'occurred_at' => '2026-02-19T10:00:00Z',
+        ]);
+    }
+
+    /**
+     * @dataProvider entityActionCombinationProvider
+     */
+    public function test_ingest_all_entity_type_and_action_combinations(string $entityType, string $action): void
+    {
+        $eventId = $this->faker->uuid();
+        $entityId = $this->faker->uuid();
+        Redis::shouldReceive('set')->andReturn('OK');
+
+        $expectedKey = 'anl:counters:'.AnalyticsDomain::Jav->value.":{$entityType}:{$entityId}";
+        Redis::shouldReceive('hincrby')
+            ->once()
+            ->with($expectedKey, $action, 1);
+        Redis::shouldReceive('hincrby')
+            ->once()
+            ->with($expectedKey, $action.':2026-02-19', 1);
+
+        $service = new AnalyticsIngestService;
+        $service->ingest([
+            'event_id' => $eventId,
+            'domain' => AnalyticsDomain::Jav->value,
+            'entity_type' => $entityType,
+            'entity_id' => $entityId,
+            'action' => $action,
+            'occurred_at' => '2026-02-19T10:00:00Z',
+        ]);
+    }
+
+    public static function entityActionCombinationProvider(): array
+    {
+        $combos = [];
+        foreach (AnalyticsEntityType::cases() as $entityType) {
+            foreach (AnalyticsAction::cases() as $action) {
+                $combos["{$entityType->value}:{$action->value}"] = [$entityType->value, $action->value];
+            }
+        }
+
+        return $combos;
+    }
+
+    public function test_ingest_with_special_chars_in_entity_id(): void
+    {
+        $eventId = $this->faker->uuid();
+        $entityId = 'entity:with:colons/and/slashes';
+        Redis::shouldReceive('set')->andReturn('OK');
+
+        $expectedKey = 'anl:counters:'.AnalyticsDomain::Jav->value.':'.AnalyticsEntityType::Movie->value.":{$entityId}";
+        Redis::shouldReceive('hincrby')
+            ->once()
+            ->with($expectedKey, AnalyticsAction::View->value, 1);
+        Redis::shouldReceive('hincrby')
+            ->once()
+            ->with($expectedKey, AnalyticsAction::View->value.':2026-02-19', 1);
 
         $service = new AnalyticsIngestService;
         $service->ingest([

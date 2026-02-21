@@ -3,16 +3,13 @@
 namespace Modules\JAV\Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 use Modules\JAV\Models\Jav;
 use Modules\JAV\Models\Rating;
-use Tests\TestCase;
+use Modules\JAV\Tests\TestCase;
 
 class RatingControllerTest extends TestCase
 {
-    use RefreshDatabase;
-
     protected User $user;
 
     protected function setUp(): void
