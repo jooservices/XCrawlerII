@@ -15,11 +15,10 @@ class AnalyticsIngestServiceTest extends TestCase
     {
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
             ->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", 172800);
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -44,11 +43,10 @@ class AnalyticsIngestServiceTest extends TestCase
     {
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
             ->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", 172800);
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -73,11 +71,10 @@ class AnalyticsIngestServiceTest extends TestCase
     {
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
             ->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", 172800);
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -103,11 +100,10 @@ class AnalyticsIngestServiceTest extends TestCase
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
 
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
             ->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", 172800);
 
         Redis::shouldReceive('hincrby')
             ->once()
@@ -132,11 +128,10 @@ class AnalyticsIngestServiceTest extends TestCase
     {
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
             ->andReturn(false);
-        Redis::shouldReceive('expire')->never();
         Redis::shouldReceive('hincrby')->never();
 
         $service = new AnalyticsIngestService;
@@ -156,8 +151,10 @@ class AnalyticsIngestServiceTest extends TestCase
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
         $ttlSeconds = 48 * 60 * 60; // 172800
-        Redis::shouldReceive('setnx')->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", $ttlSeconds);
+        Redis::shouldReceive('set')
+            ->once()
+            ->with("anl:evt:{$eventId}", '1', 'EX', $ttlSeconds, 'NX')
+            ->andReturn(true);
         Redis::shouldReceive('hincrby')->twice();
 
         $service = new AnalyticsIngestService;
