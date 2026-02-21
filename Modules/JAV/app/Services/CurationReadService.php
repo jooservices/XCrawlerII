@@ -45,11 +45,11 @@ class CurationReadService
             ->where(function ($query): void {
                 $query->whereNull('ends_at')->orWhere('ends_at', '>=', now());
             })
-            ->latest()
             ->get(['item_id', 'uuid'])
+            ->unique('item_id')
             ->keyBy('item_id');
 
-        foreach ($movieList as $movie) {
+        foreach ($movieList as $key => $movie) {
             $movieId = $this->extractMovieId($movie);
             if ($movieId === null) {
                 continue;
@@ -62,6 +62,7 @@ class CurationReadService
             if (is_array($movie)) {
                 $movie['is_featured'] = $isFeatured;
                 $movie['featured_curation_uuid'] = $curationUuid;
+                $movieList->offsetSet($key, $movie);
 
                 continue;
             }
@@ -102,8 +103,8 @@ class CurationReadService
             ->where(function ($query): void {
                 $query->whereNull('ends_at')->orWhere('ends_at', '>=', now());
             })
-            ->latest()
             ->get(['item_id', 'uuid'])
+            ->unique('item_id')
             ->keyBy('item_id');
 
         foreach ($actorList as $key => $actor) {
@@ -160,8 +161,8 @@ class CurationReadService
             ->where(function ($query): void {
                 $query->whereNull('ends_at')->orWhere('ends_at', '>=', now());
             })
-            ->latest()
             ->get(['item_id', 'uuid'])
+            ->unique('item_id')
             ->keyBy('item_id');
 
         foreach ($tagList as $key => $tag) {

@@ -313,17 +313,25 @@ const toggleFeatured = async () => {
                 item_id: props.item.id,
             });
 
-            localFeaturedCurationUuid.value = response?.data?.data?.uuid || null;
-            uiStore.showToast('Movie marked as featured', 'success');
+            if (response?.data?.success) {
+                localFeaturedCurationUuid.value = response.data?.data?.uuid || null;
+                uiStore.showToast('Movie marked as featured', 'success');
+            } else {
+                throw new Error('Failed to mark as featured: invalid response');
+            }
         } else {
             const uuid = await findFeaturedCurationUuid();
             if (!uuid) {
                 throw new Error('Featured curation not found.');
             }
 
-            await axios.delete(route('api.curations.destroy', uuid));
-            localFeaturedCurationUuid.value = null;
-            uiStore.showToast('Movie removed from featured', 'success');
+            const response = await axios.delete(route('api.curations.destroy', uuid));
+            if (response?.data?.success) {
+                localFeaturedCurationUuid.value = null;
+                uiStore.showToast('Movie removed from featured', 'success');
+            } else {
+                throw new Error('Failed to remove from featured: invalid response');
+            }
         }
     } catch (error) {
         console.error(error);

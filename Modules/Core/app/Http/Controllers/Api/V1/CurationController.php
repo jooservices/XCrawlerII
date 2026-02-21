@@ -34,6 +34,13 @@ class CurationController extends Controller
                 })->where(function ($activeQuery): void {
                     $activeQuery->whereNull('ends_at')->orWhere('ends_at', '>=', now());
                 });
+            } else {
+                $query->where(function ($inactiveQuery): void {
+                    $inactiveQuery->whereNotNull('starts_at')->where('starts_at', '>', now())
+                        ->orWhere(function ($expiredQuery): void {
+                            $expiredQuery->whereNotNull('ends_at')->where('ends_at', '<', now());
+                        });
+                });
             }
         }
 
@@ -50,20 +57,22 @@ class CurationController extends Controller
         $item = $modelClass::query()->findOrFail((int) $validated['item_id']);
         $itemId = (int) $item->getKey();
 
-        $curation = CuratedItem::query()->firstOrCreate(
-            [
-                'curation_type' => (string) $validated['curation_type'],
-                'item_type' => (string) $validated['item_type'],
-                'item_id' => $itemId,
-            ],
-            [
-                'position' => $validated['position'] ?? null,
-                'starts_at' => $validated['starts_at'] ?? null,
-                'ends_at' => $validated['ends_at'] ?? null,
-                'meta' => $validated['meta'] ?? null,
-                'user_id' => (int) $request->user()->id,
-            ]
-        );
+        $curation = \Illuminate\Support\Facades\DB::transaction(function () use ($validated, $itemId, $request) {
+            return CuratedItem::query()->firstOrCreate(
+                [
+                    'curation_type' => (string) $validated['curation_type'],
+                    'item_type' => (string) $validated['item_type'],
+                    'item_id' => $itemId,
+                ],
+                [
+                    'position' => $validated['position'] ?? null,
+                    'starts_at' => $validated['starts_at'] ?? null,
+                    'ends_at' => $validated['ends_at'] ?? null,
+                    'meta' => $validated['meta'] ?? null,
+                    'user_id' => (int) $request->user()->id,
+                ]
+            );
+        });
 
         return response()->json([
             'success' => true,
