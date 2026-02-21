@@ -21,11 +21,10 @@ class AnalyticsIngestEndpointTest extends TestCase
     {
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->withArgs(fn ($key) => str_starts_with($key, 'anl:evt:'))
+            ->withArgs(fn ($key, $v, $ex, $s, $nx) => str_starts_with($key, 'anl:evt:') && $nx === 'NX')
             ->andReturn(true);
-        Redis::shouldReceive('expire')->once();
 
         Redis::shouldReceive('hincrby')->twice();
 
@@ -49,8 +48,7 @@ class AnalyticsIngestEndpointTest extends TestCase
     {
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')->andReturn(true);
-        Redis::shouldReceive('expire')->once();
+        Redis::shouldReceive('set')->andReturn(true);
 
         // Expect key: anl:counters:jav:{entityType}:{uuid}
         $expectedKey = 'anl:counters:'.AnalyticsDomain::Jav->value.":{$entityType}:{$entityId}";
@@ -89,11 +87,10 @@ class AnalyticsIngestEndpointTest extends TestCase
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
         // First call: New event
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
             ->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", 172800);
 
         Redis::shouldReceive('hincrby')->twice();
 
@@ -109,12 +106,11 @@ class AnalyticsIngestEndpointTest extends TestCase
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
 
         // Second call: Duplicate event
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
             ->andReturn(false); // Key exists
 
-        Redis::shouldReceive('expire')->never();
         Redis::shouldReceive('hincrby')->never(); // No write
 
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
@@ -122,7 +118,7 @@ class AnalyticsIngestEndpointTest extends TestCase
 
     public function test_redis_connection_failure_handled_gracefully(): void
     {
-        Redis::shouldReceive('setnx')->andThrow(new \Exception('Redis connection refused'));
+        Redis::shouldReceive('set')->andThrow(new \Exception('Redis connection refused'));
 
         $payload = [
             'event_id' => $this->faker->uuid(),
@@ -157,8 +153,7 @@ class AnalyticsIngestEndpointTest extends TestCase
         ];
 
         // Mock Redis for success path
-        Redis::shouldReceive('setnx')->andReturn(true);
-        Redis::shouldReceive('expire')->andReturn(true);
+        Redis::shouldReceive('set')->andReturn(true);
         Redis::shouldReceive('hincrby')->andReturn(1);
 
         // 1st request: OK
@@ -210,12 +205,12 @@ class AnalyticsIngestEndpointTest extends TestCase
 
     public function test_value_one_and_hundred_accepted(): void
     {
+        Redis::shouldReceive('set')->andReturn(true);
+        Redis::shouldReceive('hincrby')->times(4);
+
         foreach ([1, 100] as $value) {
             $eventId = $this->faker->uuid();
             $entityId = $this->faker->uuid();
-            Redis::shouldReceive('setnx')->andReturn(true);
-            Redis::shouldReceive('expire')->once();
-            Redis::shouldReceive('hincrby')->twice();
 
             $payload = [
                 'event_id' => $eventId,
@@ -246,20 +241,18 @@ class AnalyticsIngestEndpointTest extends TestCase
             'occurred_at' => '2026-02-19T10:00:00Z',
         ];
 
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
             ->andReturn(true);
-        Redis::shouldReceive('expire')->once()->with("anl:evt:{$eventId}", 172800);
         Redis::shouldReceive('hincrby')->twice();
 
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
 
-        Redis::shouldReceive('setnx')
+        Redis::shouldReceive('set')
             ->once()
-            ->with("anl:evt:{$eventId}", 1)
+            ->with("anl:evt:{$eventId}", '1', 'EX', 172800, 'NX')
             ->andReturn(false);
-        Redis::shouldReceive('expire')->never();
         Redis::shouldReceive('hincrby')->never();
 
         $this->postJson(route('api.analytics.events.store'), $payload)->assertStatus(202);
@@ -270,8 +263,7 @@ class AnalyticsIngestEndpointTest extends TestCase
         $this->assertGuest();
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')->andReturn(true);
-        Redis::shouldReceive('expire')->once();
+        Redis::shouldReceive('set')->andReturn(true);
         Redis::shouldReceive('hincrby')->twice();
 
         $payload = [
@@ -292,8 +284,7 @@ class AnalyticsIngestEndpointTest extends TestCase
         $this->actingAs($user);
         $eventId = $this->faker->uuid();
         $entityId = $this->faker->uuid();
-        Redis::shouldReceive('setnx')->andReturn(true);
-        Redis::shouldReceive('expire')->once();
+        Redis::shouldReceive('set')->andReturn(true);
         Redis::shouldReceive('hincrby')->twice();
 
         $payload = [
