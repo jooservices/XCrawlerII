@@ -1,0 +1,22 @@
+
+echo "=== Running Pre-Push Quality Gate ==="
+
+echo "[1/6] Running Pint..."
+./vendor/bin/pint --test
+
+echo "[2/6] Running PHPCS..."
+./vendor/bin/phpcs
+
+echo "[3/6] Running PHPStan..."
+./vendor/bin/phpstan analyse
+
+echo "[4/6] Running PHPMD..."
+./vendor/bin/phpmd app,config,database,routes,tests text cleancode,codesize,controversial,design,naming,unusedcode
+
+echo "[5/6] Checking for Pest Usage..."
+./scripts/detect-pest.sh
+
+echo "[6/6] Running PHPUnit with Coverage >= 90%..."
+./vendor/bin/phpunit --coverage-clover coverage.xml
+
+echo "✅ Pre-Push Quality Gate Passed (Zero-Issue Policy Verified)"

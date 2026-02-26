@@ -1,0 +1,72 @@
+# Laravel
+/vendor
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/framework/
+/storage/logs/
+/storage/pail/
+/storage/phpstan
+/storage/phpunit/
+/bootstrap/cache/*.php
+
+# Build & tool output
+phpmd_output.txt
+phpstan_errors.txt
+.phpunit.result.cache
+/.phpunit.cache
+/coverage/
+.php-cs-fixer.cache
+
+# Secrets & auth
+.env
+.env.*
+!.env.example
+/auth.json
+
+# Modules (deps & build)
+/Modules/*/node_modules
+/Modules/*/public/build
+/Modules/*/public/hot
+/Modules/*/vendor
+
+# Editor / IDE
+/.idea
+/.vscode
+/.fleet
+/.zed
+/.nova
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm
+.yarn-integrity
+.pnpm-debug.log*
+
+# Local / runtime
+Homestead.json
+Homestead.yaml
+/tmp/
+/temp/
+/logs/
+/public/logs/
+
+# SQLite (local DBs)
+*.sqlite
+*.sqlite-journal
+*.db
+
+# AI Tools
+.gemini/
+.cursor/
+

@@ -1,0 +1,82 @@
+# AI context ignore — exclude from indexing/context to reduce noise and tokens.
+# Keep in sync with .cursorignore; this file is the source of truth for AI tooling.
+
+# Version control
+.git/
+
+# Dependencies
+/vendor/
+/node_modules/
+/Modules/*/vendor
+/Modules/*/node_modules
+
+# Lock files (noise for general coding; only needed for dependency debugging)
+composer.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs & assets
+/public/build/
+/public/hot/
+/public/storage/
+/Modules/*/public/build
+/Modules/*/public/hot
+*.min.js
+*.min.css
+*.map
+
+# Framework & storage
+/bootstrap/cache/
+/storage/
+/storage/phpstan
+*.log
+
+# Testing & quality (generated)
+.phpunit.result.cache
+/.phpunit.cache/
+/coverage/
+phpstan_errors.txt
+phpmd_output.txt
+.php-cs-fixer.cache
+
+# IDE & editor
+.idea/
+.vscode/
+.fleet/
+.zed/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+!.env.example
+/auth.json
+
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm
+.yarn-integrity
+
+# Temp & local
+/tmp/
+/temp/
+*.sqlite
+*.sqlite-journal
+*.db
+
+# Large/generated binaries (optional; uncomment if you have big assets)
+# *.zip
+# *.tar.gz
+# *.pdf
+
+# AI Tools
+.gemini/
+.cursor/
+
