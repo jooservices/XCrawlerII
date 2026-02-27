@@ -57,11 +57,6 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
 
-        $this->app->singleton(HttpLogSanitizer::class, function (): HttpLogSanitizer {
-            return new HttpLogSanitizer(
-                previewBytes: (int) config('core.logging.preview_bytes', 8192),
-            );
-        });
 
         $this->app->singleton(MemoryCache::class, fn (): MemoryCache => new MemoryCache);
 
