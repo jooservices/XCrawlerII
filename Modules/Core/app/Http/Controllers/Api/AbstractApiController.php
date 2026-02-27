@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Core\app\Http\Controllers\Api;
+namespace Modules\Core\Http\Controllers\Api;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
