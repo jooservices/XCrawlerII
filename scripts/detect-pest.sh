@@ -5,8 +5,14 @@ set -e
 
 echo "Running Pest usage detection..."
 
-# Check composer.json for pestphp/pest
-if rg -n 'pestphp/pest' composer.json; then
+# Check composer dependencies for pestphp/pest only (not plugin keys in config)
+if php -r '
+$composer = json_decode(file_get_contents("composer.json"), true);
+$require = array_keys($composer["require"] ?? []);
+$requireDev = array_keys($composer["require-dev"] ?? []);
+$packages = array_merge($require, $requireDev);
+exit(in_array("pestphp/pest", $packages, true) ? 0 : 1);
+'; then
     echo "ERROR: pestphp/pest dependency found in composer.json under strictly PHPUnit-only policy."
     exit 1
 fi
