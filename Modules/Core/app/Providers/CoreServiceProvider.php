@@ -3,13 +3,21 @@
 namespace Modules\Core\Providers;
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Log as LogFacade;
 use Illuminate\Support\ServiceProvider;
 use JOOservices\Client\Cache\MemoryCache;
 use Modules\Core\Console\Commands\ServicesHealthCheck;
+use Modules\Core\Models\Log as LogModel;
+use Modules\Core\Repositories\LogRepository;
 use Modules\Core\Services\Client\Client;
+use Modules\Core\Services\LogService;
 use Modules\Core\Services\Client\Contracts\ClientContract;
 use Modules\Core\Services\Client\Logging\HttpLogSanitizer;
 use Modules\Core\Services\Client\Logging\MongoHttpLogWriter;
+use Modules\Core\Support\Logging\LogMongoFormatter;
+use MongoDB\Driver\Manager;
+use Monolog\Handler\MongoDBHandler;
+use Monolog\Level;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -33,6 +41,27 @@ class CoreServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
+        $this->registerMongoLogDriver();
+    }
+
+    private function registerMongoLogDriver(): void
+    {
+        LogFacade::extend('mongodb', function ($app, array $config) {
+            $dsn = (string) config('database.connections.mongodb.dsn', env('MONGO_URI', 'mongodb://127.0.0.1:27017'));
+            $database = (string) config('database.connections.mongodb.database', env('MONGO_DB', 'xcrawler'));
+            $collection = LogModel::COLLECTION;
+            $level = $config['level'] ?? 'debug';
+            $level = is_string($level) ? Level::fromName($level) : $level;
+
+            $manager = new Manager($dsn);
+            $handler = new MongoDBHandler($manager, $database, $collection, $level, true);
+            $handler->setFormatter($app->make(LogMongoFormatter::class));
+
+            $logger = new \Monolog\Logger($config['name'] ?? 'mongodb');
+            $logger->pushHandler($handler);
+
+            return $logger;
+        });
     }
 
     /**
@@ -57,6 +86,10 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(MemoryCache::class, fn (): MemoryCache => new MemoryCache);
+        $this->app->singleton(LogMongoFormatter::class, fn (): LogMongoFormatter => new LogMongoFormatter);
+
+        $this->app->singleton(LogRepository::class);
+        $this->app->singleton(LogService::class);
 
         $this->app->bind(ClientContract::class, function ($app): ClientContract {
             $cacheStore = (string) env('CACHE_STORE', 'database');

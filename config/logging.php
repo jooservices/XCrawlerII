@@ -127,6 +127,11 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'level' => env('LOG_LEVEL', 'debug'),
+        ],
+
     ],
 
 ];

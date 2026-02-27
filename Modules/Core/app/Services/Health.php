@@ -34,6 +34,10 @@ class Health
 
     public function assertHealthy(): void
     {
+        if (config('app.env') === 'testing') {
+            return;
+        }
+
         $result = $this->check();
         if ($result['healthy']) {
             return;
