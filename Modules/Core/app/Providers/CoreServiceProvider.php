@@ -2,26 +2,25 @@
 
 namespace Modules\Core\Providers;
 
+use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Log as LogFacade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use JOOservices\Client\Cache\MemoryCache;
 use Modules\Core\Console\Commands\ServicesHealthCheck;
-use Modules\Core\Models\Log as LogModel;
+use Modules\Core\Models\MongoDb\Log as LogModel;
 use Modules\Core\Repositories\LogRepository;
 use Modules\Core\Services\Client\Client;
-use Modules\Core\Services\LogService;
 use Modules\Core\Services\Client\Contracts\ClientContract;
 use Modules\Core\Services\Client\Logging\HttpLogSanitizer;
-use Modules\Core\Services\Client\Logging\MongoHttpLogWriter;
-use Modules\Core\Support\Logging\LogMongoFormatter;
-use MongoDB\Driver\Manager;
-use Monolog\Handler\MongoDBHandler;
-use Monolog\Level;
+use Modules\Core\Services\LogService;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
+/**
+ * @SuppressWarnings("PHPMD.CouplingBetweenObjects")
+ */
 class CoreServiceProvider extends ServiceProvider
 {
     use PathNamespace;
@@ -41,26 +40,12 @@ class CoreServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(module_path($this->name, 'database/migrations'));
-        $this->registerMongoLogDriver();
-    }
-
-    private function registerMongoLogDriver(): void
-    {
-        LogFacade::extend('mongodb', function ($app, array $config) {
-            $dsn = (string) config('database.connections.mongodb.dsn', env('MONGO_URI', 'mongodb://127.0.0.1:27017'));
-            $database = (string) config('database.connections.mongodb.database', env('MONGO_DB', 'xcrawler'));
-            $collection = LogModel::COLLECTION;
-            $level = $config['level'] ?? 'debug';
-            $level = is_string($level) ? Level::fromName($level) : $level;
-
-            $manager = new Manager($dsn);
-            $handler = new MongoDBHandler($manager, $database, $collection, $level, true);
-            $handler->setFormatter($app->make(LogMongoFormatter::class));
-
-            $logger = new \Monolog\Logger($config['name'] ?? 'mongodb');
-            $logger->pushHandler($handler);
-
-            return $logger;
+        Event::listen(MessageLogged::class, function (MessageLogged $event): void {
+            try {
+                LogModel::query()->create(LogModel::fromMessageLogged($event));
+            } catch (\Throwable) {
+                // Avoid recursive logging loops if persistence fails.
+            }
         });
     }
 
@@ -74,19 +59,11 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->app->singleton(HttpLogSanitizer::class, function (): HttpLogSanitizer {
             return new HttpLogSanitizer(
-                previewBytes: (int) env('XCRAWLER_LOG_PREVIEW_BYTES', 8192),
-            );
-        });
-
-        $this->app->singleton(MongoHttpLogWriter::class, function (): MongoHttpLogWriter {
-            return new MongoHttpLogWriter(
-                uri: (string) env('MONGO_URI', 'mongodb://127.0.0.1:27017'),
-                database: (string) env('MONGO_DB', 'xcrawler'),
+                previewBytes: (int) config('core.logging.preview_bytes', 8192),
             );
         });
 
         $this->app->singleton(MemoryCache::class, fn (): MemoryCache => new MemoryCache);
-        $this->app->singleton(LogMongoFormatter::class, fn (): LogMongoFormatter => new LogMongoFormatter);
 
         $this->app->singleton(LogRepository::class);
         $this->app->singleton(LogService::class);
@@ -96,16 +73,15 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->alias(\Modules\Core\Services\ConfigService::class, 'core.config');
 
         $this->app->bind(ClientContract::class, function ($app): ClientContract {
-            $cacheStore = (string) env('CACHE_STORE', 'database');
+            $cacheStore = (string) config('core.client.cache_store', (string) config('cache.default', 'database'));
 
             return new Client(
                 sanitizer: $app->make(HttpLogSanitizer::class),
-                logWriter: $app->make(MongoHttpLogWriter::class),
                 cache: $app->make(MemoryCache::class),
-                timeoutSec: (int) env('XCRAWLER_CLIENT_TIMEOUT', 20),
-                connectTimeoutSec: (int) env('XCRAWLER_CLIENT_CONNECT_TIMEOUT', 8),
-                defaultMaxAttempts: (int) env('XCRAWLER_CLIENT_MAX_ATTEMPTS', 3),
-                defaultCacheTtlSec: (int) env('XCRAWLER_CLIENT_CACHE_TTL', 300),
+                timeoutSec: (int) config('core.client.timeout_sec', 20),
+                connectTimeoutSec: (int) config('core.client.connect_timeout_sec', 8),
+                defaultMaxAttempts: (int) config('core.client.max_attempts', 3),
+                defaultCacheTtlSec: (int) config('core.client.cache_ttl_sec', 300),
                 cacheStore: $cacheStore,
             );
         });
@@ -142,10 +118,13 @@ class CoreServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, $this->nameLower);
             $this->loadJsonTranslationsFrom($langPath);
-        } else {
-            $this->loadTranslationsFrom(module_path($this->name, 'lang'), $this->nameLower);
-            $this->loadJsonTranslationsFrom(module_path($this->name, 'lang'));
+
+            return;
         }
+
+        $moduleLangPath = module_path($this->name, 'lang');
+        $this->loadTranslationsFrom($moduleLangPath, $this->nameLower);
+        $this->loadJsonTranslationsFrom($moduleLangPath);
     }
 
     /**
@@ -175,7 +154,7 @@ class CoreServiceProvider extends ServiceProvider
                     $key = ($config === 'config.php') ? $this->nameLower : implode('.', $normalized);
 
                     $this->publishes([$file->getPathname() => config_path($config)], 'config');
-                    $this->merge_config_from($file->getPathname(), $key);
+                    $this->mergeModuleConfigFrom($file->getPathname(), $key);
                 }
             }
         }
@@ -184,7 +163,7 @@ class CoreServiceProvider extends ServiceProvider
     /**
      * Merge config from the given path recursively.
      */
-    protected function merge_config_from(string $path, string $key): void
+    protected function mergeModuleConfigFrom(string $path, string $key): void
     {
         $existing = config($key, []);
         $module_config = require $path;

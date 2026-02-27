@@ -2,41 +2,60 @@
 
 declare(strict_types=1);
 
-namespace Modules\Core\Models;
+namespace Modules\Core\Models\MongoDb;
 
-use Modules\Core\Database\Factories\ClientLogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\Core\Database\Factories\ClientLogFactory;
+use Modules\Core\Models\MongoDb;
 use MongoDB\BSON\UTCDateTime;
-use MongoDB\Laravel\Eloquent\Model;
 
 /**
  * @property array<string, mixed> $attributes
  */
-final class ClientLog extends Model
+final class ClientLog extends MongoDb
 {
     use HasFactory;
 
-    public const COLLECTION = 'client_logs';
-
-    protected $connection = 'mongodb';
+    public const string COLLECTION = 'client_logs';
 
     protected $table = self::COLLECTION;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'ts',
+        'site',
+        'method',
+        'path',
+        'url',
+        'status',
+        'ok',
+        'duration_ms',
+        'attempt',
+        'retries',
+        'max_attempts',
+        'request',
+        'response',
+        'cache',
+        'error',
+        'correlation_id',
+        'trace_id',
+        'tags',
+        'task_id',
+        'job_id',
+    ];
 
     /**
-     * @param array<string, mixed> $payload
+     * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
     public static function fromHttpLifecycle(array $payload): array
     {
         $ts = $payload['ts'] ?? null;
+        $timestamp = new UTCDateTime;
         if ($ts instanceof UTCDateTime) {
             $timestamp = $ts;
-        } elseif ($ts instanceof \DateTimeInterface) {
+        }
+        if ($ts instanceof \DateTimeInterface) {
             $timestamp = new UTCDateTime($ts);
-        } else {
-            $timestamp = new UTCDateTime();
         }
 
         $attempt = max(1, (int) ($payload['attempt'] ?? 1));

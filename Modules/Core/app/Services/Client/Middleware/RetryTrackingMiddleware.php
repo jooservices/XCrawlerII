@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 
 final class RetryTrackingMiddleware implements MiddlewareInterface
 {
-    public const CONTEXT_KEY = '_xcrawler_context';
+    public const string CONTEXT_KEY = '_xcrawler_context';
 
     public function __invoke(RequestInterface $request, array $options, Closure $next): ResponseInterface
     {

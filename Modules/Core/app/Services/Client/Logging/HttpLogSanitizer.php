@@ -12,7 +12,7 @@ final class HttpLogSanitizer
     /**
      * @var array<string, true>
      */
-    private const SENSITIVE_HEADERS = [
+    private const array SENSITIVE_HEADERS = [
         'authorization' => true,
         'cookie' => true,
         'set-cookie' => true,
@@ -25,7 +25,7 @@ final class HttpLogSanitizer
     /**
      * @var array<string, true>
      */
-    private const SENSITIVE_BODY_KEYS = [
+    private const array SENSITIVE_BODY_KEYS = [
         'token' => true,
         'access_token' => true,
         'refresh_token' => true,
@@ -39,11 +39,10 @@ final class HttpLogSanitizer
 
     public function __construct(
         private readonly int $previewBytes = 8192,
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, array<int, string>|string> $headers
+     * @param  array<string, array<int, string>|string>  $headers
      * @return array<string, string>
      */
     public function sanitizeHeaders(array $headers): array
@@ -56,6 +55,7 @@ final class HttpLogSanitizer
 
             if (isset(self::SENSITIVE_HEADERS[$normalizedName])) {
                 $result[$normalizedName] = '[REDACTED]';
+
                 continue;
             }
 
@@ -66,7 +66,7 @@ final class HttpLogSanitizer
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      * @return array<string, mixed>
      */
     public function sanitizeRequestBody(array $options): array
@@ -80,11 +80,13 @@ final class HttpLogSanitizer
 
         if (array_key_exists('json', $options)) {
             $sanitized = $this->sanitizeBodyValue($options['json']);
+
             return $this->snapshotFromString($this->encodeJson($sanitized), true);
         }
 
         if (array_key_exists('form_params', $options)) {
             $sanitized = $this->sanitizeBodyValue($options['form_params']);
+
             return $this->snapshotFromString($this->encodeJson($sanitized), true);
         }
 
@@ -116,10 +118,6 @@ final class HttpLogSanitizer
         return $this->snapshotFromStream($response->getBody(), false);
     }
 
-    /**
-     * @param mixed $value
-     * @return mixed
-     */
     private function sanitizeBodyValue(mixed $value): mixed
     {
         if (is_array($value)) {
@@ -128,6 +126,7 @@ final class HttpLogSanitizer
                 $normalizedKey = strtolower((string) $key);
                 if (isset(self::SENSITIVE_BODY_KEYS[$normalizedKey])) {
                     $out[$key] = '[REDACTED]';
+
                     continue;
                 }
                 $out[$key] = $this->sanitizeBodyValue($item);
@@ -204,7 +203,7 @@ final class HttpLogSanitizer
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     private function resolveRequestContentType(array $options): string
     {
@@ -248,9 +247,6 @@ final class HttpLogSanitizer
         return false;
     }
 
-    /**
-     * @param mixed $value
-     */
     private function encodeJson(mixed $value): string
     {
         $encoded = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Modules\Core\Models;
+namespace Modules\Core\Models\MongoDb;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Log\Events\MessageLogged;
 use Modules\Core\Database\Factories\LogFactory;
+use Modules\Core\Models\MongoDb;
 use MongoDB\BSON\UTCDateTime;
-use MongoDB\Laravel\Eloquent\Model;
 use Monolog\Level;
 use Monolog\LogRecord;
 
@@ -18,21 +18,26 @@ use Monolog\LogRecord;
  *
  * @property array<string, mixed> $attributes
  */
-final class Log extends Model
+final class Log extends MongoDb
 {
     use HasFactory;
 
-    public const COLLECTION = 'logs';
+    public const string COLLECTION = 'logs';
 
-    public const SCHEMA_VERSION = 1;
-
-    protected $connection = 'mongodb';
+    public const int SCHEMA_VERSION = 1;
 
     protected $table = self::COLLECTION;
 
-    public $timestamps = false;
-
-    protected $guarded = [];
+    protected $fillable = [
+        'message',
+        'level',
+        'level_name',
+        'channel',
+        'context',
+        'extra',
+        'datetime',
+        'schema_version',
+    ];
 
     /**
      * Build a MongoDB document from a Monolog log record (06-DB-004: includes created_at, updated_at, schema_version).
@@ -41,14 +46,9 @@ final class Log extends Model
      */
     public static function fromMonologRecord(LogRecord $record): array
     {
-        $datetime = $record->datetime;
-        $ts = $datetime instanceof \DateTimeInterface
-            ? new UTCDateTime($datetime)
-            : new UTCDateTime;
-
-        $level = $record->level;
-        $levelValue = $level instanceof Level ? $level->value : (int) $level;
-        $levelName = $level instanceof Level ? $level->getName() : (string) $level;
+        $ts = new UTCDateTime($record->datetime);
+        $levelValue = $record->level->value;
+        $levelName = $record->level->getName();
 
         return [
             'message' => $record->message,
@@ -59,8 +59,6 @@ final class Log extends Model
             'extra' => self::toMongoSafeArray($record->extra),
             'datetime' => $ts,
             'schema_version' => self::SCHEMA_VERSION,
-            'created_at' => $ts,
-            'updated_at' => $ts,
         ];
     }
 
@@ -71,11 +69,11 @@ final class Log extends Model
      */
     public static function fromMessageLogged(MessageLogged $event): array
     {
-        $ts = new UTCDateTime();
-        $levelName = strtoupper((string) $event->level);
+        $ts = new UTCDateTime;
+        $levelName = strtoupper($event->level);
 
         return [
-            'message' => (string) $event->message,
+            'message' => $event->message,
             'level' => self::levelValueFromName($levelName),
             'level_name' => $levelName,
             'channel' => 'app',
@@ -83,8 +81,6 @@ final class Log extends Model
             'extra' => [],
             'datetime' => $ts,
             'schema_version' => self::SCHEMA_VERSION,
-            'created_at' => $ts,
-            'updated_at' => $ts,
         ];
     }
 

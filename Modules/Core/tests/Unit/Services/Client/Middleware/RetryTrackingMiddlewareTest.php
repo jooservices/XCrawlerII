@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Core\Tests\Unit\Services\Client\Middleware;
 
+use ArrayObject;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Modules\Core\Services\Client\Middleware\RetryTrackingMiddleware;
@@ -16,8 +17,8 @@ final class RetryTrackingMiddlewareTest extends TestCase
     public function test_increments_attempt_per_invocation(): void
     {
         $faker = fake();
-        $middleware = new RetryTrackingMiddleware();
-        $context = new \ArrayObject(['attempt' => 0, 'retries' => 0, 'marker' => $faker->uuid()]);
+        $middleware = new RetryTrackingMiddleware;
+        $context = new ArrayObject(['attempt' => 0, 'retries' => 0, 'marker' => $faker->uuid()]);
         $request = new Request('GET', 'https://'.$faker->domainName().'/items');
 
         $next = function (RequestInterface $req, array $opts): ResponseInterface {
@@ -33,7 +34,7 @@ final class RetryTrackingMiddlewareTest extends TestCase
 
     public function test_does_not_fail_without_context(): void
     {
-        $middleware = new RetryTrackingMiddleware();
+        $middleware = new RetryTrackingMiddleware;
         $request = new Request('GET', 'https://example.test');
 
         $response = $middleware(

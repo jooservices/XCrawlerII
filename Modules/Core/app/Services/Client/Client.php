@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Modules\Core\Services\Client;
 
+use ArrayObject;
+use DateTimeImmutable;
 use JOOservices\Client\Client\ClientBuilder;
 use JOOservices\Client\Contracts\HttpClientInterface;
 use JOOservices\Client\Resilience\RetryConfig;
+use Modules\Core\Models\MongoDb\ClientLog;
 use Modules\Core\Services\Client\Contracts\ClientContract;
 use Modules\Core\Services\Client\Logging\HttpLogSanitizer;
-use Modules\Core\Services\Client\Logging\MongoHttpLogWriter;
 use Modules\Core\Services\Client\Middleware\CacheMetadataMiddleware;
 use Modules\Core\Services\Client\Middleware\RetryTrackingMiddleware;
 use Psr\Http\Message\ResponseInterface;
@@ -20,22 +22,20 @@ final class Client implements ClientContract
 {
     public function __construct(
         private readonly HttpLogSanitizer $sanitizer,
-        private readonly MongoHttpLogWriter $logWriter,
         private readonly CacheInterface $cache,
         private readonly int $timeoutSec = 20,
         private readonly int $connectTimeoutSec = 8,
         private readonly int $defaultMaxAttempts = 3,
         private readonly int $defaultCacheTtlSec = 300,
         private readonly string $cacheStore = 'default',
-    ) {
-    }
+    ) {}
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function request(string $method, string $url, array $options = []): ResponseInterface
     {
-        $context = new \ArrayObject([
+        $context = new ArrayObject([
             'attempt' => 0,
             'retries' => 0,
             'cache' => [
@@ -84,7 +84,7 @@ final class Client implements ClientContract
             ->withTimeout($this->timeoutSec)
             ->withConnectTimeout($this->connectTimeoutSec)
             ->withRetry(new RetryConfig(maxAttempts: $maxAttempts))
-            ->withMiddleware(new RetryTrackingMiddleware(), 'retry_tracking')
+            ->withMiddleware(new RetryTrackingMiddleware, 'retry_tracking')
             ->withMiddleware(
                 new CacheMetadataMiddleware($this->cache, $this->defaultCacheTtlSec, $this->cacheStore),
                 'cache_meta'
@@ -94,13 +94,13 @@ final class Client implements ClientContract
     }
 
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     private function writeLog(
         string $method,
         string $url,
         array $options,
-        \ArrayObject $context,
+        ArrayObject $context,
         ?ResponseInterface $response,
         ?Throwable $error,
         int $durationMs,
@@ -128,7 +128,7 @@ final class Client implements ClientContract
         ];
 
         $payload = [
-            'ts' => new \DateTimeImmutable(),
+            'ts' => new DateTimeImmutable,
             'site' => $site,
             'method' => $method,
             'path' => $path,
@@ -166,7 +166,7 @@ final class Client implements ClientContract
 
         $payload['retries'] = $retries;
 
-        $this->logWriter->write($payload);
+        ClientLog::create(ClientLog::fromHttpLifecycle($payload));
     }
 
     /**
