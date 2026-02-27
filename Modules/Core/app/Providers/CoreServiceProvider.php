@@ -4,6 +4,11 @@ namespace Modules\Core\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use JOOservices\Client\Cache\MemoryCache;
+use Modules\Core\Services\Client\Client;
+use Modules\Core\Services\Client\Contracts\ClientContract;
+use Modules\Core\Services\Client\Logging\HttpLogSanitizer;
+use Modules\Core\Services\Client\Logging\MongoHttpLogWriter;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -36,6 +41,36 @@ class CoreServiceProvider extends ServiceProvider
     {
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
+
+        $this->app->singleton(HttpLogSanitizer::class, function (): HttpLogSanitizer {
+            return new HttpLogSanitizer(
+                previewBytes: (int) env('XCRAWLER_LOG_PREVIEW_BYTES', 8192),
+            );
+        });
+
+        $this->app->singleton(MongoHttpLogWriter::class, function (): MongoHttpLogWriter {
+            return new MongoHttpLogWriter(
+                uri: (string) env('MONGO_URI', 'mongodb://127.0.0.1:27017'),
+                database: (string) env('MONGO_DB', 'xcrawler'),
+            );
+        });
+
+        $this->app->singleton(MemoryCache::class, fn (): MemoryCache => new MemoryCache());
+
+        $this->app->bind(ClientContract::class, function ($app): ClientContract {
+            $cacheStore = (string) env('CACHE_STORE', 'database');
+
+            return new Client(
+                sanitizer: $app->make(HttpLogSanitizer::class),
+                logWriter: $app->make(MongoHttpLogWriter::class),
+                cache: $app->make(MemoryCache::class),
+                timeoutSec: (int) env('XCRAWLER_CLIENT_TIMEOUT', 20),
+                connectTimeoutSec: (int) env('XCRAWLER_CLIENT_CONNECT_TIMEOUT', 8),
+                defaultMaxAttempts: (int) env('XCRAWLER_CLIENT_MAX_ATTEMPTS', 3),
+                defaultCacheTtlSec: (int) env('XCRAWLER_CLIENT_CACHE_TTL', 300),
+                cacheStore: $cacheStore,
+            );
+        });
     }
 
     /**
