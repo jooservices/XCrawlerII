@@ -17,6 +17,10 @@ echo "[5/6] Checking for Pest Usage..."
 ./scripts/detect-pest.sh
 
 echo "[6/6] Running PHPUnit with Coverage >= 90%..."
+if [ ! -f public/build/manifest.json ]; then
+  echo "Vite manifest not found. Building frontend assets..."
+  npm run build
+fi
 ./vendor/bin/phpunit --coverage-clover coverage.xml
 
 echo "✅ Pre-Push Quality Gate Passed (Zero-Issue Policy Verified)"
