@@ -13,7 +13,7 @@ Assumptions:
 ## How To Use
 
 1. Read `00-project-structure.md` before creating files.
-2. Apply `01` through `10` while implementing features; use `15` for Jira-driven work (AI workflow and Owner approval gates).
+2. Apply `01` through `10` and `16` (contracts) while implementing features; use `15` for Jira-driven work (AI workflow and Owner approval gates).
 3. Register deviations in `11-exceptions-registry.md` before implementation.
 4. Use `09-feature-definition-of-done.md` as the completion gate.
 
@@ -42,6 +42,7 @@ Assumptions:
 - Coverage policy: `13`
 - Branch/commit/PR workflow: `14`
 - Jira AI workflow and approval gates: `15`
+- Contracts and interfaces (module-wide): `16`
 
 ## Rule Format
 

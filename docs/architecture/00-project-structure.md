@@ -84,6 +84,8 @@ MongoDB models MUST be placed in `Modules/<ModuleName>/app/Models/MongoDb/`.
 
 ## Core Module Structure
 
+Contract placement and naming for `Contracts/` are defined in [16 - Contracts and Interfaces (Module-wide)](16-contracts-and-interfaces.md).
+
 ```text
 Modules/Core/
 ├── app/
