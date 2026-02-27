@@ -5,6 +5,7 @@ namespace Modules\Core\Providers;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use JOOservices\Client\Cache\MemoryCache;
+use Modules\Core\Console\Commands\ServicesHealthCheck;
 use Modules\Core\Services\Client\Client;
 use Modules\Core\Services\Client\Contracts\ClientContract;
 use Modules\Core\Services\Client\Logging\HttpLogSanitizer;
@@ -55,7 +56,7 @@ class CoreServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->singleton(MemoryCache::class, fn (): MemoryCache => new MemoryCache());
+        $this->app->singleton(MemoryCache::class, fn (): MemoryCache => new MemoryCache);
 
         $this->app->bind(ClientContract::class, function ($app): ClientContract {
             $cacheStore = (string) env('CACHE_STORE', 'database');
@@ -78,7 +79,9 @@ class CoreServiceProvider extends ServiceProvider
      */
     protected function registerCommands(): void
     {
-        // $this->commands([]);
+        $this->commands([
+            ServicesHealthCheck::class,
+        ]);
     }
 
     /**
@@ -164,7 +167,7 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->nameLower);
 
-        Blade::componentNamespace(config('modules.namespace').'\\' . $this->name . '\\View\\Components', $this->nameLower);
+        Blade::componentNamespace(config('modules.namespace').'\\'.$this->name.'\\View\\Components', $this->nameLower);
     }
 
     /**

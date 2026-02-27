@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'elasticsearch' => [
+        'url' => env('ELASTICSEARCH_URL'),
+    ],
+
 ];
