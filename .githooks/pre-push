@@ -1,0 +1,141 @@
+#!/usr/bin/env bash
+
+# pre-push hook for Laravel Modules Model Standards
+# Enforces rules from 06a-model-standards.md on pushed files.
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+while read local_ref local_sha remote_ref remote_sha; do
+    if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+        continue # deleted branch
+    fi
+
+    # Determine commit range
+    if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+        # New branch. Check against origin/main or origin/master
+        git rev-parse --verify origin/main >/dev/null 2>&1 && base="origin/main" || base="origin/master"
+        # If neither exists, fallback to empty to just get local changes if possible, or HEAD
+        git rev-parse --verify $base >/dev/null 2>&1 || base=""
+        if [ -n "$base" ]; then
+            range="$base...$local_sha"
+        else
+            # Last resort fallback: check last commit
+            range="HEAD~1...HEAD"
+        fi
+    else
+        range="$remote_sha...$local_sha"
+    fi
+
+    # Find modified .php files in Modules/*/app/Models/
+    files=$(git diff --name-only "$range" -- 'Modules/*/app/Models/' 2>/dev/null | grep '\.php$')
+
+    # If git diff fails or finds nothing, it might be an empty output.
+    if [ -z "$files" ]; then
+        continue
+    fi
+
+    total_errors=0
+
+    for file in $files; do
+        if [ ! -f "$file" ]; then
+            continue # File deleted or renamed out
+        fi
+
+        content=$(cat "$file")
+        has_errors=0
+
+        # Output prefix to group errors
+        echo -e "${YELLOW}Checking model standards in:${NC} $file"
+
+        # A. Mongo folder rule
+        is_mongo=0
+        if echo "$content" | grep -E -q 'extends[[:space:]]+.*MongoDb|const[[:space:]]+COLLECTION'; then
+            is_mongo=1
+        fi
+
+        if [ $is_mongo -eq 1 ] && ! echo "$file" | grep -q '/Models/MongoDb/'; then
+            echo -e "  ${RED}❌ Error [06A-MOD-003]: MongoDB Location${NC}"
+            echo -e "     MongoDB models MUST be located under Modules/{ModuleName}/app/Models/MongoDb/"
+            echo -e "     ${GREEN}Fix: Move file to valid MongoDb directory.${NC}"
+            has_errors=1
+        fi
+
+        if echo "$file" | grep -q '/Models/MongoDb/' && ! echo "$content" | grep -E -q 'extends[[:space:]]+.*MongoDb'; then
+            echo -e "  ${RED}❌ Error [06A-MOD-002]: MongoDB Base Extension${NC}"
+            echo -e "     MongoDB models MUST extend \Modules\Core\app\Models\MongoDb."
+            echo -e "     ${GREEN}Fix: Update base class extension.${NC}"
+            has_errors=1
+        fi
+
+        # B. Guarded rule
+        if echo "$content" | grep -E -q 'protected[[:space:]]+\$guarded[[:space:]]*=[[:space:]]*\[[[:space:]]*\][[:space:]]*;'; then
+            echo -e "  ${RED}❌ Error [06A-MOD-005]: Mass Assignment Policy${NC}"
+            echo -e "     Models MUST use \$fillable and MUST NOT use open \$guarded = [];"
+            echo -e "     ${GREEN}Fix: Remove \$guarded and define an explicit \$fillable array.${NC}"
+            has_errors=1
+        fi
+
+        # C. Timestamps rule
+        if echo "$content" | grep -E -q '(public|protected)?[[:space:]]*\$timestamps[[:space:]]*=[[:space:]]*false[[:space:]]*;'; then
+            echo -e "  ${RED}❌ Error [06A-MOD-006]: Timestamps Policy${NC}"
+            echo -e "     Models MUST NOT set \$timestamps = false."
+            echo -e "     ${GREEN}Fix: Remove the \$timestamps override statement.${NC}"
+            has_errors=1
+        fi
+
+        # D. Table/collection constant rule
+        if echo "$content" | grep -E -q 'protected[[:space:]]+\$(table|collection)[[:space:]]*=[[:space:]]*['\''"].*['\''"][[:space:]]*;'; then
+            echo -e "  ${RED}❌ Error [06A-MOD-007]: Table/Collection Constant (Literal string found)${NC}"
+            echo -e "     MUST NOT hardcode table/collection string literal."
+            echo -e "     ${GREEN}Fix: Use 'protected \$table = self::TABLE;'${NC}"
+            has_errors=1
+        elif ! echo "$content" | grep -E -q 'protected[[:space:]]+\$(table|collection)[[:space:]]*=[[:space:]]*self::(TABLE|COLLECTION)[[:space:]]*;'; then
+            echo -e "  ${RED}❌ Error [06A-MOD-007]: Table/Collection Binding${NC}"
+            echo -e "     Model must bind table/collection to a constant explicitly."
+            echo -e "     ${GREEN}Fix: Add 'protected \$table = self::TABLE;' (or COLLECTION)${NC}"
+            has_errors=1
+        fi
+
+        if ! echo "$content" | grep -E -q 'const[[:space:]]+(string[[:space:]]+)?(TABLE|COLLECTION)[[:space:]]*='; then
+            echo -e "  ${RED}❌ Error [06A-MOD-007]: Constant Definition Missing${NC}"
+            echo -e "     Model must define TABLE or COLLECTION constant explicitly."
+            echo -e "     ${GREEN}Fix: Add 'public const string TABLE = \"...\";'${NC}"
+            has_errors=1
+        fi
+
+        # E. Fillable excludes timestamps
+        if echo "$content" | awk '
+            BEGIN { in_f=0; err=0 }
+            /protected \$fillable/ { in_f=1 }
+            in_f && /'\''created_at'\''|"created_at"/ { err=1 }
+            in_f && /'\''updated_at'\''|"updated_at"/ { err=1 }
+            in_f && /;/ { in_f=0 } # semicolon means end of statement
+            END { exit err }
+        '; then
+            : # No timestamp detected in fillable
+        else
+            echo -e "  ${RED}❌ Error [06A-MOD-005]: Fillable Excludes Timestamps${NC}"
+            echo -e "     \$fillable MUST NOT include system-managed timestamp fields."
+            echo -e "     ${GREEN}Fix: Remove 'created_at' and 'updated_at' from the \$fillable array.${NC}"
+            has_errors=1
+        fi
+
+        if [ $has_errors -eq 1 ]; then
+            total_errors=$((total_errors + 1))
+            echo ""
+        else
+            echo -e "  ${GREEN}✅ Passed${NC}\n"
+        fi
+    done
+
+    if [ $total_errors -gt 0 ]; then
+        echo -e "${RED}Push blocked! Found $total_errors file(s) violating Model Standards.${NC}"
+        echo -e "Please fix the errors and try pushing again."
+        exit 1
+    fi
+done
+
+exit 0
