@@ -2,8 +2,8 @@
 
 namespace Modules\Core\Repositories;
 
+use Modules\Core\Contracts\ConfigRepositoryInterface;
 use Modules\Core\Models\MongoDb\Config;
-use Modules\Core\Repositories\Contracts\ConfigRepositoryInterface;
 
 class ConfigRepository implements ConfigRepositoryInterface
 {

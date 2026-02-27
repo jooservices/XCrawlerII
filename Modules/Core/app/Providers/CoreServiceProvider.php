@@ -68,7 +68,7 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->singleton(LogRepository::class);
         $this->app->singleton(LogService::class);
 
-        $this->app->singleton(\Modules\Core\Repositories\Contracts\ConfigRepositoryInterface::class, \Modules\Core\Repositories\ConfigRepository::class);
+        $this->app->singleton(\Modules\Core\Contracts\ConfigRepositoryInterface::class, \Modules\Core\Repositories\ConfigRepository::class);
         $this->app->singleton(\Modules\Core\Services\ConfigService::class);
 
         $this->app->bind(ClientContract::class, function ($app): ClientContract {

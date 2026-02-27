@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Modules\Core\Tests\Unit\Services;
 
 use Mockery;
+use Modules\Core\Contracts\ConfigRepositoryInterface;
 use Modules\Core\Models\MongoDb\Config;
-use Modules\Core\Repositories\Contracts\ConfigRepositoryInterface;
 use Modules\Core\Services\ConfigService;
 use Modules\Core\Tests\TestCase;
 
