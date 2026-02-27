@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Core\Repositories\Contracts;
+namespace Modules\Core\Contracts;
 
 use Modules\Core\Models\MongoDb\Config;
 
