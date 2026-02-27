@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Modules\Core\Tests\Unit\Models;
 
+use DateTimeImmutable;
 use Modules\Core\Database\Factories\LogFactory;
-use Modules\Core\Models\Log;
+use Modules\Core\Models\MongoDb\Log;
 use Modules\Core\Tests\TestCase;
 use MongoDB\BSON\UTCDateTime;
 use Monolog\Level;
-use Monolog\Logger;
 use Monolog\LogRecord;
+use RuntimeException;
 
 final class LogTest extends TestCase
 {
@@ -20,43 +21,15 @@ final class LogTest extends TestCase
         string $channel = 'test',
         array $context = [],
         array $extra = [],
-        ?\DateTimeImmutable $datetime = null,
     ): LogRecord {
-        $logger = new Logger($channel);
-        $holder = new \stdClass;
-        $holder->record = null;
-        $logger->pushHandler(new class($holder) implements \Monolog\Handler\HandlerInterface
-        {
-            private \stdClass $holder;
-
-            public function __construct(\stdClass $holder)
-            {
-                $this->holder = $holder;
-            }
-
-            public function isHandling(LogRecord $record): bool
-            {
-                return true;
-            }
-
-            public function handle(LogRecord $record): bool
-            {
-                $this->holder->record = $record;
-
-                return false;
-            }
-
-            public function handleBatch(array $records): void {}
-
-            public function close(): void {}
-        });
-        $logger->log($level, $message, $context);
-
-        if ($holder->record === null) {
-            throw new \RuntimeException('Handler did not capture record');
-        }
-
-        return $holder->record;
+        return new LogRecord(
+            datetime: new DateTimeImmutable,
+            channel: $channel,
+            level: $level,
+            message: $message,
+            context: $context,
+            extra: $extra,
+        );
     }
 
     public function test_from_monolog_record_returns_array_with_required_fields(): void
@@ -65,7 +38,6 @@ final class LogTest extends TestCase
 
         $doc = Log::fromMonologRecord($record);
 
-        $this->assertIsArray($doc);
         $this->assertSame('hello world', $doc['message']);
         $this->assertSame('app', $doc['channel']);
         $this->assertArrayHasKey('level', $doc);
@@ -114,13 +86,13 @@ final class LogTest extends TestCase
 
     public function test_from_monolog_record_exception_in_context_is_formatted(): void
     {
-        $e = new \RuntimeException('oops', 42);
+        $e = new RuntimeException('oops', 42);
         $record = self::createRecord('error', Level::Error, 'ch', ['exception' => $e]);
 
         $doc = Log::fromMonologRecord($record);
 
         $this->assertIsArray($doc['context']['exception']);
-        $this->assertSame(\RuntimeException::class, $doc['context']['exception']['class']);
+        $this->assertSame(RuntimeException::class, $doc['context']['exception']['class']);
         $this->assertSame('oops', $doc['context']['exception']['message']);
         $this->assertSame(42, $doc['context']['exception']['code']);
     }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Core\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\Core\Models\ClientLog;
+use Modules\Core\Models\MongoDb\ClientLog;
 use MongoDB\BSON\UTCDateTime;
 
 /**
@@ -24,7 +24,7 @@ final class ClientLogFactory extends Factory
         $status = $this->faker->numberBetween(200, 599);
 
         return [
-            'ts' => new UTCDateTime(),
+            'ts' => new UTCDateTime,
             'site' => $this->faker->domainName(),
             'method' => $this->faker->randomElement(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
             'path' => '/'.$this->faker->slug(),

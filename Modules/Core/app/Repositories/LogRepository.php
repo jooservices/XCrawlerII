@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\Core\Repositories;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
-use Modules\Core\Models\Log;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Modules\Core\Models\MongoDb\Log;
 
 /**
  * 1:1 with Log model (03-BE-003). Read-only persistence for logs collection.
@@ -22,7 +22,7 @@ final class LogRepository
     }
 
     /**
-     * @return LengthAwarePaginator<Log>
+     * @return LengthAwarePaginator<int, Log>
      */
     public function getPaginated(int $perPage = 15, ?string $channel = null, ?string $levelName = null): LengthAwarePaginator
     {

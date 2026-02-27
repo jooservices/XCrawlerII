@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redis;
 use MongoDB\Driver\Command;
 use MongoDB\Driver\Manager;
+use RuntimeException;
 
 class Health
 {
@@ -48,7 +49,7 @@ class Health
             ->map(fn (array $check): string => $check['service'].': '.$check['detail'])
             ->implode('; ');
 
-        throw new \RuntimeException('Startup service health check failed: '.$failedChecks);
+        throw new RuntimeException('Startup service health check failed: '.$failedChecks);
     }
 
     /**
@@ -105,33 +106,40 @@ class Health
             ];
         }
 
-        return $this->runCheck('elasticsearch', function () use ($url): string {
+        try {
             $response = Http::connectTimeout(2)->timeout(5)->get($url);
             if (! $response->successful()) {
-                return 'http '.$response->status();
+                return [
+                    'service' => 'elasticsearch',
+                    'status' => 'FAIL',
+                    'detail' => 'http '.$response->status(),
+                ];
             }
 
             $clusterName = (string) $response->json('cluster_name', '');
 
-            return $clusterName === '' ? 'http 200' : 'cluster '.$clusterName;
-        }, strictSuccess: true);
+            return [
+                'service' => 'elasticsearch',
+                'status' => 'OK',
+                'detail' => $clusterName === '' ? 'http 200' : 'cluster '.$clusterName,
+            ];
+        } catch (\Throwable $throwable) {
+            return [
+                'service' => 'elasticsearch',
+                'status' => 'FAIL',
+                'detail' => $throwable->getMessage(),
+            ];
+        }
     }
 
     /**
      * @param  callable(): string  $check
      * @return array{service: string, status: string, detail: string}
      */
-    protected function runCheck(string $service, callable $check, bool $strictSuccess = false): array
+    protected function runCheck(string $service, callable $check): array
     {
         try {
             $detail = $check();
-            if ($strictSuccess && str_starts_with($detail, 'http ') && $detail !== 'http 200') {
-                return [
-                    'service' => $service,
-                    'status' => 'FAIL',
-                    'detail' => $detail,
-                ];
-            }
 
             return [
                 'service' => $service,

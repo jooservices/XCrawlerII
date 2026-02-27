@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 interface ClientContract
 {
     /**
-     * @param array<string, mixed> $options
+     * @param  array<string, mixed>  $options
      */
     public function request(string $method, string $url, array $options = []): ResponseInterface;
 }

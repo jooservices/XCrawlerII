@@ -20,7 +20,7 @@ class CoreController extends Controller
      */
     public function create()
     {
-        return view('core::create');
+        return view('core::index');
     }
 
     /**
@@ -33,7 +33,7 @@ class CoreController extends Controller
      */
     public function show($id)
     {
-        return view('core::show');
+        return view('core::index');
     }
 
     /**
@@ -41,7 +41,7 @@ class CoreController extends Controller
      */
     public function edit($id)
     {
-        return view('core::edit');
+        return view('core::index');
     }
 
     /**

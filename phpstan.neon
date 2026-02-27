@@ -15,9 +15,7 @@ parameters:
     # Level 9 is the highest level
     level: 5
 
-    ignoreErrors:
-        - '#Call to method PHPUnit\\Framework\\Assert::assertTrue\(\) with true will always evaluate to true.#'
-        - '~Parameter \#[0-9]+ \$user of class Illuminate\\Auth\\Events\\Verified constructor expects Illuminate\\Contracts\\Auth\\MustVerifyEmail~'
+    ignoreErrors: []
 
     excludePaths:
         - ./*/*/FileToBeExcluded.php

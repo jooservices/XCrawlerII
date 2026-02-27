@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\Core\Tests\Feature\Services\Client;
 
-use Modules\Core\Models\ClientLog;
+use Modules\Core\Models\MongoDb\ClientLog;
 use Modules\Core\Services\Client\Contracts\ClientContract;
 use Modules\Core\Tests\TestCase;
-use MongoDB\Driver\Command;
-use MongoDB\Driver\Manager;
-use MongoDB\Driver\Query;
 
 final class ClientLoggingToMongoTest extends TestCase
 {
@@ -24,8 +21,6 @@ final class ClientLoggingToMongoTest extends TestCase
 
     private string $testRunId = '';
 
-    private Manager $mongo;
-
     private bool $initialized = false;
 
     protected function setUp(): void
@@ -33,7 +28,6 @@ final class ClientLoggingToMongoTest extends TestCase
         parent::setUp();
 
         $this->testRunId = 'test_run_'.fake()->uuid();
-        $this->mongo = new Manager((string) env('MONGO_URI', 'mongodb://127.0.0.1:27017'));
         $this->assertMongoAvailable();
         $this->bootLocalHttpServer();
         $this->initialized = true;
@@ -140,7 +134,8 @@ PHP);
             2 => ['file', storage_path('logs/core-client-test-server-error.log'), 'a'],
         ];
 
-        $this->serverProcess = proc_open($command, $descriptorSpec, $pipes);
+        $unusedPipes = [];
+        $this->serverProcess = proc_open($command, $descriptorSpec, $unusedPipes);
         usleep(300000);
 
         if (! is_resource($this->serverProcess)) {
@@ -148,7 +143,7 @@ PHP);
         }
 
         $status = proc_get_status($this->serverProcess);
-        if (! ($status['running'] ?? false)) {
+        if (! $status['running']) {
             $this->fail('Local HTTP server is blocked in this environment.');
         }
     }
@@ -170,30 +165,27 @@ PHP);
      */
     private function fetchDocsByTag(string $tag): array
     {
-        $namespace = (string) env('MONGO_DB', 'xcrawler').'.'.ClientLog::COLLECTION;
-        $query = new Query(['tags' => $tag], ['sort' => ['ts' => -1]]);
-        $cursor = $this->mongo->executeQuery($namespace, $query);
-        $docs = [];
-
-        foreach ($cursor as $doc) {
-            $docs[] = json_decode(json_encode($doc, JSON_THROW_ON_ERROR), true, 512, JSON_THROW_ON_ERROR);
-        }
-
-        return $docs;
+        return ClientLog::query()
+            ->orderByDesc('ts')
+            ->limit(200)
+            ->get()
+            ->map(static fn (ClientLog $doc): array => $doc->getAttributes())
+            ->filter(static fn (array $doc): bool => in_array($tag, (array) ($doc['tags'] ?? []), true))
+            ->values()
+            ->all();
     }
 
     private function assertMongoAvailable(): void
     {
         try {
-            $command = new Command(['ping' => 1]);
-            $this->mongo->executeCommand((string) env('MONGO_DB', 'xcrawler'), $command);
+            ClientLog::query()->limit(1)->get();
         } catch (\Throwable $throwable) {
             $this->fail('MongoDB is not reachable in current environment: '.$throwable->getMessage());
         }
     }
 
     /**
-     * @param array<int, array<string, mixed>> $docs
+     * @param  array<int, array<string, mixed>>  $docs
      * @return array<string, mixed>|null
      */
     private function findDocByStatus(array $docs, int $status): ?array

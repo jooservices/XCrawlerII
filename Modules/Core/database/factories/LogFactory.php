@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Core\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Modules\Core\Models\Log;
+use Modules\Core\Models\MongoDb\Log;
 use MongoDB\BSON\UTCDateTime;
 
 /**

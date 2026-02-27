@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Modules\Core\Tests\Unit\Models;
 
+use DateTimeImmutable;
 use Modules\Core\Database\Factories\ClientLogFactory;
-use Modules\Core\Models\ClientLog;
+use Modules\Core\Models\MongoDb\ClientLog;
 use Modules\Core\Tests\TestCase;
 use MongoDB\BSON\UTCDateTime;
 
@@ -19,7 +20,7 @@ final class ClientLogTest extends TestCase
         $payload['attempt'] = 3;
         $payload['max_attempts'] = 3;
         $payload['site'] = $faker->domainName();
-        $payload['ts'] = new \DateTimeImmutable();
+        $payload['ts'] = new DateTimeImmutable;
 
         $doc = ClientLog::fromHttpLifecycle($payload);
 

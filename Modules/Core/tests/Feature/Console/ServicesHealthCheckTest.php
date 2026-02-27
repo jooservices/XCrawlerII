@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Modules\Core\Tests\Feature\Console;
 
 use Mockery;
+use Mockery\Expectation;
 use Modules\Core\Services\Health;
 use Modules\Core\Tests\TestCase;
 
@@ -86,9 +87,11 @@ final class ServicesHealthCheckTest extends TestCase
      */
     private function mockHealthResult(array $checks, bool $healthy): void
     {
+        /** @var \Mockery\MockInterface&Health $health */
         $health = Mockery::mock(Health::class);
-        $health->shouldReceive('check')
-            ->once()
+        /** @var Expectation $expectation */
+        $expectation = $health->shouldReceive('check');
+        $expectation->once()
             ->andReturn([
                 'healthy' => $healthy,
                 'checks' => $checks,

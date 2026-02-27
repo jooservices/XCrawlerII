@@ -12,14 +12,20 @@ use Modules\Core\Tests\TestCase;
 
 class ConfigServiceTest extends TestCase
 {
+    /**
+     * @var ConfigRepositoryInterface&\Mockery\MockInterface
+     */
     private $repositoryMock;
+
     private ConfigService $service;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repositoryMock = Mockery::mock(ConfigRepositoryInterface::class);
+        /** @var ConfigRepositoryInterface&\Mockery\MockInterface $repositoryMock */
+        $repositoryMock = Mockery::mock(ConfigRepositoryInterface::class);
+        $this->repositoryMock = $repositoryMock;
         $this->service = new ConfigService($this->repositoryMock);
     }
 
@@ -33,7 +39,9 @@ class ConfigServiceTest extends TestCase
     {
         $config = new Config(['value' => 'test_value']);
 
-        $this->repositoryMock->shouldReceive('get')
+        /** @var \Mockery\Expectation $expectation */
+        $expectation = $this->repositoryMock->shouldReceive('get');
+        $expectation
             ->once()
             ->with('group1', 'key1')
             ->andReturn($config);
@@ -45,7 +53,9 @@ class ConfigServiceTest extends TestCase
 
     public function test_get_returns_default_when_not_found(): void
     {
-        $this->repositoryMock->shouldReceive('get')
+        /** @var \Mockery\Expectation $expectation */
+        $expectation = $this->repositoryMock->shouldReceive('get');
+        $expectation
             ->once()
             ->with('group1', 'key1')
             ->andReturn(null);
@@ -59,7 +69,9 @@ class ConfigServiceTest extends TestCase
     {
         $config = new Config(['group' => 'g1', 'key' => 'k1', 'value' => 'v1']);
 
-        $this->repositoryMock->shouldReceive('updateOrCreate')
+        /** @var \Mockery\Expectation $expectation */
+        $expectation = $this->repositoryMock->shouldReceive('updateOrCreate');
+        $expectation
             ->once()
             ->with('g1', 'k1', 'v1', 'desc1')
             ->andReturn($config);

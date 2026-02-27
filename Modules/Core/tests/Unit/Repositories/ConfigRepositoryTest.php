@@ -18,7 +18,7 @@ class ConfigRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new ConfigRepository();
+        $this->repository = new ConfigRepository;
     }
 
     public function test_get_returns_null_when_not_found(): void
@@ -54,7 +54,7 @@ class ConfigRepositoryTest extends TestCase
             'group' => 'app',
             'key' => 'timezone',
             'value' => 'UTC',
-        ],'mongodb');
+        ], 'mongodb');
     }
 
     public function test_update_or_create_updates_existing_record_and_preserves_description_if_null(): void
