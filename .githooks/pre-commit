@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+# pre-commit hook
+# Enforces Rule 12-GAT-001: Run Pint in test mode and block on formatting issues.
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${YELLOW}Running Laravel Pint formatting check...${NC}"
+
+./vendor/bin/pint --test
+
+if [ $? -ne 0 ]; then
+    echo -e "${RED}❌ Error [12-GAT-001]: Pre-Commit Formatting Hook${NC}"
+    echo -e "   Pint found formatting violations."
+    echo -e "   ${GREEN}Fix: Run './vendor/bin/pint' to automatically fix formatting issues, then add the changes and commit again.${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Formatting check passed.${NC}"
+exit 0
