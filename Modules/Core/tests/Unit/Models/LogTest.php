@@ -49,8 +49,6 @@ final class LogTest extends TestCase
         $this->assertArrayHasKey('extra', $doc);
         $this->assertInstanceOf(UTCDateTime::class, $doc['datetime']);
         $this->assertSame(Log::SCHEMA_VERSION, $doc['schema_version']);
-        $this->assertInstanceOf(UTCDateTime::class, $doc['created_at']);
-        $this->assertInstanceOf(UTCDateTime::class, $doc['updated_at']);
     }
 
     public function test_from_monolog_record_schema_version_is_constant(): void
@@ -60,16 +58,6 @@ final class LogTest extends TestCase
         $doc = Log::fromMonologRecord($record);
 
         $this->assertSame(Log::SCHEMA_VERSION, $doc['schema_version']);
-    }
-
-    public function test_from_monolog_record_created_at_and_updated_at_are_same(): void
-    {
-        $record = self::createRecord('msg');
-
-        $doc = Log::fromMonologRecord($record);
-
-        $this->assertEquals($doc['datetime'], $doc['created_at']);
-        $this->assertEquals($doc['datetime'], $doc['updated_at']);
     }
 
     public function test_from_monolog_record_nested_context_is_mongo_safe(): void

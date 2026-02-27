@@ -37,9 +37,13 @@ final class HttpLogSanitizer
         'authorization' => true,
     ];
 
+    private readonly int $previewBytes;
+
     public function __construct(
-        private readonly int $previewBytes = 8192,
-    ) {}
+        ?int $previewBytes = null,
+    ) {
+        $this->previewBytes = $previewBytes ?? config('core.logging.preview_bytes', 8192);
+    }
 
     /**
      * @param  array<string, array<int, string>|string>  $headers
