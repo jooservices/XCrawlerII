@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Modules\Core\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Log\Events\MessageLogged;
 use Modules\Core\Database\Factories\LogFactory;
 use MongoDB\BSON\UTCDateTime;
+use MongoDB\Laravel\Eloquent\Model;
 use Monolog\Level;
 use Monolog\LogRecord;
 
@@ -64,6 +65,30 @@ final class Log extends Model
     }
 
     /**
+     * Build a MongoDB document from Laravel's MessageLogged event.
+     *
+     * @return array<string, mixed>
+     */
+    public static function fromMessageLogged(MessageLogged $event): array
+    {
+        $ts = new UTCDateTime();
+        $levelName = strtoupper((string) $event->level);
+
+        return [
+            'message' => (string) $event->message,
+            'level' => self::levelValueFromName($levelName),
+            'level_name' => $levelName,
+            'channel' => 'app',
+            'context' => self::toMongoSafeArray($event->context),
+            'extra' => [],
+            'datetime' => $ts,
+            'schema_version' => self::SCHEMA_VERSION,
+            'created_at' => $ts,
+            'updated_at' => $ts,
+        ];
+    }
+
+    /**
      * Recursively convert to MongoDB-safe array (max depth 3 to avoid unbounded nesting).
      */
     private static function toMongoSafeArray(mixed $value, int $depth = 0): mixed
@@ -102,6 +127,21 @@ final class Log extends Model
         }
 
         return $value;
+    }
+
+    private static function levelValueFromName(string $levelName): int
+    {
+        return match ($levelName) {
+            'DEBUG' => Level::Debug->value,
+            'INFO' => Level::Info->value,
+            'NOTICE' => Level::Notice->value,
+            'WARNING' => Level::Warning->value,
+            'ERROR' => Level::Error->value,
+            'CRITICAL' => Level::Critical->value,
+            'ALERT' => Level::Alert->value,
+            'EMERGENCY' => Level::Emergency->value,
+            default => Level::Info->value,
+        };
     }
 
     protected static function newFactory(): LogFactory

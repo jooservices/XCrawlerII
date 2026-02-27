@@ -6,8 +6,8 @@ namespace Modules\Core\Models;
 
 use Modules\Core\Database\Factories\ClientLogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use MongoDB\BSON\UTCDateTime;
+use MongoDB\Laravel\Eloquent\Model;
 
 /**
  * @property array<string, mixed> $attributes
@@ -21,8 +21,6 @@ final class ClientLog extends Model
     protected $connection = 'mongodb';
 
     protected $table = self::COLLECTION;
-
-    public $timestamps = false;
 
     protected $guarded = [];
 
