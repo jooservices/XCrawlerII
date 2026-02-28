@@ -8,11 +8,17 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use JOOservices\Client\Cache\MemoryCache;
 use Modules\Core\Console\Commands\ServicesHealthCheck;
+use Modules\Core\Contracts\Events\ChangeSetBuilderInterface;
+use Modules\Core\Contracts\Events\EventSubscriberInterface;
 use Modules\Core\Models\MongoDb\Log as LogModel;
+use Modules\Core\Repositories\EventLogRepository;
+use Modules\Core\Repositories\EventStoreRepository;
 use Modules\Core\Repositories\LogRepository;
 use Modules\Core\Services\Client\Client;
 use Modules\Core\Services\Client\Contracts\ClientContract;
 use Modules\Core\Services\Client\Logging\HttpLogSanitizer;
+use Modules\Core\Services\Events\ChangeSetBuilder;
+use Modules\Core\Services\Events\EventService;
 use Modules\Core\Services\LogService;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
@@ -47,6 +53,29 @@ class CoreServiceProvider extends ServiceProvider
                 // Avoid recursive logging loops if persistence fails.
             }
         });
+
+        $this->registerEventSubscribers();
+    }
+
+    /**
+     * Register tagged event subscribers. Feature modules tag their subscriber classes with 'core.event_subscribers'.
+     * Core does NOT scan or depend on feature module classes.
+     */
+    protected function registerEventSubscribers(): void
+    {
+        foreach ($this->app->tagged('core.event_subscribers') as $subscriber) {
+            if (! $subscriber instanceof EventSubscriberInterface) {
+                continue;
+            }
+
+            $map = $subscriber::subscriptions();
+            foreach ($map as $eventName => $handler) {
+                $handlers = is_array($handler) ? $handler : [$handler];
+                foreach ($handlers as $h) {
+                    Event::listen($eventName, [$subscriber, $h]);
+                }
+            }
+        }
     }
 
     /**
@@ -57,7 +86,6 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->register(EventServiceProvider::class);
         $this->app->register(RouteServiceProvider::class);
 
-
         $this->app->singleton(MemoryCache::class, fn (): MemoryCache => new MemoryCache);
 
         $this->app->singleton(LogRepository::class);
@@ -65,6 +93,11 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->app->singleton(\Modules\Core\Contracts\ConfigRepositoryInterface::class, \Modules\Core\Repositories\ConfigRepository::class);
         $this->app->singleton(\Modules\Core\Services\ConfigService::class);
+
+        $this->app->singleton(ChangeSetBuilderInterface::class, ChangeSetBuilder::class);
+        $this->app->singleton(EventStoreRepository::class);
+        $this->app->singleton(EventLogRepository::class);
+        $this->app->singleton(EventService::class);
 
         $this->app->bind(ClientContract::class, function ($app): ClientContract {
             $cacheStore = (string) config('core.client.cache_store', (string) config('cache.default', 'database'));

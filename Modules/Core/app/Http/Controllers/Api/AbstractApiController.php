@@ -19,10 +19,15 @@ abstract class AbstractApiController extends Controller
     use ValidatesRequests;
 
     public const string MSG_UNAUTHENTICATED = 'Unauthenticated.';
+
     public const string MSG_FORBIDDEN = 'Forbidden.';
+
     public const string MSG_NOT_FOUND = 'Not found.';
+
     public const string MSG_CONFLICT = 'Conflict.';
+
     public const string MSG_INVALID = 'The given data was invalid.';
+
     public const string MSG_SERVER_ERROR = 'Server error.';
 
     protected function ok(mixed $data = null, array $meta = [], array $headers = []): JsonResponse
@@ -48,7 +53,7 @@ abstract class AbstractApiController extends Controller
     protected function success(mixed $data, int $status, array $meta = [], array $headers = []): JsonResponse
     {
         if ($data instanceof JsonResource) {
-            if (!empty($meta)) {
+            if (! empty($meta)) {
                 $data->additional(['meta' => $meta]);
             }
 
@@ -71,7 +76,7 @@ abstract class AbstractApiController extends Controller
 
         return response()->json([
             'data' => $data,
-            'meta' => empty($meta) ? new stdClass() : $meta,
+            'meta' => empty($meta) ? new stdClass : $meta,
         ], $status, $headers);
     }
 
@@ -79,8 +84,8 @@ abstract class AbstractApiController extends Controller
     {
         return response()->json([
             'message' => $message,
-            'errors' => empty($errors) ? new stdClass() : $errors,
-            'meta' => empty($meta) ? new stdClass() : $meta,
+            'errors' => empty($errors) ? new stdClass : $errors,
+            'meta' => empty($meta) ? new stdClass : $meta,
         ], $status, $headers);
     }
 
