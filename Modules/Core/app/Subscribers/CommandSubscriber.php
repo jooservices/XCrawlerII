@@ -28,63 +28,33 @@ class CommandSubscriber
         $events->listen(CommandFailed::class, [$this, 'onCommandFailed']);
     }
 
-    public function onSchedulerStarted(SchedulerStarted $event): void
+    public function onSchedulerStarted(SchedulerStarted $_event): void
     {
-        try {
-            (void) $event;
-            // Placeholder: DB/metrics/observability hook here later.
-        } catch (\Throwable $e) {
-            Log::warning('CommandSubscriber::onSchedulerStarted failed', ['exception' => $e->getMessage()]);
-        }
+        // Intentionally no-op for now; lifecycle hook kept for future telemetry.
     }
 
-    public function onSchedulerCompleted(SchedulerCompleted $event): void
+    public function onSchedulerCompleted(SchedulerCompleted $_event): void
     {
-        try {
-            (void) $event;
-            // Placeholder: DB/metrics (exitCode, durationMs) here later.
-        } catch (\Throwable $e) {
-            Log::warning('CommandSubscriber::onSchedulerCompleted failed', ['exception' => $e->getMessage()]);
-        }
+        // Intentionally no-op for now; lifecycle hook kept for future telemetry.
     }
 
-    public function onSchedulerFailed(SchedulerFailed $event): void
+    public function onSchedulerFailed(SchedulerFailed $_event): void
     {
-        try {
-            (void) $event;
-            // Placeholder: DB/metrics/alerting (exitCode, durationMs) here later.
-        } catch (\Throwable $e) {
-            Log::warning('CommandSubscriber::onSchedulerFailed failed', ['exception' => $e->getMessage()]);
-        }
+        // Intentionally no-op for now; lifecycle hook kept for future telemetry.
     }
 
-    public function onCommandStarted(CommandStarted $event): void
+    public function onCommandStarted(CommandStarted $_event): void
     {
-        try {
-            (void) $event;
-            // Placeholder: DB/metrics (command name) here later.
-        } catch (\Throwable $e) {
-            Log::warning('CommandSubscriber::onCommandStarted failed', ['exception' => $e->getMessage()]);
-        }
+        // Intentionally no-op for now; lifecycle hook kept for future telemetry.
     }
 
-    public function onCommandCompleted(CommandCompleted $event): void
+    public function onCommandCompleted(CommandCompleted $_event): void
     {
-        try {
-            (void) $event;
-            // Placeholder: DB/metrics (command, exitCode, durationMs) here later.
-        } catch (\Throwable $e) {
-            Log::warning('CommandSubscriber::onCommandCompleted failed', ['exception' => $e->getMessage()]);
-        }
+        // Intentionally no-op for now; lifecycle hook kept for future telemetry.
     }
 
-    public function onCommandFailed(CommandFailed $event): void
+    public function onCommandFailed(CommandFailed $_event): void
     {
-        try {
-            (void) $event;
-            // Placeholder: DB/metrics/alerting (command, exitCode, durationMs) here later.
-        } catch (\Throwable $e) {
-            Log::warning('CommandSubscriber::onCommandFailed failed', ['exception' => $e->getMessage()]);
-        }
+        // Intentionally no-op for now; lifecycle hook kept for future telemetry.
     }
 }

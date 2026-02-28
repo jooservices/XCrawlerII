@@ -19,7 +19,7 @@ final class ClientLogRepository
     {
         $this->assertRequiredAttributes($attributes);
 
-        $model = new ClientLog;
+        $model = new ClientLog();
         $model->fill($attributes);
         $model->save();
 

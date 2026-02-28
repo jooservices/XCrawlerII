@@ -20,7 +20,7 @@ final class ClientLogTest extends TestCase
         $payload['attempt'] = 3;
         $payload['max_attempts'] = 3;
         $payload['site'] = $faker->domainName();
-        $payload['ts'] = new DateTimeImmutable;
+        $payload['ts'] = new DateTimeImmutable();
 
         $doc = ClientLog::fromHttpLifecycle($payload);
 

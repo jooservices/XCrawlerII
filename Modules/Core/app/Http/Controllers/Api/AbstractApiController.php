@@ -76,7 +76,7 @@ abstract class AbstractApiController extends Controller
 
         return response()->json([
             'data' => $data,
-            'meta' => empty($meta) ? new stdClass : $meta,
+            'meta' => empty($meta) ? new stdClass() : $meta,
         ], $status, $headers);
     }
 
@@ -84,8 +84,8 @@ abstract class AbstractApiController extends Controller
     {
         return response()->json([
             'message' => $message,
-            'errors' => empty($errors) ? new stdClass : $errors,
-            'meta' => empty($meta) ? new stdClass : $meta,
+            'errors' => empty($errors) ? new stdClass() : $errors,
+            'meta' => empty($meta) ? new stdClass() : $meta,
         ], $status, $headers);
     }
 

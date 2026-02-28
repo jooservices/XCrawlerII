@@ -18,7 +18,7 @@ class ConfigRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new ConfigRepository;
+        $this->repository = new ConfigRepository();
     }
 
     public function test_unhappy_get_returns_null_when_not_found(): void

@@ -16,7 +16,8 @@ final class LogService
 {
     public function __construct(
         private readonly LogRepository $logRepository,
-    ) {}
+    ) {
+    }
 
     public function getRecent(int $limit = 50): Collection
     {

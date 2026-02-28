@@ -20,7 +20,7 @@ final class LogFactory extends Factory
      */
     public function definition(): array
     {
-        $ts = new UTCDateTime;
+        $ts = new UTCDateTime();
 
         return [
             'message' => $this->faker->sentence(),

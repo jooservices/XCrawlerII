@@ -37,7 +37,7 @@ final class EventServiceFlowTest extends TestCase
 
     public function test_happy_full_flow_record_sourcing_writes_to_mongo(): void
     {
-        $eventId = 'evt-'.fake()->uuid();
+        $eventId = 'evt-' . fake()->uuid();
         $aggregateId = fake()->uuid();
         $event = new StubEventSourcing(
             eventId: $eventId,
@@ -47,7 +47,7 @@ final class EventServiceFlowTest extends TestCase
             aggregateId: $aggregateId,
             aggregateVersion: 1,
             payload: ['total' => 99.99, 'currency' => 'USD'],
-            correlationId: 'req-'.fake()->uuid(),
+            correlationId: 'req-' . fake()->uuid(),
             actorType: 'user',
             actorId: fake()->uuid(),
         );
@@ -66,7 +66,7 @@ final class EventServiceFlowTest extends TestCase
 
     public function test_happy_full_flow_record_log_writes_to_mongo(): void
     {
-        $eventId = 'log-'.fake()->uuid();
+        $eventId = 'log-' . fake()->uuid();
         $entityId = fake()->uuid();
         $event = new StubEventLog(
             eventId: $eventId,
@@ -77,7 +77,7 @@ final class EventServiceFlowTest extends TestCase
             changedFields: ['status', 'paid_at'],
             previous: ['status' => 'pending', 'paid_at' => null],
             new: ['status' => 'paid', 'paid_at' => CarbonImmutable::now()->toIso8601String()],
-            correlationId: 'req-'.fake()->uuid(),
+            correlationId: 'req-' . fake()->uuid(),
             actorType: 'user',
             actorId: fake()->uuid(),
         );
@@ -149,7 +149,7 @@ final class EventServiceFlowTest extends TestCase
         try {
             EventStore::query()->limit(1)->get();
         } catch (\Throwable $e) {
-            $this->markTestSkipped('MongoDB is not reachable: '.$e->getMessage());
+            $this->markTestSkipped('MongoDB is not reachable: ' . $e->getMessage());
         }
     }
 

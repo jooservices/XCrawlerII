@@ -16,7 +16,8 @@ final class CacheMetadataMiddleware implements MiddlewareInterface
         private readonly CacheInterface $cache,
         private readonly int $defaultTtlSec,
         private readonly string $storeName,
-    ) {}
+    ) {
+    }
 
     public function __invoke(RequestInterface $request, array $options, Closure $next): ResponseInterface
     {
@@ -45,6 +46,6 @@ final class CacheMetadataMiddleware implements MiddlewareInterface
 
     private function cacheKey(RequestInterface $request): string
     {
-        return 'http_cache_'.md5($request->getMethod().' '.$request->getUri());
+        return 'http_cache_' . md5($request->getMethod() . ' ' . $request->getUri());
     }
 }

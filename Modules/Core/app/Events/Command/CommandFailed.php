@@ -16,5 +16,6 @@ class CommandFailed
         public readonly string $command,
         public readonly int $exitCode,
         public readonly int $durationMs
-    ) {}
+    ) {
+    }
 }

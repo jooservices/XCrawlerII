@@ -16,7 +16,7 @@ final class EventStoreRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new EventStoreRepository;
+        $this->repository = new EventStoreRepository();
         $this->cleanCollection();
     }
 
@@ -30,7 +30,7 @@ final class EventStoreRepositoryTest extends TestCase
     {
         $occurred = CarbonImmutable::now();
         $attributes = [
-            'event_id' => 'evt-'.fake()->uuid(),
+            'event_id' => 'evt-' . fake()->uuid(),
             'event_name' => 'test.created',
             'occurred_at' => $occurred,
             'aggregate_type' => 'test_aggregate',

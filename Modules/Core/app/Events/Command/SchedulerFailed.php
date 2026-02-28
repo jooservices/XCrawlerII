@@ -15,5 +15,6 @@ class SchedulerFailed
     public function __construct(
         public readonly int $exitCode,
         public readonly int $durationMs
-    ) {}
+    ) {
+    }
 }

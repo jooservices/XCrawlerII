@@ -15,7 +15,8 @@ final readonly class ActorContext
         public ?string $requestId = null,
         public ?string $ip = null,
         public ?string $userAgent = null,
-    ) {}
+    ) {
+    }
 
     public static function system(?string $correlationId = null): self
     {

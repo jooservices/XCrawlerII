@@ -17,7 +17,8 @@ class QueueDispatchFailed
         public readonly string $jobClass,
         public readonly string $queueName,
         public readonly ?Throwable $exception = null
-    ) {}
+    ) {
+    }
 
     /**
      * Safe exception summary for payload (message + class, no sensitive stack).

@@ -19,7 +19,8 @@ class TestJob implements ShouldQueue
 
     public function __construct(
         public readonly string $x = ''
-    ) {}
+    ) {
+    }
 
     public function handle(): void
     {

@@ -18,7 +18,8 @@ final class EventService
     public function __construct(
         private EventStoreRepository $eventStoreRepository,
         private EventLogRepository $eventLogRepository,
-    ) {}
+    ) {
+    }
 
     public function recordSourcing(EventSourcingInterface $event, ?ActorContext $actor = null): void
     {

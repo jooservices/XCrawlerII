@@ -21,7 +21,8 @@ final class StubEventSourcing implements EventSourcingInterface
         private ?string $causationId = null,
         private ?string $actorType = null,
         private ?string $actorId = null,
-    ) {}
+    ) {
+    }
 
     public function getEventId(): ?string
     {

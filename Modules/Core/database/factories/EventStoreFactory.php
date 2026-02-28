@@ -22,9 +22,9 @@ final class EventStoreFactory extends Factory
 
         return [
             'event_id' => $this->faker->uuid(),
-            'event_name' => 'domain.event.'.$this->faker->slug(2),
+            'event_name' => 'domain.event.' . $this->faker->slug(2),
             'occurred_at' => new UTCDateTime($occurred),
-            'aggregate_type' => $this->faker->word().'_aggregate',
+            'aggregate_type' => $this->faker->word() . '_aggregate',
             'aggregate_id' => $this->faker->uuid(),
             'aggregate_version' => $this->faker->optional(0.7)->numberBetween(1, 100),
             'payload' => [

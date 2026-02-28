@@ -28,7 +28,8 @@ final class Client implements ClientContract
         private readonly int $defaultMaxAttempts = 3,
         private readonly int $defaultCacheTtlSec = 300,
         private readonly string $cacheStore = 'default',
-    ) {}
+    ) {
+    }
 
     /**
      * @param  array<string, mixed>  $options
@@ -84,7 +85,7 @@ final class Client implements ClientContract
             ->withTimeout($this->timeoutSec)
             ->withConnectTimeout($this->connectTimeoutSec)
             ->withRetry(new RetryConfig(maxAttempts: $maxAttempts))
-            ->withMiddleware(new RetryTrackingMiddleware, 'retry_tracking')
+            ->withMiddleware(new RetryTrackingMiddleware(), 'retry_tracking')
             ->withMiddleware(
                 new CacheMetadataMiddleware($this->cache, $this->defaultCacheTtlSec, $this->cacheStore),
                 'cache_meta'
@@ -128,7 +129,7 @@ final class Client implements ClientContract
         ];
 
         $payload = [
-            'ts' => new DateTimeImmutable,
+            'ts' => new DateTimeImmutable(),
             'site' => $site,
             'method' => $method,
             'path' => $path,
