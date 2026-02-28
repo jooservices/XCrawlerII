@@ -26,6 +26,21 @@ Provide a single checklist for reviewers, mapped to Rule IDs from the architectu
 
 ---
 
+## Interfaces (IFACE-900)
+
+Interface creation is a **blocker** unless the following are satisfied. See [16-contracts-and-interfaces](16-contracts-and-interfaces.md) for full Interface Governance policy.
+
+| Check                                                                 | Rule ID    | Severity | Action                                                                 |
+| --------------------------------------------------------------------- | ---------- | -------- | ---------------------------------------------------------------------- |
+| New/changed interface has justification (external boundary or IFACE-002) | IFACE-900  | Blocker  | Reject; justify per IFACE-001/IFACE-002 or remove interface.          |
+| At least one consumer type-hints the interface                        | IFACE-900  | Blocker  | Reject; add consumer or remove interface.                              |
+| Interface is bound in correct ServiceProvider (Core or owning module)  | IFACE-400  | Blocker  | Reject; add binding.                                                   |
+| At least one test proves the seam is used; external boundaries mockable | IFACE-500  | Blocker  | Reject; add test that uses interface (mock/fake/swap).                 |
+| No 1:1 / mirror / micro-interface without benefit                     | IFACE-003  | Blocker  | Reject; remove interface or justify per IFACE-001/IFACE-002.           |
+| Shared contracts live in Core only                                    | IFACE-100  | Blocker  | Reject; move contract to Core.                                        |
+
+---
+
 ## Backend layering
 
 | Check                                                                        | Rule ID                | Severity    | Action                                         |
@@ -87,7 +102,7 @@ Provide a single checklist for reviewers, mapped to Rule IDs from the architectu
 
 ## Severity summary
 
-- **Blocker:** Violation of MOD-002, MOD-003, MOD-004, BE-REQ-001 to BE-REQ-005, DATA-MOD-001 to DATA-MOD-004, FE-ARCH-005 (shared in Core only), TEST-001, TEST-004, TEST-007. Must fix before merge.
+- **Blocker:** Violation of MOD-002, MOD-003, MOD-004, IFACE-900, IFACE-003, IFACE-400, IFACE-500, IFACE-100, BE-REQ-001 to BE-REQ-005, DATA-MOD-001 to DATA-MOD-004, FE-ARCH-005 (shared in Core only), TEST-001, TEST-004, TEST-007. Must fix before merge.
 - **Non-blocker:** MOD-001, BE-REQ-006, BE-REQ-007, DATA-MOD-005, FE-ARCH-001, FE-ARCH-002, FE-ARCH-006, TEST-002, TEST-003, TEST-005, TEST-006, docs classification. Should fix or explicitly accept.
 
 ---
@@ -100,4 +115,5 @@ Provide a single checklist for reviewers, mapped to Rule IDs from the architectu
 - [03-data-model-standards](03-data-model-standards.md)
 - [04-frontend-standards](04-frontend-standards.md)
 - [05-testing-standards](05-testing-standards.md)
+- [16-contracts-and-interfaces](16-contracts-and-interfaces.md) — Interface Governance (IFACE-*), placement, binding, IFACE-900 checklist.
 - [docs/README.md](../README.md)
