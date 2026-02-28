@@ -24,10 +24,10 @@ final class ClientLogFactory extends Factory
         $status = $this->faker->numberBetween(200, 599);
 
         return [
-            'ts' => new UTCDateTime,
+            'ts' => new UTCDateTime(),
             'site' => $this->faker->domainName(),
             'method' => $this->faker->randomElement(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']),
-            'path' => '/'.$this->faker->slug(),
+            'path' => '/' . $this->faker->slug(),
             'url' => $this->faker->url(),
             'status' => $status,
             'ok' => $status >= 200 && $status < 400,
@@ -60,8 +60,8 @@ final class ClientLogFactory extends Factory
             'correlation_id' => $this->faker->uuid(),
             'trace_id' => $this->faker->uuid(),
             'tags' => ['crawler', 'test'],
-            'task_id' => 'task_'.$this->faker->uuid(),
-            'job_id' => 'job_'.$this->faker->uuid(),
+            'task_id' => 'task_' . $this->faker->uuid(),
+            'job_id' => 'job_' . $this->faker->uuid(),
         ];
     }
 }

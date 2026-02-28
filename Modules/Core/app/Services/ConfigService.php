@@ -9,7 +9,8 @@ class ConfigService
 {
     public function __construct(
         private ConfigRepositoryInterface $repository
-    ) {}
+    ) {
+    }
 
     /**
      * Get a config value.

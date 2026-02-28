@@ -16,7 +16,7 @@ final class ClientLogRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new ClientLogRepository;
+        $this->repository = new ClientLogRepository();
         $this->cleanCollection();
     }
 
@@ -53,8 +53,8 @@ final class ClientLogRepositoryTest extends TestCase
     public function test_edge_create_accepts_max_length_url_and_path_values(): void
     {
         $attributes = ClientLog::factory()->make()->getAttributes();
-        $attributes['path'] = '/'.str_repeat('segment-', 128);
-        $attributes['url'] = 'https://example.test/'.str_repeat('q', 1024);
+        $attributes['path'] = '/' . str_repeat('segment-', 128);
+        $attributes['url'] = 'https://example.test/' . str_repeat('q', 1024);
 
         $model = $this->repository->create($attributes);
 

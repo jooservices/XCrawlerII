@@ -14,5 +14,6 @@ class SchedulerStarted
 
     public function __construct(
         public readonly ?int $durationMs = null
-    ) {}
+    ) {
+    }
 }

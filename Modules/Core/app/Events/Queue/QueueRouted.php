@@ -15,5 +15,6 @@ class QueueRouted
     public function __construct(
         public readonly string $jobClass,
         public readonly string $queueName
-    ) {}
+    ) {
+    }
 }

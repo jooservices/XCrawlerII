@@ -15,7 +15,7 @@ final class MongoLogChannelTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->testRunId = 'test_run_'.fake()->uuid();
+        $this->testRunId = 'test_run_' . fake()->uuid();
         $this->assertMongoAvailable();
     }
 
@@ -24,7 +24,7 @@ final class MongoLogChannelTest extends TestCase
         try {
             LogModel::query()->limit(1)->get();
         } catch (\Throwable $e) {
-            $this->markTestSkipped('MongoDB is not reachable: '.$e->getMessage());
+            $this->markTestSkipped('MongoDB is not reachable: ' . $e->getMessage());
         }
     }
 
@@ -45,7 +45,7 @@ final class MongoLogChannelTest extends TestCase
 
     public function test_mongodb_channel_writes_document_to_logs_collection(): void
     {
-        $message = 'MongoLogChannelTest message '.$this->testRunId;
+        $message = 'MongoLogChannelTest message ' . $this->testRunId;
         Log::info($message, ['test_run_id' => $this->testRunId]);
 
         $docs = $this->fetchLogsByTestRunId();
@@ -60,7 +60,7 @@ final class MongoLogChannelTest extends TestCase
 
     public function test_mongodb_channel_document_has_06_db_004_fields(): void
     {
-        $message = '06-DB-004 check '.$this->testRunId;
+        $message = '06-DB-004 check ' . $this->testRunId;
         Log::warning($message, ['test_run_id' => $this->testRunId]);
 
         $docs = $this->fetchLogsByTestRunId();
@@ -77,7 +77,7 @@ final class MongoLogChannelTest extends TestCase
 
     public function test_mongodb_channel_includes_context_in_document(): void
     {
-        $message = 'context test '.$this->testRunId;
+        $message = 'context test ' . $this->testRunId;
         $context = ['user_id' => 99, 'test_run_id' => $this->testRunId];
         Log::info($message, $context);
 
@@ -91,7 +91,7 @@ final class MongoLogChannelTest extends TestCase
 
     public function test_mongodb_channel_different_levels_write_correct_level_value(): void
     {
-        $message = 'level test '.$this->testRunId;
+        $message = 'level test ' . $this->testRunId;
         Log::error($message, ['test_run_id' => $this->testRunId]);
 
         $docs = $this->fetchLogsByTestRunId();

@@ -53,6 +53,27 @@
             "git config core.hooksPath .githooks",
             "chmod +x .githooks/*"
         ],
+        "lint:php:fix": [
+            "./vendor/bin/pint"
+        ],
+        "lint:php": [
+            "./vendor/bin/pint --test",
+            "./vendor/bin/phpcs --standard=phpcs.xml --runtime-set ignore_warnings_on_exit 1",
+            "./vendor/bin/phpstan analyse --memory-limit=1G --debug",
+            "@php -d error_reporting='E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED' ./vendor/bin/phpmd app,Modules,routes,config,database,tests text phpmd.xml"
+        ],
+        "lint:fe": [
+            "npm run lint"
+        ],
+        "lint:all": [
+            "@lint:php",
+            "@lint:fe"
+        ],
+        "quality:check": [
+            "@lint:all",
+            "@test",
+            "npm run test"
+        ],
         "setup": [
             "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",

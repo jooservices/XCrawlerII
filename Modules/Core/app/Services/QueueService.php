@@ -31,7 +31,7 @@ class QueueService
         }
 
         if (! is_subclass_of($queueClass, ShouldQueue::class)) {
-            $e = new InvalidArgumentException('Job class must implement '.ShouldQueue::class.": {$queueClass}");
+            $e = new InvalidArgumentException('Job class must implement ' . ShouldQueue::class . ": {$queueClass}");
             QueueDispatchFailed::dispatch($queueClass, QueueEnum::DEFAULT->value, $e);
             throw $e;
         }

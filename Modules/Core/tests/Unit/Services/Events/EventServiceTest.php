@@ -34,7 +34,7 @@ final class EventServiceTest extends TestCase
     public function test_record_sourcing_persists_document_with_required_fields(): void
     {
         $event = new StubEventSourcing(
-            eventId: 'evt-'.fake()->uuid(),
+            eventId: 'evt-' . fake()->uuid(),
             eventName: 'test.aggregate.created',
             occurredAt: CarbonImmutable::now(),
             aggregateType: 'test_aggregate',
@@ -128,7 +128,7 @@ final class EventServiceTest extends TestCase
     public function test_record_log_persists_document_with_changed_fields(): void
     {
         $event = new StubEventLog(
-            eventId: 'log-'.fake()->uuid(),
+            eventId: 'log-' . fake()->uuid(),
             eventName: 'entity.updated',
             occurredAt: CarbonImmutable::now(),
             entityType: 'order',

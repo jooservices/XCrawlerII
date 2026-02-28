@@ -22,24 +22,14 @@ class QueueSubscriber
         $events->listen(QueueDispatchFailed::class, [$this, 'onQueueDispatchFailed']);
     }
 
-    public function onQueueRouted(QueueRouted $event): void
+    public function onQueueRouted(QueueRouted $_event): void
     {
-        try {
-            (void) $event;
-            // Placeholder: DB/metrics (jobClass, queueName) here later.
-        } catch (\Throwable $e) {
-            Log::warning('QueueSubscriber::onQueueRouted failed', ['exception' => $e->getMessage()]);
-        }
+        // Intentionally no-op for now; lifecycle hook kept for future telemetry.
     }
 
-    public function onQueueDispatched(QueueDispatched $event): void
+    public function onQueueDispatched(QueueDispatched $_event): void
     {
-        try {
-            (void) $event;
-            // Placeholder: DB/metrics (jobClass, queueName) here later.
-        } catch (\Throwable $e) {
-            Log::warning('QueueSubscriber::onQueueDispatched failed', ['exception' => $e->getMessage()]);
-        }
+        // Intentionally no-op for now; lifecycle hook kept for future telemetry.
     }
 
     public function onQueueDispatchFailed(QueueDispatchFailed $event): void

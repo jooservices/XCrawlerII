@@ -25,7 +25,7 @@ final class EventLogFactory extends Factory
             'event_id' => $this->faker->uuid(),
             'event_name' => 'entity.updated',
             'occurred_at' => new UTCDateTime($occurred),
-            'entity_type' => $this->faker->word().'_entity',
+            'entity_type' => $this->faker->word() . '_entity',
             'entity_id' => $this->faker->uuid(),
             'changed_fields' => $changed,
             'previous' => ['name' => $this->faker->name(), 'status' => 'old'],

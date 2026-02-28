@@ -17,9 +17,9 @@ final class RetryTrackingMiddlewareTest extends TestCase
     public function test_increments_attempt_per_invocation(): void
     {
         $faker = fake();
-        $middleware = new RetryTrackingMiddleware;
+        $middleware = new RetryTrackingMiddleware();
         $context = new ArrayObject(['attempt' => 0, 'retries' => 0, 'marker' => $faker->uuid()]);
-        $request = new Request('GET', 'https://'.$faker->domainName().'/items');
+        $request = new Request('GET', 'https://' . $faker->domainName() . '/items');
 
         $next = function (RequestInterface $req, array $opts): ResponseInterface {
             return new Response(200, [], 'ok');
@@ -34,7 +34,7 @@ final class RetryTrackingMiddlewareTest extends TestCase
 
     public function test_does_not_fail_without_context(): void
     {
-        $middleware = new RetryTrackingMiddleware;
+        $middleware = new RetryTrackingMiddleware();
         $request = new Request('GET', 'https://example.test');
 
         $response = $middleware(

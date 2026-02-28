@@ -13,7 +13,8 @@ final readonly class ChangeSet
         public ?array $previousPartial,
         /** @var array<string, mixed>|null */
         public ?array $newPartial,
-    ) {}
+    ) {
+    }
 
     public function hasChanges(): bool
     {

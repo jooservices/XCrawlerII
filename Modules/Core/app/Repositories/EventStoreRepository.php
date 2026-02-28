@@ -16,7 +16,7 @@ final class EventStoreRepository
      */
     public function create(array $attributes): EventStore
     {
-        $model = new EventStore;
+        $model = new EventStore();
         $model->fill($attributes);
         $model->save();
 

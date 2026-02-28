@@ -50,7 +50,7 @@ final class ClientLog extends MongoDb
     public static function fromHttpLifecycle(array $payload): array
     {
         $ts = $payload['ts'] ?? null;
-        $timestamp = new UTCDateTime;
+        $timestamp = new UTCDateTime();
         if ($ts instanceof UTCDateTime) {
             $timestamp = $ts;
         }

@@ -23,7 +23,7 @@ final class LogTest extends TestCase
         array $extra = [],
     ): LogRecord {
         return new LogRecord(
-            datetime: new DateTimeImmutable,
+            datetime: new DateTimeImmutable(),
             channel: $channel,
             level: $level,
             message: $message,

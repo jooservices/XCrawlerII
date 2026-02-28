@@ -46,10 +46,10 @@ class Health
 
         $failedChecks = collect($result['checks'])
             ->filter(fn (array $check): bool => $check['status'] === 'FAIL')
-            ->map(fn (array $check): string => $check['service'].': '.$check['detail'])
+            ->map(fn (array $check): string => $check['service'] . ': ' . $check['detail'])
             ->implode('; ');
 
-        throw new RuntimeException('Startup service health check failed: '.$failedChecks);
+        throw new RuntimeException('Startup service health check failed: ' . $failedChecks);
     }
 
     /**
@@ -88,7 +88,7 @@ class Health
             $pong = Redis::connection('default')->ping();
             $detail = is_scalar($pong) ? (string) $pong : 'pong';
 
-            return 'ping '.$detail;
+            return 'ping ' . $detail;
         });
     }
 
@@ -112,7 +112,7 @@ class Health
                 return [
                     'service' => 'elasticsearch',
                     'status' => 'FAIL',
-                    'detail' => 'http '.$response->status(),
+                    'detail' => 'http ' . $response->status(),
                 ];
             }
 
@@ -121,7 +121,7 @@ class Health
             return [
                 'service' => 'elasticsearch',
                 'status' => 'OK',
-                'detail' => $clusterName === '' ? 'http 200' : 'cluster '.$clusterName,
+                'detail' => $clusterName === '' ? 'http 200' : 'cluster ' . $clusterName,
             ];
         } catch (\Throwable $throwable) {
             return [

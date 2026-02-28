@@ -27,7 +27,7 @@ final class ClientLoggingToMongoTest extends TestCase
     {
         parent::setUp();
 
-        $this->testRunId = 'test_run_'.fake()->uuid();
+        $this->testRunId = 'test_run_' . fake()->uuid();
         $this->assertMongoAvailable();
         $this->bootLocalHttpServer();
         $this->initialized = true;
@@ -51,20 +51,20 @@ final class ClientLoggingToMongoTest extends TestCase
 
         $client->request('GET', $baseUrl, [
             'headers' => [
-                'Authorization' => 'Bearer '.fake()->sha1(),
+                'Authorization' => 'Bearer ' . fake()->sha1(),
                 'X-Correlation-ID' => $correlationId,
                 'Accept' => 'application/json',
             ],
             'tags' => [$this->testRunId],
-            'task_id' => 'task_'.fake()->uuid(),
-            'job_id' => 'job_'.fake()->uuid(),
+            'task_id' => 'task_' . fake()->uuid(),
+            'job_id' => 'job_' . fake()->uuid(),
             'cache_ttl' => 120,
             'max_attempts' => 3,
         ]);
 
         $client->request('GET', $baseUrl, [
             'headers' => [
-                'Authorization' => 'Bearer '.fake()->sha1(),
+                'Authorization' => 'Bearer ' . fake()->sha1(),
                 'X-Correlation-ID' => $correlationId,
                 'Accept' => 'application/json',
             ],
@@ -101,7 +101,7 @@ final class ClientLoggingToMongoTest extends TestCase
     {
         /** @var ClientContract $client */
         $client = $this->app->make(ClientContract::class);
-        $payloadTag = $this->testRunId.'-xss';
+        $payloadTag = $this->testRunId . '-xss';
         $xssQuery = rawurlencode('<script>alert(1)</script>');
         $url = "http://127.0.0.1:{$this->serverPort}/ok?next={$xssQuery}";
 
@@ -199,7 +199,7 @@ PHP);
         try {
             ClientLog::query()->limit(1)->get();
         } catch (\Throwable $throwable) {
-            $this->fail('MongoDB is not reachable in current environment: '.$throwable->getMessage());
+            $this->fail('MongoDB is not reachable in current environment: ' . $throwable->getMessage());
         }
     }
 

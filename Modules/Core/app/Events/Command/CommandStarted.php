@@ -14,5 +14,6 @@ class CommandStarted
 
     public function __construct(
         public readonly string $command
-    ) {}
+    ) {
+    }
 }

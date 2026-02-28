@@ -22,7 +22,8 @@ final class StubEventLog implements EventLogInterface
         private ?string $correlationId = null,
         private ?string $actorType = null,
         private ?string $actorId = null,
-    ) {}
+    ) {
+    }
 
     public function getEventId(): ?string
     {

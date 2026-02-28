@@ -16,7 +16,7 @@ final class EventLogRepository
      */
     public function create(array $attributes): EventLog
     {
-        $model = new EventLog;
+        $model = new EventLog();
         $model->fill($attributes);
         $model->save();
 

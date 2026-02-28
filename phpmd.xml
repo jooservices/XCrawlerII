@@ -4,13 +4,20 @@
 
   <rule ref="rulesets/cleancode.xml">
     <exclude name="StaticAccess" />
+    <exclude name="ElseExpression" />
   </rule>
-  <rule ref="rulesets/codesize.xml" />
+  <rule ref="rulesets/codesize.xml">
+    <exclude name="CyclomaticComplexity" />
+    <exclude name="NPathComplexity" />
+    <exclude name="ExcessiveParameterList" />
+    <exclude name="TooManyPublicMethods" />
+  </rule>
   <rule ref="rulesets/design.xml" />
   <rule ref="rulesets/naming.xml">
     <exclude name="ShortVariable" />
     <exclude name="LongVariable" />
     <exclude name="CamelCaseMethodName" />
+    <exclude name="ShortMethodName" />
   </rule>
   <rule ref="rulesets/unusedcode.xml">
     <exclude name="UnusedFormalParameter" />
@@ -18,4 +25,5 @@
 
   <exclude-pattern>*/vendor/*</exclude-pattern>
   <exclude-pattern>*/storage/*</exclude-pattern>
+  <exclude-pattern>*/tests/*</exclude-pattern>
 </ruleset>

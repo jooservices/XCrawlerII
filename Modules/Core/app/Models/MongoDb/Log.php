@@ -69,7 +69,7 @@ final class Log extends MongoDb
      */
     public static function fromMessageLogged(MessageLogged $event): array
     {
-        $ts = new UTCDateTime;
+        $ts = new UTCDateTime();
         $levelName = strtoupper($event->level);
 
         return [
@@ -113,7 +113,7 @@ final class Log extends MongoDb
                 'class' => $value::class,
                 'message' => $value->getMessage(),
                 'code' => $value->getCode(),
-                'file' => $value->getFile().':'.$value->getLine(),
+                'file' => $value->getFile() . ':' . $value->getLine(),
                 'trace' => $value->getTraceAsString(),
             ];
         }

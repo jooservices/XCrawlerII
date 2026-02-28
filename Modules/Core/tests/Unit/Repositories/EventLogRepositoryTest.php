@@ -16,7 +16,7 @@ final class EventLogRepositoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = new EventLogRepository;
+        $this->repository = new EventLogRepository();
         $this->cleanCollection();
     }
 
@@ -30,7 +30,7 @@ final class EventLogRepositoryTest extends TestCase
     {
         $occurred = CarbonImmutable::now();
         $attributes = [
-            'event_id' => 'log-'.fake()->uuid(),
+            'event_id' => 'log-' . fake()->uuid(),
             'event_name' => 'entity.updated',
             'occurred_at' => $occurred,
             'entity_type' => 'order',

@@ -24,6 +24,6 @@ final class HorizonConfigTest extends TestCase
     {
         $waits = config('horizon.waits');
 
-        self::assertArrayHasKey('redis:'.QueueEnum::DEFAULT->value, $waits);
+        self::assertArrayHasKey('redis:' . QueueEnum::DEFAULT->value, $waits);
     }
 }
