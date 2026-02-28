@@ -67,7 +67,7 @@ Examples:
 
 ### DATA-MOD-002: TABLE (SQL) or COLLECTION (Mongo) constant required
 
-**Rule:** Every model MUST define `public const string TABLE` (SQL) or `public const string COLLECTION` (MongoDB), and MUST assign it to `protected $table = self::TABLE` or `self::COLLECTION`.
+**Rule:** Every model MUST define a typed constant using PHP 8.3 typed constants syntax: `public const string TABLE` (SQL) or `public const string COLLECTION` (MongoDB), and MUST assign it to `protected $table = self::TABLE` or `self::COLLECTION`.
 
 **Rationale:** Single source of truth for table/collection name; refactor-safe.
 
@@ -100,7 +100,7 @@ Examples:
 - MongoDB model in `Modules/Crawler/app/Models/` (no `MongoDb` subfolder).
 
 **Enforcement:** Code review; path and extends check.  
-**References:** [01-module-boundaries](01-module-boundaries.md).
+**References:** [01-module-boundaries](01-module-boundaries-and-dependencies.md).
 
 ---
 

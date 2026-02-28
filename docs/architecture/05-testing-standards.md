@@ -119,7 +119,7 @@ final class OrderFeatureTest extends TestCase  // in Modules/*/tests
 ```
 
 **Enforcement:** Grep in `Modules/*/tests` for `extends \Tests\TestCase`; should be empty.  
-**References:** [01-module-boundaries](01-module-boundaries.md).
+**References:** [01-module-boundaries](01-module-boundaries-and-dependencies.md).
 
 ---
 
@@ -143,6 +143,34 @@ final class OrderFeatureTest extends TestCase  // in Modules/*/tests
 
 **Enforcement:** Code review; test plan or checklist per feature.  
 **References:** [06-code-review-checklist](06-code-review-checklist.md).
+
+---
+
+### TEST-005A: Naming convention for required coverage categories
+
+**Rule:** To make TEST-005 mechanically checkable, new tests SHOULD include category-prefixed method names:
+
+- `test_happy_*`
+- `test_unhappy_*`
+- `test_weird_*`
+- `test_security_*` (or `test_exploit_*`)
+- `test_edge_*`
+
+**Rationale:** Explicit naming makes required category coverage grep/CI-enforceable and easier to review.
+
+**Allowed:**
+
+- `test_happy_create_order_success()`
+- `test_unhappy_create_order_validation_error()`
+- `test_weird_create_order_rejects_malformed_payload()`
+- `test_security_create_order_rejects_idor_attempt()`
+- `test_edge_create_order_handles_empty_items()`
+
+**Anti-examples (forbidden for new tests):**
+
+- Only generic names with no category clarity (for example, `test_create_order_case_1`).
+
+**Enforcement:** Optional CI check can grep category prefixes in target test suites.
 
 ---
 

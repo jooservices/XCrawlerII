@@ -110,7 +110,7 @@ Interface creation is a **blocker** unless the following are satisfied. See [16-
 ## References
 
 - [00-docs-classification](00-docs-classification.md)
-- [01-module-boundaries](01-module-boundaries.md)
+- [01-module-boundaries](01-module-boundaries-and-dependencies.md)
 - [02-backend-layering](02-backend-layering.md)
 - [03-data-model-standards](03-data-model-standards.md)
 - [04-frontend-standards](04-frontend-standards.md)
