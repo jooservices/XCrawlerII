@@ -11,6 +11,7 @@ use Modules\Core\Console\Commands\ServicesHealthCheck;
 use Modules\Core\Contracts\Events\ChangeSetBuilderInterface;
 use Modules\Core\Contracts\Events\EventSubscriberInterface;
 use Modules\Core\Models\MongoDb\Log as LogModel;
+use Modules\Core\Repositories\ClientLogRepository;
 use Modules\Core\Repositories\EventLogRepository;
 use Modules\Core\Repositories\EventStoreRepository;
 use Modules\Core\Repositories\LogRepository;
@@ -101,6 +102,7 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->singleton(\Modules\Core\Services\ConfigService::class);
 
         $this->app->singleton(ChangeSetBuilderInterface::class, ChangeSetBuilder::class);
+        $this->app->singleton(ClientLogRepository::class);
         $this->app->singleton(EventStoreRepository::class);
         $this->app->singleton(EventLogRepository::class);
         $this->app->singleton(EventService::class);

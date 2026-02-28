@@ -96,7 +96,7 @@ Define the roles of Inertia Pages, Components, Composables, and Services, and en
 - Composable that implements HTTP calls with raw `fetch` instead of a Service.
 
 **Enforcement:** Code review.  
-**References:** [01-module-boundaries](01-module-boundaries.md) (shared composables in Core).
+**References:** [01-module-boundaries](01-module-boundaries-and-dependencies.md) (shared composables in Core).
 
 ---
 
@@ -139,7 +139,7 @@ Define the roles of Inertia Pages, Components, Composables, and Services, and en
 - Shared component that is used by multiple features but lives in `Modules/Auth` (move to Core).
 
 **Enforcement:** Code review; convention that any “shared” or “common” FE asset used by 2+ features must live in Core.  
-**References:** [01-module-boundaries](01-module-boundaries.md), [06-code-review-checklist](06-code-review-checklist.md).
+**References:** [01-module-boundaries](01-module-boundaries-and-dependencies.md), [06-code-review-checklist](06-code-review-checklist.md).
 
 ---
 
@@ -179,4 +179,4 @@ Define the roles of Inertia Pages, Components, Composables, and Services, and en
 
 - **PR:** Checklist in [06-code-review-checklist](06-code-review-checklist.md).
 - **CI:** Optional: lint for script setup and import paths (no shared assets outside Core).
-- **References:** [01-module-boundaries](01-module-boundaries.md), [docs/reference/02-module-map](../reference/02-module-map.md).
+- **References:** [01-module-boundaries](01-module-boundaries-and-dependencies.md), [docs/reference/02-module-map](../reference/02-module-map.md).

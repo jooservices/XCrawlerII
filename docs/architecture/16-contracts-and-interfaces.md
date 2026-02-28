@@ -73,6 +73,26 @@ Verification:
 
 ---
 
+### Repository interface decision table
+
+Use this table when deciding if a repository needs an interface.
+
+| Scenario | Interface Required? | Why |
+| --- | --- | --- |
+| Repository wraps an external boundary adapter (remote API/search/payment) | Yes | IFACE-001 external boundary seam. |
+| Repository contract is consumed across modules | Yes (in Core) | IFACE-002 + IFACE-100 shared contract ownership. |
+| Two concrete repository implementations exist now (or approved near-term) | Yes | IFACE-002 multi-implementation seam. |
+| Single concrete repository, module-local, no approved alternative implementation | No | IFACE-003 1:1/mirror anti-pattern. |
+| Only tests need deterministic seam and this is documented in PR | Maybe | Allowed by IFACE-002 hard-to-test seam; include binding + tests. |
+
+Reviewer quick checks:
+
+- Is there a real consumer type-hinting the interface?
+- Is there DI binding in the owning ServiceProvider?
+- Is there at least one test proving the seam is used?
+
+---
+
 ### Core placement and shared contracts
 
 Rule `IFACE-100`:

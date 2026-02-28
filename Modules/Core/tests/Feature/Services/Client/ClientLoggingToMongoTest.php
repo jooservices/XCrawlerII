@@ -42,7 +42,7 @@ final class ClientLoggingToMongoTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_client_logs_sanitized_payload_retry_and_cache_metadata_to_mongo(): void
+    public function test_happy_unhappy_edge_client_logs_sanitized_payload_retry_and_cache_metadata_to_mongo(): void
     {
         /** @var ClientContract $client */
         $client = $this->app->make(ClientContract::class);
@@ -95,6 +95,25 @@ final class ClientLoggingToMongoTest extends TestCase
         $this->assertArrayHasKey('retries', $failedDoc);
         $this->assertGreaterThanOrEqual(1, (int) $failedDoc['attempt']);
         $this->assertSame(max(0, ((int) $failedDoc['attempt']) - 1), (int) $failedDoc['retries']);
+    }
+
+    public function test_security_client_log_preserves_xss_like_url_as_text_in_mongo_document(): void
+    {
+        /** @var ClientContract $client */
+        $client = $this->app->make(ClientContract::class);
+        $payloadTag = $this->testRunId.'-xss';
+        $xssQuery = rawurlencode('<script>alert(1)</script>');
+        $url = "http://127.0.0.1:{$this->serverPort}/ok?next={$xssQuery}";
+
+        $client->request('GET', $url, [
+            'headers' => ['Accept' => 'application/json'],
+            'tags' => [$payloadTag],
+        ]);
+
+        $docs = $this->fetchDocsByTag($payloadTag);
+        $this->assertNotEmpty($docs);
+        $doc = $docs[0];
+        $this->assertStringContainsString($xssQuery, (string) ($doc['url'] ?? ''));
     }
 
     private function bootLocalHttpServer(): void

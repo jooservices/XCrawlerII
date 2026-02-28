@@ -27,7 +27,7 @@ final class CommandServiceCommandTest extends TestCase
     }
 
     #[Test]
-    public function schedule_dispatches_scheduler_started_then_completed_or_failed(): void
+    public function test_happy_schedule_dispatches_scheduler_started_then_completed_or_failed(): void
     {
         Event::fake([SchedulerStarted::class, SchedulerCompleted::class, SchedulerFailed::class]);
 
@@ -53,7 +53,7 @@ final class CommandServiceCommandTest extends TestCase
     }
 
     #[Test]
-    public function command_dispatches_lifecycle_events_on_success(): void
+    public function test_happy_command_dispatches_lifecycle_events_on_success(): void
     {
         Event::fake([CommandStarted::class, CommandCompleted::class, CommandFailed::class]);
 
@@ -69,7 +69,7 @@ final class CommandServiceCommandTest extends TestCase
     }
 
     #[Test]
-    public function command_dispatches_command_failed_on_non_zero_exit(): void
+    public function test_unhappy_command_dispatches_command_failed_on_non_zero_exit(): void
     {
         Event::fake([CommandStarted::class, CommandCompleted::class, CommandFailed::class]);
 
@@ -85,7 +85,7 @@ final class CommandServiceCommandTest extends TestCase
     }
 
     #[Test]
-    public function command_passes_parameters_through(): void
+    public function test_happy_command_passes_parameters_through(): void
     {
         Artisan::command('core:test-params {value}', function ($value) {
             return $value === 'passed' ? 0 : 1;
@@ -99,7 +99,7 @@ final class CommandServiceCommandTest extends TestCase
     }
 
     #[Test]
-    public function invalid_command_name_throws(): void
+    public function test_unhappy_invalid_command_name_throws(): void
     {
         Event::fake([CommandStarted::class, CommandCompleted::class, CommandFailed::class]);
 
@@ -107,5 +107,15 @@ final class CommandServiceCommandTest extends TestCase
         $this->expectExceptionMessage('nonexistent:command');
 
         Command::command('nonexistent:command');
+    }
+
+    #[Test]
+    public function test_security_command_name_injection_like_input_is_not_executed_and_throws(): void
+    {
+        Event::fake([CommandStarted::class, CommandCompleted::class, CommandFailed::class]);
+
+        $this->expectException(\Throwable::class);
+
+        Command::command('core:test-ok; echo hacked');
     }
 }

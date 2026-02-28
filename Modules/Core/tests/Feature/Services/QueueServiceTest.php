@@ -17,7 +17,7 @@ use PHPUnit\Framework\Attributes\Test;
 final class QueueServiceTest extends TestCase
 {
     #[Test]
-    public function queue_dispatches_routed_and_dispatched_events_and_job_on_default_queue(): void
+    public function test_happy_queue_dispatches_routed_and_dispatched_events_and_job_on_default_queue(): void
     {
         Event::fake([QueueRouted::class, QueueDispatched::class, QueueDispatchFailed::class]);
         Bus::fake();
@@ -31,7 +31,7 @@ final class QueueServiceTest extends TestCase
     }
 
     #[Test]
-    public function unknown_job_class_uses_default_queue(): void
+    public function test_edge_unknown_job_class_mapping_uses_default_queue(): void
     {
         Event::fake([QueueRouted::class, QueueDispatched::class]);
         Bus::fake();
@@ -43,7 +43,7 @@ final class QueueServiceTest extends TestCase
     }
 
     #[Test]
-    public function class_not_implementing_should_queue_throws_and_dispatches_failed(): void
+    public function test_unhappy_class_not_implementing_should_queue_throws_and_dispatches_failed(): void
     {
         Event::fake([QueueRouted::class, QueueDispatched::class, QueueDispatchFailed::class]);
         Bus::fake();
@@ -55,7 +55,7 @@ final class QueueServiceTest extends TestCase
     }
 
     #[Test]
-    public function queue_dispatch_failed_event_fired_when_class_invalid(): void
+    public function test_unhappy_queue_dispatch_failed_event_fired_when_class_invalid(): void
     {
         Event::fake([QueueDispatchFailed::class]);
 
@@ -66,5 +66,16 @@ final class QueueServiceTest extends TestCase
         }
 
         Event::assertDispatched(QueueDispatchFailed::class);
+    }
+
+    #[Test]
+    public function test_edge_empty_job_class_value_throws_and_dispatches_failed(): void
+    {
+        Event::fake([QueueDispatchFailed::class]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Job class does not exist');
+
+        QueueManager::queue('', []);
     }
 }

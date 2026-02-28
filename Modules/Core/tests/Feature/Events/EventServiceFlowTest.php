@@ -35,7 +35,7 @@ final class EventServiceFlowTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_full_flow_record_sourcing_writes_to_mongo(): void
+    public function test_happy_full_flow_record_sourcing_writes_to_mongo(): void
     {
         $eventId = 'evt-'.fake()->uuid();
         $aggregateId = fake()->uuid();
@@ -64,7 +64,7 @@ final class EventServiceFlowTest extends TestCase
         $this->assertNotNull($doc->created_at);
     }
 
-    public function test_full_flow_record_log_writes_to_mongo(): void
+    public function test_happy_full_flow_record_log_writes_to_mongo(): void
     {
         $eventId = 'log-'.fake()->uuid();
         $entityId = fake()->uuid();
@@ -95,7 +95,7 @@ final class EventServiceFlowTest extends TestCase
         $this->assertNotNull($doc->created_at);
     }
 
-    public function test_full_flow_actor_context_overrides_event_actor(): void
+    public function test_edge_full_flow_actor_context_overrides_event_actor(): void
     {
         $event = new StubEventSourcing(
             eventId: fake()->uuid(),
@@ -119,7 +119,7 @@ final class EventServiceFlowTest extends TestCase
         $this->assertSame('corr-xyz', $doc->correlation_id);
     }
 
-    public function test_full_flow_sanitizer_redacts_secrets_in_stored_payload(): void
+    public function test_security_full_flow_sanitizer_redacts_secrets_in_stored_payload(): void
     {
         $event = new StubEventSourcing(
             eventId: fake()->uuid(),

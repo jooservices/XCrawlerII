@@ -1,105 +1,145 @@
 # 01 - Module Boundaries and Dependencies
 
-## Dependency Diagram
+## Purpose
+
+Define dependency rules between modules so Core remains domain-agnostic and feature modules stay independent and replaceable.
+
+## Scope
+
+- All code under `Modules/`
+- Composer/autoload and runtime dependencies between modules
+
+## Non-goals
+
+- Package versioning or composer merge-plugin details (see project README/composer)
+- Routing or controller layout inside a module (see [02-backend-layering](02-backend-layering.md))
+
+## Definitions
+
+| Term | Meaning |
+| --- | --- |
+| **Core** | The single shared module: `Modules/Core`. Domain-agnostic contracts, base classes, shared FE assets. |
+| **Feature module** | Any other module under `Modules/` that implements a bounded feature (e.g. Auth, Crawler, Search). |
+| **Boundary contract** | Interface or abstract class in Core that defines how features or external systems interact. |
+
+This is the single authoritative `01` document. The legacy [01-module-boundaries](01-module-boundaries.md) file is deprecated and kept only as a redirect.
+
+## Dependency Diagram (allowed vs forbidden)
+
 ```mermaid
-flowchart LR
-    Core[Modules/Core]
-    Auth[Modules/Auth]
-    Billing[Modules/Billing]
-    Orders[Modules/Orders]
+flowchart TB
+    subgraph Allowed
+        direction TB
+        F1[Feature A]
+        F2[Feature B]
+        F3[Feature C]
+        Core[Modules/Core]
+        F1 --> Core
+        F2 --> Core
+        F3 --> Core
+    end
 
-    Auth --> Core
-    Billing --> Core
-    Orders --> Core
-
-    Auth -. forbidden direct dependency .-> Billing
-    Billing -. forbidden direct dependency .-> Orders
-    Core -. forbidden .-> Auth
+    subgraph Forbidden
+        direction TB
+        FA[Feature A]
+        FB[Feature B]
+        FA -.->|"MUST NOT"| FB
+        FB -.->|"MUST NOT"| FA
+        Core -.->|"MUST NOT"| FA
+    end
 ```
 
-## Core Scope
-Rule `01-MOD-001`:
-Core contains only shared/general assets: abstractions, contracts, shared DTOs/enums/constants, FE master layout/base/shared components/composables/http wrapper, logging wrapper, and error schema helpers.
+- **Allowed:** Feature -> Core (one-way).
+- **Forbidden:** Core -> Feature; Feature -> Feature (any direct dependency between two feature modules).
 
-Rationale:
-Core is a stable platform layer, not a feature bucket.
+## Rules
 
-Allowed:
+### MOD-001: Core is the only shared module
+
+**Rule:** `Modules/Core` is the only shared module and MUST remain domain-agnostic. It must not contain feature-specific business logic or feature-specific nouns (except in contract/interface names that describe capabilities).
+
+**Rationale:** Prevents Core from becoming a grab-bag of feature code and keeps the platform layer stable.
+
+**Allowed:**
+
+- Contracts in Core: `SmsGatewayPort`, `AuditLogger`, `CustomerReadPort`.
+- Shared DTOs, enums, constants in Core.
+- Base classes (e.g. `MongoDb` base model), shared HTTP client, master layout, shared Vue components.
+
+**Anti-examples (forbidden):**
+
+- `Modules\Core\Services\BillingInvoiceService` (feature-specific).
+- `Modules\Core\Models\Order` (feature-specific; orders belong in an Orders or similar feature module).
+
+**Enforcement:** Code review; static scan for feature-domain nouns in Core outside of Contracts/Interfaces.
+
+### MOD-002: Feature modules may depend only on Core
+
+**Rule:** Feature modules MAY depend on Core. They MUST NOT depend on any other feature module (no `use Modules\OtherFeature\...` from a feature module).
+
+**Rationale:** Keeps features independently deployable and replaceable; avoids hidden coupling.
+
+**Allowed:**
+
 ```php
-namespace Modules\Core\Contracts;
-interface SmsGatewayPort { public function send(string $to, string $message): void; }
-```
-
-Forbidden:
-```php
-namespace Modules\Core\Services;
-class BillingInvoiceService {}
-```
-
-Verification:
-- Core classes are domain-agnostic.
-- Feature-specific nouns are absent from Core except contract names.
-
-## Dependency Direction
-Rule `01-MOD-002`:
-Feature modules MAY depend on Core. Core MUST NOT depend on feature modules.
-
-Rationale:
-One-way dependency prevents cycles and hidden coupling.
-
-Allowed:
-```php
+// Inside Modules/Auth
 use Modules\Core\Contracts\AuditLogger;
+use Modules\Core\Dto\SomeSharedDto;
 ```
 
-Forbidden:
+**Anti-examples (forbidden):**
+
 ```php
-use Modules\Orders\app\Services\OrderService;
+// Inside Modules/Auth
+use Modules\Crawler\Services\CrawlerService;
+use Modules\Billing\Repositories\InvoiceRepository;
 ```
 
-Verification:
-- Static scan for feature imports in Core returns none.
+**Enforcement:** Code review; Composer/autoload or static analysis to ensure no cross-feature `use` in `Modules/*` (except Core).
 
-## Inter-Feature Communication
-Rule `01-MOD-003`:
-Feature modules MUST NOT directly depend on each other. Cross-module interaction must go through explicit contracts in Core.
+### MOD-003: Inter-feature communication via Core contracts only
 
-Rationale:
-Contracts preserve replaceability and independent evolution.
+**Rule:** Inter-feature communication MUST be via Contracts/Interfaces (and optionally DTOs) defined in Core. Feature modules implement or consume these contracts; they must not call each other's concrete classes.
 
-Allowed:
+**Rationale:** Preserves replaceability and keeps dependencies one-way (feature -> Core).
+
+**Allowed:**
+
+- Core defines `CustomerReadPort`; Feature A implements it, Feature B consumes it via the interface (injected).
+- Events/listeners if the event contract and payload are defined in Core or in a neutral namespace agreed in ADR.
+
+**Anti-examples (forbidden):**
+
+- Feature B importing and calling `FeatureA\Services\SomeService` directly.
+- Feature B type-hinting `FeatureA\Dto\Something` in public API (DTOs crossing feature boundary should live in Core or be agreed in ADR).
+
+**Enforcement:** Code review; dependency direction checks.
+
+### MOD-004: Core must not depend on feature modules
+
+**Rule:** Core MUST NOT depend on any feature module. No `use Modules\<Feature>\...` in Core code.
+
+**Rationale:** Core is the stable platform; it must not be pulled into feature release cycles.
+
+**Allowed:**
+
+- Core only references its own namespace, framework, and third-party packages.
+
+**Anti-examples (forbidden):**
+
 ```php
-interface CustomerReadPort { public function findById(int $id): ?CustomerSummaryDto; }
+// In Modules/Core
+use Modules\Auth\Services\AuthService;
 ```
 
-Forbidden:
-```php
-use Modules\Customer\app\Repositories\CustomerRepository;
-```
+**Enforcement:** Grep/static analysis: no imports from `Modules\*` in `Modules/Core` except `Modules\Core\*`.
 
-Verification:
-- No direct inter-feature imports in feature modules.
+## Exceptions
 
-## Public Contract Placement
-Rule `01-MOD-004`:
-Interfaces/enums/DTOs used by more than one module MUST live in Core.
+Exceptions to this document MUST be registered in [11-exceptions-registry](11-exceptions-registry.md).
 
-Rationale:
-Shared contracts need single ownership and version control.
+## References
 
-Allowed:
-```text
-Modules/Core/app/Contracts/PaymentProviderPort.php
-Modules/Core/app/DTO/PaymentResultDto.php
-```
-
-Forbidden:
-```text
-Modules/Billing/app/Contracts/PaymentProviderPort.php
-```
-
-Verification:
-- Shared contract paths start with `Modules/Core/app`.
-
-## Exception Link
-Exceptions to this document MUST be registered in `11-exceptions-registry.md`.
+- [02-backend-layering](02-backend-layering.md)
+- [03-data-model-standards](03-data-model-standards.md)
+- [06-code-review-checklist](06-code-review-checklist.md)

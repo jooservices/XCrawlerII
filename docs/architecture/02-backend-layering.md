@@ -132,6 +132,26 @@ $this->db->transaction(function () use ($payload) {
 
 ---
 
+### BE-REQ-003A: Infrastructure service exception for diagnostics
+
+**Rule:** Infrastructure diagnostics services MAY use direct `DB::connection()` checks when the sole purpose is runtime health verification (for example, service/database health probes). This exception is not allowed for business data reads/writes.
+
+**Rationale:** Health probes need low-level connection validation and should not require business repositories.
+
+**Allowed:**
+
+- `Health` service calling `DB::connection(...)->getPdo()` (or equivalent ping/query) to verify DB availability.
+- Similar checks for cache/queue/search adapters in dedicated diagnostics services.
+
+**Anti-examples (forbidden):**
+
+- Reusing diagnostics services to fetch business entities or run domain queries.
+- Direct `DB::connection()` access inside controllers, business services, or repositories for normal feature flow.
+
+**Enforcement:** Code review; diagnostics-only classes should be clearly named (e.g. `*Health*`, `*Probe*`) and scoped to operational checks.
+
+---
+
 ### BE-REQ-004: One Model per Repository
 
 **Rule:** Maintain a 1 Model ↔ 1 Repository mapping. A repository must not own or return multiple unrelated models/aggregates.
@@ -189,7 +209,7 @@ $this->db->transaction(function () use ($payload) {
 - `if ($status === 'pending')`, `'order_created'` as string in multiple places.
 
 **Enforcement:** Code review; grep for quoted strings that represent domain states.  
-**References:** [01-module-boundaries](01-module-boundaries.md).
+**References:** [01-module-boundaries](01-module-boundaries-and-dependencies.md).
 
 ---
 
