@@ -1,0 +1,31 @@
+flowchart LR
+    subgraph Ingress
+        Crawl[Crawl Pipeline]
+        API[Search API]
+    end
+
+    subgraph Stores
+        MariaDB[(MariaDB)]
+        Mongo[(MongoDB)]
+        Redis[(Redis)]
+        ES[(Elasticsearch)]
+    end
+
+    Crawl --> MariaDB
+    Crawl --> Mongo
+    Crawl --> ES
+    API --> ES
+    API --> Redis
+    Crawl --> Redis
+
+    subgraph Labels
+        L1[Relational / transactional]
+        L2[Logs / documents]
+        L3[Cache / queue / rate limit]
+        L4[Search index]
+    end
+
+    MariaDB -.- L1
+    Mongo -.- L2
+    Redis -.- L3
+    ES -.- L4

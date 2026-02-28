@@ -1,0 +1,20 @@
+sequenceDiagram
+    participant Client
+    participant Router
+    participant Controller
+    participant FormRequest
+    participant Service
+    participant Repository
+    participant Model
+
+    Client->>Router: HTTP Request
+    Router->>Controller: dispatch
+    Controller->>FormRequest: validate + authorize
+    FormRequest-->>Controller: validated()
+    Controller->>Service: execute(data, user)
+    Service->>Repository: find/create/update
+    Repository->>Model: query / persist
+    Model-->>Repository: result
+    Repository-->>Service: entity / collection
+    Service-->>Controller: result
+    Controller-->>Client: Response

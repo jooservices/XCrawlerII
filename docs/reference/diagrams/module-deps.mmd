@@ -1,0 +1,21 @@
+flowchart TB
+    subgraph Modules
+        Core[Modules/Core]
+        Auth[Modules/Auth]
+        Crawler[Modules/Crawler]
+        Search[Modules/Search]
+    end
+
+    Auth --> Core
+    Crawler --> Core
+    Search --> Core
+
+    Auth -.->|forbidden| Crawler
+    Auth -.->|forbidden| Search
+    Crawler -.->|forbidden| Auth
+    Crawler -.->|forbidden| Search
+    Search -.->|forbidden| Auth
+    Search -.->|forbidden| Crawler
+    Core -.->|forbidden| Auth
+    Core -.->|forbidden| Crawler
+    Core -.->|forbidden| Search
