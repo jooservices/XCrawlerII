@@ -27,8 +27,25 @@ final class ChangeSetBuilder implements ChangeSetBuilderInterface
         $newPartial = [];
 
         foreach ($keys as $key) {
-            $prevVal = $previous[$key] ?? null;
-            $newVal = $new[$key] ?? null;
+            $prevExists = array_key_exists($key, $previous);
+            $newExists = array_key_exists($key, $new);
+
+            $prevVal = $prevExists ? $previous[$key] : null;
+            $newVal = $newExists ? $new[$key] : null;
+
+            if (!$prevExists && $newExists) {
+                $changedFields[] = $key;
+                $newPartial[$key] = $newVal;
+
+                continue;
+            }
+
+            if ($prevExists && !$newExists) {
+                $changedFields[] = $key;
+                $previousPartial[$key] = $prevVal;
+
+                continue;
+            }
 
             if ($maxDepth > 1 && is_array($prevVal) && is_array($newVal)) {
                 $nested = $this->build($prevVal, $newVal, null, $maxKeys, $maxDepth - 1);
@@ -61,7 +78,7 @@ final class ChangeSetBuilder implements ChangeSetBuilderInterface
     {
         $all = array_unique(array_merge(array_keys($previous), array_keys($new)));
 
-        if ($onlyKeys !== null && $onlyKeys !== []) {
+        if ($onlyKeys !== null) {
             $allowed = array_flip($onlyKeys);
 
             return array_values(array_filter($all, static fn (string $k): bool => isset($allowed[$k])));
