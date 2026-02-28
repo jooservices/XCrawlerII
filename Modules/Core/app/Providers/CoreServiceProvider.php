@@ -17,9 +17,13 @@ use Modules\Core\Repositories\LogRepository;
 use Modules\Core\Services\Client\Client;
 use Modules\Core\Services\Client\Contracts\ClientContract;
 use Modules\Core\Services\Client\Logging\HttpLogSanitizer;
+use Modules\Core\Services\CommandService;
 use Modules\Core\Services\Events\ChangeSetBuilder;
 use Modules\Core\Services\Events\EventService;
 use Modules\Core\Services\LogService;
+use Modules\Core\Services\QueueService;
+use Modules\Core\Subscribers\CommandSubscriber;
+use Modules\Core\Subscribers\QueueSubscriber;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -55,6 +59,8 @@ class CoreServiceProvider extends ServiceProvider
         });
 
         $this->registerEventSubscribers();
+        Event::subscribe(CommandSubscriber::class);
+        Event::subscribe(QueueSubscriber::class);
     }
 
     /**
@@ -98,6 +104,8 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->singleton(EventStoreRepository::class);
         $this->app->singleton(EventLogRepository::class);
         $this->app->singleton(EventService::class);
+        $this->app->singleton(CommandService::class);
+        $this->app->singleton(QueueService::class);
 
         $this->app->bind(ClientContract::class, function ($app): ClientContract {
             $cacheStore = (string) config('core.client.cache_store', (string) config('cache.default', 'database'));
