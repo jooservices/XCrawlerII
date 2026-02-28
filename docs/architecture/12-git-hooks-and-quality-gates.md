@@ -181,13 +181,20 @@ Verification:
 
 - PR template/review checklist includes DTO count and exception ID when needed.
 
-## Pre-Push Hooks (Model Standards)
+## Pre-Push Hooks (Model Standards + Conditional FE Build)
 
 Rule `12-GAT-008`:
 A pre-push hook MUST block any pushes that violate the Model Standards (naming, location, inheritance, table constant, fillable, timestamps, etc.).
 
 Rationale:
 Prevents persistent layer technical debt from being merged or consuming unnecessary CI time.
+
+**Single source of truth:** All hooks live in `.githooks/`. The repository uses this directory only; `core.hooksPath` must be `.githooks`. Husky is not used for hook execution (so that `core.hooksPath` is not overwritten by `npm install`).
+
+**Pre-push execution order (unified flow):**
+
+1. **BE validation (priority):** Validate changed files under `Modules/*/app/Models/` against `06a-model-standards.md`. On violation, push is blocked.
+2. **FE build (conditional):** If `scripts/should-run-build.sh` indicates FE-related files changed, run `npm run build`. If no FE changes, the build is skipped.
 
 Installation & Setup:
 Hooks are stored in `.githooks/`. To install globally for the repository, run:
@@ -196,6 +203,8 @@ Hooks are stored in `.githooks/`. To install globally for the repository, run:
 composer githooks:install
 ```
 
+This sets `git config core.hooksPath .githooks` and makes the hook scripts executable. The full setup (`composer run setup`) includes this step. After clone or when hooks are not running, run the command above once.
+
 Bypass:
 In absolute emergencies, this gate can be bypassed with `git push --no-verify`, but this practice is rigorously discouraged and requires justification in the PR.
 
@@ -203,3 +212,4 @@ Verification:
 
 - `.githooks/pre-push` script executes properly upon push.
 - The Git push process is aborted successfully if any model standard violates the `06a-model-standards.md` compliance.
+- When BE validation passes, FE build runs only when FE-related files (per `scripts/should-run-build.sh`) have changed.

@@ -138,4 +138,10 @@ while read local_ref local_sha remote_ref remote_sha; do
     fi
 done
 
+# --- FE build (conditional): only when FE-related files changed (unified pre-push, 12-GAT-008)
+if sh ./scripts/should-run-build.sh; then
+    echo -e "${YELLOW}FE/build changes detected, running build...${NC}"
+    npm run build
+fi
+
 exit 0

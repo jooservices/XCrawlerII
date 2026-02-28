@@ -101,6 +101,28 @@ Architecture set (00-14):
     - [13 Coverage Policy](docs/architecture/13-coverage-policy.md)
     - [14 Branch, Commit, PR Rules](docs/architecture/14-branch-commit-pr-rules.md)
 
+## Git Hooks (single source of truth: `.githooks/`)
+
+All git hooks are in **`.githooks/`**. Git uses this directory when `core.hooksPath` is set to `.githooks`.
+
+**Enable hooks (required after clone or if hooks are not running):**
+
+```bash
+composer githooks:install
+```
+
+This sets `git config core.hooksPath .githooks` and makes the hook scripts executable. No other `core.hooksPath` should be used; the repo does not use Husky for hook execution to avoid conflicts.
+
+**What runs:**
+
+- **pre-commit** (12-GAT-001): `./vendor/bin/pint --test` — blocks commit on PHP formatting issues.
+- **commit-msg** (12-GAT-005): Enforces Conventional Commits format (`type(scope): description`).
+- **pre-push** (12-GAT-008): (1) **BE first** — validates Model Standards on changed `Modules/*/app/Models/*.php` per [06a-model-standards.md](docs/architecture/06a-model-standards.md); (2) **FE second (conditional)** — if FE-related files changed (per `scripts/should-run-build.sh`), runs `npm run build`.
+
+If you previously had Husky and only saw the FE build on push, run `composer githooks:install` once to switch to the unified pre-push (BE validation + conditional FE build).
+
+See [12 - Git Hooks and Quality Gates](docs/architecture/12-git-hooks-and-quality-gates.md).
+
 ## Quick Start
 
 Prerequisites:
@@ -115,6 +137,13 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate
 npm install
+composer githooks:install
+```
+
+Or use the full setup (includes hook installation):
+
+```bash
+composer run setup
 ```
 
 Run development:
