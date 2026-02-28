@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.5",
         "inertiajs/inertia-laravel": "^2.0",
         "jooservices/client": "^0.5.0",
         "jooservices/dto": "^1.0",
