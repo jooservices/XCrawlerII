@@ -33,14 +33,14 @@ final class ChangeSetBuilder implements ChangeSetBuilderInterface
             $prevVal = $prevExists ? $previous[$key] : null;
             $newVal = $newExists ? $new[$key] : null;
 
-            if (!$prevExists && $newExists) {
+            if (! $prevExists && $newExists) {
                 $changedFields[] = $key;
                 $newPartial[$key] = $newVal;
 
                 continue;
             }
 
-            if ($prevExists && !$newExists) {
+            if ($prevExists && ! $newExists) {
                 $changedFields[] = $key;
                 $previousPartial[$key] = $prevVal;
 
