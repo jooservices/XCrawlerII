@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Modules\Core\Contracts\Events;
 
-use Modules\Core\Dto\Events\ChangeSet;
+use Modules\Core\DTOs\Events\ChangeSet;
 
 interface ChangeSetBuilderInterface
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Modules\Core\Dto\Events;
+namespace Modules\Core\DTOs\Events;
 
 use Modules\Core\Enums\Events\ActorType;
 

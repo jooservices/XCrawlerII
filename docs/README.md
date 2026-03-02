@@ -64,6 +64,7 @@ This folder contains the canonical documentation for the XCrawler repository. Do
 | [00-system-overview](reference/00-system-overview.md)     | Roles of MariaDB, Mongo, Redis, Elasticsearch; project purpose (crawling, search) |
 | [01-request-lifecycle](reference/01-request-lifecycle.md) | Request flow with sequence diagrams (backend and frontend)                        |
 | [02-module-map](reference/02-module-map.md)               | Core vs feature modules; example tree; how to add a new module                    |
+| [03-jav-fetch-parse-flow](reference/03-jav-fetch-parse-flow.md) | JAV fetch/parse: process flow, logic flow, diagrams, onejav/141jav/ffjav, extension options |
 | [diagrams/](reference/diagrams/)                          | Mermaid sources: module-deps.mmd, request-flow.mmd, data-flows.mmd                |
 
 ---
@@ -101,6 +102,7 @@ This folder contains the canonical documentation for the XCrawler repository. Do
 | Document                                                            | Content                                                                                                         |
 | ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | [00-pr-onboarding-playbook](playbooks/00-pr-onboarding-playbook.md) | Step-by-step: implement a change without violating rules (before coding, while coding, before PR, after review) |
+| [01-jav-module-copy-refactor](playbooks/01-jav-module-copy-refactor.md) | Copy JAV module from XCrawlerII to Cursor and refactor to follow docs policies (deps, layering, routes, tests) |
 
 ---
 

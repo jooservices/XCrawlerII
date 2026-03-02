@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
 use Modules\Core\Contracts\Events\ChangeSetBuilderInterface;
 
 /**
- * @method static \Modules\Core\Dto\Events\ChangeSet build(array $previous, array $new, ?array $onlyKeys = null, int $maxKeys = 100, int $maxDepth = 1)
+ * @method static \Modules\Core\DTOs\Events\ChangeSet build(array $previous, array $new, ?array $onlyKeys = null, int $maxKeys = 100, int $maxDepth = 1)
  *
  * @see ChangeSetBuilderInterface
  */

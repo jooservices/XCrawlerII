@@ -45,7 +45,7 @@ final class ClientLoggingToMongoTest extends TestCase
     public function test_happy_unhappy_edge_client_logs_sanitized_payload_retry_and_cache_metadata_to_mongo(): void
     {
         /** @var ClientContract $client */
-        $client = $this->app->make(ClientContract::class);
+        $client = app(ClientContract::class);
         $baseUrl = "http://127.0.0.1:{$this->serverPort}/ok";
         $correlationId = fake()->uuid();
 
@@ -100,7 +100,7 @@ final class ClientLoggingToMongoTest extends TestCase
     public function test_security_client_log_preserves_xss_like_url_as_text_in_mongo_document(): void
     {
         /** @var ClientContract $client */
-        $client = $this->app->make(ClientContract::class);
+        $client = app(ClientContract::class);
         $payloadTag = $this->testRunId . '-xss';
         $xssQuery = rawurlencode('<script>alert(1)</script>');
         $url = "http://127.0.0.1:{$this->serverPort}/ok?next={$xssQuery}";

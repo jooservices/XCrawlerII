@@ -84,7 +84,7 @@ flowchart TB
 ```php
 // Inside Modules/Auth
 use Modules\Core\Contracts\AuditLogger;
-use Modules\Core\Dto\SomeSharedDto;
+use Modules\Core\DTOs\SomeSharedDto;
 ```
 
 **Anti-examples (forbidden):**
@@ -111,7 +111,7 @@ use Modules\Billing\Repositories\InvoiceRepository;
 **Anti-examples (forbidden):**
 
 - Feature B importing and calling `FeatureA\Services\SomeService` directly.
-- Feature B type-hinting `FeatureA\Dto\Something` in public API (DTOs crossing feature boundary should live in Core or be agreed in ADR).
+- Feature B type-hinting `FeatureA\DTOs\Something` in public API (DTOs crossing feature boundary should live in Core or be agreed in ADR).
 
 **Enforcement:** Code review; dependency direction checks.
 

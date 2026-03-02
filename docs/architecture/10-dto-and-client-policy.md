@@ -1,5 +1,10 @@
 # 10 - DTO and Client Policy
 
+## DTO location and namespace
+
+Rule `10-DTO-000`:
+Place DTO classes under `Modules/<Module>/app/DTOs/` (subfolders allowed, e.g. `Events/`). Use PHP namespace `Modules\<Module>\DTOs` or `Modules\<Module>\DTOs\<SubNamespace>` (e.g. `Modules\Core\DTOs\Events`).
+
 ## DTO MUST Rules
 Rule `10-DTO-001`:
 Use DTOs only for boundary I/O: HTTP input/output contracts, event payloads, integration request/response, and cross-module public contracts.

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Core\Services\Events;
 
 use Modules\Core\Contracts\Events\ChangeSetBuilderInterface;
-use Modules\Core\Dto\Events\ChangeSet;
+use Modules\Core\DTOs\Events\ChangeSet;
 
 final class ChangeSetBuilder implements ChangeSetBuilderInterface
 {

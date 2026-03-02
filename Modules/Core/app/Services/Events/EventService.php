@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Modules\Core\Constants\Events\PayloadSanitizerKeys;
 use Modules\Core\Contracts\Events\EventLogInterface;
 use Modules\Core\Contracts\Events\EventSourcingInterface;
-use Modules\Core\Dto\Events\ActorContext;
+use Modules\Core\DTOs\Events\ActorContext;
 use Modules\Core\Repositories\EventLogRepository;
 use Modules\Core\Repositories\EventStoreRepository;
 

@@ -45,7 +45,7 @@ Modules/<ModuleName>/
 │   ├── Jobs/
 │   ├── Events/
 │   ├── Listeners/
-│   ├── DTO/
+│   ├── DTOs/
 │   └── Providers/
 ├── database/
 │   ├── migrations/
@@ -92,7 +92,7 @@ Modules/Core/
 │   ├── Constants/
 │   ├── Enums/
 │   ├── Contracts/
-│   ├── DTO/
+│   ├── DTOs/
 │   ├── Support/
 │   │   ├── Logging/
 │   │   └── Errors/

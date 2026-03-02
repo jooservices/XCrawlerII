@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Modules\Core\Tests\Unit\Services\Events;
 
 use Carbon\CarbonImmutable;
-use Modules\Core\Dto\Events\ActorContext;
+use Modules\Core\DTOs\Events\ActorContext;
 use Modules\Core\Enums\Events\ActorType;
 use Modules\Core\Models\MongoDb\EventLog;
 use Modules\Core\Models\MongoDb\EventStore;
@@ -21,7 +21,7 @@ final class EventServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->eventService = $this->app->make(EventService::class);
+        $this->eventService = app(EventService::class);
         $this->cleanEventCollections();
     }
 
