@@ -10,20 +10,22 @@
     "license": "MIT",
     "require": {
         "php": "^8.5",
+        "ext-mongodb": "*",
         "inertiajs/inertia-laravel": "^2.0",
         "jooservices/client": "^0.5.0",
         "jooservices/dto": "^1.0",
+        "jooservices/useragent": "^1.1",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.26",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "mongodb/laravel-mongodb": "^5.6",
         "nwidart/laravel-modules": "^12.0",
-        "tightenco/ziggy": "^2.0",
-        "ext-mongodb": "*"
+        "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
+        "guzzlehttp/psr7": "^2.8",
         "larastan/larastan": "^3.9",
         "laravel/breeze": "^2.3",
         "laravel/pail": "^1.2.2",

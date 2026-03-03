@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Modules\JAV\Repositories;
 
+use Modules\JAV\Contracts\Repositories\MovieRepositoryInterface;
 use Modules\JAV\Models\MongoDb\Onejav;
 
-final class OnejavRepository
+final class OnejavRepository implements MovieRepositoryInterface
 {
     /** @param  array<string, mixed>  $attributes */
     public function upsertByCode(string $code, array $attributes): Onejav
@@ -15,5 +16,10 @@ final class OnejavRepository
             ['code' => $code],
             array_merge(['code' => $code], $attributes)
         );
+    }
+
+    public function findByCode(string $code): ?Onejav
+    {
+        return Onejav::query()->where('code', $code)->first();
     }
 }

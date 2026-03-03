@@ -6,27 +6,17 @@ namespace Modules\Core\Services\Client;
 
 use ArrayObject;
 use DateTimeImmutable;
-use JOOservices\Client\Client\ClientBuilder;
-use JOOservices\Client\Contracts\HttpClientInterface;
-use JOOservices\Client\Resilience\RetryConfig;
+use JOOservices\Client\Contracts\ResponseWrapperInterface;
 use Modules\Core\Models\MongoDb\ClientLog;
-use Modules\Core\Services\Client\Contracts\ClientContract;
 use Modules\Core\Services\Client\Logging\HttpLogSanitizer;
-use Modules\Core\Services\Client\Middleware\CacheMetadataMiddleware;
 use Modules\Core\Services\Client\Middleware\RetryTrackingMiddleware;
-use Psr\Http\Message\ResponseInterface;
-use Psr\SimpleCache\CacheInterface;
 use Throwable;
 
-final class Client implements ClientContract
+final class Client
 {
     public function __construct(
         private readonly HttpLogSanitizer $sanitizer,
-        private readonly CacheInterface $cache,
-        private readonly int $timeoutSec = 20,
-        private readonly int $connectTimeoutSec = 8,
         private readonly int $defaultMaxAttempts = 3,
-        private readonly int $defaultCacheTtlSec = 300,
         private readonly string $cacheStore = 'default',
     ) {
     }
@@ -34,7 +24,7 @@ final class Client implements ClientContract
     /**
      * @param  array<string, mixed>  $options
      */
-    public function request(string $method, string $url, array $options = []): ResponseInterface
+    public function request(string $method, string $url, array $options = []): ResponseWrapperInterface
     {
         $context = new ArrayObject([
             'attempt' => 0,
@@ -51,14 +41,15 @@ final class Client implements ClientContract
         $options[RetryTrackingMiddleware::CONTEXT_KEY] = $context;
         $maxAttempts = (int) ($options['max_attempts'] ?? $this->defaultMaxAttempts);
         $maxAttempts = max(1, $maxAttempts);
-        $options['cache_ttl'] = (int) ($options['cache_ttl'] ?? $this->defaultCacheTtlSec);
+        $options['cache_ttl'] = (int) ($options['cache_ttl'] ?? 300);
         $start = microtime(true);
         $response = null;
         $error = null;
 
         try {
-            $client = $this->buildClient($maxAttempts);
-            $response = $client->request(strtoupper($method), $url, $options)->toPsrResponse();
+            $factory = app(ClientFactory::class);
+            $client = $factory->create($maxAttempts);
+            $response = $client->request(strtoupper($method), $url, $options);
 
             return $response;
         } catch (Throwable $exception) {
@@ -79,21 +70,6 @@ final class Client implements ClientContract
         }
     }
 
-    private function buildClient(int $maxAttempts): HttpClientInterface
-    {
-        return ClientBuilder::create()
-            ->withTimeout($this->timeoutSec)
-            ->withConnectTimeout($this->connectTimeoutSec)
-            ->withRetry(new RetryConfig(maxAttempts: $maxAttempts))
-            ->withMiddleware(new RetryTrackingMiddleware(), 'retry_tracking')
-            ->withMiddleware(
-                new CacheMetadataMiddleware($this->cache, $this->defaultCacheTtlSec, $this->cacheStore),
-                'cache_meta'
-            )
-            ->withCache($this->cache, $this->defaultCacheTtlSec)
-            ->build();
-    }
-
     /**
      * @param  array<string, mixed>  $options
      */
@@ -102,7 +78,7 @@ final class Client implements ClientContract
         string $url,
         array $options,
         ArrayObject $context,
-        ?ResponseInterface $response,
+        ?ResponseWrapperInterface $response,
         ?Throwable $error,
         int $durationMs,
         int $maxAttempts,
@@ -114,12 +90,13 @@ final class Client implements ClientContract
         $requestHeaders = $this->sanitizer->sanitizeHeaders($options['headers'] ?? []);
         $requestBody = $this->sanitizer->sanitizeRequestBody($options);
 
-        $responseHeaders = $response ? $this->sanitizer->sanitizeHeaders($response->getHeaders()) : [];
-        $responseBody = $response ? $this->sanitizer->sanitizeResponseBody($response) : $this->emptyBody();
+        $psrResponse = $response?->toPsrResponse();
+        $responseHeaders = $psrResponse ? $this->sanitizer->sanitizeHeaders($psrResponse->getHeaders()) : [];
+        $responseBody = $psrResponse ? $this->sanitizer->sanitizeResponseBody($psrResponse) : $this->emptyBody();
 
         $attempt = max(1, (int) ($context['attempt'] ?? 1));
         $retries = max(0, $attempt - 1);
-        $status = $response?->getStatusCode() ?? 0;
+        $status = $psrResponse?->getStatusCode() ?? 0;
         $cache = $context['cache'] ?? [
             'enabled' => false,
             'hit' => false,

@@ -9,4 +9,5 @@ enum SourceEnum: string
     case Onejav = 'onejav';
     case OneFourOneJav = '141jav';
     case FfJav = 'ffjav';
+    case Xcity = 'xcity';
 }

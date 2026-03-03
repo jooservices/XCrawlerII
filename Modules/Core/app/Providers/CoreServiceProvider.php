@@ -16,7 +16,7 @@ use Modules\Core\Repositories\EventLogRepository;
 use Modules\Core\Repositories\EventStoreRepository;
 use Modules\Core\Repositories\LogRepository;
 use Modules\Core\Services\Client\Client;
-use Modules\Core\Services\Client\Contracts\ClientContract;
+use Modules\Core\Services\Client\ClientFactory;
 use Modules\Core\Services\Client\Logging\HttpLogSanitizer;
 use Modules\Core\Services\CommandService;
 use Modules\Core\Services\Events\ChangeSetBuilder;
@@ -109,16 +109,24 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->singleton(CommandService::class);
         $this->app->singleton(QueueService::class);
 
-        $this->app->bind(ClientContract::class, function ($app): ClientContract {
+        $this->app->singleton(ClientFactory::class, function ($app): ClientFactory {
+            $cacheStore = (string) config('core.client.cache_store', (string) config('cache.default', 'database'));
+
+            return new ClientFactory(
+                cache: $app->make(MemoryCache::class),
+                timeoutSec: (int) config('core.client.timeout_sec', 20),
+                connectTimeoutSec: (int) config('core.client.connect_timeout_sec', 8),
+                defaultCacheTtlSec: (int) config('core.client.cache_ttl_sec', 300),
+                cacheStore: $cacheStore,
+            );
+        });
+
+        $this->app->bind(Client::class, function ($app): Client {
             $cacheStore = (string) config('core.client.cache_store', (string) config('cache.default', 'database'));
 
             return new Client(
                 sanitizer: $app->make(HttpLogSanitizer::class),
-                cache: $app->make(MemoryCache::class),
-                timeoutSec: (int) config('core.client.timeout_sec', 20),
-                connectTimeoutSec: (int) config('core.client.connect_timeout_sec', 8),
                 defaultMaxAttempts: (int) config('core.client.max_attempts', 3),
-                defaultCacheTtlSec: (int) config('core.client.cache_ttl_sec', 300),
                 cacheStore: $cacheStore,
             );
         });

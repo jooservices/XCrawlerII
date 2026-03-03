@@ -9,6 +9,7 @@ use Modules\JAV\DTOs\ActorDto;
 use Modules\JAV\DTOs\MovieDto;
 use Modules\JAV\DTOs\TagDto;
 use Modules\JAV\Enums\SourceEnum;
+use Modules\JAV\Exceptions\UnsupportedSourceException;
 use Modules\JAV\Models\Actor;
 use Modules\JAV\Models\Movie;
 use Modules\JAV\Models\MongoDb\FfJav;
@@ -17,6 +18,7 @@ use Modules\JAV\Models\MongoDb\Onejav;
 use Modules\JAV\Repositories\MovieRepository;
 use Modules\JAV\Services\MovieService;
 use Modules\JAV\Tests\TestCase;
+use Mockery;
 
 /**
  * Full flow: MovieService::save() -> adapter (Mongo snapshot) + transaction (MySQL + pivot sync). No mocks of internal services.
@@ -36,6 +38,7 @@ final class MovieServiceTest extends TestCase
 
     protected function tearDown(): void
     {
+        Mockery::close();
         $this->cleanMongoCollections();
         parent::tearDown();
     }
@@ -149,6 +152,91 @@ final class MovieServiceTest extends TestCase
         $movie->load(['actors', 'tags']);
         $this->assertCount(0, $movie->actors);
         $this->assertCount(0, $movie->tags);
+    }
+
+    public function test_save_throws_unsupported_source_exception_for_unsupported_source(): void
+    {
+        $dto = new MovieDto(source: SourceEnum::Xcity, code: 'XC-001', title: 'Xcity Sample');
+
+        $this->expectException(UnsupportedSourceException::class);
+        $this->expectExceptionMessage('Unsupported source: xcity');
+
+        $this->service->save($dto);
+    }
+
+    public function test_save_throws_when_db_transaction_fails(): void
+    {
+        $this->markTestSkipped('DB transaction failure is not tested via repo mock; repos are never mocked.');
+    }
+
+    public function test_save_with_empty_code_persists_using_empty_string(): void
+    {
+        $dto = new MovieDto(source: SourceEnum::Onejav, code: '', title: 'Empty Code', actors: [], tags: []);
+
+        $this->service->save($dto);
+
+        $movie = app(MovieRepository::class)->findByCode('');
+        $this->assertInstanceOf(Movie::class, $movie);
+        $this->assertSame('', $movie->code);
+    }
+
+    public function test_save_with_all_null_dto_fields_persists_minimal_movie(): void
+    {
+        $dto = new MovieDto(
+            source: SourceEnum::Onejav,
+            code: 'MIN-001',
+            itemId: null,
+            title: null,
+            description: null,
+            category: null,
+            cover: null,
+            trailer: null,
+            gallery: null,
+            isCensored: null,
+            hasSubtitles: null,
+            subtitles: null,
+            releaseDate: null,
+            durationMinutes: null,
+            crawledAt: null,
+            seenAt: null,
+            attributes: null,
+            actors: [],
+            tags: [],
+        );
+
+        $this->service->save($dto);
+
+        $movie = app(MovieRepository::class)->findByCode('MIN-001');
+        $this->assertInstanceOf(Movie::class, $movie);
+        $this->assertSame('MIN-001', $movie->code);
+    }
+
+    public function test_save_with_many_actors_and_tags_syncs_all(): void
+    {
+        $actors = [];
+        for ($i = 0; $i < 105; $i++) {
+            $actors[] = new ActorDto(name: "Actor {$i}");
+        }
+        $tags = [];
+        for ($i = 0; $i < 105; $i++) {
+            $tags[] = new TagDto(name: "Tag{$i}");
+        }
+
+        $dto = new MovieDto(
+            source: SourceEnum::Onejav,
+            code: 'BULK-001',
+            title: 'Bulk Test',
+            actors: $actors,
+            tags: $tags,
+        );
+
+        $this->service->save($dto);
+
+        $movie = app(MovieRepository::class)->findByCode('BULK-001');
+        $this->assertInstanceOf(Movie::class, $movie);
+        $movie->load(['actors', 'tags']);
+        $this->assertCount(105, $movie->actors);
+        $this->assertCount(105, $movie->tags);
     }
 
     private function assertMongoAvailable(): void

@@ -291,6 +291,7 @@ Modules/Analytics/app/Contracts/
 ```text
 ❌ Modules/Billing/app/Services/Contracts/PaymentGatewayContract.php
 ❌ Modules/Core/app/Repositories/Contracts/ConfigRepositoryInterface.php
+❌ Modules/Core/app/Services/Client/Contracts/ClientContract.php   (use app/Contracts/ instead)
 ❌ Modules/Analytics/app/Contracts/Repository/EventRepositoryInterface.php   (singular group)
 ❌ Modules/Analytics/app/Contracts/Services/Client/ClientInterface.php     (nested group)
 ```
