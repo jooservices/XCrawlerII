@@ -146,31 +146,35 @@ final class OrderFeatureTest extends TestCase  // in Modules/*/tests
 
 ---
 
-### TEST-005A: Naming convention for required coverage categories
+### TEST-005A: Required coverage categories (no category prefix in test names)
 
-**Rule:** To make TEST-005 mechanically checkable, new tests SHOULD include category-prefixed method names:
+**Rule:** TEST-005 coverage is required: every feature (or major use case) MUST have tests that cover **Happy**, **Unhappy**, **Weird**, **Security** (or exploit), and **Edge** cases. Test method names do **not** include a category prefix (e.g. do not use `test_happy_*`, `test_unhappy_*`, `test_weird_*`, `test_security_*`, `test_edge_*`). Use descriptive names only: `test_<behavior_or_scenario>`.
 
-- `test_happy_*`
-- `test_unhappy_*`
-- `test_weird_*`
-- `test_security_*` (or `test_exploit_*`)
-- `test_edge_*`
+**Rationale:** Coverage of all five categories is mandatory; naming stays simple and behavior-focused. Verification is by test plan, checklist, or review—not by parsing method names.
 
-**Rationale:** Explicit naming makes required category coverage grep/CI-enforceable and easier to review.
+**Required categories (must be covered):**
 
-**Allowed:**
+- **Happy:** valid request, 200/201, correct state.
+- **Unhappy:** 422 validation, 404, 403.
+- **Weird:** empty body, wrong content-type, malformed payload.
+- **Security:** unauthorized access, wrong tenant, IDOR, invalid ID.
+- **Edge:** pagination last page, empty result set, boundaries.
 
-- `test_happy_create_order_success()`
-- `test_unhappy_create_order_validation_error()`
-- `test_weird_create_order_rejects_malformed_payload()`
-- `test_security_create_order_rejects_idor_attempt()`
-- `test_edge_create_order_handles_empty_items()`
+**Allowed (descriptive names, no category prefix):**
 
-**Anti-examples (forbidden for new tests):**
+- `test_create_order_success()`
+- `test_create_order_validation_error()`
+- `test_create_order_rejects_malformed_payload()`
+- `test_create_order_rejects_idor_attempt()`
+- `test_create_order_handles_empty_items()`
 
-- Only generic names with no category clarity (for example, `test_create_order_case_1`).
+**Anti-examples (forbidden):**
 
-**Enforcement:** Optional CI check can grep category prefixes in target test suites.
+- Category-prefixed method names: `test_happy_create_order_success()`, `test_unhappy_*`, etc.
+- Only generic names with no scenario clarity (e.g. `test_create_order_case_1`).
+- Missing coverage for one or more of the five categories (Happy / Unhappy / Weird / Security / Edge).
+
+**Enforcement:** Code review and test plan or checklist verify that all five categories are covered; no CI grep on method name prefixes.
 
 ---
 
