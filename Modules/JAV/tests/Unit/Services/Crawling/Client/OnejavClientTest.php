@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Modules\JAV\Tests\Unit\Services\Crawling\Client;
 
+use GuzzleHttp\Exception\ConnectException;
 use JOOservices\Client\Contracts\HttpClientInterface;
+use Mockery;
 use Modules\Core\Services\Client\Client;
 use Modules\Core\Services\Client\ClientFactory;
 use Modules\JAV\Services\Crawling\Client\OnejavClient;
 use Modules\JAV\Tests\TestCase;
-use Mockery;
 
 final class OnejavClientTest extends TestCase
 {
@@ -25,7 +26,7 @@ final class OnejavClientTest extends TestCase
         $mockHttp = Mockery::mock(HttpClientInterface::class);
         $mockHttp->shouldReceive('request')
             ->once()
-            ->with('GET', OnejavClient::BASE_URI . '/new?page=1', Mockery::on(function (array $options): bool {
+            ->with('GET', OnejavClient::BASE_URI.'/new?page=1', Mockery::on(function (array $options): bool {
                 return isset($options['headers']['User-Agent']) && $options['headers']['User-Agent'] !== '';
             }))
             ->andReturn($response);
@@ -46,7 +47,7 @@ final class OnejavClientTest extends TestCase
         $mockHttp = Mockery::mock(HttpClientInterface::class);
         $mockHttp->shouldReceive('request')
             ->once()
-            ->with('GET', OnejavClient::BASE_URI . '/new', Mockery::on(function (array $options): bool {
+            ->with('GET', OnejavClient::BASE_URI.'/new', Mockery::on(function (array $options): bool {
                 return isset($options['headers']['User-Agent']) && $options['headers']['User-Agent'] !== '';
             }))
             ->andReturn($response);
@@ -148,7 +149,7 @@ final class OnejavClientTest extends TestCase
         $mockHttp = Mockery::mock(HttpClientInterface::class);
         $mockHttp->shouldReceive('request')
             ->once()
-            ->with('GET', OnejavClient::BASE_URI . '/2025/03/03', Mockery::on(function (array $options): bool {
+            ->with('GET', OnejavClient::BASE_URI.'/2025/03/03', Mockery::on(function (array $options): bool {
                 return isset($options['headers']['User-Agent']) && $options['headers']['User-Agent'] !== '';
             }))
             ->andReturn($response);
@@ -169,7 +170,7 @@ final class OnejavClientTest extends TestCase
         $mockHttp = Mockery::mock(HttpClientInterface::class);
         $mockHttp->shouldReceive('request')
             ->once()
-            ->with('GET', OnejavClient::BASE_URI . '/popular', Mockery::on(function (array $options): bool {
+            ->with('GET', OnejavClient::BASE_URI.'/popular', Mockery::on(function (array $options): bool {
                 return isset($options['headers']['User-Agent']) && $options['headers']['User-Agent'] !== '';
             }))
             ->andReturn($response);
@@ -190,7 +191,7 @@ final class OnejavClientTest extends TestCase
         $mockHttp = Mockery::mock(HttpClientInterface::class);
         $mockHttp->shouldReceive('request')
             ->once()
-            ->with('GET', OnejavClient::BASE_URI . '/2026/03/03?page=1', Mockery::on(function (array $options): bool {
+            ->with('GET', OnejavClient::BASE_URI.'/2026/03/03?page=1', Mockery::on(function (array $options): bool {
                 return isset($options['headers']['User-Agent']) && $options['headers']['User-Agent'] !== '';
             }))
             ->andReturn($response);
@@ -211,7 +212,7 @@ final class OnejavClientTest extends TestCase
         $mockHttp = Mockery::mock(HttpClientInterface::class);
         $mockHttp->shouldReceive('request')
             ->once()
-            ->with('GET', OnejavClient::BASE_URI . '/2026/03/03?page=2', Mockery::on(function (array $options): bool {
+            ->with('GET', OnejavClient::BASE_URI.'/2026/03/03?page=2', Mockery::on(function (array $options): bool {
                 return isset($options['headers']['User-Agent']) && $options['headers']['User-Agent'] !== '';
             }))
             ->andReturn($response);
@@ -232,7 +233,7 @@ final class OnejavClientTest extends TestCase
         $mockHttp = Mockery::mock(HttpClientInterface::class);
         $mockHttp->shouldReceive('request')
             ->once()
-            ->with('GET', OnejavClient::BASE_URI . '/2026/03/03?page=3', Mockery::on(function (array $options): bool {
+            ->with('GET', OnejavClient::BASE_URI.'/2026/03/03?page=3', Mockery::on(function (array $options): bool {
                 return isset($options['headers']['User-Agent']) && $options['headers']['User-Agent'] !== '';
             }))
             ->andReturn($response);
@@ -285,7 +286,7 @@ final class OnejavClientTest extends TestCase
         $mockHttp = Mockery::mock(HttpClientInterface::class);
         $mockHttp->shouldReceive('request')
             ->once()
-            ->andThrow(new \GuzzleHttp\Exception\ConnectException('Connection refused', new \GuzzleHttp\Psr7\Request('GET', 'https://onejav.com/')));
+            ->andThrow(new ConnectException('Connection refused', new \GuzzleHttp\Psr7\Request('GET', 'https://onejav.com/')));
         $mockFactory = Mockery::mock(ClientFactory::class);
         $mockFactory->shouldReceive('create')->andReturn($mockHttp);
 
@@ -293,7 +294,7 @@ final class OnejavClientTest extends TestCase
         $coreClient = $this->app->make(Client::class);
         $client = new OnejavClient($coreClient);
 
-        $this->expectException(\GuzzleHttp\Exception\ConnectException::class);
+        $this->expectException(ConnectException::class);
         $client->get('/path');
     }
 

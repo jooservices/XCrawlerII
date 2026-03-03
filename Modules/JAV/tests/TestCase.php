@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Modules\JAV\Tests;
 
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Psr7\Utils;
 use JOOservices\Client\Contracts\ResponseWrapperInterface;
 use Modules\JAV\Tests\Stubs\ResponseWrapperStub;
 use Modules\Core\Tests\TestCase as BaseTestCase;
@@ -25,7 +27,7 @@ abstract class TestCase extends BaseTestCase
     {
         $content = $this->loadFixture($path);
 
-        return new \GuzzleHttp\Psr7\Response(200, [], \GuzzleHttp\Psr7\Utils::streamFor($content));
+        return new Response(200, [], Utils::streamFor($content));
     }
 
     /**
@@ -41,10 +43,10 @@ abstract class TestCase extends BaseTestCase
             $headers = [];
         }
 
-        $res = new \GuzzleHttp\Psr7\Response(
+        $res = new Response(
             $statusCode,
             $headers,
-            \GuzzleHttp\Psr7\Utils::streamFor($body)
+            Utils::streamFor($body)
         );
 
         return new ResponseWrapperStub($res);
