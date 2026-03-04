@@ -12,4 +12,15 @@ return [
         'cache_ttl_sec' => (int) env('XCRAWLER_CLIENT_CACHE_TTL', 300),
         'cache_store' => (string) env('CACHE_STORE', 'database'),
     ],
+    'reactions' => [
+        'allowed_types' => [
+            'like',
+            'dislike',
+            'love',
+            'haha',
+            'wow',
+            'sad',
+            'angry',
+        ],
+    ],
 ];
