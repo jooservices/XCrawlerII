@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Core\Http\Controllers\CoreController;
+use Modules\Core\Http\Controllers\Api\V1\ReactionController;
 
-Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
-    Route::apiResource('cores', CoreController::class)->names('core');
+Route::prefix('v1/reactions')->name('v1.reactions.')->group(function () {
+    Route::post('', [ReactionController::class, 'react'])->name('react');
 });
